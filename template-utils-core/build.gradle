@@ -1,0 +1,46 @@
+apply plugin: 'java'
+//    id "com.jfrog.artifactory" version "4.5.4"
+//    id "com.jfrog.bintray" version "1.7.3"
+//    id "maven-publish"
+
+dependencies {
+  implementation('org.slf4j:slf4j-api:1.7.21')
+  implementation('com.google.zxing:core:3.2.1')
+  implementation('com.google.code.gson:gson:2.8.5')  
+  
+  implementation('javax.validation:validation-api:2.0.1.Final')
+//  implementation('log4j:log4j:1.2.8')
+  implementation('org.apache.commons:commons-csv:1.2')
+  implementation('org.apache.commons:commons-text:1.6')
+
+  // PDF
+  implementation('org.apache.poi:poi:3.16') 
+  implementation('org.apache.poi:poi-ooxml:3.16') 
+  implementation('org.apache.poi:ooxml-schemas:1.4')
+  implementation('com.lowagie:itext:2.1.7') {transitive = false}   
+  implementation('org.springframework:spring-expression:4.3.6.RELEASE')
+  implementation('org.javassist:javassist:3.21.0-GA')
+
+  // docx->pdf converter (requires poi3, itext<5)
+  implementation('fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.docx.xwpf:2.0.1')
+
+  // pdf merger
+  implementation('org.apache.pdfbox:pdfbox:2.0.12')
+
+  // Docx4j
+  implementation('org.docx4j:docx4j:6.0.1')
+  implementation('org.wickedsource:docx-stamper:1.2.2')
+  implementation('com.fasterxml.jackson.core:jackson-core:2.9.8')
+
+  // JXls 
+  implementation('org.jxls:jxls:2.6.0')
+  implementation('org.jxls:jxls-jexcel:1.0.9')
+  implementation('org.jxls:jxls-poi:1.0.13')
+  implementation('org.jxls:jxls-reader:2.0.3')
+  implementation('org.apache.commons:commons-jexl:2.1.1')
+    
+  testCompile('junit:junit:4.12')
+  
+  compile project(':template-utils-core-dto-extensions')
+  testCompile project(':template-utils-core-test-dto')
+}

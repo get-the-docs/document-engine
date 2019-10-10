@@ -1,0 +1,13 @@
+apply plugin: 'java'
+//    id "com.jfrog.artifactory" version "4.5.4"
+//    id "com.jfrog.bintray" version "1.7.3"
+//    id "maven-publish"
+
+dependencies {
+  compile project(':template-utils-core-dto-extensions')
+
+}
+
+task javadocs(type: Javadoc) {
+  source = sourceSets.main.allJava
+}
