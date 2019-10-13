@@ -19,6 +19,6 @@ public class InputFormatTest {
 
     @Test
     public void notSameValueTest() {
-        Assert.assertTrue(InputFormat.DOCX.isSameFormat(OutputFormat.PDF));
+        Assert.assertFalse(InputFormat.DOCX.isSameFormat(OutputFormat.PDF));
     }
 }

@@ -1,6 +1,6 @@
 package net.videki.templateutils.template.core.configuration.util;
 
-import javax.validation.constraints.NotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -12,12 +12,12 @@ public class FileSystemHelper {
     public static final String            FILENAME_COLON = ".";
     public static final String            FILENAME_DIR_SEPARATOR = "/";
 
-    public static InputStream getInputStream(@NotNull final OutputStream out) {
+    public static InputStream getInputStream(final OutputStream out) {
         return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());
 
     }
 
-    public static List<InputStream> getInputStream(@NotNull final List<OutputStream> out) {
+    public static List<InputStream> getInputStream(final List<OutputStream> out) {
         List<InputStream> results = new ArrayList<>(out.size());
         for (OutputStream o : out) {
             results.add(getInputStream(o));
@@ -28,5 +28,9 @@ public class FileSystemHelper {
 
     public static OutputStream getOutputStream() {
         return new ByteArrayOutputStream();
+    }
+
+    public static String getFullPath(final String path, final String fileName) {
+        return path + FILENAME_DIR_SEPARATOR + fileName;
     }
 }

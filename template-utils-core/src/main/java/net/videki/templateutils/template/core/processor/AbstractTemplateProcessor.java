@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +13,8 @@ public abstract class AbstractTemplateProcessor {
 
   private static final Logger LOGGER      = LoggerFactory.getLogger(TemplateService.class);
 
-  protected static InputStream getTemplate(@NotNull final String templateFile) {
-    InputStream result = null;
+  protected static InputStream getTemplate(final String templateFile) {
+    InputStream result;
 
     result = AbstractTemplateProcessor.class.getResourceAsStream(templateFile);
     if (result == null) {
@@ -28,7 +27,7 @@ public abstract class AbstractTemplateProcessor {
 
   }
 
-  protected static InputStream getInputStream(@NotNull final OutputStream out) {
+  protected static InputStream getInputStream(final OutputStream out) {
     return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());
 
   }

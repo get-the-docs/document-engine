@@ -1,6 +1,7 @@
 package net.videki.templateutils.template.core.service;
 
 import net.videki.templateutils.template.core.TestHelper;
+import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
@@ -15,6 +16,8 @@ import net.videki.templateutils.template.test.dto.contract.Contract;
 import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +28,9 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TemplateServiceParamTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
@@ -89,7 +92,49 @@ public class TemplateServiceParamTest {
     }
 
     @Test
-    public void fillSimpleTemplate() {
+    public void fillSimpleTemplatePojo() {
+        boolean testResult;
+
+        final String inputDir = "/templates/docx";
+        final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
+
+        final String fileName = "SimpleContract_v1_21-pojo.docx";
+        final String resultFileName = "result-" + fileName;
+
+        final Contract dto = ContractDataFactory.createContract();
+
+        try {
+            OutputStream result = ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), dto, OutputFormat.DOCX);
+
+            LOGGER.info("Result file: {}/{}.", projectOutDir, resultFileName);
+
+            FileOutputStream o = new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, resultFileName));
+
+            o.write(((ByteArrayOutputStream) result).toByteArray());
+            o.flush();
+            o.close();
+            result.close();
+
+            testResult = true;
+
+            LOGGER.info("Done.");
+        } catch (IOException e) {
+            System.out.println("error:");
+            e.printStackTrace();
+
+            testResult = false;
+
+        } catch (TemplateServiceException e) {
+            e.printStackTrace();
+
+            testResult = false;
+        }
+
+        assertTrue(testResult);
+    }
+
+    @Test
+    public void fillSimpleTemplateMap() {
         boolean testResult;
 
         final String inputDir = "/templates/docx";
@@ -99,11 +144,54 @@ public class TemplateServiceParamTest {
         final String resultFileName = "result-" + fileName;
 
         try {
-            OutputStream result = ts.fill(inputDir + "/" + fileName, getContractTestData(), OutputFormat.DOCX);
+            OutputStream result = ts.fill(FileSystemHelper.getFullPath(inputDir, fileName),
+                    getContractTestData().getCtx(),
+                    OutputFormat.DOCX);
 
             LOGGER.info("Result file: {}/{}.", projectOutDir, resultFileName);
 
-            FileOutputStream o = new FileOutputStream(projectOutDir + "/" + resultFileName);
+            FileOutputStream o = new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, resultFileName));
+
+            o.write(((ByteArrayOutputStream)result).toByteArray());
+            o.flush();
+            o.close();
+            result.close();
+
+            testResult = true;
+
+            LOGGER.info("Done.");
+        } catch (IOException e) {
+            System.out.println("error:");
+            e.printStackTrace();
+
+            testResult = false;
+
+        } catch (TemplateServiceException e) {
+            e.printStackTrace();
+
+            testResult = false;
+        }
+
+        assertTrue(testResult);
+    }
+
+    @Test
+    public void fillSimpleTemplateTemplateContext() {
+        boolean testResult;
+
+        final String inputDir = "/templates/docx";
+        final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
+
+        final String fileName = "SimpleContract_v1_21.docx";
+        final String resultFileName = "result-" + fileName;
+
+        try {
+            OutputStream result = ts.fill(FileSystemHelper.getFullPath(inputDir, fileName),
+                    getContractTestData(), OutputFormat.DOCX);
+
+            LOGGER.info("Result file: {}/{}.", projectOutDir, resultFileName);
+
+            FileOutputStream o = new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, resultFileName));
 
             o.write(((ByteArrayOutputStream)result).toByteArray());
             o.flush();
@@ -137,7 +225,7 @@ public class TemplateServiceParamTest {
         final String fileName = "there_is_no_such_template_file.docx";
 
         try {
-            ts.fill(inputDir + "/" + fileName, getContractTestData(), OutputFormat.DOCX);
+            ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
 
             LOGGER.info("Done.");
         } catch (TemplateNotFoundException e) {
@@ -147,7 +235,7 @@ public class TemplateServiceParamTest {
             e.printStackTrace();
         }
 
-        assertTrue(testResult);
+        assertFalse(testResult);
 
     }
 
@@ -160,7 +248,7 @@ public class TemplateServiceParamTest {
         final String fileName = "SimpleContract_v1_21.docx";
 
         final DocumentStructure structure = new DocumentStructure();
-        final TemplateElement docElement = new TemplateElement("contract", inputDir + "/" + fileName);
+        final TemplateElement docElement = new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName));
         docElement
                 .withCount(1)
                 .withDefaultLocale(new Locale("HU"));
@@ -188,11 +276,9 @@ public class TemplateServiceParamTest {
         assertTrue(testResult);
     }
 
-
     private TemplateContext getContractTestData() {
         final Contract dto = ContractDataFactory.createContract();
         final OrganizationUnit orgUnit = OrgUnitDataFactory.createOrgUnit();
-
         final Officer officer = OfficerDataFactory.createOfficer();
 
         final TemplateContext context = new TemplateContext();
@@ -202,12 +288,5 @@ public class TemplateServiceParamTest {
 
         return context;
     }
-/*
-            (@NotNull final String templateName, @NotNull final T dto);
-
-    <T> OutputStream fill(@NotNull final String templateName, @NotNull final T dto, @NotNull final OutputFormat format);
-
-    List<OutputStream> fill(@NotNull final DocumentStructure documentStructure, @NotNull final ValueSet values);
-*/
 
 }

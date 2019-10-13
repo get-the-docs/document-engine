@@ -3,11 +3,10 @@ package net.videki.templateutils.template.core.processor.input.docx;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.validation.constraints.NotNull;
 
 import net.videki.templateutils.template.core.processor.AbstractTemplateProcessor;
+import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
-import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wickedsource.docxstamper.DocxStamper;
@@ -15,6 +14,7 @@ import org.wickedsource.docxstamper.DocxStamperConfiguration;
 
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
+import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
 
 public class DocxInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
 
@@ -49,7 +49,13 @@ public class DocxInputTemplateProcessor extends AbstractTemplateProcessor implem
 
         throw new TemplateNotFoundException("e12c71e9-f27f-48ba-b600-2a0a071c5958", msg);
       }
-      
+
+    } catch (final UnresolvedExpressionException e) {
+      final String msg = String.format("Placholder error in file: %s", templateFileName);
+      LOGGER.warn(msg, e);
+
+      throw new PlaceholderEvalException("ff03cf41-25fb-463a-829d-e2b411df4c16", msg, e);
+
     } catch (final IOException e) {
       LOGGER.error("Error reading/closing template file: {} or creating the output.", templateFileName);
     }

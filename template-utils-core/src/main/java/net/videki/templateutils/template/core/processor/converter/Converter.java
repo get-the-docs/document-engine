@@ -3,15 +3,14 @@ package net.videki.templateutils.template.core.processor.converter;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.OutputFormat;
 
-import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface OutputMapper {
+public interface Converter {
 
   InputFormat getInputFormat();
 
   OutputFormat getOutputFormat();
 
-  OutputStream convert(@NotNull final InputStream source);
+  OutputStream convert(final InputStream source) throws ConversionException;
 }

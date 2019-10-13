@@ -8,8 +8,9 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.service.TemplateService;
-import net.videki.templateutils.template.core.service.TemplateServiceImpl;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import org.slf4j.Logger;
@@ -41,10 +42,10 @@ public class XlsxTemplateTest {
     final TemplateData dto = generateTestData();
 
     final Map<String, Object> dtoExt = new HashMap<>();
-    dtoExt.put(TemplateService.CONTEXT_KEY, dto);
+    dtoExt.put(TemplateContext.CONTEXT_ROOT_KEY, dto);
 
-    try (final FileOutputStream o = new FileOutputStream(projectOutDir + "/" + resultFileName)) {
-      final OutputStream result = ts.fill(inputDir + "/" + fileName, dtoExt);
+    try (final FileOutputStream o = new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, resultFileName))) {
+      final OutputStream result = ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), dtoExt);
 
       LOGGER.info("Result file: {}/{}.", projectOutDir, resultFileName);
       o.write(((ByteArrayOutputStream)result).toByteArray());

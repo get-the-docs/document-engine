@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
@@ -28,11 +29,11 @@ public class PdfExportTest {
     TableDTO dto = new TableDTO();
 
     try {
-      OutputStream result = ts.fill(inputDir + "/" + fileName, dto, OutputFormat.PDF);
+      OutputStream result = ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), dto, OutputFormat.PDF);
 
       LOGGER.info("Result file: {}/{}.", projectOutDir, resultFileName);
 
-      FileOutputStream o = new FileOutputStream(projectOutDir + "/" + resultFileName);
+      FileOutputStream o = new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, resultFileName));
 
       o.write(((ByteArrayOutputStream)result).toByteArray());
       o.flush();

@@ -16,13 +16,13 @@ import javax.validation.constraints.NotNull;
  * Base interface for the main entry point.
  */
 public interface TemplateService {
-  String CONTEXT_KEY = "ctx";
 
   /** Fills the given template specified by its name and return the filled document in the templates format.
    * @param templateName The template file name
    * @param dto the value object to fill the template
    * @throws TemplateServiceException if invalid parameters caught
-   * @throws TemplateProcessException
+   * @throws TemplateProcessException thrown if the configuration/call params are invalid
+   *
    * */
   <T> OutputStream fill(final String templateName, final T dto) throws TemplateServiceException;
 

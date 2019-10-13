@@ -1,6 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure;
 
 import net.videki.templateutils.template.core.TestHelper;
+import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.TemplateService;
@@ -66,7 +67,7 @@ public class DocumentStructureTest {
         final DocumentStructure structure = new DocumentStructure();
 
         final TemplateElement docElement =
-                new TemplateElement(TEMPLATE_CONTRACT, inputDir + "/" + fileName);
+                new TemplateElement(TEMPLATE_CONTRACT, FileSystemHelper.getFullPath(inputDir, fileName));
         docElement
                 .withCount(2)
                 .withDefaultLocale(new Locale("HU"));

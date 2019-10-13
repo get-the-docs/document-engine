@@ -11,9 +11,7 @@ import net.videki.templateutils.template.core.documentstructure.DocumentStructur
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
-import net.videki.templateutils.template.core.processor.input.docx.DocxInputTemplateProcessor;
-import net.videki.templateutils.template.core.processor.input.rtf.RtfInputTemplateProcessor;
-import net.videki.templateutils.template.core.processor.input.xlsx.XlsxInputTemplateProcessor;
+import net.videki.templateutils.template.core.processor.TemplateProcessorRegistry;
 import net.videki.templateutils.template.core.processor.converter.pdf.DocxToPdfConverter;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
@@ -28,9 +26,6 @@ import static net.videki.templateutils.template.core.service.exception.TemplateS
 public class TemplateServiceImpl implements TemplateService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
-    private static final InputTemplateProcessor PROCESSOR_DOCX = new DocxInputTemplateProcessor();
-    private static final InputTemplateProcessor PROCESSOR_RTF = new RtfInputTemplateProcessor();
-    private static final InputTemplateProcessor PROCESSOR_XLSX = new XlsxInputTemplateProcessor();
 
     TemplateServiceImpl() {
 
@@ -43,7 +38,7 @@ public class TemplateServiceImpl implements TemplateService {
             LOGGER.debug("Map context caught.");
             context = new TemplateContext();
             for (Object actKey : ((Map) dto).keySet()) {
-                context.getCtx().put((String) actKey, ((Map) dto).keySet());
+                context.getCtx().put((String) actKey, ((Map) dto).get(actKey));
             }
         } else if (dto instanceof TemplateContext) {
             LOGGER.debug("TemplateContext context caught.");
@@ -51,8 +46,10 @@ public class TemplateServiceImpl implements TemplateService {
         } else {
             LOGGER.debug("POJO context caught.");
             context = new TemplateContext();
-            context.getCtx().put(TemplateService.CONTEXT_KEY, dto);
+            context.getCtx().put(TemplateContext.CONTEXT_ROOT_KEY_MODEL, dto);
         }
+
+        LOGGER.debug("Context object: {}", context.toJson());
 
         return context;
     }
@@ -66,52 +63,30 @@ public class TemplateServiceImpl implements TemplateService {
                             MSG_INVALID_PARAMETERS, templateName, dto) );
         }
 
-        OutputStream result;
-
         TemplateContext context = getContextObject(dto);
 
-        final InputFormat inputFormat = InputFormat
-                .valueOf(
-                        templateName.toUpperCase().substring(
-                                templateName.lastIndexOf(FileSystemHelper.FILENAME_COLON))
-                                .replace(FileSystemHelper.FILENAME_COLON, ""));
+        final InputFormat format = InputFormat.getInputFormatForFileName(templateName);
+        InputTemplateProcessor processor = TemplateProcessorRegistry.getInputTemplateProcessor(format);
 
-        LOGGER.debug("Context object: {}", context.toJson());
+        return processor.fill(templateName, context);
 
-        switch (inputFormat) {
-            case DOCX:
-                result = PROCESSOR_DOCX.fill(templateName, context);
-                break;
-            case RTF:
-                result = PROCESSOR_RTF.fill(templateName, dto);
-                break;
-            case XLSX:
-                result = PROCESSOR_XLSX.fill(templateName, dto);
-                break;
-            default:
-                final String msg = String.format("Unhandled input format %s. Has been a new one defined?", inputFormat);
-                LOGGER.error(msg);
-                throw new TemplateProcessException("d320e547-b4c6-45b2-bdd9-19ac0b699c97", msg);
-        }
-
-        return result;
     }
 
     @Override
-    public <T> OutputStream fill(final String templateName, final T dto, final OutputFormat format)
+    public <T> OutputStream fill(final String templateName, final T dto, final OutputFormat outputFormat)
             throws TemplateServiceException {
 
-        if (Strings.isNullOrEmpty(templateName) || dto == null || format == null ) {
+        if (Strings.isNullOrEmpty(templateName) || dto == null || outputFormat == null ) {
             throw new TemplateServiceConfigurationException("c936e550-8b0e-4577-bffa-7f36b211d981",
-                    String.format("%s - templateFileName: %s, dto: %s, format: %s",
-                            MSG_INVALID_PARAMETERS, templateName, dto, format) );
+                    String.format("%s - templateFileName: %s, dto: %s, outputFormat: %s",
+                            MSG_INVALID_PARAMETERS, templateName, dto, outputFormat) );
         }
 
         OutputStream result = null;
 
         final OutputStream filledDoc = fill(templateName, dto);
 
-        switch (format) {
+        switch (outputFormat) {
             case DOCX:
                 result = filledDoc;
                 break;
@@ -120,7 +95,7 @@ public class TemplateServiceImpl implements TemplateService {
                 result = new DocxToPdfConverter().convert(filledInputStream);
                 break;
             default:
-                LOGGER.warn("Unhandled output format {}. Has been a new one defined?", format);
+                LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
         }
 
         return result;
@@ -187,7 +162,6 @@ public class TemplateServiceImpl implements TemplateService {
                             actResult = new DocxToPdfConverter()
                                     .convert(FileSystemHelper.getInputStream(actFilledDocument));
                             break;
-                        case RTF:
                         case XLSX:
                             final String msg = String.format("Invalid document structure. " +
                                     "The current template cannot be converted to the desired format: " +

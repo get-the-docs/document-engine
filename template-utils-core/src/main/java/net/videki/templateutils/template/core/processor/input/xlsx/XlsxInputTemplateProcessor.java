@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import javax.validation.constraints.NotNull;
 
 import net.videki.templateutils.template.core.processor.AbstractTemplateProcessor;
+import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
+import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import org.jxls.common.Context;
 import org.jxls.util.JxlsHelper;
 import org.slf4j.Logger;
@@ -25,10 +27,17 @@ public class XlsxInputTemplateProcessor extends AbstractTemplateProcessor implem
 
   @Override
   public <T> OutputStream fill(@NotNull String templateFileName, T dto) {
-    OutputStream result = null;
+    OutputStream result;
 
-    try (final InputStream is = XlsxInputTemplateProcessor.class.getResourceAsStream(templateFileName);
-         final OutputStream out = getOutputStream()) {
+    try (final InputStream is = XlsxInputTemplateProcessor.class.getResourceAsStream(templateFileName)) {
+
+      if (is == null) {
+        final String msg = String.format("Template not found: %s", templateFileName);
+        LOGGER.error(msg);
+
+        throw new TemplateNotFoundException("3985eb36-6274-4870-af3a-c73a5c499873", msg);
+
+      }
 
       Context context = new Context();
       context.putVar("model", dto);
@@ -37,14 +46,26 @@ public class XlsxInputTemplateProcessor extends AbstractTemplateProcessor implem
 //      ExpressionEvaluator evaluator = new 
 //      transformer.getTransformationConfig().setExpressionEvaluator(evaluator);   
 
-      LOGGER.debug("Template {} found, starting fill...", templateFileName);
-      JxlsHelper.getInstance().processTemplate(is, out, context);
+      try (final OutputStream out = getOutputStream()) {
 
-      LOGGER.debug("Template {} filled.", templateFileName);
+        LOGGER.debug("Template {} found, starting fill...", templateFileName);
+        JxlsHelper.getInstance().processTemplate(is, out, context);
 
-      result = out;
+        LOGGER.debug("Template {} filled.", templateFileName);
+
+        result = out;
+      } catch (IOException e) {
+        final String msg = String.format("Error creating the output for the template: %s", templateFileName);
+        LOGGER.error(msg);
+
+        throw new TemplateProcessException("4b7c901e-7f99-4dfe-991e-663ac15ee644", msg);
+
+      }
     } catch (IOException e) {
-      LOGGER.error("Error reading/closing template file: {} or creating the output.", templateFileName);
+      final String msg = String.format("Error opening the input template: %s", templateFileName);
+      LOGGER.error(msg);
+
+      throw new TemplateProcessException("a2d17a80-fec7-4431-8d03-2bc3a94e23dd", msg);
     }
 
     return result;

@@ -13,17 +13,17 @@ import net.videki.templateutils.template.core.configuration.FontConfig;
 import net.videki.templateutils.template.core.configuration.FontStyle;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
-import net.videki.templateutils.template.core.processor.converter.OutputMapper;
+import net.videki.templateutils.template.core.processor.converter.ConversionException;
+import net.videki.templateutils.template.core.processor.converter.Converter;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DocxToPdfConverter implements OutputMapper {
+public class DocxToPdfConverter implements Converter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DocxToPdfConverter.class);
 
@@ -38,7 +38,7 @@ public class DocxToPdfConverter implements OutputMapper {
   }
 
   @Override
-  public OutputStream convert(@NotNull InputStream source) {
+  public OutputStream convert(final InputStream source) {
     OutputStream result;
 
     final TemplateServiceConfiguration fontConfiguration = new TemplateServiceConfiguration();
@@ -99,9 +99,10 @@ public class DocxToPdfConverter implements OutputMapper {
         source.close();
       }
     } catch (Exception e) {
-      LOGGER.error("Error on pdf creation: ", e);
+      final String msg = "Error on pdf creation.";
+      LOGGER.error(msg, e);
 
-      result = null;
+      throw new ConversionException("c0a3ab2e-297d-4634-85cc-d171fd0772f1", msg, e);
     }
 
     return result;

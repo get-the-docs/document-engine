@@ -1,5 +1,6 @@
 package net.videki.templateutils.template.core.service.docx;
 
+import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.context.TemplateContext;
@@ -26,8 +27,8 @@ public class DocxTemplateTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateTest.class);
 
-    final String inputDir = "/templates/docx";
-    final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
+    private final String inputDir = "/templates/docx";
+    private final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
 
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
 
@@ -47,11 +48,11 @@ public class DocxTemplateTest {
         context.getCtx().put("contract", dto);
 
         try {
-            OutputStream result = ts.fill(inputDir + "/" + fileName, context, OutputFormat.DOCX);
+            OutputStream result = ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), context, OutputFormat.DOCX);
 
             LOGGER.info("Result file: {}/{}.", projectOutDir, resultFileName);
 
-            FileOutputStream o = new FileOutputStream(projectOutDir + "/" + resultFileName);
+            FileOutputStream o = new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, resultFileName));
 
             o.write(((ByteArrayOutputStream)result).toByteArray());
             o.flush();
