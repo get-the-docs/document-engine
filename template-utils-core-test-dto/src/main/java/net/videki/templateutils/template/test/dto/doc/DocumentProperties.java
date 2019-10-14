@@ -16,6 +16,9 @@ public class DocumentProperties {
     /** Document generation date */
     private LocalDateTime generationDate;
 
+    /** DMS url */
+    private String dmsUrl;
+
     public String getLogin() {
         return login;
     }
@@ -30,5 +33,13 @@ public class DocumentProperties {
 
     public void setGenerationDate(LocalDateTime generationDate) {
         this.generationDate = generationDate;
+    }
+
+    public String getDmsUrl() {
+        return dmsUrl;
+    }
+
+    public void setDmsUrl(String dmsUrl) {
+        this.dmsUrl = dmsUrl;
     }
 }

@@ -1,6 +1,6 @@
 package net.videki.templateutils.template.core.service.docx;
 
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.context.TemplateContext;

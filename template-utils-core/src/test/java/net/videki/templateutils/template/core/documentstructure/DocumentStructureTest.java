@@ -1,7 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure;
 
 import net.videki.templateutils.template.core.TestHelper;
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.TemplateService;
@@ -18,8 +18,6 @@ import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 
 import org.junit.Test;
 
-import java.io.OutputStream;
-import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.*;
@@ -76,7 +74,7 @@ public class DocumentStructureTest {
         final DocumentStructure structure = new DocumentStructure();
 
         final TemplateElement docElement;
-        List<DocumentResult> resultDocs = null;
+        GenerationResult result = null;
         try {
             docElement =
                 new TemplateElement(TEMPLATE_CONTRACT, FileSystemHelper.getFullPath(inputDir, fileName))
@@ -88,14 +86,14 @@ public class DocumentStructureTest {
             final ValueSet values = new ValueSet();
             values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
 
-            resultDocs = null;
-            resultDocs = ts.fill(structure, values);
+            result = null;
+            result = ts.fill(structure, values);
 
-            testResult = (resultDocs.size() == 2);
+            testResult = (result.getResults().size() == 2);
         } catch (TemplateNotFoundException | TemplateServiceException e) {
             testResult = false;
         } finally {
-            TestHelper.closeResults(resultDocs);
+            TestHelper.closeResults(result);
         }
 
         assertTrue(testResult);
@@ -110,11 +108,11 @@ public class DocumentStructureTest {
 
         final ValueSet values = new ValueSet();
 
-        List<DocumentResult> resultDocs = null;
+        GenerationResult result = null;
         try {
-            resultDocs = ts.fill(structure, values);
+            result = ts.fill(structure, values);
 
-            testResult = (0 == resultDocs.size());
+            testResult = (0 == result.getResults().size());
         } catch (TemplateNotFoundException e) {
             testResult = true;
         } catch (TemplateServiceException e) {
@@ -122,7 +120,7 @@ public class DocumentStructureTest {
 
             testResult = false;
         } finally {
-            TestHelper.closeResults(resultDocs);
+            TestHelper.closeResults(result);
         }
         assertTrue(testResult);
     }

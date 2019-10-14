@@ -1,6 +1,6 @@
 package net.videki.templateutils.template.core.processor.merger.pdf;
 
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.processor.merger.OutputMerger;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import org.apache.pdfbox.io.MemoryUsageSetting;
@@ -8,8 +8,6 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,7 +22,7 @@ public class PdfMerger implements OutputMerger {
     }
 
     @Override
-    public OutputStream merge(@NotNull @NotEmpty final List<InputStream> pdfParts) {
+    public OutputStream merge(final List<InputStream> pdfParts) {
         OutputStream result = FileSystemHelper.getOutputStream();
 
         try {

@@ -3,7 +3,6 @@ package net.videki.templateutils.template.core.processor.input.xlsx;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.validation.constraints.NotNull;
 
 import net.videki.templateutils.template.core.processor.AbstractTemplateProcessor;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
@@ -26,7 +25,7 @@ public class XlsxInputTemplateProcessor extends AbstractTemplateProcessor implem
   }
 
   @Override
-  public <T> OutputStream fill(@NotNull String templateFileName, T dto) {
+  public <T> OutputStream fill(final String templateFileName, T dto) {
     OutputStream result;
 
     try (final InputStream is = XlsxInputTemplateProcessor.class.getResourceAsStream(templateFileName)) {

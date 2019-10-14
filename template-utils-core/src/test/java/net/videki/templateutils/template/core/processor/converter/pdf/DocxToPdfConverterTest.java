@@ -1,6 +1,6 @@
 package net.videki.templateutils.template.core.processor.converter.pdf;
 
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.processor.converter.ConversionException;
 import net.videki.templateutils.template.core.processor.converter.Converter;
 import net.videki.templateutils.template.core.service.InputFormat;

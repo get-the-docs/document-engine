@@ -1,6 +1,6 @@
 package net.videki.templateutils.template.core.service;
 
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 
 public enum InputFormat {

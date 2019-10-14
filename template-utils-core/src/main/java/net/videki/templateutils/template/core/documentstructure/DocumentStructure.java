@@ -3,6 +3,7 @@ package net.videki.templateutils.template.core.documentstructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.GenerationResultMode;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
+import net.videki.templateutils.template.core.dto.JsonModel;
 import net.videki.templateutils.template.core.service.OutputFormat;
 
 import java.util.*;
@@ -14,7 +15,11 @@ import java.util.*;
  * the desired output document collection.</p>
  * <p></p>
  */
-public class DocumentStructure {
+public class DocumentStructure implements JsonModel {
+
+    /** Value set unique id */
+    private final String transactionId;
+
     /**
      * The document parts
      */
@@ -31,6 +36,10 @@ public class DocumentStructure {
 
     /** The number of copies */
     private int copies = 1;
+
+    public DocumentStructure() {
+        this.transactionId = UUID.randomUUID().toString();
+    }
 
     public List<TemplateElement> getElements() {
         return elements;
@@ -70,5 +79,20 @@ public class DocumentStructure {
 
     public void setCopies(int copies) {
         this.copies = copies;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    @Override
+    public String toString() {
+        return "DocumentStructure{" +
+                "transactionId='" + transactionId + '\'' +
+                ", elements=" + elements +
+                ", resultMode=" + resultMode +
+                ", outputFormat=" + outputFormat +
+                ", copies=" + copies +
+                '}';
     }
 }

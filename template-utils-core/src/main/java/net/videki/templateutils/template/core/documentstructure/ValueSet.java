@@ -2,17 +2,24 @@ package net.videki.templateutils.template.core.documentstructure;
 
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
+import net.videki.templateutils.template.core.dto.JsonModel;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
-public class ValueSet {
+public class ValueSet implements JsonModel {
     private final Map<TemplateElementId, TemplateContext> values = new HashMap<>();
+
+    /** Value set unique id */
+    private final String transactionId;
 
     /**
      * The locality to be used during the generation
      */
     private Locale locale;
+
+    public ValueSet() {
+        this.transactionId = UUID.randomUUID().toString();
+    }
 
     /**
      * <p>The actual value set which will be used when filling each doc part.</p>
@@ -33,6 +40,10 @@ public class ValueSet {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
     }
 
     public Optional<TemplateContext> getGlobalContext() {
@@ -70,7 +81,7 @@ public class ValueSet {
     }
 
 
-    public <T> ValueSet addContext(final String elementId,
+    public ValueSet addContext(final String elementId,
                                    final TemplateContext context) {
         this.values.put(new TemplateElementId(elementId), context);
 
@@ -81,5 +92,14 @@ public class ValueSet {
         this.locale = locale;
 
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ValueSet{" +
+                "values=" + values +
+                ", transactionId='" + transactionId + '\'' +
+                ", locale=" + locale +
+                '}';
     }
 }

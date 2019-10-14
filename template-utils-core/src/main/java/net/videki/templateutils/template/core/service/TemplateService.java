@@ -2,14 +2,13 @@ package net.videki.templateutils.template.core.service;
 
 import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
-import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 
 import java.io.OutputStream;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author Levente Ban
@@ -31,6 +30,6 @@ public interface TemplateService {
   <T> OutputStream fill(final String templateName, final T dto, final OutputFormat format) throws TemplateServiceException;
 
   /** Process a multipart template (consisting of more template files) and return one or more result documents. */
-  List<DocumentResult> fill(final DocumentStructure documentStructure, final ValueSet values) throws TemplateServiceException;
+  GenerationResult fill(final DocumentStructure documentStructure, final ValueSet values) throws TemplateServiceException;
 
 }

@@ -1,16 +1,27 @@
 package net.videki.templateutils.template.core.dto;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wickedsource.docxstamper.replace.typeresolver.image.Image;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 public interface ITemplate {
   Locale LC_HU = new Locale("hu", "HU");
@@ -131,6 +142,52 @@ public interface ITemplate {
     }
 
     return results;
+  }
+
+  default Image createQRCode(final String qrString, final int size) {
+
+    BufferedImage qrImage;
+    Image docImage;
+    try {
+      final Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
+      hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+
+      hintMap.put(EncodeHintType.MARGIN, 1);
+      hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+
+      final QRCodeWriter qrCodeWriter = new QRCodeWriter();
+      final BitMatrix byteMatrix = qrCodeWriter.encode(qrString,
+              BarcodeFormat.QR_CODE, 2 * size, 2 * size, hintMap);
+      final int crunchifyWidth = byteMatrix.getWidth();
+      qrImage = new BufferedImage(crunchifyWidth, crunchifyWidth, BufferedImage.TYPE_INT_RGB);
+      qrImage.createGraphics();
+
+      final Graphics2D graphics = (Graphics2D)qrImage.getGraphics();
+      graphics.setColor(Color.WHITE);
+      graphics.fillRect(0, 0, crunchifyWidth, crunchifyWidth);
+      graphics.setColor(Color.BLACK);
+
+      for (int i = 0; i < crunchifyWidth; i++) {
+        for (int j = 0; j < crunchifyWidth; j++) {
+          if (byteMatrix.get(i, j)) {
+            graphics.fillRect(i, j, 1, 1);
+          }
+        }
+      }
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      ImageIO.write(qrImage, "jpg", baos);
+      baos.flush();
+      byte[] imageInByte = baos.toByteArray();
+      baos.close();
+
+      docImage = new Image(imageInByte);
+
+    } catch (final WriterException | IOException e) {
+      throw new RuntimeException("Error generating QR code: " + e.getMessage(), e);
+    }
+
+    return docImage;
   }
 
 }

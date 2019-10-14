@@ -12,7 +12,7 @@ import fr.opensagres.xdocreport.core.document.DocumentKind;
 import net.videki.templateutils.template.core.configuration.FontConfig;
 import net.videki.templateutils.template.core.configuration.FontStyle;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.processor.converter.ConversionException;
 import net.videki.templateutils.template.core.processor.converter.Converter;
 import net.videki.templateutils.template.core.service.InputFormat;
@@ -41,7 +41,7 @@ public class DocxToPdfConverter implements Converter {
   public OutputStream convert(final InputStream source) {
     OutputStream result;
 
-    final TemplateServiceConfiguration fontConfiguration = new TemplateServiceConfiguration();
+    final TemplateServiceConfiguration fontConfiguration = TemplateServiceConfiguration.getInstance();
 
     final DocumentKind from = DocumentKind.valueOf("DOCX");
     final ConverterTypeTo to = ConverterTypeTo.valueOf("PDF");

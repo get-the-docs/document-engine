@@ -8,7 +8,6 @@ dependencies {
   implementation('com.google.zxing:core:3.2.1')
   implementation('com.google.code.gson:gson:2.8.5')  
   
-  implementation('javax.validation:validation-api:2.0.1.Final')
 //  implementation('log4j:log4j:1.2.8')
   implementation('org.apache.commons:commons-csv:1.2')
   implementation('org.apache.commons:commons-text:1.6')
@@ -28,7 +27,7 @@ dependencies {
   implementation('org.apache.pdfbox:pdfbox:2.0.12')
 
   // Docx4j
-  implementation('org.docx4j:docx4j:6.0.1')
+//  implementation('org.docx4j:docx4j:6.0.1')
   implementation('org.wickedsource:docx-stamper:1.2.2')
   implementation('com.fasterxml.jackson.core:jackson-core:2.9.8')
 

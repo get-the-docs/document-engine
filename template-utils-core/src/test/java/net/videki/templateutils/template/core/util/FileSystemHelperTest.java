@@ -1,4 +1,4 @@
-package net.videki.templateutils.template.core.configuration.util;
+package net.videki.templateutils.template.core.util;
 
 import org.junit.Assert;
 import org.junit.Test;

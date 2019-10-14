@@ -18,6 +18,9 @@ import java.util.Optional;
  * <p></p>
  */
 public class DocumentResult {
+    /** Document generation id */
+    private String transactionId;
+
     /**
      * The document binary
      */
@@ -41,4 +44,11 @@ public class DocumentResult {
         return fileName;
     }
 
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 }

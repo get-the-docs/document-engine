@@ -4,10 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.*;
 
 import com.google.common.base.Strings;
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
+import net.videki.templateutils.template.core.documentstructure.GenerationResult;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
@@ -29,9 +32,18 @@ import static net.videki.templateutils.template.core.service.exception.TemplateS
 public class TemplateServiceImpl implements TemplateService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
+    private static Logger LOGGER_VALUE;
+    private final TemplateServiceConfiguration configuration;
 
     TemplateServiceImpl() {
+        this.configuration = TemplateServiceConfiguration.getInstance();
 
+        String valueLogCategory = this.configuration.getDocStructureLogCategory();
+        if (valueLogCategory == null) {
+            LOGGER_VALUE = LoggerFactory.getLogger(TemplateService.class);
+        } else {
+            LOGGER_VALUE = LoggerFactory.getLogger(valueLogCategory);
+        }
     }
 
     private <T> TemplateContext getContextObject(final T dto) {
@@ -105,7 +117,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<DocumentResult> fill(final DocumentStructure documentStructure, final ValueSet values)
+    public GenerationResult fill(final DocumentStructure documentStructure, final ValueSet values)
             throws TemplateServiceException {
 
         if (documentStructure == null || values == null ) {
@@ -114,12 +126,20 @@ public class TemplateServiceImpl implements TemplateService {
                             MSG_INVALID_PARAMETERS, documentStructure, values) );
         }
 
-        List<DocumentResult> results = new LinkedList<>();
+        final List<DocumentResult> results = new LinkedList<>();
+        final GenerationResult result = new GenerationResult(results);
+        result.setGenerationStartTime(Instant.now());
+        result.setTransactionId(values.getTransactionId());
 
         final Optional<TemplateContext> globalContext = values.getGlobalContext();
 
         LOGGER.debug("Start processing document structure: element size: {}",
                 documentStructure.getElements().size());
+
+        if (LOGGER_VALUE.isDebugEnabled()) {
+            LOGGER_VALUE.debug(String.format("Transaction id: [%s] - %s %s",
+                    values.getTransactionId(), documentStructure, values));
+        }
 
         for (final TemplateElement actTemplate : documentStructure.getElements()) {
 
@@ -145,20 +165,23 @@ public class TemplateServiceImpl implements TemplateService {
             final OutputStream actContent = convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
             final DocumentResult actResult =
                     new DocumentResult(
-                        FileSystemHelper.getFileName(actTemplate.getTemplateName()), actContent);
+                        FileSystemHelper.getFileName(actTemplate.getTemplateName(values.getLocale())), actContent);
 
             if (actResult != null) {
-               for (int i = 0, count = actTemplate.getCount(); i < count; i++) {
+                actResult.setTransactionId(values.getTransactionId());
+                for (int i = 0, count = actTemplate.getCount(); i < count; i++) {
                     results.add(actResult);
                 }
             }
+
+            result.setGenerationStartTime(Instant.now());
 
             LOGGER.debug(String.format("End processing document structure. " +
                             "Result document list size: %s", results.size()));
 
         }
 
-        return results;
+        return result;
     }
 
     private OutputStream convertToOutputFormat(DocumentStructure documentStructure, TemplateElement actTemplate,

@@ -10,6 +10,12 @@ public class TemplateServiceRegistry {
     }
 
     public static TemplateService getInstance() {
-        return INSTANCE;
+        TemplateService result = INSTANCE;
+        if (result == null) {
+            synchronized (INSTANCE) {
+                result = INSTANCE = new TemplateServiceImpl();
+            }
+        }
+        return result;
     }
 }

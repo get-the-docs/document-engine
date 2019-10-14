@@ -1,12 +1,16 @@
-package net.videki.templateutils.template.core.service;
+package net.videki.templateutils.template.core.service.integrationtests;
 
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
+import net.videki.templateutils.template.core.documentstructure.GenerationResult;
+import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
+import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
-import net.videki.templateutils.template.core.service.docx.DocxTemplateTest;
+import net.videki.templateutils.template.core.service.TemplateService;
+import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
@@ -18,18 +22,13 @@ import net.videki.templateutils.template.test.dto.doc.DocumentProperties;
 import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class FullExampleIT {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateTest.class);
-
     private static final Locale LC_HU = new Locale("hu", "HU");
 
     private static final String TL_COVER_KEY = "cover";
@@ -45,62 +44,32 @@ public class FullExampleIT {
     private static final String TL_CONDITIONS_KEY = "terms";
     private static final String TL_CONDITIONS_FILE = "04-conditions_v11.xlsx";
 
-    private final String inputDir = "/full-example";
-    private final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
+    private static final String inputDir = "/full-example";
 
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
 
     @Test
     public void fillStructuredTemplateTest() {
-        final Contract dto = ContractDataFactory.createContract();
-        final OrganizationUnit orgUnit = OrgUnitDataFactory.createOrgUnit();
 
-        final Officer officer = OfficerDataFactory.createOfficer();
-
-        final TemplateContext context = new TemplateContext();
-        context.getCtx().put("org", orgUnit);
-        context.getCtx().put("officer", officer);
-        context.getCtx().put("contract", dto);
-
-        List<DocumentResult> resultDocs;
+        GenerationResult result = null;
         try {
-            resultDocs = ts.fill(getDocStructure(), getValueSet());
-
-            for (final DocumentResult actResult : resultDocs) {
-                LOGGER.info("Result file: {}/{}.", projectOutDir, actResult.getFileName());
-
-                try (FileOutputStream o =
-                             new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, actResult.getFileName()))) {
-
-                    o.write(((ByteArrayOutputStream) actResult.getContent()).toByteArray());
-                    o.flush();
-                } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
-                } catch (IOException e) {
-                    System.out.println("error:");
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        actResult.getContent().close();
-                    } catch (IOException e) {
-                        System.out.println("error:");
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            LOGGER.info("Done.");
-        } catch (TemplateServiceException e) {
+            result = ts.fill(getDocStructure(), getValueSet());
+        } catch (TemplateNotFoundException | TemplateServiceException e) {
             e.printStackTrace();
+            fail();
+
         }
+        final ResultStore resultStore = TemplateServiceConfiguration.getInstance().getResultStore();
+
+        resultStore.save(result);
 
         assertTrue(true);
     }
 
-    private TemplateContext getCoverData() {
+    private TemplateContext getCoverData(final String transactionId) {
         final OrganizationUnit orgUnit = OrgUnitDataFactory.createOrgUnit();
         final Officer officer = OfficerDataFactory.createOfficer();
-        final DocumentProperties documentProperties = DocDataFactory.createDocData();
+        final DocumentProperties documentProperties = DocDataFactory.createDocData(transactionId);
 
         final TemplateContext context = new TemplateContext();
         context.getCtx().put("org", orgUnit);
@@ -150,12 +119,15 @@ public class FullExampleIT {
 
     private ValueSet getValueSet() {
 
-        final ValueSet result = new ValueSet()
-                .addContext(TL_COVER_KEY, getCoverData())
+        final ValueSet result = new ValueSet();
+        final String transactionId = result.getTransactionId();
+        result
+                .addContext(TL_COVER_KEY, getCoverData(transactionId))
                 .addContext(TL_CONTRACT_KEY, getContractTestData())
                 .addDefaultContext(TL_TERMS_KEY, null)
                 .addContext(TL_CONDITIONS_KEY, getContractTestData())
-                .withLocale(Locale.ENGLISH)
+                .withLocale(LC_HU)
+//                .withLocale(Locale.ENGLISH)
                 ;
 
         return result;

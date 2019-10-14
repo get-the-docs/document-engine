@@ -1,7 +1,8 @@
 package net.videki.templateutils.template.core.service;
 
 import net.videki.templateutils.template.core.TestHelper;
-import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
+import net.videki.templateutils.template.core.documentstructure.GenerationResult;
+import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
@@ -251,7 +252,7 @@ public class TemplateServiceParamTest {
 
         final DocumentStructure structure = new DocumentStructure();
         final TemplateElement docElement;
-        List<DocumentResult> resultDocs = null;
+        GenerationResult result = null;
         try {
             docElement =
                 new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName))
@@ -263,7 +264,7 @@ public class TemplateServiceParamTest {
             final ValueSet values = new ValueSet();
             values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
 
-            resultDocs = ts.fill(structure, values);
+            result = ts.fill(structure, values);
 
             testResult = true;
 
@@ -273,7 +274,7 @@ public class TemplateServiceParamTest {
 
             testResult = false;
         } finally {
-            TestHelper.closeResults(resultDocs);
+            TestHelper.closeResults(result);
         }
 
         assertTrue(testResult);
