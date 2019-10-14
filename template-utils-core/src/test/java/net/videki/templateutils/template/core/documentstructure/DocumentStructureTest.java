@@ -7,6 +7,7 @@ import net.videki.templateutils.template.core.documentstructure.descriptors.Temp
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
 import net.videki.templateutils.template.test.dto.OfficerDataFactory;
@@ -21,10 +22,10 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DocumentStructureTest {
+    private static final Locale LC_HU = new Locale("hu", "HU");
 
     private static final String TEMPLATE_CONTRACT = "contract";
     private static final TemplateService ts = TemplateServiceRegistry.getInstance();
@@ -48,14 +49,22 @@ public class DocumentStructureTest {
     public void createSingleDocStructureTest() {
         final DocumentStructure structure = new DocumentStructure();
 
-        final TemplateElement docElement = new TemplateElement(TEMPLATE_CONTRACT, "SimpleContract_v1_21.docx");
-        docElement
-                .withCount(1)
-                .withDefaultLocale(new Locale("HU"));
+        final TemplateElement docElement;
+        try {
+            docElement =
+                    new TemplateElement(TEMPLATE_CONTRACT, "SimpleContract_v1_21.docx")
+                        .withCount(1)
+                        .withDefaultLocale(LC_HU);
 
-        structure.getElements().add(docElement);
+            structure.getElements().add(docElement);
 
-        assertEquals(structure.getElements().size(), 1);
+            assertEquals(structure.getElements().size(), 1);
+        } catch (TemplateServiceConfigurationException e) {
+            e.printStackTrace();
+            assertFalse(false);
+        }
+
+        assertFalse(false);
     }
 
     @Test
@@ -66,19 +75,20 @@ public class DocumentStructureTest {
 
         final DocumentStructure structure = new DocumentStructure();
 
-        final TemplateElement docElement =
-                new TemplateElement(TEMPLATE_CONTRACT, FileSystemHelper.getFullPath(inputDir, fileName));
-        docElement
-                .withCount(2)
-                .withDefaultLocale(new Locale("HU"));
-
-        structure.getElements().add(docElement);
-
-        final ValueSet values = new ValueSet();
-        values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
-
-        List<OutputStream> resultDocs = null;
+        final TemplateElement docElement;
+        List<DocumentResult> resultDocs = null;
         try {
+            docElement =
+                new TemplateElement(TEMPLATE_CONTRACT, FileSystemHelper.getFullPath(inputDir, fileName))
+                    .withCount(2)
+                    .withDefaultLocale(LC_HU);
+
+            structure.getElements().add(docElement);
+
+            final ValueSet values = new ValueSet();
+            values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
+
+            resultDocs = null;
             resultDocs = ts.fill(structure, values);
 
             testResult = (resultDocs.size() == 2);
@@ -100,7 +110,7 @@ public class DocumentStructureTest {
 
         final ValueSet values = new ValueSet();
 
-        List<OutputStream> resultDocs = null;
+        List<DocumentResult> resultDocs = null;
         try {
             resultDocs = ts.fill(structure, values);
 

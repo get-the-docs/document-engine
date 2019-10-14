@@ -13,6 +13,15 @@ public abstract class AbstractTemplateProcessor {
 
   private static final Logger LOGGER      = LoggerFactory.getLogger(TemplateService.class);
 
+  protected static InputStream getInputStream(final OutputStream out) {
+    return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());
+
+  }
+  
+  protected static OutputStream getOutputStream() {
+    return new ByteArrayOutputStream();
+  }
+
   protected static InputStream getTemplate(final String templateFile) {
     InputStream result;
 
@@ -25,15 +34,6 @@ public abstract class AbstractTemplateProcessor {
 
     return result;
 
-  }
-
-  protected static InputStream getInputStream(final OutputStream out) {
-    return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());
-
-  }
-  
-  protected static OutputStream getOutputStream() {
-    return new ByteArrayOutputStream();
   }
 
 }

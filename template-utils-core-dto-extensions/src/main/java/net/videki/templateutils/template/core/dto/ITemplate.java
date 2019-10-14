@@ -3,6 +3,7 @@ package net.videki.templateutils.template.core.dto;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,14 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public interface ITemplate {
+  Locale LC_HU = new Locale("hu", "HU");
   String PLACEHOLDER_EMPTY = "................";
   DateTimeFormatter DATE_FORMAT_DATE = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+  DateTimeFormatter DATE_FORMAT_DATETIME = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
   Logger           LOG             = LoggerFactory.getLogger(ITemplate.class);
 
   default String fmtN(final Integer value) {
     try {
-      final DecimalFormatSymbols dfs = new DecimalFormatSymbols(new Locale("hu", "HU"));
+      final DecimalFormatSymbols dfs = new DecimalFormatSymbols(LC_HU);
       dfs.setDecimalSeparator(',');
       dfs.setGroupingSeparator(' ');
 
@@ -35,7 +38,7 @@ public interface ITemplate {
 
   default String fmtNxM(final Double value, final int m) {
     try {
-      final DecimalFormatSymbols dfs = new DecimalFormatSymbols(new Locale("hu", "HU"));
+      final DecimalFormatSymbols dfs = new DecimalFormatSymbols(LC_HU);
       dfs.setDecimalSeparator(',');
       dfs.setGroupingSeparator(' ');
 
@@ -87,6 +90,16 @@ public interface ITemplate {
     String result;
     if (value != null) {
       result = value.format(DATE_FORMAT_DATE);
+    } else {
+      result = PLACEHOLDER_EMPTY;
+    }
+    return result;
+  }
+
+  default String fmtDateTime(final LocalDateTime value) {
+    String result;
+    if (value != null) {
+      result = value.format(DATE_FORMAT_DATETIME);
     } else {
       result = PLACEHOLDER_EMPTY;
     }

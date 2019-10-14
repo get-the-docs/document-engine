@@ -28,17 +28,22 @@ public enum InputFormat {
   public static InputFormat getInputFormatForFileName(final String templateName) {
     InputFormat format;
     try {
-      format = InputFormat
-              .valueOf(
-                      templateName.toUpperCase().substring(
-                              templateName.lastIndexOf(FileSystemHelper.FILENAME_COLON))
-                              .replace(FileSystemHelper.FILENAME_COLON, ""));
+      int fileExtPos = templateName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
+      if (fileExtPos > 0) {
+        format = InputFormat
+                .valueOf(
+                        templateName.toUpperCase().substring(fileExtPos)
+                                .replace(FileSystemHelper.FILENAME_COLON, ""));
 
-      return format;
+      } else {
+        throw new IllegalArgumentException();
+      }
     } catch (IllegalArgumentException e) {
       final String msg = String.format("Unhandled template file format " +
               "(input processor for the filename extension not found). Filename: %s", templateName);
       throw new TemplateProcessException("c14d63df-8db2-45a2-bf21-e62fe60a23a0", msg);
     }
+
+    return format;
   }
 }

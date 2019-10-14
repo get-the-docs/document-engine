@@ -1,5 +1,6 @@
 package net.videki.templateutils.template.core.service;
 
+import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
@@ -30,6 +31,6 @@ public interface TemplateService {
   <T> OutputStream fill(final String templateName, final T dto, final OutputFormat format) throws TemplateServiceException;
 
   /** Process a multipart template (consisting of more template files) and return one or more result documents. */
-  List<OutputStream> fill(final DocumentStructure documentStructure, final ValueSet values) throws TemplateServiceException;
+  List<DocumentResult> fill(final DocumentStructure documentStructure, final ValueSet values) throws TemplateServiceException;
 
 }

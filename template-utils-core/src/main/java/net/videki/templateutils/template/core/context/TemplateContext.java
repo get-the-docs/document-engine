@@ -22,4 +22,15 @@ public class TemplateContext implements ITemplate, JsonModel {
         return this.ctx;
     }
 
+    public <T> TemplateContext addValueObject(final T value) {
+        this.ctx.put(CONTEXT_ROOT_KEY_MODEL, value);
+
+        return this;
+    }
+
+    public <T> TemplateContext addValueObject(final String contextKey, final T value) {
+        this.ctx.put(contextKey, value);
+
+        return this;
+    }
 }

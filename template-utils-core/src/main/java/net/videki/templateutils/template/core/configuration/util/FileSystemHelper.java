@@ -33,4 +33,14 @@ public class FileSystemHelper {
     public static String getFullPath(final String path, final String fileName) {
         return path + FILENAME_DIR_SEPARATOR + fileName;
     }
+
+    public static String getFileName(final String fileName) {
+        if (fileName != null) {
+            int lastPos = fileName.lastIndexOf(FILENAME_DIR_SEPARATOR);
+            final String result = fileName.substring(lastPos).replace(FILENAME_DIR_SEPARATOR, "");
+
+            return result;
+        }
+        return "";
+    }
 }

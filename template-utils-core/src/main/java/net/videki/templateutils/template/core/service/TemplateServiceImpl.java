@@ -1,5 +1,7 @@
 package net.videki.templateutils.template.core.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
@@ -7,6 +9,7 @@ import java.util.*;
 import com.google.common.base.Strings;
 import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
+import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
@@ -102,7 +105,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<OutputStream> fill(final DocumentStructure documentStructure, final ValueSet values)
+    public List<DocumentResult> fill(final DocumentStructure documentStructure, final ValueSet values)
             throws TemplateServiceException {
 
         if (documentStructure == null || values == null ) {
@@ -111,7 +114,7 @@ public class TemplateServiceImpl implements TemplateService {
                             MSG_INVALID_PARAMETERS, documentStructure, values) );
         }
 
-        List<OutputStream> results = new LinkedList<>();
+        List<DocumentResult> results = new LinkedList<>();
 
         final Optional<TemplateContext> globalContext = values.getGlobalContext();
 
@@ -121,16 +124,28 @@ public class TemplateServiceImpl implements TemplateService {
         for (final TemplateElement actTemplate : documentStructure.getElements()) {
 
             LOGGER.debug("Processing template: friendly name: {} template name: {}, id: {}.",
-                    actTemplate.getFriendlyName(), actTemplate.getTemplateName(), actTemplate.getTemplateElementId());
+                    actTemplate.getTemplateElementId(), actTemplate.getTemplateName(), actTemplate.getTemplateElementId());
 
             final TemplateElementId actTemplateElementId = actTemplate.getTemplateElementId();
             final Optional<TemplateContext> actContext = values.getContext(actTemplateElementId);
+            LOGGER.debug("Getting context for template: friendly name: {}, context: {}.",
+                    actTemplate.getTemplateElementId(), actContext);
 
-            final OutputStream actFilledDocument =
-                    this.fill(actTemplate.getTemplateName(),
-                            getLocalTemplateContext(globalContext, actContext));
+            final OutputStream actFilledDocument;
+            if (actContext.isPresent()) {
+                actFilledDocument =
+                        this.fill(actTemplate.getTemplateName(values.getLocale()),
+                                getLocalTemplateContext(globalContext, actContext));
+            } else {
+                actFilledDocument =
+                        TemplateProcessorRegistry.getNoopProcessor()
+                                .fill(actTemplate.getTemplateName(values.getLocale()), null);
+            }
 
-            final OutputStream actResult = convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
+            final OutputStream actContent = convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
+            final DocumentResult actResult =
+                    new DocumentResult(
+                        FileSystemHelper.getFileName(actTemplate.getTemplateName()), actContent);
 
             if (actResult != null) {
                for (int i = 0, count = actTemplate.getCount(); i < count; i++) {
@@ -166,7 +181,7 @@ public class TemplateServiceImpl implements TemplateService {
                             final String msg = String.format("Invalid document structure. " +
                                     "The current template cannot be converted to the desired format: " +
                                             "template: %s/%s, source format: %s - target format: %s",
-                                    actTemplate.getFriendlyName(),
+                                    actTemplate.getTemplateElementId(),
                                     actTemplate.getTemplateName(),
                                     actTemplate.getFormat(),
                                     documentStructure.getOutputFormat());
@@ -200,5 +215,9 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
+    protected static InputStream getInputStream(final OutputStream out) {
+        return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());
+
+    }
 
 }

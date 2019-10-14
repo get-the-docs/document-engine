@@ -2,10 +2,10 @@ package net.videki.templateutils.template.core.documentstructure;
 
 import net.videki.templateutils.template.core.documentstructure.descriptors.GenerationResultMode;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
+import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.service.OutputFormat;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Levente Ban
@@ -34,6 +34,17 @@ public class DocumentStructure {
 
     public List<TemplateElement> getElements() {
         return elements;
+    }
+
+    public Optional<TemplateElementId> getElementIdByFriendlyName(final String friendlyName) {
+        Optional<TemplateElementId> result = Optional.empty();
+
+        for (final TemplateElement actElement : this.elements) {
+            if (actElement.getTemplateElementId().equals(friendlyName)) {
+                result = Optional.of(actElement.getTemplateElementId());
+            }
+        }
+        return result;
     }
 
     public GenerationResultMode getResultMode() {

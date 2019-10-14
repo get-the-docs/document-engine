@@ -8,6 +8,7 @@ public class OfficerDataFactory {
 
         result.setName("Chuck Norris");
         result.setOrgCode("PB-001");
+        result.setLogin("PB\\cnorris");
 
         return result;
     }

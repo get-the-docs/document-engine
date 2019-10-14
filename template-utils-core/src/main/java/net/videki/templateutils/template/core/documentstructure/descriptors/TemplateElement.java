@@ -1,59 +1,57 @@
 package net.videki.templateutils.template.core.documentstructure.descriptors;
 
 import net.videki.templateutils.template.core.service.InputFormat;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
 import java.util.*;
 
 public class TemplateElement {
 
-    private final TemplateElementId templateElementId;
-    private String friendlyName;
-    private String templateName;
+    private TemplateElementId templateElementId;
+    private Map<Locale, String> templateNames;
     private InputFormat format;
-    private List<Locale> locales;
     private Locale defaultLocale;
-    private final List<Object> valueList;
     private int count;
 
-    public TemplateElement(final String templateName) {
+    public TemplateElement(final String templateElementId) {
         super();
-        this.templateElementId = new TemplateElementId();
-        this.locales = new LinkedList<>();
+
+        init();
+
+        this.templateElementId = new TemplateElementId(templateElementId);
         this.defaultLocale = Locale.getDefault();
-        this.templateName = templateName;
-        this.valueList = new ArrayList<>();
+
         this.count = 1;
     }
 
-    public TemplateElement(final String friendlyName, final String templateName) {
-        this(templateName);
-        this.friendlyName = friendlyName;
+    public TemplateElement(final String templateElementId, final String templateName)
+            throws TemplateServiceConfigurationException {
+        this(templateElementId);
+        withTemplateName(templateName, this.defaultLocale);
     }
 
-    public TemplateElement(final String templateName, final List<Object> valueList) {
+    public TemplateElement(final String templateName, int count) {
         this(templateName);
-
-        this.friendlyName = templateName;
-        this.valueList.addAll(valueList);
-
-    }
-
-    public TemplateElement(final String templateName, final List<Object> valueList, int count) {
-        this(templateName, valueList);
 
         this.count = count;
     }
 
-    public String getFriendlyName() {
-        return friendlyName;
+    private void init() {
+        this.templateNames = new HashMap<>();
     }
 
     public String getTemplateName() {
-        return templateName;
+        return this.templateNames.get(this.defaultLocale);
     }
 
-    public List<Object> getValueList() {
-        return valueList;
+    public String getTemplateName(final Locale locale) {
+        String result = this.templateNames.get(locale);
+
+        if (result == null) {
+            result = getTemplateName();
+        }
+
+        return result;
     }
 
     public int getCount() {
@@ -69,7 +67,7 @@ public class TemplateElement {
     }
 
     public List<Locale> getLocales() {
-        return locales;
+        return new LinkedList<>(this.templateNames.keySet());
     }
 
     public InputFormat getFormat() {
@@ -80,33 +78,41 @@ public class TemplateElement {
         this.format = format;
     }
 
-    public TemplateElement withFriendlyName(final String friendlyName) {
-        this.friendlyName = friendlyName;
+    public TemplateElement withTemplateName(final String templateName, final Locale locale)
+            throws TemplateServiceConfigurationException {
+
+        this.templateNames.put(locale, templateName);
+        if (this.templateElementId == null) {
+            this.templateElementId = new TemplateElementId(templateName);
+        }
+        InputFormat format = InputFormat.getInputFormatForFileName(templateName);
+
+        if (this.templateNames.keySet().contains(format)) {
+            final String msg = String.format("The locale is already specified for the template element. " +
+                    "TemplateElementId: %s, locale: %s, templateName: %s",
+                    this.templateElementId, locale, templateName);
+
+            throw new TemplateServiceConfigurationException("a5ebf647-b52a-43c8-b4d7-7788fa7d2398", msg);
+        }
 
         return this;
     }
 
-    public TemplateElement withTemplateName(final String templateName) {
-        this.templateName = templateName;
+    public TemplateElement withDefaultLocale(final Locale locale) {
 
-        return this;
-    }
-
-    public TemplateElement withFormat(final InputFormat format) {
-        this.format = format;
-
-        return this;
-    }
-
-    public TemplateElement withDefaultLocale(Locale locale) {
         this.defaultLocale = locale;
 
         return this;
     }
 
-    public TemplateElement withLocales(List<Locale> locales) {
-        this.locales.clear();
-        this.locales.addAll(locales);
+    public TemplateElement withLocales(final List<Locale> newLocales) {
+        if (newLocales != null) {
+            final String templateNameForDefaultLocale = this.templateNames.get(this.defaultLocale);
+
+            for (final Locale actLocale : newLocales) {
+                this.templateNames.put(actLocale, templateNameForDefaultLocale);
+            }
+        }
 
         return this;
     }

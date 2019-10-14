@@ -3,6 +3,7 @@ package net.videki.templateutils.template.core.service;
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.configuration.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
+import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
@@ -35,6 +36,7 @@ public class TemplateServiceParamTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
     private static final TemplateService ts = TemplateServiceRegistry.getInstance();
+    private static final Locale LC_HU = new Locale("hu", "HU");
 
     @Test
     public void fillNoParamsSingleDocTemplateAndDto() {
@@ -248,18 +250,19 @@ public class TemplateServiceParamTest {
         final String fileName = "SimpleContract_v1_21.docx";
 
         final DocumentStructure structure = new DocumentStructure();
-        final TemplateElement docElement = new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName));
-        docElement
-                .withCount(1)
-                .withDefaultLocale(new Locale("HU"));
-
-        structure.getElements().add(docElement);
-
-        final ValueSet values = new ValueSet();
-        values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
-
-        List<OutputStream> resultDocs = null;
+        final TemplateElement docElement;
+        List<DocumentResult> resultDocs = null;
         try {
+            docElement =
+                new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName))
+                    .withCount(1)
+                    .withDefaultLocale(LC_HU);
+
+            structure.getElements().add(docElement);
+
+            final ValueSet values = new ValueSet();
+            values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
+
             resultDocs = ts.fill(structure, values);
 
             testResult = true;

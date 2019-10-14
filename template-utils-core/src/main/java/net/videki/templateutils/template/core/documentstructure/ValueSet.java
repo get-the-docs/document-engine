@@ -44,8 +44,9 @@ public class ValueSet {
         }
     }
 
-    public Optional<TemplateContext> getContext(@NotNull final TemplateElementId elementId) {
+    public Optional<TemplateContext> getContext(final TemplateElementId elementId) {
         final TemplateContext c = this.values.get(elementId);
+
         if (c != null) {
             return Optional.of(c);
         } else {
@@ -53,4 +54,32 @@ public class ValueSet {
         }
     }
 
+    public <T> ValueSet addContext(final String elementId,
+                                   final String contextKey,
+                                   final T dto) {
+        final TemplateContext ctx = new TemplateContext().addValueObject(contextKey, dto);
+
+        return this.addContext(elementId, ctx);
+    }
+
+    public <T> ValueSet addDefaultContext(final String elementId,
+                                   final T dto) {
+        final TemplateContext ctx = new TemplateContext().addValueObject(TemplateContext.CONTEXT_ROOT_KEY_MODEL, dto);
+
+        return this.addContext(elementId, ctx);
+    }
+
+
+    public <T> ValueSet addContext(final String elementId,
+                                   final TemplateContext context) {
+        this.values.put(new TemplateElementId(elementId), context);
+
+        return this;
+    }
+
+    public ValueSet withLocale(final Locale locale) {
+        this.locale = locale;
+
+        return this;
+    }
 }

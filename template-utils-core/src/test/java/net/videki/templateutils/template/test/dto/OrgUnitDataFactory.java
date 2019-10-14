@@ -7,6 +7,7 @@ public class OrgUnitDataFactory {
     public static OrganizationUnit createOrgUnit() {
         final OrganizationUnit result = new OrganizationUnit();
 
+        result.setOrgCode("PB");
         result.setName("Vintage Services - Palm beach");
 
         final Address address = new Address();
