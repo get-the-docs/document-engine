@@ -1,8 +1,7 @@
-package net.videki.templateutils.template.core.service.integrationtests;
+package net.videki.templateutils.template.core.integrationtests;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.documentstructure.GenerationResult;
-import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
@@ -46,22 +45,22 @@ public class FullExampleIT {
 
     private static final String inputDir = "/full-example";
 
-    private static TemplateService ts = TemplateServiceRegistry.getInstance();
+    private final TemplateService templateService = TemplateServiceRegistry.getInstance();
+    private final TemplateServiceConfiguration templateServiceConfiguration = TemplateServiceConfiguration.getInstance();
 
     @Test
-    public void fillStructuredTemplateTest() {
-
-        GenerationResult result = null;
+    public void fillAndSaveStructuredTemplateTest() {
         try {
-            result = ts.fill(getDocStructure(), getValueSet());
+            final DocumentStructure templateStructure = getContractDocStructure();
+            final ValueSet testData = getTestData();
+
+            GenerationResult result = this.templateService.fill(templateStructure, testData);
+            this.templateServiceConfiguration.getResultStore().save(result);
+
         } catch (TemplateNotFoundException | TemplateServiceException e) {
             e.printStackTrace();
             fail();
-
         }
-        final ResultStore resultStore = TemplateServiceConfiguration.getInstance().getResultStore();
-
-        resultStore.save(result);
 
         assertTrue(true);
     }
@@ -92,7 +91,7 @@ public class FullExampleIT {
         return context;
     }
 
-    private DocumentStructure getDocStructure() throws TemplateServiceConfigurationException {
+    private DocumentStructure getContractDocStructure() throws TemplateServiceConfigurationException {
         final DocumentStructure result = new DocumentStructure();
 
         result.getElements().add(
@@ -117,7 +116,7 @@ public class FullExampleIT {
         return result;
     }
 
-    private ValueSet getValueSet() {
+    private ValueSet getTestData() {
 
         final ValueSet result = new ValueSet();
         final String transactionId = result.getTransactionId();

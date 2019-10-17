@@ -1,5 +1,6 @@
 package net.videki.templateutils.template.core.documentstructure.descriptors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
@@ -12,6 +13,10 @@ public class TemplateElement {
     private InputFormat format;
     private Locale defaultLocale;
     private int count;
+
+    public TemplateElement() {
+        super();
+    }
 
     public TemplateElement(final String templateElementId) {
         super();
@@ -40,6 +45,7 @@ public class TemplateElement {
         this.templateNames = new HashMap<>();
     }
 
+    @JsonIgnore
     public String getTemplateName() {
         return this.templateNames.get(this.defaultLocale);
     }
@@ -58,24 +64,56 @@ public class TemplateElement {
         return count;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public TemplateElementId getTemplateElementId() {
         return templateElementId;
+    }
+
+    public void setTemplateElementId(TemplateElementId templateElementId) {
+        this.templateElementId = templateElementId;
+    }
+
+    public void setTemplateElementId(String templateElementId) {
+        this.templateElementId = new TemplateElementId(templateElementId);
     }
 
     public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
+    public void setDefaultLocale(Locale locale) {
+        this.defaultLocale = locale;
+    }
+
+    @JsonIgnore
     public List<Locale> getLocales() {
         return new LinkedList<>(this.templateNames.keySet());
     }
 
+    @JsonIgnore
     public InputFormat getFormat() {
         return format;
     }
 
     public void setFormat(InputFormat format) {
         this.format = format;
+    }
+
+    public Map<Locale, String> getTemplateNames() {
+        return templateNames;
+    }
+
+    public void setTemplateNames(Map<String, String> templateNames) {
+        final Map<Locale, String> tmpMap = new HashMap<>();
+
+        for (final String actKey : templateNames.keySet()) {
+            tmpMap.put(new Locale(actKey), templateNames.get(actKey));
+        }
+        this.templateNames.clear();
+        this.templateNames.putAll(tmpMap);
     }
 
     public TemplateElement withTemplateName(final String templateName, final Locale locale)
@@ -121,14 +159,6 @@ public class TemplateElement {
         this.count = count;
 
         return this;
-    }
-
-    public void setDefaultLocale(Locale locale) {
-        this.defaultLocale = locale;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
 }

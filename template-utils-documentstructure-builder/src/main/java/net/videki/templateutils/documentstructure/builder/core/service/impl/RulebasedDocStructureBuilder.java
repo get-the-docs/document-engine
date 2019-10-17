@@ -5,7 +5,7 @@ import net.videki.templateutils.template.core.documentstructure.DocumentStructur
 
 public class RulebasedDocStructureBuilder implements DocumentStructureBuilder {
     @Override
-    public DocumentStructure build() {
+    public DocumentStructure build(final String config) {
         return null;
     }
 }

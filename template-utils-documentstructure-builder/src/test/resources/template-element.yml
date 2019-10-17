@@ -1,0 +1,7 @@
+---
+templateElementId:
+  id: "cover"
+templateNames:
+  hu_HU: "/full-example/01-cover_v03.docx"
+defaultLocale: "hu_HU"
+count: 1

@@ -1,5 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure.descriptors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,11 +16,16 @@ public class TemplateElementId {
         this.id = id;
     }
 
+    @JsonIgnore
     public void setGlobal() {
         this.id = TEMPLATE_KIND_GLOBAL;
     }
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

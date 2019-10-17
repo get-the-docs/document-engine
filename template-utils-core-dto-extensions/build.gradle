@@ -9,8 +9,14 @@ dependencies {
   implementation('com.google.zxing:core:3.2.1')
   implementation('com.google.code.gson:gson:2.8.5') 
   
-  implementation('org.wickedsource:docx-stamper:1.2.2')
-
+  implementation('org.wickedsource:docx-stamper:1.2.2') {
+    exclude module: 'jackson-annotations'
+    exclude module: 'jackson-core'
+    exclude module: 'jackson-databind'
+	exclude module: 'jackson-dataformat-yaml'
+	changing = 'true'
+  }
+  
   testCompile('junit:junit:4.12')
   
 }

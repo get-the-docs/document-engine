@@ -6,8 +6,17 @@ apply plugin: 'java'
 dependencies {
   implementation('org.slf4j:slf4j-api:1.7.21')
   implementation('com.google.code.gson:gson:2.8.5') 
-  
-  compile project(':template-utils-core')
-  
+
+  implementation('com.fasterxml.jackson.core:jackson-core:2.9.8')
+  implementation('com.fasterxml.jackson.core:jackson-databind:2.9.8')
+  implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8')
+  implementation('org.apache.commons:commons-lang3:3.8.1')  
+    
   testCompile('junit:junit:4.12')
+  
+  // Project dependencies
+  compile project(':template-utils-core')
+  compile project(':template-utils-core-dto-extensions')
+
+  testCompile project(':template-utils-core-test-dto')  
 }

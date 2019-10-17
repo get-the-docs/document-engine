@@ -17,8 +17,8 @@ import java.util.*;
  */
 public class DocumentStructure implements JsonModel {
 
-    /** Value set unique id */
-    private final String transactionId;
+    /** The template structure's unique id */
+    private final String documentStructureId;
 
     /**
      * The document parts
@@ -38,7 +38,11 @@ public class DocumentStructure implements JsonModel {
     private int copies = 1;
 
     public DocumentStructure() {
-        this.transactionId = UUID.randomUUID().toString();
+        this.documentStructureId = UUID.randomUUID().toString();
+    }
+
+    public DocumentStructure(final String id) {
+        this.documentStructureId = id;
     }
 
     public List<TemplateElement> getElements() {
@@ -81,14 +85,14 @@ public class DocumentStructure implements JsonModel {
         this.copies = copies;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getDocumentStructureId() {
+        return documentStructureId;
     }
 
     @Override
     public String toString() {
         return "DocumentStructure{" +
-                "transactionId='" + transactionId + '\'' +
+                "documentStructureId='" + documentStructureId + '\'' +
                 ", elements=" + elements +
                 ", resultMode=" + resultMode +
                 ", outputFormat=" + outputFormat +
