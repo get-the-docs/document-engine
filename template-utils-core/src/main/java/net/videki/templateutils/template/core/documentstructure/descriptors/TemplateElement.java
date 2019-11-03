@@ -72,14 +72,6 @@ public class TemplateElement {
         return templateElementId;
     }
 
-    public void setTemplateElementId(TemplateElementId templateElementId) {
-        this.templateElementId = templateElementId;
-    }
-
-    public void setTemplateElementId(String templateElementId) {
-        this.templateElementId = new TemplateElementId(templateElementId);
-    }
-
     public Locale getDefaultLocale() {
         return defaultLocale;
     }
@@ -105,7 +97,7 @@ public class TemplateElement {
     public Map<Locale, String> getTemplateNames() {
         return templateNames;
     }
-
+/*
     public void setTemplateNames(Map<String, String> templateNames) {
         final Map<Locale, String> tmpMap = new HashMap<>();
 
@@ -115,23 +107,22 @@ public class TemplateElement {
         this.templateNames.clear();
         this.templateNames.putAll(tmpMap);
     }
-
+*/
     public TemplateElement withTemplateName(final String templateName, final Locale locale)
             throws TemplateServiceConfigurationException {
 
-        this.templateNames.put(locale, templateName);
-        if (this.templateElementId == null) {
-            this.templateElementId = new TemplateElementId(templateName);
-        }
-        InputFormat format = InputFormat.getInputFormatForFileName(templateName);
-
-        if (this.templateNames.keySet().contains(format)) {
+        if (this.templateNames.containsKey(locale)) {
             final String msg = String.format("The locale is already specified for the template element. " +
                     "TemplateElementId: %s, locale: %s, templateName: %s",
                     this.templateElementId, locale, templateName);
 
             throw new TemplateServiceConfigurationException("a5ebf647-b52a-43c8-b4d7-7788fa7d2398", msg);
         }
+
+        if (this.templateElementId == null) {
+            this.templateElementId = new TemplateElementId(templateName);
+        }
+        this.templateNames.put(locale, templateName);
 
         return this;
     }

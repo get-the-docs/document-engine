@@ -48,7 +48,7 @@ public class GenerationResult {
         return getGenerationEndTime;
     }
 
-    public void setGetGenerationEndTime(Instant getGenerationEndTime) {
+    public void setGenerationEndTime(Instant getGenerationEndTime) {
         this.getGenerationEndTime = getGenerationEndTime;
     }
 

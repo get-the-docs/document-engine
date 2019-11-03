@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
@@ -99,20 +101,21 @@ public class TemplateServiceImpl implements TemplateService {
 
         OutputStream result = null;
 
-        final OutputStream filledDoc = fill(templateName, dto);
+        final Optional<OutputStream> filledDoc = Optional.ofNullable(fill(templateName, dto));
 
-        switch (outputFormat) {
-            case DOCX:
-                result = filledDoc;
-                break;
-            case PDF:
-                final InputStream filledInputStream = FileSystemHelper.getInputStream(filledDoc);
-                result = new DocxToPdfConverter().convert(filledInputStream);
-                break;
-            default:
-                LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
+        if (filledDoc.isPresent()) {
+            switch (outputFormat) {
+                case DOCX:
+                    result = filledDoc.get();
+                    break;
+                case PDF:
+                    final InputStream filledInputStream = FileSystemHelper.getInputStream(filledDoc.get());
+                    result = new DocxToPdfConverter().convert(filledInputStream);
+                    break;
+                default:
+                    LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
+            }
         }
-
         return result;
     }
 
@@ -142,53 +145,63 @@ public class TemplateServiceImpl implements TemplateService {
         }
 
         for (final TemplateElement actTemplate : documentStructure.getElements()) {
-
             LOGGER.debug("Processing template: friendly name: {} template name: {}, id: {}.",
                     actTemplate.getTemplateElementId(), actTemplate.getTemplateName(), actTemplate.getTemplateElementId());
 
             final TemplateElementId actTemplateElementId = actTemplate.getTemplateElementId();
             final Optional<TemplateContext> actContext = values.getContext(actTemplateElementId);
+
             LOGGER.debug("Getting context for template: friendly name: {}, context: {}.",
                     actTemplate.getTemplateElementId(), actContext);
 
-            final OutputStream actFilledDocument;
+            final Optional<OutputStream> actFilledDocument;
+
             if (actContext.isPresent()) {
-                actFilledDocument =
+                actFilledDocument = Optional.ofNullable(
                         this.fill(actTemplate.getTemplateName(values.getLocale()),
-                                getLocalTemplateContext(globalContext, actContext));
+                                getLocalTemplateContext(globalContext, actContext)));
             } else {
                 actFilledDocument =
-                        TemplateProcessorRegistry.getNoopProcessor()
-                                .fill(actTemplate.getTemplateName(values.getLocale()), null);
+                        Optional.ofNullable(TemplateProcessorRegistry.getNoopProcessor()
+                                .fill(actTemplate.getTemplateName(values.getLocale()), null));
             }
 
-            final OutputStream actContent = convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
-            final DocumentResult actResult =
-                    new DocumentResult(
-                        FileSystemHelper.getFileName(actTemplate.getTemplateName(values.getLocale())), actContent);
+            final Optional<OutputStream> actContent =
+                    convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
 
-            if (actResult != null) {
-                actResult.setTransactionId(values.getTransactionId());
-                for (int i = 0, count = actTemplate.getCount(); i < count; i++) {
-                    results.add(actResult);
-                }
+            if (actContent.isPresent()) {
+                final DocumentResult arContent =
+                        new DocumentResult(
+                        FileSystemHelper.getFileName(actTemplate.getTemplateName(values.getLocale())),
+                        actContent.get());
+                arContent.setTransactionId(values.getTransactionId());
+
+                results.addAll(
+                        Stream.generate(() -> arContent).limit(actTemplate.getCount()).collect(Collectors.toList()));
+
             }
 
-            result.setGenerationStartTime(Instant.now());
+            result.setGenerationEndTime(Instant.now());
 
-            LOGGER.debug(String.format("End processing document structure. " +
-                            "Result document list size: %s", results.size()));
-
+            LOGGER.debug("Processing template - end: friendly name: {} template name: {}, id: {}.",
+                    actTemplate.getTemplateElementId(), actTemplate.getTemplateName(),
+                    actTemplate.getTemplateElementId());
         }
+
+        LOGGER.debug(String.format("End processing document structure. " +
+                "Result document list size: %s", results.size()));
 
         return result;
     }
 
-    private OutputStream convertToOutputFormat(DocumentStructure documentStructure, TemplateElement actTemplate,
-                                               OutputStream actFilledDocument)
+    private Optional<OutputStream> convertToOutputFormat(final DocumentStructure documentStructure,
+                                                         final TemplateElement actTemplate,
+                                                         final Optional<OutputStream> actFilledDocument)
             throws TemplateProcessException {
-        OutputStream actResult;
-        if (!documentStructure.getOutputFormat().isSameFormat(actTemplate.getFormat())) {
+
+        Optional<OutputStream> actResult;
+        if (actFilledDocument.isPresent() &&
+                !documentStructure.getOutputFormat().isSameFormat(actTemplate.getFormat())) {
             switch (documentStructure.getOutputFormat()) {
                 case UNCHANGED:
                     actResult = actFilledDocument;
@@ -197,8 +210,8 @@ public class TemplateServiceImpl implements TemplateService {
                     LOGGER.trace("Output: PDF");
                     switch (actTemplate.getFormat()) {
                         case DOCX:
-                            actResult = new DocxToPdfConverter()
-                                    .convert(FileSystemHelper.getInputStream(actFilledDocument));
+                            actResult = Optional.ofNullable(new DocxToPdfConverter()
+                                    .convert(FileSystemHelper.getInputStream(actFilledDocument.get())));
                             break;
                         case XLSX:
                             final String msg = String.format("Invalid document structure. " +

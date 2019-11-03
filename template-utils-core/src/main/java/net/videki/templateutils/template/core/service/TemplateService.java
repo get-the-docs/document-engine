@@ -1,6 +1,5 @@
 package net.videki.templateutils.template.core.service;
 
-import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
@@ -8,7 +7,6 @@ import net.videki.templateutils.template.core.service.exception.TemplateProcessE
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * @author Levente Ban

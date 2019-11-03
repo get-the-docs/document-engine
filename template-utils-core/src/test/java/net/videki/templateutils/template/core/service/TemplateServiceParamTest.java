@@ -4,7 +4,6 @@ import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.DocumentResult;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
@@ -27,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.*;
@@ -44,15 +42,17 @@ public class TemplateServiceParamTest {
 
         String resultCode;
 
-        try(final OutputStream ignored = ts.fill((String)null, null)) {
+        try (final OutputStream ignore = ts.fill((String)null, null)) {
+
             resultCode = "No exception";
-        } catch (IOException e) {
-            resultCode = "IOException";
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
         } catch (TemplateServiceException e) {
             e.printStackTrace();
             resultCode = e.getCode();
+        } catch (IOException e) {
+            resultCode = "None";
+            e.printStackTrace();
         }
 
         assertEquals("070f463e-743f-4cb2-a651-bd11e844728d", resultCode);

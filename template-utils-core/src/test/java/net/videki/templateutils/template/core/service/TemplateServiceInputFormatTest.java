@@ -9,11 +9,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
-
 
 public class TemplateServiceInputFormatTest {
 
@@ -59,33 +57,36 @@ public class TemplateServiceInputFormatTest {
 
         TemplateProcessorRegistry.setProcessors(mockProcessors);
 
-        try (OutputStream ignore = ts.fill("myTemplate.rtf", ContractDataFactory.createContract())) {
+        try {
+            ts.fill("myTemplate.rtf", ContractDataFactory.createContract());
             Assert.assertFalse(false);
         } catch (TemplateProcessException e) {
             Assert.assertEquals("c14d63df-8db2-45a2-bf21-e62fe60a23a0", e.getCode());
-        } catch (TemplateServiceException | IOException e) {
+        } catch (TemplateServiceException e) {
             e.printStackTrace();
 
             Assert.assertFalse(false);
         }
     }
 
-//    @Test
-
-    public void docxProcessorTestUnhandledInputFormat() {
+    @Test
+    public void templateRegistryDocxProcessorTestUnhandledInputFormat() {
         this.mockProcessors = new EnumMap<>(InputFormat.class);
         this.mockProcessors.put(InputFormat.DOCX, new DocxMockProcessor());
 
         TemplateProcessorRegistry.setProcessors(mockProcessors);
 
-        try (OutputStream ignore = ts.fill("myTemplate.rtf", new Object())) {
+        try {
+            ts.fill("myTemplate.rtf", new Object());
             Assert.assertFalse(false);
         } catch (TemplateProcessException e) {
-            Assert.assertEquals("d320e547-b4c6-45b2-bdd9-19ac0b699c97", e.getCode());
-        } catch (TemplateServiceException | IOException e) {
+            Assert.assertEquals("c14d63df-8db2-45a2-bf21-e62fe60a23a0", e.getCode());
+            //d320e547-b4c6-45b2-bdd9-19ac0b699c97
+        } catch (TemplateServiceException e) {
             e.printStackTrace();
 
             Assert.assertFalse(false);
         }
     }
+
 }

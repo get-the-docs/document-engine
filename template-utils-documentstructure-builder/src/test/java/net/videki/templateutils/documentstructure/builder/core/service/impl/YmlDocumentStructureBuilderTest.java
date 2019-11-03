@@ -1,6 +1,7 @@
 package net.videki.templateutils.documentstructure.builder.core.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import net.videki.templateutils.documentstructure.builder.core.service.DocumentStructureBuilder;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
@@ -24,7 +25,7 @@ import java.util.Locale;
 import static org.junit.Assert.fail;
 
 public class YmlDocumentStructureBuilderTest {
-    private static final Locale LC_HU = new Locale("hu", "HU");
+    private static final Locale LC_HU = new Locale("hu");
 
     private static final String TL_COVER_KEY = "cover";
     private static final String TL_COVER_FILE = "01-cover_v03.docx";
@@ -59,11 +60,16 @@ public class YmlDocumentStructureBuilderTest {
 
     }
 
-//    @Test
+    @Test
     public void readTemplateElement() {
         TemplateElement result;
 
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(TemplateElement.class, new TemplateElementDeserializer());
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+
+            mapper.registerModule(module);
+
             try {
                 result = mapper.readValue(YmlDocStructureBuilder.class.getResourceAsStream("/template-element.yml"),
                         TemplateElement.class);
@@ -72,9 +78,6 @@ public class YmlDocumentStructureBuilderTest {
 
                     System.out.println(msg);
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                fail();
             } catch (Exception e) {
                 e.printStackTrace();
                 fail();
@@ -82,31 +85,7 @@ public class YmlDocumentStructureBuilderTest {
 
     }
 
-//    @Test
-    public void readTemplateElementId() {
-        TemplateElementId result;
-
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        try {
-            result = mapper.readValue("---\n" +
-                    "  id: \"cover\"",
-                    TemplateElementId.class);
-            final String msg = String.format("TemplateElement loaded: %s",
-                    ReflectionToStringBuilder.toString(result, ToStringStyle.MULTI_LINE_STYLE));
-
-            System.out.println(msg);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-
-    }
-
-    //    @Test
+    @Test
     public void readDocStructure() {
         try {
             final DocumentStructureBuilder dsBuilder = new YmlDocStructureBuilder();
