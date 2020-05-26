@@ -3,7 +3,10 @@ package net.videki.templateutils.documentstructure.builder.core.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import net.videki.templateutils.documentstructure.builder.core.documentstructure.DocumentStructureOptions;
+import net.videki.templateutils.documentstructure.builder.core.documentstructure.OptionalTemplateElement;
 import net.videki.templateutils.documentstructure.builder.core.service.DocumentStructureBuilder;
+import net.videki.templateutils.documentstructure.builder.core.service.DocumentStructureOptionsBuilder;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
@@ -12,10 +15,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
-public class YmlDocStructureBuilder implements DocumentStructureBuilder {
+public class YmlDocStructureBuilder implements DocumentStructureBuilder, DocumentStructureOptionsBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YmlDocStructureBuilder.class);
 
@@ -52,6 +54,43 @@ public class YmlDocStructureBuilder implements DocumentStructureBuilder {
             LOGGER.error(msg, e);
 
             throw new TemplateServiceConfigurationException("d53a8fb6-183f-466e-ad94-aa189bad455a", msg);
+        }
+        return result;
+    }
+
+    @Override
+    public DocumentStructureOptions buildOptions(final String dsConfig) throws TemplateServiceConfigurationException {
+
+        DocumentStructureOptions result;
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(OptionalTemplateElement.class, new OptionalTemplateElementDeserializer());
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+
+        mapper.registerModule(module);
+        try {
+            result = mapper.readValue(YmlDocStructureBuilder.class.getResourceAsStream(dsConfig),
+                    DocumentStructureOptions.class);
+            if (LOGGER.isDebugEnabled()) {
+                final String msg = String.format("DocumentStructureOptions loaded: configFile: %s", dsConfig);
+
+                LOGGER.debug(msg);
+            }
+            if (LOGGER.isTraceEnabled()) {
+                final String msg = String.format("DocumentStructureOptions loaded: configFile: %s, content: %s", dsConfig,
+                        ReflectionToStringBuilder.toString(result, ToStringStyle.MULTI_LINE_STYLE));
+
+                LOGGER.debug(msg);
+            }
+        } catch (FileNotFoundException e) {
+            final String msg = String.format("DocumentStructureOptions configuration file not found: %s", dsConfig);
+            LOGGER.error(msg, e);
+
+            throw new TemplateServiceConfigurationException("bf4dbf44-8b7b-4cba-b449-906083eabf0d", msg);
+        } catch (Exception e) {
+            final String msg = String.format("Error reading documentStructureOptions configuration: %s", dsConfig);
+            LOGGER.error(msg, e);
+
+            throw new TemplateServiceConfigurationException("40b51a6b-4ad5-4940-80d3-ffac4bba3c99", msg);
         }
         return result;
     }

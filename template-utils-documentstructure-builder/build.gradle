@@ -10,7 +10,12 @@ dependencies {
   implementation('com.fasterxml.jackson.core:jackson-core:2.9.8')
   implementation('com.fasterxml.jackson.core:jackson-databind:2.9.8')
   implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8')
-  implementation('org.apache.commons:commons-lang3:3.8.1')  
+  implementation('org.apache.commons:commons-lang3:3.8.1')
+
+  implementation('org.kie:kie-ci:7.28.0.Final')
+  implementation('org.drools:drools-decisiontables:7.28.0.Final')
+  implementation('org.drools:drools-decisiontables:7.28.0.Final')
+
     
   testCompile('junit:junit:4.12')
   

@@ -7,7 +7,6 @@ import net.videki.templateutils.documentstructure.builder.core.service.DocumentS
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -91,7 +89,7 @@ public class YmlDocumentStructureBuilderTest {
             final DocumentStructureBuilder dsBuilder = new YmlDocStructureBuilder();
 
             final DocumentStructure ds =
-                    dsBuilder.build("/contract-vintage_plus_v02.yml");
+                    dsBuilder.build("/contract-vintage_v02.yml");
 
         } catch (TemplateNotFoundException | TemplateServiceException e) {
             e.printStackTrace();
