@@ -37,7 +37,7 @@ Output:
 
 Uses:
 1. for docx templates:
-    - docx-stamper
+    - docx-stamper (based on xdocreports)
 2. for xlsx templates:
     - apache jexl
 3. for pdf generation:
