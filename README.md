@@ -2,7 +2,30 @@
 
 Docx, xlsx template engine and pdf converter to provide enterprise document generation feautures.
 
-The module is a simple java wrapper to other tools integrate their capabilities.
+The module is a java wrapper to other tools integrate their capabilities.
+
+## Main features
+
+- Impersonate simple docx and xlsx documents via pojo data
+- Document generation based on multiple templates for handling complex hand-outs:
+    - Fix/optional templates
+    - Language dependent templates
+    - Copies
+    - Multiple value object handling for different data sources (e.g. capability for differentiating officer and customer data)
+    - Pdf concatenation for multi-part documents 
+    - Cover page for multi user environments
+    - QR code and picture embedding
+    - Ms office editable templates
+    
+## Upcoming features
+
+- Template repository handling
+    VCS based template store to provide template history
+- Rule based template structure 
+    Xls based decision table support for template alternatives to provide business editable template sets  
+     
+
+## Engine details
 
 Inputs:
 - docx
@@ -22,6 +45,8 @@ Uses:
 
 ## Usage
 
+### Single document
+
 To create a simple document 
 
     public OutputStream generateContractDocument() {
@@ -29,4 +54,40 @@ To create a simple document
         return TemplateServiceRegistry.getInstance().fill("MyTemplate.docx", dto, OutputFormat.PDF);
     }
     
-    
+### Document structure
+
+```yaml
+# contract_v02.yml
+---
+documentStructureId: "109a562d-8290-407d-98e1-e5e31c9808b7"
+elements:
+  - templateElementId:
+      id: "cover"
+    templateNames:
+      hu_HU: "/full-example/01-cover_v03.docx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "contract"
+    templateNames:
+      en: "/full-example/02-contract_v09_en.docx"
+      hu: "/full-example/02-contract_v09_hu.docx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "terms"
+    templateNames:
+      hu: "/full-example/03-terms_v02.docx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "conditions"
+    templateNames:
+      hu: "/full-example/04-conditions_eco_v11.xlsx"
+    defaultLocale: "hu_HU"
+    count: 1
+resultMode: "SEPARATE_DOCUMENTS"
+outputFormat: "UNCHANGED"
+copies: 1
+
+```
