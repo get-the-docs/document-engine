@@ -49,10 +49,12 @@ Uses:
 
 To create a simple document 
 
+```java
     public OutputStream generateContractDocument() {
         MyDTO dto = generateData();
         return TemplateServiceRegistry.getInstance().fill("MyTemplate.docx", dto, OutputFormat.PDF);
     }
+```
     
 ### Document structure
 
