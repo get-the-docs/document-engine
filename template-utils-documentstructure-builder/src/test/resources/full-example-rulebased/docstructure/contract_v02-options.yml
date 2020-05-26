@@ -1,0 +1,50 @@
+# contract_v02.yml
+---
+documentStructureId: "109a562d-8290-407d-98e1-e5e31c9808b7"
+elements:
+  - templateElementId:
+      id: "conditions-vintage_basic_underaged"
+    originalTemplateElementId:
+      id: "conditions"
+    templateNames:
+      hu: "/full-example-rulebased/templates/04-conditions-vintage_basic_underaged_v01.xlsx"
+    defaultLocale: "hu"
+    count: 1
+  - templateElementId:
+      id: "conditions-vintage_basic"
+    originalTemplateElementId:
+      id: "conditions"
+    templateNames:
+      hu: "/full-example-rulebased/templates/04-conditions-vintage_basic_v01.xlsx"
+    defaultLocale: "hu"
+    count: 1
+  - templateElementId:
+      id: "conditions-vintage_family"
+    originalTemplateElementId:
+      id: "conditions"
+    templateNames:
+      hu: "/full-example-rulebased/templates/04-conditions-vintage_family_v01.xlsx"
+    defaultLocale: "hu"
+    count: 1
+  - templateElementId:
+      id: "conditions-vintage_gold"
+    originalTemplateElementId:
+      id: "conditions"
+    templateNames:
+      hu: "/full-example-rulebased/templates/04-conditions-vintage_gold_v01.xlsx"
+    defaultLocale: "hu"
+    count: 1
+  - templateElementId:
+      id: "terms-vintage_gold_plus"
+    templateNames:
+      hu: "/full-example-rulebased/templates/03-terms-vintage_gold_plus_v02.docx"
+    defaultLocale: "hu"
+    count: 1
+  - templateElementId:
+      originalTemplateElementId:
+        id: "conditions"
+      id: "conditions-vintage_gold_plus"
+    templateNames:
+      hu: "/full-example-rulebased/templates/03-terms-vintage_gold_plus_v02.docx"
+    defaultLocale: "hu"
+    count: 1

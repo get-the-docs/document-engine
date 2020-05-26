@@ -1,6 +1,7 @@
 package net.videki.templateutils.template.test.dto.contract;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 public class Contractor {
     private String name;
@@ -20,5 +21,13 @@ public class Contractor {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public int getAge() {
+        if (this.birthDate != null) {
+            return Period.between(this.birthDate, LocalDate.now()).getYears();
+        } else {
+            return 0;
+        }
     }
 }

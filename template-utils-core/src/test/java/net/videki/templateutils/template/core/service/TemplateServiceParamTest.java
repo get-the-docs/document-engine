@@ -99,7 +99,7 @@ public class TemplateServiceParamTest {
         boolean testResult;
 
         final String inputDir = "/templates/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
+        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
         final String resultFileName = "result-" + fileName;
@@ -141,7 +141,7 @@ public class TemplateServiceParamTest {
         boolean testResult;
 
         final String inputDir = "/templates/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
+        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "result-" + fileName;
@@ -183,7 +183,7 @@ public class TemplateServiceParamTest {
         boolean testResult;
 
         final String inputDir = "/templates/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/build/test-results/test";
+        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "result-" + fileName;

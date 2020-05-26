@@ -51,7 +51,7 @@ public class YmlDroolsOptionsDocStructureBuilder implements ConfigurableDocument
 
         KieServices kieServices = KieServices.Factory.get();
         KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
-
+/*
         KieBaseModel kieBaseModel1 = kieModuleModel.newKieBaseModel( "KBase1 ")
                 .setDefault( true )
                 .setEqualsBehavior( EqualityBehaviorOption.EQUALITY )
@@ -62,7 +62,7 @@ public class YmlDroolsOptionsDocStructureBuilder implements ConfigurableDocument
                 .setDefault( true )
                 .setType( KieSessionModel.KieSessionType.STATEFUL )
                 .setClockType( ClockTypeOption.get("realtime") );
-
+*/
         try {
             KieFileSystem kfs = kieServices.newKieFileSystem();
             kfs.write(configuration,

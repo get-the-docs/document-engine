@@ -1,3 +1,7 @@
 /.idea/
 /.gradle/
 /template-utils-core-test-dto/build/
+/template-utils-core/target/
+/template-utils-core-dto-extensions/target/
+/template-utils-core-test-dto/target/
+/template-utils-documentstructure-builder/target/

@@ -7,6 +7,9 @@ import net.videki.templateutils.template.core.dto.JsonModel;
 import java.util.*;
 
 public class ValueSet implements JsonModel {
+    /** The document structure's unique id */
+    private String documentStructureId;
+
     private final Map<TemplateElementId, TemplateContext> values = new HashMap<>();
 
     /** Value set unique id */
@@ -34,11 +37,19 @@ public class ValueSet implements JsonModel {
         return values;
     }
 
+    public String getDocumentStructureId() {
+        return documentStructureId;
+    }
+
+    public void setDocumentStructureId(String documentStructureId) {
+        this.documentStructureId = documentStructureId;
+    }
+
     public Locale getLocale() {
         return locale;
     }
 
-    public void setLocale(Locale locale) {
+    public void setLocale(final Locale locale) {
         this.locale = locale;
     }
 
