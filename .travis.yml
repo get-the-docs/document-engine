@@ -2,10 +2,8 @@ language: java
 install: true
 
 sudo: false
-addons:
-  apt:
-    packages:
-      - openjdk-11-jre-headless
+jdk:
+  - openjdk11
 
 stages:
   - name: build
