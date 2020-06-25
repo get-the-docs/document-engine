@@ -1,5 +1,6 @@
 package net.videki.templateutils.template.core.configuration;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class TemplateServiceConfiguration {
 
         properties = new Properties();
         try {
-            properties.load(TemplateServiceConfiguration.getResource(CONFIG_FILE_NAME));
+            properties.load(TemplateServiceConfiguration.getResource(File.separator + CONFIG_FILE_NAME));
 
             Set<Object> keys = properties.keySet();
 
@@ -126,6 +127,10 @@ public class TemplateServiceConfiguration {
         }
 
         InputStream is = url.openConnection().getInputStream();
+        if (is == null) {
+            LOGGER.error("Couldn't open file: " + filename);
+            throw new IOException(filename + " not found via classloader.");
+        }
         return is;
     }
 
