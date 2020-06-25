@@ -255,9 +255,8 @@ public class TemplateServiceParamTest {
         GenerationResult result = null;
         try {
             docElement =
-                new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName))
-                    .withCount(1)
-                    .withDefaultLocale(LC_HU);
+                new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName), LC_HU)
+                    .withCount(1);
 
             structure.getElements().add(docElement);
 

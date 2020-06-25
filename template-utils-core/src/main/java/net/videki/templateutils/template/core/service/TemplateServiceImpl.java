@@ -84,7 +84,11 @@ public class TemplateServiceImpl implements TemplateService {
 
         final InputFormat format = InputFormat.getInputFormatForFileName(templateName);
         InputTemplateProcessor processor = TemplateProcessorRegistry.getInputTemplateProcessor(format);
-
+        if (processor == null) {
+            final String msg = "Could not determine the input processor";
+            LOGGER.error(msg);
+            throw new TemplateServiceConfigurationException("9476f20c-0d78-4c8a-87a5-277101256924", msg);
+        }
         return processor.fill(templateName, context);
 
     }
@@ -122,7 +126,6 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public GenerationResult fill(final DocumentStructure documentStructure, final ValueSet values)
             throws TemplateServiceException {
-
         if (documentStructure == null || values == null ) {
             throw new TemplateServiceConfigurationException("bdaa9376-28b4-4718-9859-2ef5d88ab3b0",
                     String.format("%s - documentStructure: %s, values: %s",
@@ -145,8 +148,8 @@ public class TemplateServiceImpl implements TemplateService {
         }
 
         for (final TemplateElement actTemplate : documentStructure.getElements()) {
-            LOGGER.debug("Processing template: friendly name: {} template name: {}, id: {}.",
-                    actTemplate.getTemplateElementId(), actTemplate.getTemplateName(), actTemplate.getTemplateElementId());
+            LOGGER.debug("Processing template: friendly name: {}, id: {}.",
+                    actTemplate.getTemplateName(), actTemplate.getTemplateElementId());
 
             final TemplateElementId actTemplateElementId = actTemplate.getTemplateElementId();
             final Optional<TemplateContext> actContext = values.getContext(actTemplateElementId);

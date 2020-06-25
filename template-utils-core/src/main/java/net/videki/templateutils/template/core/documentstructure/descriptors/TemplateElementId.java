@@ -45,6 +45,6 @@ public class TemplateElementId {
     public String toString() {
         return "TemplateElementId{" +
                 "id='" + id + '\'' +
-                '}';
+                "}";
     }
 }
