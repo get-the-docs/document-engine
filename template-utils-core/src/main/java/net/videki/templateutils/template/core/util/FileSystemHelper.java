@@ -1,16 +1,13 @@
 package net.videki.templateutils.template.core.util;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileSystemHelper {
     public static final String            FILENAME_COLON = ".";
-    public static final String            FILENAME_DIR_SEPARATOR = "/";
+    public static final String            FILENAME_DIR_SEPARATOR = File.separator;
 
     public static InputStream getInputStream(final OutputStream out) {
         return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());

@@ -33,4 +33,11 @@ public class TemplateContext implements ITemplate, JsonModel {
 
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "TemplateContext{" +
+                "ctx=" + ctx +
+                "}";
+    }
 }

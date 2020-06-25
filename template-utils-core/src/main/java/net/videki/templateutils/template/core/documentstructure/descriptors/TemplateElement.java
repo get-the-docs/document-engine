@@ -29,6 +29,13 @@ public class TemplateElement {
         this.count = 1;
     }
 
+    public TemplateElement(final String templateElementId, final String templateName, final Locale defaultLocale)
+            throws TemplateServiceConfigurationException {
+        this(templateElementId);
+        withDefaultLocale(defaultLocale);
+        withTemplateName(templateName, this.defaultLocale);
+    }
+
     public TemplateElement(final String templateElementId, final String templateName)
             throws TemplateServiceConfigurationException {
         this(templateElementId);
@@ -152,4 +159,14 @@ public class TemplateElement {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "TemplateElement{" +
+                "templateElementId=" + templateElementId +
+                ", templateNames=[" + templateNames + "]" +
+                ", format=" + format +
+                ", defaultLocale=" + defaultLocale +
+                ", count=" + count +
+                "}";
+    }
 }

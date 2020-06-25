@@ -27,6 +27,8 @@ public class DocxInputTemplateProcessor extends AbstractTemplateProcessor implem
 
   @Override
   public <T> OutputStream fill(final String templateFileName, T dto) {
+    LOGGER.debug("Start docx fill...");
+
     OutputStream result = null;
 
     final DocxStamperConfiguration config = new DocxStamperConfiguration();
@@ -58,6 +60,8 @@ public class DocxInputTemplateProcessor extends AbstractTemplateProcessor implem
 
     } catch (final IOException e) {
       LOGGER.error("Error reading/closing template file: {} or creating the output.", templateFileName);
+    } catch (final Exception e) {
+      LOGGER.error("Error stamping the template file: {}. {}", templateFileName, e);
     }
 
     return result;

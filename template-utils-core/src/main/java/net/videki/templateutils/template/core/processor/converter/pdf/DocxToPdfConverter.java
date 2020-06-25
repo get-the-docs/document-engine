@@ -41,6 +41,10 @@ public class DocxToPdfConverter implements Converter {
   public OutputStream convert(final InputStream source) {
     OutputStream result;
 
+    if (source == null) {
+      return null;
+    }
+
     final TemplateServiceConfiguration fontConfiguration = TemplateServiceConfiguration.getInstance();
 
     final DocumentKind from = DocumentKind.valueOf("DOCX");

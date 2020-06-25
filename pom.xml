@@ -24,7 +24,7 @@
         <json.version>20190722</json.version>
     </properties>
 
-    <repositories>
+    <!--repositories>
         <repository>
             <snapshots>
                 <enabled>false</enabled>
@@ -43,7 +43,7 @@
             <name>bintray-plugins</name>
             <url>https://jcenter.bintray.com</url>
         </pluginRepository>
-    </pluginRepositories>
+    </pluginRepositories-->
 
     <dependencies>
 
