@@ -1,5 +1,7 @@
 # Template-utils
 
+[![Build Status](https://travis-ci.org/videki/template-utils.png?branch=master)](https://travis-ci.org/videki/template-utils)
+
 Docx, xlsx template engine and pdf converter to provide enterprise document generation feautures.
 
 The module is a java wrapper to other tools integrate their capabilities.
