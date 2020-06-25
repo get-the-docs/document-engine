@@ -1,0 +1,33 @@
+language: java
+install: true
+
+sudo: false
+addons:
+  apt:
+    packages:
+      - openjdk-11-jre-headless
+
+stages:
+  - name: build
+
+jobs:
+  include:
+
+    # run gradle build
+    - stage: build
+
+      before_cache:
+        - rm -fr $HOME/.m2/repository/net/videki/
+
+      cache:
+        yarn: true
+        directories:
+          - $HOME/.m2
+
+      script:
+        - set -e
+        - /bin/bash ./bin/utils/detect_merge_conflict.sh
+        - /bin/bash ./bin/utils/detect_tab_in_java_class.sh
+        - mvn --no-snapshot-updates --quiet --batch-mode --show-version clean install -Dorg.slf4j.simpleLogger.defaultLogLevel=error
+        - mvn --no-snapshot-updates --quiet --batch-mode --show-version verify -Dorg.slf4j.simpleLogger.defaultLogLevel=error
+
