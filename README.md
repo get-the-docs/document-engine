@@ -1,6 +1,6 @@
 # Template-utils
 
-[![Build Status](https://travis-ci.com/videki/template-utils.svg?branch=master)](https://travis-ci.com/videki/template-utils)
+[![Build Status](https://img.shields.io/travis/com/videki/template-utils/master?label=Integration%20tests)](https://travis-ci.com/videki/template-utils)
 
 Docx, xlsx template engine and pdf converter to provide enterprise document generation feautures.
 
