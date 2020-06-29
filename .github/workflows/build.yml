@@ -36,7 +36,8 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: dist
-          path: ${{ github.workspace }}/**/target/template-utils*.jar
+          path: /home/runner/work/template-utils/template-utils/template-utils-core/target/template-utils-core-1.0.1.jar
+#          path: ${{ github.workspace }}/**/target/template-utils*.jar
 
   coverage_job:
     name: Run coverage
@@ -80,9 +81,9 @@ jobs:
     - name: Codecov upload
       run: bash <(curl -s https://codecov.io/bash)
 
-    - name: Archive code coverage results
-      if: ${{ success() }}
-      uses: actions/upload-artifact@v1
-      with:
-        name: code-coverage-report
-        path: ${{ github.workspace }}/**/target/site/jacoco/*
+#    - name: Archive code coverage results
+#      if: ${{ success() }}
+#      uses: actions/upload-artifact@v1
+#      with:
+ #       name: code-coverage-report
+ #       path: ${{ github.workspace }}/**/target/site/jacoco/*
