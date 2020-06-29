@@ -2,12 +2,13 @@ package net.videki.templateutils.template.core.util;
 
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileSystemHelper {
     public static final String            FILENAME_COLON = ".";
-    public static final String            FILENAME_DIR_SEPARATOR = File.separator;
 
     public static InputStream getInputStream(final OutputStream out) {
         return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());
@@ -28,13 +29,12 @@ public class FileSystemHelper {
     }
 
     public static String getFullPath(final String path, final String fileName) {
-        return path + FILENAME_DIR_SEPARATOR + fileName;
+        return path + File.separator + fileName;
     }
 
     public static String getFileName(final String fileName) {
         if (fileName != null) {
-            int lastPos = fileName.lastIndexOf(FILENAME_DIR_SEPARATOR);
-            final String result = fileName.substring(lastPos).replace(FILENAME_DIR_SEPARATOR, "");
+            final String result = Paths.get(fileName).getFileName().toString();
 
             return result;
         }

@@ -20,6 +20,7 @@ import net.videki.templateutils.template.core.service.OutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -74,7 +75,7 @@ public class DocxToPdfConverter implements Converter {
         final FontConfig fc = fontConfiguration.getFontConfig(familyName, fontStyle);
 
         if (fc != null) {
-          final String fontPath = fc.getBasedir() + FileSystemHelper.FILENAME_DIR_SEPARATOR + fc.getFileName();
+          final String fontPath = fc.getBasedir() + File.separator + fc.getFileName();
           final BaseFont baseFont = BaseFont.createFont(fontPath, encoding, BaseFont.EMBEDDED);
 
           Font f = new Font(baseFont, size, style, color);
