@@ -20,11 +20,11 @@ public class TemplateProcessorRegistryTest {
         Assert.assertNotNull(p);
     }
 
-    @Test
+    @Test(expected = net.videki.templateutils.template.core.service.exception.TemplateProcessException.class)
     public void inputTemplateProcessorXlsxTest() {
         InputTemplateProcessor p = TemplateProcessorRegistry.getInputTemplateProcessor(InputFormat.XLSX);
 
-        Assert.assertNotNull(p);
+        Assert.fail();
     }
 
     @Test
