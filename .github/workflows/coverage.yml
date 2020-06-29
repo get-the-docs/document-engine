@@ -34,3 +34,6 @@ jobs:
         # Specify whether or not CI build should fail if Codecov runs into an error during upload
 #        fail_ci_if_error: # optional
 
+    - name: Codecov upload
+      run: bash <(curl -s https://codecov.io/bash)
+
