@@ -1,4 +1,4 @@
-name: Build and coverage
+name: Build
 
 env:
   CODECOV_TOKEN: 39e3c96b-a8b8-4e07-b52c-13880a73db37
@@ -35,55 +35,6 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v1
         with:
-          name: dist
+          name: template-utils-core-$GITHUB_SHA
           path: /home/runner/work/template-utils/template-utils/template-utils-core/target/template-utils-core-1.0.1.jar
 #          path: ${{ github.workspace }}/**/target/template-utils*.jar
-
-  coverage_job:
-    name: Run coverage
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
-
-    - name: Cache local Maven repository
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.m2/repository
-          !~/.m2/repository/net/videki/**
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-
-    - name: Build with Maven
-      run: mvn -B verify --file pom.xml -Pcoverage
-
-    - name: Codecov
-      uses: codecov/codecov-action@v1.0.7
-      with:
-        name: template-utils
-        token: 39e3c96b-a8b8-4e07-b52c-13880a73db37
-        # Path to coverage file to upload
-#        file: # optional
-        # Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)
-#        flags: # optional
-        # Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)
-#        env_vars: # optional
-        # Specify whether or not CI build should fail if Codecov runs into an error during upload
-#        fail_ci_if_error: # optional
-
-    - name: Codecov upload
-      run: bash <(curl -s https://codecov.io/bash)
-
-#    - name: Archive code coverage results
-#      if: ${{ success() }}
-#      uses: actions/upload-artifact@v1
-#      with:
- #       name: code-coverage-report
- #       path: ${{ github.workspace }}/**/target/site/jacoco/*

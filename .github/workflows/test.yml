@@ -1,0 +1,32 @@
+name: Tests
+
+env:
+  CODECOV_TOKEN: 39e3c96b-a8b8-4e07-b52c-13880a73db37
+
+on: [push]
+
+jobs:
+  coverage_job:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.m2/repository
+          !~/.m2/repository/net/videki/**
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Build with Maven
+      run: mvn -B verify --file pom.xml -Pcoverage
