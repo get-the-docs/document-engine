@@ -1,8 +1,7 @@
 name: Coverage
 
 env:
-  global:
-    - CODECOV_TOKEN=39e3c96b-a8b8-4e07-b52c-13880a73db37
+  CODECOV_TOKEN: 39e3c96b-a8b8-4e07-b52c-13880a73db37
 
 on:
   push:
