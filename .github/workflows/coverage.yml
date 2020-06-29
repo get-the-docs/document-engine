@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: dist
-          path: /template-utils*/target/template-utils*.jar
+          path: /home/runner/work/template-utils/**/target/template-utils*.jar
 
   coverage_job:
     name: Run coverage
@@ -83,4 +83,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: code-coverage-report
-        path: /template-utils*/target/site/jacoco/**
+        path: /home/runner/work/template-utils/**/template-utils*/target/site/jacoco/**
