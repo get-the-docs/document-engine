@@ -1,7 +1,8 @@
 # Template-utils
 
-[![Build Status](https://img.shields.io/travis/com/videki/template-utils/master?label=Integration%20tests)](https://travis-ci.com/videki/template-utils)
-![Codecov branch](https://img.shields.io/codecov/c/github/videki/template-utils/master)
+![Build](https://github.com/videki/template-utils/workflows/Build/badge.svg)
+![Tests](https://github.com/videki/template-utils/workflows/Tests/badge.svg)
+![Codecov branch](https://img.shields.io/codecov/c/github/videki/template-utils/master?label=Coverage)
 
 Docx, xlsx template engine and pdf converter to provide enterprise document generation feautures.
 
