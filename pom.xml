@@ -121,31 +121,20 @@
 
     <profiles>
         <profile>
-            <id>clover</id>
+            <id>coverage</id>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.openclover</groupId>
-                        <artifactId>clover-maven-plugin</artifactId>
-                        <version>4.4.1</version>
-                        <executions>
-                            <execution>
-                                <id>clover-report</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>instrument</goal>
-                                    <!--goal>aggregate</goal-->
-                                    <goal>clover</goal>
-                                    <!--goal>check</goal-->
-                                </goals>
-                                <configuration>
-                                    <generatePdf>false</generatePdf>
-                                    <generateXml>true</generateXml>
-                                    <generateHtml>true</generateHtml>
-                                    <generateJson>true</generateJson>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.7</version>
+                        <configuration>
+                            <formats>
+                                <format>html</format>
+                                <format>xml</format>
+                            </formats>
+                            <check />
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
