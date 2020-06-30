@@ -88,6 +88,11 @@ public class TemplateServiceImpl implements TemplateService {
             final String msg = "Could not determine the input processor";
             LOGGER.error(msg);
             throw new TemplateServiceConfigurationException("9476f20c-0d78-4c8a-87a5-277101256924", msg);
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("Found template processor for: templateFileName: %s, processor: %s",
+                        templateName, processor.getClass()));
+            }
         }
         return processor.fill(templateName, context);
 

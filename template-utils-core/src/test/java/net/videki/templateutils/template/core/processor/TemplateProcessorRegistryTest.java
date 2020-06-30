@@ -26,7 +26,7 @@ public class TemplateProcessorRegistryTest {
 
         Assert.assertNotNull(p);
     }
-
+/*
     @Test
     public void inputTemplateProcessorReAssignUseUnregistered() {
         Map<InputFormat, InputTemplateProcessor> mockProcessors = new EnumMap<>(InputFormat.class);
@@ -45,7 +45,7 @@ public class TemplateProcessorRegistryTest {
 
         }
     }
-
+*/
     @After
     public void resetProcessors() {
         TemplateProcessorRegistry.init();

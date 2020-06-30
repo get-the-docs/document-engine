@@ -59,7 +59,7 @@ public class DocxToPdfConverterTest {
 
             Assert.assertFalse(false);
         } catch (ConversionException e) {
-            Assert.assertEquals("c0a3ab2e-297d-4634-85cc-d171fd0772f1", e.getCode());
+            Assert.assertEquals("7d90a4a1-14df-4d1a-87d8-fd9b146357e8", e.getCode());
         } catch (Exception e) {
             Assert.assertFalse(false);
         }
@@ -78,9 +78,9 @@ public class DocxToPdfConverterTest {
             x.convert(is);
 
             Assert.assertFalse(false);
-        } catch (ConversionException e) {
+        } catch (final ConversionException e) {
             Assert.assertEquals("c0a3ab2e-297d-4634-85cc-d171fd0772f1", e.getCode());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertFalse(false);
         }
     }

@@ -28,6 +28,12 @@ public class TemplateProcessorRegistry {
         processors.putAll(param);
     }
 
+    public static void resetProcessors() {
+        synchronized (TemplateProcessorRegistry.processors) {
+            init();
+        }
+    }
+
     protected static void init() {
         processors.clear();
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import net.videki.templateutils.documentstructure.builder.core.service.DocumentStructureBuilder;
-import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
@@ -38,12 +37,10 @@ public class YmlDocumentStructureBuilderTest {
     private static final String TL_CONDITIONS_KEY = "terms";
     private static final String TL_CONDITIONS_FILE = "04-conditions_v11.xlsx";
 
-    private static final String inputDir = "/full-example";
-    private final String projectOutDir = System.getProperty("user.dir") + "/build";
+    private static final String inputDir = "full-example";
+    private final String projectOutDir = System.getProperty("user.dir") + File.separator + "target";
 
-    private final TemplateServiceConfiguration templateServiceConfiguration = TemplateServiceConfiguration.getInstance();
-
-//    @Test
+    @Test
     public void saveDocStructure() {
         try {
             final DocumentStructure templateStructure = getContractDocStructure();

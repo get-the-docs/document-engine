@@ -52,6 +52,9 @@ public class DocxInputTemplateProcessor extends AbstractTemplateProcessor implem
         throw new TemplateNotFoundException("e12c71e9-f27f-48ba-b600-2a0a071c5958", msg);
       }
 
+    } catch (final TemplateNotFoundException e) {
+      throw e;
+
     } catch (final UnresolvedExpressionException e) {
       final String msg = String.format("Placholder error in file: %s", templateFileName);
       LOGGER.warn(msg, e);

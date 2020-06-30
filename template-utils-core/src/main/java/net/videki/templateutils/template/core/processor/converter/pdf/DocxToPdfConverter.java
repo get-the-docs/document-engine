@@ -43,7 +43,7 @@ public class DocxToPdfConverter implements Converter {
     OutputStream result;
 
     if (source == null) {
-      return null;
+      throw new ConversionException("7d90a4a1-14df-4d1a-87d8-fd9b146357e8", "Null input caught.");
     }
 
     final TemplateServiceConfiguration fontConfiguration = TemplateServiceConfiguration.getInstance();

@@ -9,7 +9,6 @@ import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
-import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
 import net.videki.templateutils.template.test.dto.OfficerDataFactory;
 import net.videki.templateutils.template.test.dto.OrgUnitDataFactory;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
@@ -44,18 +42,15 @@ public class TemplateServiceParamTest {
 
         try (final OutputStream ignore = ts.fill((String)null, null)) {
 
-            resultCode = "No exception";
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
-            resultCode = e.getCode();
-        } catch (IOException e) {
-            resultCode = "None";
-            e.printStackTrace();
+
+            assertEquals("070f463e-743f-4cb2-a651-bd11e844728d", resultCode);
+        } catch (Exception e) {
+            fail();
         }
 
-        assertEquals("070f463e-743f-4cb2-a651-bd11e844728d", resultCode);
+
     }
 
     @Test
@@ -63,17 +58,14 @@ public class TemplateServiceParamTest {
         String resultCode;
 
         try(final OutputStream ignored = ts.fill(null, null, null)) {
-            resultCode = "No exception";
-        } catch (IOException e) {
-            resultCode = "IOException";
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
-            resultCode = e.getCode();
+
+            assertEquals("c936e550-8b0e-4577-bffa-7f36b211d981", resultCode);
+        } catch (Exception e) {
+            fail();
         }
 
-        assertEquals("c936e550-8b0e-4577-bffa-7f36b211d981", resultCode);
     }
 
     @Test
@@ -83,20 +75,22 @@ public class TemplateServiceParamTest {
         try {
             ts.fill((DocumentStructure) null, null);
 
+            LOGGER.error("Error: TemplateServiceConfigurationException expected.");
+
+            fail();
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
-            resultCode = e.getCode();
 
+            assertEquals("bdaa9376-28b4-4718-9859-2ef5d88ab3b0", resultCode);
+        } catch (Exception e) {
+            LOGGER.error("Error:", e);
+
+            fail();
         }
-
-        assertEquals("bdaa9376-28b4-4718-9859-2ef5d88ab3b0", resultCode);
     }
 
     @Test
     public void fillSimpleTemplatePojo() {
-        boolean testResult;
 
         final String inputDir = "templates/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
@@ -118,27 +112,18 @@ public class TemplateServiceParamTest {
             o.close();
             result.close();
 
-            testResult = true;
-
             LOGGER.info("Done.");
-        } catch (IOException e) {
-            System.out.println("error:");
-            e.printStackTrace();
 
-            testResult = false;
+            assertNotNull(result);
+        } catch (Exception e) {
+            LOGGER.error("Error: ", e);
 
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
-
-            testResult = false;
+            fail();
         }
-
-        assertTrue(testResult);
     }
 
     @Test
     public void fillSimpleTemplateMap() {
-        boolean testResult;
 
         final String inputDir = "templates/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
@@ -160,27 +145,19 @@ public class TemplateServiceParamTest {
             o.close();
             result.close();
 
-            testResult = true;
 
             LOGGER.info("Done.");
-        } catch (IOException e) {
-            System.out.println("error:");
-            e.printStackTrace();
 
-            testResult = false;
+            assertNotNull(result);
+        } catch (Exception e) {
+            LOGGER.error("Error:", e);
 
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
-
-            testResult = false;
+            fail();
         }
-
-        assertTrue(testResult);
     }
 
     @Test
     public void fillSimpleTemplateTemplateContext() {
-        boolean testResult;
 
         final String inputDir = "templates/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
@@ -201,50 +178,30 @@ public class TemplateServiceParamTest {
             o.close();
             result.close();
 
-            testResult = true;
-
             LOGGER.info("Done.");
-        } catch (IOException e) {
-            System.out.println("error:");
-            e.printStackTrace();
 
-            testResult = false;
+            assertNotNull(result);
+        } catch (Exception e) {
+            LOGGER.error("Error:", e);
 
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
-
-            testResult = false;
+            fail();
         }
 
-        assertTrue(testResult);
     }
 
-    @Test
-    public void fillSimpleTemplateNonexistingTemplateFile() {
-        boolean testResult = false;
-
+    @Test(expected = net.videki.templateutils.template.core.service.exception.TemplateNotFoundException.class)
+    public void fillSimpleTemplateNonexistingTemplateFile() throws Exception {
         final String inputDir = "templates/docx";
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        try {
-            ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
+        ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
 
-            LOGGER.info("Done.");
-        } catch (TemplateNotFoundException e) {
-            testResult = true;
-
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
-        }
-
-        assertFalse(testResult);
-
+        fail();
     }
 
     @Test
     public void fillSimpleTemplateViaDocumentStructre() {
-        boolean testResult;
 
         final String inputDir = "templates/docx";
 
@@ -265,18 +222,16 @@ public class TemplateServiceParamTest {
 
             result = ts.fill(structure, values);
 
-            testResult = true;
-
             LOGGER.info("Done.");
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
+            assertNotNull(result);
+        } catch (Exception e) {
+            LOGGER.error("Error: ", e);
 
-            testResult = false;
+            fail();
         } finally {
             TestHelper.closeResults(result);
         }
 
-        assertTrue(testResult);
     }
 
     private TemplateContext getContractTestData() {

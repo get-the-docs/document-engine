@@ -22,13 +22,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class DocxTemplateTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateTest.class);
 
     private final String inputDir = "templates/docx";
-    private final String projectOutDir = System.getProperty("user.dir") + "/target/test-results/test";
+    private final String projectOutDir = ".";
 
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
 
@@ -61,10 +62,13 @@ public class DocxTemplateTest {
 
             LOGGER.info("Done.");
         } catch (IOException e) {
-            System.out.println("error:");
-            e.printStackTrace();
+            LOGGER.error("Error saving result file.", e);
+
+            fail();
         } catch (TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("Error generating the result file.", e);
+
+            fail();
         }
 
         assertTrue(true);
