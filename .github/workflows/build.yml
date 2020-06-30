@@ -31,10 +31,10 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml -DskipTests=true
 
-      - name: Archive production artifacts
-        if: ${{ success() }}
-        uses: actions/upload-artifact@v1
-        with:
-          name: template-utils-core-$GITHUB_SHA
-          path: /home/runner/work/template-utils/template-utils/template-utils-core/target/template-utils-core-1.0.1.jar
+#      - name: Archive production artifacts
+#        if: ${{ success() }}
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: template-utils-core
+#          path: /home/runner/work/template-utils/template-utils/template-utils-core/target/template-utils-core-1.0.1.jar
 #          path: ${{ github.workspace }}/**/target/template-utils*.jar
