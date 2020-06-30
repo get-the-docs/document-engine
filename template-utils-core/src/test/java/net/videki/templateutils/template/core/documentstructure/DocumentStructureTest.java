@@ -31,7 +31,7 @@ public class DocumentStructureTest {
 
     private static final String TEMPLATE_CONTRACT = "contract";
     private static final TemplateService ts = TemplateServiceRegistry.getInstance();
-    private static final String inputDir = "/templates/docx";
+    private static final String inputDir = "templates/docx";
 
     private TemplateContext getContractTestData() {
         final Contract dto = ContractDataFactory.createContract();

@@ -28,7 +28,7 @@ public class XlsxInputTemplateProcessorTest {
     @Test
     public void fillValidTemplateMatchingFormat() {
 
-        final String inputDir = "/templates/xlsx";
+        final String inputDir = "templates/xlsx";
 
         final String fileName = "xlsTemplate_v11.xlsx";
         this.processor.fill(FileSystemHelper.getFullPath(inputDir, fileName),
@@ -38,7 +38,7 @@ public class XlsxInputTemplateProcessorTest {
     @Test
     public void fillTemplateNotFound() {
 
-        final String inputDir = "/templates/xlsx";
+        final String inputDir = "templates/xlsx";
 
         final String fileName = "this_template_file_does_not_exist.xlsx";
 
@@ -56,7 +56,7 @@ public class XlsxInputTemplateProcessorTest {
     @Test
     public void fillValidTemplatePlaceholderError() {
 
-        final String inputDir = "/templates/xlsx";
+        final String inputDir = "templates/xlsx";
 
         final String fileName = "xlsTemplate_v11-expression_error.xlsx";
 

@@ -35,7 +35,7 @@ public class FileSystemResultStore implements ResultStore {
 
         final File subdir = new File(resultDir);
         if (!subdir.exists()) {
-            if (!subdir.mkdir()) {
+            if (!subdir.mkdirs()) {
                 throw new IllegalArgumentException("Cannot create directory: " + resultDir);
             }
         }

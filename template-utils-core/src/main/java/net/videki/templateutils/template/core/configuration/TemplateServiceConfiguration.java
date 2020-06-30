@@ -135,12 +135,12 @@ public class TemplateServiceConfiguration {
     }
 
     private static InputStream getResource(String filename) throws java.io.IOException {
-        java.net.URL url = TemplateServiceConfiguration.class.getResource(filename);
-
+        java.net.URL url = TemplateServiceConfiguration.class.getClassLoader().getResource(filename);
+/*
         if (url == null) {
             url = Thread.currentThread().getContextClassLoader().getResource(filename);
         }
-
+*/
         if (url == null) {
             LOGGER.warn("Couldn't get resource: " + filename);
             throw new IOException(filename + " not found via classloader.");

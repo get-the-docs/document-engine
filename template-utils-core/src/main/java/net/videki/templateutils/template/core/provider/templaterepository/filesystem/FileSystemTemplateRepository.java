@@ -13,7 +13,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     public InputStream getTemplate(final String templateFile) {
         InputStream result;
 
-        result = FileSystemTemplateRepository.class.getResourceAsStream(templateFile);
+        result = FileSystemTemplateRepository.class.getClassLoader().getResourceAsStream(templateFile);
         if (result == null) {
             LOGGER.error("Template not found. File: {}. ", templateFile);
         } else {

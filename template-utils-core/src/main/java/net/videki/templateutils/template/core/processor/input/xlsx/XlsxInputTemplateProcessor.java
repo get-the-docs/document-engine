@@ -28,7 +28,7 @@ public class XlsxInputTemplateProcessor extends AbstractTemplateProcessor implem
   public <T> OutputStream fill(final String templateFileName, T dto) {
     OutputStream result;
 
-    try (final InputStream is = XlsxInputTemplateProcessor.class.getResourceAsStream(templateFileName)) {
+    try (final InputStream is = getTemplate(templateFileName)) {
 
       if (is == null) {
         final String msg = String.format("Template not found: %s", templateFileName);

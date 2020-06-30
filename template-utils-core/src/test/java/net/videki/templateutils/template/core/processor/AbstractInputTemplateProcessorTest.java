@@ -8,7 +8,7 @@ public class AbstractInputTemplateProcessorTest {
 
   @Test
   public void getTemplate() {
-    final String fileName = "/templates/docx/SimpleContract_v1_21-pojo.docx";
+    final String fileName = "templates/docx/SimpleContract_v1_21-pojo.docx";
     InputStream i = AbstractTemplateProcessor.getTemplate(fileName);
     
     assertNotNull(i);

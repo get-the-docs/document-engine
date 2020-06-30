@@ -22,6 +22,7 @@ import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Locale;
 
 import static org.junit.Assert.assertTrue;
@@ -43,7 +44,7 @@ public class FullExampleIT {
     private static final String TL_CONDITIONS_KEY = "terms";
     private static final String TL_CONDITIONS_FILE = "04-conditions_v11.xlsx";
 
-    private static final String inputDir = "/full-example";
+    private static final String inputDir = "full-example";
 
     private final TemplateService templateService = TemplateServiceRegistry.getInstance();
     private final TemplateServiceConfiguration templateServiceConfiguration = TemplateServiceConfiguration.getInstance();
