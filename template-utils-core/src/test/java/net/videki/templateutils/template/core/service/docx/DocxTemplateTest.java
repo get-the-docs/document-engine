@@ -27,7 +27,7 @@ public class DocxTemplateTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateTest.class);
 
-    private final String inputDir = "/templates/docx";
+    private final String inputDir = "templates/docx";
     private final String projectOutDir = System.getProperty("user.dir") + "/target/test-results/test";
 
     private static TemplateService ts = TemplateServiceRegistry.getInstance();

@@ -32,7 +32,7 @@ public class XlsxTemplateTest {
 
 //  @Test
   public void fillXlsxTableRowsResultXlsx() {
-    final String inputDir = "/templates";
+    final String inputDir = "templates";
     final String fileName = "xlsTemplate.xlsx";
     final String projectOutDir = System.getProperty("user.dir") + "/build";
     final String resultFileName = "result-" + fileName;

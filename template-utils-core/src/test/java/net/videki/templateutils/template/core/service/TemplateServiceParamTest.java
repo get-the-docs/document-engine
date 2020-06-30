@@ -98,7 +98,7 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplatePojo() {
         boolean testResult;
 
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
@@ -140,7 +140,7 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplateMap() {
         boolean testResult;
 
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
@@ -182,7 +182,7 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplateTemplateContext() {
         boolean testResult;
 
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
@@ -223,7 +223,7 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplateNonexistingTemplateFile() {
         boolean testResult = false;
 
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
 
         final String fileName = "there_is_no_such_template_file.docx";
 
@@ -246,7 +246,7 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplateViaDocumentStructre() {
         boolean testResult;
 
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
 
         final String fileName = "SimpleContract_v1_21.docx";
 

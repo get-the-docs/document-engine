@@ -33,7 +33,7 @@ public class DocxToPdfConverterTest {
     public void convertValidTemplateOk() {
         OutputStream result;
 
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
         final String fileName = "SimpleContract_v1_21.docx";
 
         final Converter x = new DocxToPdfConverter();
@@ -47,7 +47,7 @@ public class DocxToPdfConverterTest {
 
     @Test
     public void convertInValidTemplate() {
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
         final String fileName = "there_is_no_such_file.docx";
 
         final Converter x = new DocxToPdfConverter();
@@ -67,7 +67,7 @@ public class DocxToPdfConverterTest {
 
     @Test
     public void convertInValidTemplateFormat() {
-        final String inputDir = "/templates/docx";
+        final String inputDir = "templates/docx";
         final String fileName = "invalidFile.docx";
 
         final Converter x = new DocxToPdfConverter();
@@ -88,7 +88,7 @@ public class DocxToPdfConverterTest {
     private static InputStream getTemplate(final String templateFile) {
         InputStream result;
 
-        result = DocxToPdfConverter.class.getResourceAsStream(templateFile);
+        result = DocxToPdfConverter.class.getClassLoader().getResourceAsStream(templateFile);
 
         return result;
 

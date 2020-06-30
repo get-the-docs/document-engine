@@ -2,13 +2,12 @@ package net.videki.templateutils.template.core.util;
 
 
 import java.io.*;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileSystemHelper {
-    public static final String            FILENAME_COLON = ".";
+    public static final String FILENAME_COLON = ".";
 
     public static InputStream getInputStream(final OutputStream out) {
         return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());

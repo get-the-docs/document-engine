@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -28,7 +27,7 @@ public class FileSystemResultStore implements ResultStore {
         }
 
         final TemplateServiceConfiguration configuration = TemplateServiceConfiguration.getInstance();
-        final String projectOutDir = //System.getProperty("user.dir") +
+        final String projectOutDir =
                 configuration.getConfigurationProperties().getProperty(CONFIG_PROPERTY_BASEDIR);
 
         final String resultDir = FileSystemHelper.getFullPath(projectOutDir, result.getTransactionId());
@@ -51,17 +50,13 @@ public class FileSystemResultStore implements ResultStore {
 
                 o.write(((ByteArrayOutputStream) actResult.getContent()).toByteArray());
                 o.flush();
-            } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
             } catch (IOException e) {
-                System.out.println("error:");
-                e.printStackTrace();
+                LOGGER.error("Error saving the result file.", e);
             } finally {
                 try {
                     actResult.getContent().close();
                 } catch (IOException e) {
-                    System.out.println("error:");
-                    e.printStackTrace();
+                    LOGGER.error("Error closing the result file.", e);
                 }
             }
         }

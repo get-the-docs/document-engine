@@ -19,7 +19,7 @@ public class PdfExportTest {
 
   //@Test
   public void docxToPdf() {
-    final String inputDir = "/templates";
+    final String inputDir = "templates";
     final String fileName = "fillDocxTableRows.docx";
     final String projectOutDir = System.getProperty("user.dir") + "/build";
     final String resultFileName = "result-" + fileName.replace(".docx", ".pdf");

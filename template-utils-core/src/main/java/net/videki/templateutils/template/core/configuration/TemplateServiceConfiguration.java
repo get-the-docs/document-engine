@@ -46,11 +46,13 @@ public class TemplateServiceConfiguration {
         properties = new Properties();
         Set<Object> keys = Collections.emptySet();
         try {
-            properties.load(TemplateServiceConfiguration.getResource(File.separator + CONFIG_FILE_NAME));
-
+            properties.load(TemplateServiceConfiguration.getResource(CONFIG_FILE_NAME));
             keys = properties.keySet();
+            if (!keys.isEmpty()) {
+                LOGGER.info("template-utils.properties configuration file found.");
+            }
         } catch (Exception e) {
-            LOGGER.warn("Cannot read template-utils.properties: " + e.getMessage());
+            LOGGER.warn("template-utils.properties configuration file not found, using default configuration.");
         }
         initFontLibrary(keys);
         initTemplateRepository();
