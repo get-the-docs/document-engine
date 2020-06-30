@@ -46,4 +46,5 @@ public enum InputFormat {
 
     return format;
   }
+
 }

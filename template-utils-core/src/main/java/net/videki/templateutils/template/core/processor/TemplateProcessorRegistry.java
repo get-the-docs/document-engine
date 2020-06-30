@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TemplateProcessorRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
@@ -41,7 +42,12 @@ public class TemplateProcessorRegistry {
         result = processors.get(format);
 
         if (result == null) {
-            final String msg = String.format("Unhandled input format %s. Has been a new one defined?", format);
+            final String supportedFormats = processors.keySet()
+                    .stream()
+                    .map(s -> s.getStrValue()).collect(Collectors.joining(", "));
+            final String msg = String.format(
+                    "Unhandled input format %s. Has been a new one defined? Supporetd formats are: %s",
+                    format, supportedFormats);
             LOGGER.error(msg);
             throw new TemplateProcessException("d320e547-b4c6-45b2-bdd9-19ac0b699c97", msg);
         }
