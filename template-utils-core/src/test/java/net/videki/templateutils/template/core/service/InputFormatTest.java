@@ -6,12 +6,12 @@ import org.junit.Test;
 
 public class InputFormatTest {
 
-    @Test
-    public void findByValueTest() {
-        final InputFormat iFormat= InputFormat.valueOf(InputFormat.DOCX.name());
+        @Test
+        public void findByValueTest() {
+            final InputFormat iFormat= InputFormat.valueOf(InputFormat.DOCX.name());
 
-        Assert.assertEquals(InputFormat.DOCX, iFormat);
-    }
+            Assert.assertEquals(InputFormat.DOCX, iFormat);
+        }
 
     @Test
     public void sameValueTest() {
@@ -24,10 +24,37 @@ public class InputFormatTest {
     }
 
     @Test
-    public void getInputFormatForFileNameUnhandledInputFormat() {
+    public void notSameFormatNullObjectTest() {
+        Assert.assertFalse(InputFormat.DOCX.isSameFormat(null));
+    }
+
+    @Test
+    public void notSameFormatTest() {
+        Assert.assertFalse(InputFormat.DOCX.isSameFormat(OutputFormat.PDF));
+    }
+
+    @Test
+    public void getInputFormatForFileNameUnhandledInputFormatTest() {
 
         try {
             Assert.assertEquals(InputFormat.getInputFormatForFileName("myTestFile.qwe"), InputFormat.DOCX);
+        } catch (TemplateProcessException e) {
+            Assert.assertEquals("c14d63df-8db2-45a2-bf21-e62fe60a23a0", e.getCode());
+        }
+    }
+
+    @Test
+    public void getStrValueTest() {
+        final InputFormat iFormat= InputFormat.valueOf(InputFormat.DOCX.name());
+
+        Assert.assertEquals(InputFormat.DOCX.getStrValue(), "DOCX");
+    }
+
+
+    @Test
+    public void getInputFormatForFileNameNoExtensionTest() {
+        try {
+            Assert.assertEquals(InputFormat.getInputFormatForFileName("myTestFile"), InputFormat.DOCX);
         } catch (TemplateProcessException e) {
             Assert.assertEquals("c14d63df-8db2-45a2-bf21-e62fe60a23a0", e.getCode());
         }

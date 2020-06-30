@@ -17,16 +17,12 @@ import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
 import static org.junit.Assert.*;
 
 public class DocumentStructureTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
-
     private static final Locale LC_HU = new Locale("hu", "HU");
 
     private static final String TEMPLATE_CONTRACT = "contract";

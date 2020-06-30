@@ -13,11 +13,29 @@ public class TemplateServiceInputFormatTest {
     private final TemplateService ts = TemplateServiceRegistry.getInstance();
 
     @Test
-    public void processorTestDocxOK() {
+    public void processorDocxOKTest() {
 
         final OutputStream result;
         try {
-            result = ts.fill("templates/docx/SimpleContract_v1_21-pojo.docx", ContractDataFactory.createContract());
+            result = ts.fill("templates/docx/SimpleContract_v1_21-pojo.docx",
+                    ContractDataFactory.createContract());
+        } catch (TemplateServiceException e) {
+            e.printStackTrace();
+
+            Assert.assertFalse(false);
+            return;
+        }
+        Assert.assertNotNull(result);
+    }
+
+
+    @Test
+    public void processorDocxToPdfOKTest() {
+
+        final OutputStream result;
+        try {
+            result = ts.fill("templates/docx/SimpleContract_v1_21-pojo.docx",
+                    ContractDataFactory.createContract(), OutputFormat.PDF);
         } catch (TemplateServiceException e) {
             e.printStackTrace();
 

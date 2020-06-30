@@ -22,7 +22,6 @@ import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.Locale;
 
 import static org.junit.Assert.assertTrue;
@@ -96,8 +95,7 @@ public class FullExampleIT {
         final DocumentStructure result = new DocumentStructure();
 
         result.getElements().add(
-                new TemplateElement(TL_COVER_KEY, FileSystemHelper.getFullPath(inputDir, TL_COVER_FILE))
-                    .withDefaultLocale(LC_HU));
+                new TemplateElement(TL_COVER_KEY, FileSystemHelper.getFullPath(inputDir, TL_COVER_FILE), LC_HU));
 
         result.getElements().add(
                 new TemplateElement(TL_CONTRACT_KEY)
@@ -107,12 +105,11 @@ public class FullExampleIT {
         );
 
         result.getElements().add(
-                new TemplateElement(TL_TERMS_KEY, FileSystemHelper.getFullPath(inputDir, TL_TERMS_FILE))
-                    .withDefaultLocale(LC_HU));
+                new TemplateElement(TL_TERMS_KEY, FileSystemHelper.getFullPath(inputDir, TL_TERMS_FILE), LC_HU));
 
         result.getElements().add(
-                new TemplateElement(TL_CONDITIONS_KEY, FileSystemHelper.getFullPath(inputDir, TL_CONDITIONS_FILE))
-                    .withDefaultLocale(LC_HU));
+                new TemplateElement(TL_CONDITIONS_KEY, FileSystemHelper.getFullPath(inputDir, TL_CONDITIONS_FILE),
+                        LC_HU));
 
         return result;
     }

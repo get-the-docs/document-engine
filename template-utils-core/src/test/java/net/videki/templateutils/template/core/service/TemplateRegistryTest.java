@@ -19,4 +19,24 @@ public class TemplateRegistryTest {
 
         Assert.assertEquals(ts1, ts2);
     }
+
+    @Test
+    public void TemplateServiceSetInstanceTest() {
+        final TemplateService ts1 = TemplateServiceRegistry.getInstance();
+        final var registry = new TemplateServiceRegistry();
+        registry.setTemplateService(null);
+        final TemplateService ts2 = TemplateServiceRegistry.getInstance();
+
+        Assert.assertNotEquals(ts1, ts2);
+    }
+
+
+    @Test
+    public void TemplateServiceCheckInstanceReinitTest() {
+        final var registry = new TemplateServiceRegistry();
+        registry.setTemplateService(null);
+        final TemplateService ts2 = TemplateServiceRegistry.getInstance();
+
+        Assert.assertNotNull(ts2);
+    }
 }
