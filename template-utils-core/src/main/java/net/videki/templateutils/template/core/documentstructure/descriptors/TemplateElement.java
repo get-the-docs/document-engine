@@ -6,6 +6,19 @@ import net.videki.templateutils.template.core.service.exception.TemplateServiceC
 
 import java.util.*;
 
+/**
+ * A template element represents a logical document template.
+ * This means a document and its available translations, but all having the same format.
+ * <p>The template elements can be referred by their id and the locale used to fill in the actual template.</p>
+ * <p>Example:</p>
+ * <p>- templateElementId:                                               </p>
+ * <p>      id: "contract"                                               </p>
+ * <p>    templateNames:                                                 </p>
+ * <p>      en: "/mobile-new_customer-contract/02-contract_v09_en.docx"  </p>
+ * <p>      hu: "/mobile-new_customer-contract/02-contract_v09_hu.docx"  </p>
+ *
+ * @author Levente Ban
+ */
 public class TemplateElement {
 
     private TemplateElementId templateElementId;

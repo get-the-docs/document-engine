@@ -16,6 +16,10 @@ public class TemplateElementId {
         this.id = id;
     }
 
+    public static TemplateElementId getGlobalTemplateElementId() {
+        return new TemplateElementId(TEMPLATE_KIND_GLOBAL);
+    }
+
     @JsonIgnore
     public void setGlobal() {
         this.id = TEMPLATE_KIND_GLOBAL;

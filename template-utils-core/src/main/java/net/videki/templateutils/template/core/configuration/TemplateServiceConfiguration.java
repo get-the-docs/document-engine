@@ -1,6 +1,5 @@
 package net.videki.templateutils.template.core.configuration;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -13,6 +12,79 @@ import org.slf4j.LoggerFactory;
 
 import net.videki.templateutils.template.core.service.TemplateService;
 
+/**
+ * Template service configuration.
+ * The default behaviour can be configured by adding a template-utils.properties config file to the classloader root.
+ *
+ * <p>
+ *     <b>Config options</b>
+ * </p>
+ * <p>#                                                                                                                 </p>
+ * <p># -------------------------                                                                                       </p>
+ * <p># <b>Template-utils properties</b>                                                                                </p>
+ * <p># -------------------------                                                                                       </p>
+ * <p>#                                                                                                                 </p>
+ * <p># <b>Document structure and value object logging category</b>                                                     </p>
+ * <p># -----------------------------                                                                                   </p>
+ * <p>#   If specified, the document structure and the actual value set can be logged with a separate logger.           </p>
+ * <p>#   To do so, enable a log category specified by this setting.                                                    </p>
+ * <p>#   The logging is bound to DEBUG log level and is logged by default through the TemplateService's logger.        </p>
+ * <p># common.log.value-logcategory= net.videki.templateutils.valuelog                                                 </p>
+ * <p>#                                                                                                                 </p>
+ * <p># <b>Template repository provider class</b>                                                                       </p>
+ * <p># Available providers: FileSystemTemplateRepository (default) can load template available                         </p>
+ * <p># for the context classloader.                                                                                    </p>
+ * <p>#   in server environments if you do not want to bundle the available templates into the application,             </p>
+ * <p>#   add the template files path to the container classpath and address them in the descriptors with               </p>
+ * <p>#   their plain path.                                                                                             </p>
+ * <p>#   To use your own implement the net.videki.templateutils.template.core.provider.TemplateRepository interface    </p>
+ * <p>repository.template.provider=net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository          </p>
+ * <p># Specifies the directory containing your template files (if set, this will be added to the template filename as a parent path)                  </p>
+ * <p>repository.template.provider.basedir=templates                                                                    </p>
+ * <p>#                                                                                                                 </p>
+ * <p># <b>Result repository provider class</b>                                                                         </p>
+ * <p># This setting specifies where to store the generated documents.                                                  </p>
+ * <p># By default the filesystem is used, but you can specify another directory (for example on a temporary fs)        </p>
+ * <p>repository.result.provider=net.videki.templateutils.template.core.provider.resultstore.filesystem.FileSystemResultStore       </p>
+ * <p>repository.result.provider.FileSystemResultStore.basedir=template-utils/template-utils-core/target/test-results/test          </p>
+ * <p>#                                                                                                                             </p>
+ * <p># <b>Converters/PDF - Font library</b>                                                                            </p>
+ * <p># -----------------------------                                                                                   </p>
+ * <p>#   For non built-in fonts (other then COURIER, HELVETICA, TIMES_ROMAN) the fonts used by the source documents    </p>
+ * <p>#   have to be provided.                                                                                          </p>
+ * <p>#   The fonts will be embedded for the correct appearance into the result document.                               </p>
+ * <p>#   This setting is important to deal with codepage related PDF problems, but take care of the font licences      </p>
+ * <p>#   before deploying them in any environment.                                                                     </p>
+ * <p>#                                                                                                                 </p>
+ * <p>#   Usage:                                                                                                        </p>
+ * <p>#     the fonts have to be specified as shown in the example below and                                            </p>
+ * <p>#     placed in a directory accessible for the TemplateService's class loader (e.g. have to be on the classpath). </p>
+ * <p>#                                                                                                                 </p>
+ * <p># Font base directory                                                                                             </p>
+ * <p>converter.pdf.font-library.basedir=/templates/fonts                                                               </p>
+ * <p>#                                                                                                                 </p>
+ * <p>converter.pdf.font-library.font.arial.bold=arialbd.ttf                                                            </p>
+ * <p>converter.pdf.font-library.font.arial.italic=ariali.ttf                                                           </p>
+ * <p>converter.pdf.font-library.font.arial.boldItalic=arialbi.ttf                                                      </p>
+ * <p>converter.pdf.font-library.font.arial.normal=arial.ttf                                                            </p>
+ * <p>#                                                                                                                 </p>
+ * <p>converter.pdf.font-library.font.calibri.bold=calibrib.ttf                                                         </p>
+ * <p>converter.pdf.font-library.font.calibri.italic=calibrii.ttf                                                       </p>
+ * <p>converter.pdf.font-library.font.calibri.boldItalic=calibriz.ttf                                                   </p>
+ * <p>converter.pdf.font-library.font.calibri.normal=calibri.ttf                                                        </p>
+ * <p>#                                                                                                                 </p>
+ * <p>converter.pdf.font-library.font.tahoma.bold=tahomabd.ttf                                                          </p>
+ * <p>converter.pdf.font-library.font.tahoma.italic=tahoma.ttf                                                          </p>
+ * <p>converter.pdf.font-library.font.tahoma.boldItalic=tahomabd.ttf                                                    </p>
+ * <p>converter.pdf.font-library.font.tahoma.normal=tahoma.ttf                                                          </p>
+ * <p>#                                                                                                                 </p>
+ * <p>converter.pdf.font-library.font.times.bold=timesbd.ttf                                                            </p>
+ * <p>converter.pdf.font-library.font.times.italic=timesi.ttf                                                           </p>
+ * <p>converter.pdf.font-library.font.times.boldItalic=timesbi.ttf                                                      </p>
+ * <p>converter.pdf.font-library.font.times.normal=times.ttf                                                            </p>
+ *
+ * @author Levente Ban
+ */
 public class TemplateServiceConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
@@ -194,6 +266,10 @@ public class TemplateServiceConfiguration {
         return result;
     }
 
+    /**
+     * Re-initializes the whole service configuration.
+     * Can be used to relase caches, re-login to the repository providers, etc.
+     */
     public static void reload() {
         synchronized (INSTANCE) {
             INSTANCE = new TemplateServiceConfiguration();

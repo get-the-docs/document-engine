@@ -11,14 +11,11 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.documentstructure.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.DocumentResult;
-import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
-import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.processor.TemplateProcessorRegistry;
 import net.videki.templateutils.template.core.processor.converter.pdf.DocxToPdfConverter;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
@@ -72,7 +69,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public <T> OutputStream fill(final String templateName, final T dto) throws TemplateServiceException {
+    public <T> ResultDocument fill(final String templateName, final T dto) throws TemplateServiceException {
 
         if (Strings.isNullOrEmpty(templateName) || dto == null ) {
             throw new TemplateServiceConfigurationException("070f463e-743f-4cb2-a651-bd11e844728d",
@@ -94,12 +91,12 @@ public class TemplateServiceImpl implements TemplateService {
                         templateName, processor.getClass()));
             }
         }
-        return processor.fill(templateName, context);
+        return new ResultDocument(templateName, processor.fill(templateName, context));
 
     }
 
     @Override
-    public <T> OutputStream fill(final String templateName, final T dto, final OutputFormat outputFormat)
+    public <T> ResultDocument fill(final String templateName, final T dto, final OutputFormat outputFormat)
             throws TemplateServiceException {
 
         if (Strings.isNullOrEmpty(templateName) || dto == null || outputFormat == null ) {
@@ -110,22 +107,22 @@ public class TemplateServiceImpl implements TemplateService {
 
         OutputStream result = null;
 
-        final Optional<OutputStream> filledDoc = Optional.ofNullable(fill(templateName, dto));
+        final Optional<ResultDocument> filledDoc = Optional.ofNullable(fill(templateName, dto));
 
         if (filledDoc.isPresent()) {
             switch (outputFormat) {
                 case DOCX:
-                    result = filledDoc.get();
+                    result = filledDoc.get().getContent();
                     break;
                 case PDF:
-                    final InputStream filledInputStream = FileSystemHelper.getInputStream(filledDoc.get());
+                    final InputStream filledInputStream = FileSystemHelper.getInputStream(filledDoc.get().getContent());
                     result = new DocxToPdfConverter().convert(filledInputStream);
                     break;
                 default:
                     LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
             }
         }
-        return result;
+        return new ResultDocument(templateName, result);
     }
 
     @Override
@@ -137,7 +134,7 @@ public class TemplateServiceImpl implements TemplateService {
                             MSG_INVALID_PARAMETERS, documentStructure, values) );
         }
 
-        final List<DocumentResult> results = new LinkedList<>();
+        final List<ResultDocument> results = new LinkedList<>();
         final GenerationResult result = new GenerationResult(results);
         result.setGenerationStartTime(Instant.now());
         result.setTransactionId(values.getTransactionId());
@@ -167,7 +164,7 @@ public class TemplateServiceImpl implements TemplateService {
             if (actContext.isPresent()) {
                 actFilledDocument = Optional.ofNullable(
                         this.fill(actTemplate.getTemplateName(values.getLocale()),
-                                getLocalTemplateContext(globalContext, actContext)));
+                                getLocalTemplateContext(globalContext, actContext)).getContent());
             } else {
                 actFilledDocument =
                         Optional.ofNullable(TemplateProcessorRegistry.getNoopProcessor()
@@ -178,8 +175,8 @@ public class TemplateServiceImpl implements TemplateService {
                     convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
 
             if (actContent.isPresent()) {
-                final DocumentResult arContent =
-                        new DocumentResult(
+                final ResultDocument arContent =
+                        new ResultDocument(
                         FileSystemHelper.getFileName(actTemplate.getTemplateName(values.getLocale())),
                         actContent.get());
                 arContent.setTransactionId(values.getTransactionId());
@@ -198,6 +195,35 @@ public class TemplateServiceImpl implements TemplateService {
 
         LOGGER.debug(String.format("End processing document structure. " +
                 "Result document list size: %s", results.size()));
+
+        return result;
+    }
+
+    @Override
+    public <T> StoredResultDocument fillAndSave(final String templateName, final T dto) throws TemplateServiceException {
+        final ResultDocument result = this.fill(templateName, dto);
+
+        return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+    }
+
+    @Override
+    public <T> StoredResultDocument fillAndSave(final String templateName, final T dto, final OutputFormat format) throws TemplateServiceException {
+        final ResultDocument result = this.fill(templateName, dto, format);
+
+        return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+    }
+
+    @Override
+    public StoredGenerationResult fillAndSave(final DocumentStructure documentStructure, final ValueSet values) throws TemplateServiceException {
+        final GenerationResult generationResult = this.fill(documentStructure, values);
+
+        final List<StoredResultDocument> ResultDocuments =
+                generationResult.getResults().parallelStream()
+                        .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
+                        .collect(Collectors.toList());
+
+        final StoredGenerationResult result =
+                new StoredGenerationResult(generationResult.getTransactionId(), ResultDocuments);
 
         return result;
     }
@@ -250,8 +276,8 @@ public class TemplateServiceImpl implements TemplateService {
         } return actResult;
     }
 
-    private TemplateContext getLocalTemplateContext(Optional<TemplateContext> globalContext,
-                                                    Optional<TemplateContext> localContext) {
+    private TemplateContext getLocalTemplateContext(final Optional<TemplateContext> globalContext,
+                                                    final Optional<TemplateContext> localContext) {
         final TemplateContext result = new TemplateContext();
         globalContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));
         localContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));

@@ -1,5 +1,6 @@
 package net.videki.templateutils.template.core.service.docx;
 
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;
@@ -12,14 +13,10 @@ import net.videki.templateutils.template.test.dto.OrgUnitDataFactory;
 import net.videki.templateutils.template.test.dto.contract.Contract;
 import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -29,7 +26,7 @@ public class DocxTemplateTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateTest.class);
 
     private final String inputDir = "templates/docx";
-    private final String projectOutDir = ".";
+    private final String projectOutDir = "target/test-results/test";
 
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
 
@@ -49,22 +46,11 @@ public class DocxTemplateTest {
         context.getCtx().put("contract", dto);
 
         try {
-            OutputStream result = ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), context, OutputFormat.DOCX);
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName), context, OutputFormat.DOCX);
 
-            LOGGER.info("Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done - Result file: {}/{}.", projectOutDir, resultFileName);
+            Assert.assertTrue(result.isGenerated());
 
-            FileOutputStream o = new FileOutputStream(FileSystemHelper.getFullPath(projectOutDir, resultFileName));
-
-            o.write(((ByteArrayOutputStream)result).toByteArray());
-            o.flush();
-            o.close();
-            result.close();
-
-            LOGGER.info("Done.");
-        } catch (IOException e) {
-            LOGGER.error("Error saving result file.", e);
-
-            fail();
         } catch (TemplateServiceException e) {
             LOGGER.error("Error generating the result file.", e);
 

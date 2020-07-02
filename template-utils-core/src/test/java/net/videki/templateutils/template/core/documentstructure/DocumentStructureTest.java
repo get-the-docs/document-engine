@@ -1,6 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure;
 
 import net.videki.templateutils.template.core.TestHelper;
+import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
@@ -17,12 +18,16 @@ import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
 import static org.junit.Assert.*;
 
 public class DocumentStructureTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateServiceParamTest.class);
+
     private static final Locale LC_HU = new Locale("hu", "HU");
 
     private static final String TEMPLATE_CONTRACT = "contract";
@@ -58,7 +63,7 @@ public class DocumentStructureTest {
 
             assertEquals(structure.getElements().size(), 1);
         } catch (TemplateServiceConfigurationException e) {
-            e.printStackTrace();
+            LOGGER.error("Error: ", e);
             assertFalse(false);
         }
 

@@ -1,48 +1,53 @@
 package net.videki.templateutils.template.core.service;
 
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.OutputStream;
+import static junit.framework.TestCase.fail;
 
 public class TemplateServiceInputFormatTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateServiceInputFormatTest.class);
     private final TemplateService ts = TemplateServiceRegistry.getInstance();
 
     @Test
     public void processorDocxOKTest() {
 
-        final OutputStream result;
         try {
-            result = ts.fill("templates/docx/SimpleContract_v1_21-pojo.docx",
+            final StoredResultDocument result = ts.fillAndSave("templates/docx/SimpleContract_v1_21-pojo.docx",
                     ContractDataFactory.createContract());
+
+            Assert.assertTrue(result.isGenerated());
         } catch (TemplateServiceException e) {
             e.printStackTrace();
 
             Assert.assertFalse(false);
             return;
         }
-        Assert.assertNotNull(result);
+
     }
 
 
     @Test
     public void processorDocxToPdfOKTest() {
 
-        final OutputStream result;
         try {
-            result = ts.fill("templates/docx/SimpleContract_v1_21-pojo.docx",
+            final StoredResultDocument result = ts.fillAndSave("templates/docx/SimpleContract_v1_21-pojo.docx",
                     ContractDataFactory.createContract(), OutputFormat.PDF);
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
 
-            Assert.assertFalse(false);
+            Assert.assertTrue(result.isGenerated());
+        } catch (TemplateServiceException e) {
+            LOGGER.error("Error generating the template. ", e);
+
+            fail();
             return;
         }
-        Assert.assertNotNull(result);
     }
 
     @Test

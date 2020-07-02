@@ -1,9 +1,9 @@
 package net.videki.templateutils.template.core.documentstructure.descriptors;
 
 /**
- * @author Levente Ban
- *
  * Defines the generation result of the whole generation.
+ *
+ * @author Levente Ban
  */
 public enum GenerationResultMode {
     /**

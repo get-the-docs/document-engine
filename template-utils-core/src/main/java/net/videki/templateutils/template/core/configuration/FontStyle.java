@@ -1,5 +1,12 @@
 package net.videki.templateutils.template.core.configuration;
 
+/**
+ * Configurable font styles.
+ *
+ * @see FontConfig
+ *
+ * @author Levente Ban
+ */
 public enum FontStyle {
 
     BOLD("bold"),

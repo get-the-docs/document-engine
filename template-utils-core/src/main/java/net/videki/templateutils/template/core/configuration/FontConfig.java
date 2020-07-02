@@ -1,5 +1,13 @@
 package net.videki.templateutils.template.core.configuration;
 
+/**
+ * Font mapping for enabling additional fonts during PDF generation.
+ * (To extend the predefined types (courier, helvetica, times roman) @see com.lowagie.text.Font)
+ *
+ * @see TemplateServiceConfiguration service configuration
+ *
+ * @author Levente Ban
+ */
 public class FontConfig {
 
     private String fontFamily;

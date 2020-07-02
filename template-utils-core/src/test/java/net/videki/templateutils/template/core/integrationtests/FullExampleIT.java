@@ -1,7 +1,7 @@
 package net.videki.templateutils.template.core.integrationtests;
 
-import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.documentstructure.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
@@ -21,13 +21,16 @@ import net.videki.templateutils.template.test.dto.doc.DocumentProperties;
 import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class FullExampleIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateServiceParamTest.class);
+
     private static final Locale LC_HU = new Locale("hu", "HU");
 
     private static final String TL_COVER_KEY = "cover";
@@ -46,7 +49,6 @@ public class FullExampleIT {
     private static final String inputDir = "full-example";
 
     private final TemplateService templateService = TemplateServiceRegistry.getInstance();
-    private final TemplateServiceConfiguration templateServiceConfiguration = TemplateServiceConfiguration.getInstance();
 
     @Test
     public void fillAndSaveStructuredTemplateTest() {
@@ -54,11 +56,12 @@ public class FullExampleIT {
             final DocumentStructure templateStructure = getContractDocStructure();
             final ValueSet testData = getTestData();
 
-            GenerationResult result = this.templateService.fill(templateStructure, testData);
-            this.templateServiceConfiguration.getResultStore().save(result);
+            final StoredGenerationResult result = this.templateService.fillAndSave(templateStructure, testData);
 
+            assertFalse(result.getResults().isEmpty());
+            assertTrue(result.getResults().get(0).isGenerated());
         } catch (TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("Error: ", e);
             fail();
         }
 
@@ -116,7 +119,7 @@ public class FullExampleIT {
 
     private ValueSet getTestData() {
 
-        final ValueSet result = new ValueSet();
+        final ValueSet result = new ValueSet("FullExampleIT");
         final String transactionId = result.getTransactionId();
         result
                 .addContext(TL_COVER_KEY, getCoverData(transactionId))
@@ -124,7 +127,6 @@ public class FullExampleIT {
                 .addDefaultContext(TL_TERMS_KEY, null)
                 .addContext(TL_CONDITIONS_KEY, getContractTestData())
                 .withLocale(LC_HU)
-//                .withLocale(Locale.ENGLISH)
                 ;
 
         return result;

@@ -9,11 +9,10 @@ import net.videki.templateutils.template.core.service.OutputFormat;
 import java.util.*;
 
 /**
- * @author Levente Ban
- *
  * <p>If multiple documents have to be generated, the DocumentStructure describes the template structure of
  * the desired output document collection.</p>
- * <p></p>
+ *
+ * @author Levente Ban
  */
 public class DocumentStructure implements JsonModel {
 

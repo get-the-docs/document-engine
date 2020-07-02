@@ -1,0 +1,10 @@
+{
+  "docs": {
+    "Docusaurus": ["getting-started"],
+    "First Category": ["getting-started"],
+    "Second Category": ["getting-started"]
+  },
+  "docs-other": {
+    "First Category": ["getting-started", "getting-started"]
+  }
+}

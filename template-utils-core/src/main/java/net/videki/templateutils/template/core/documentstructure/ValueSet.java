@@ -6,6 +6,12 @@ import net.videki.templateutils.template.core.dto.JsonModel;
 
 import java.util.*;
 
+/**
+ * A value set is the collection of data transfer objects to be used with a specific document structure.
+ * It a basically a map holding multiple template contexts for template elements.
+ *
+ * @author Levente Ban
+ */
 public class ValueSet implements JsonModel {
     /** The document structure's unique id */
     private String documentStructureId;
@@ -20,10 +26,20 @@ public class ValueSet implements JsonModel {
      */
     private Locale locale;
 
+    /**
+     * Default constructor - generating a random transaction id
+     */
     public ValueSet() {
         this.transactionId = UUID.randomUUID().toString();
     }
 
+    /**
+     * Constructor - specifying a given transaction id
+     * @param transactionId the requested transaction id
+     */
+    public ValueSet(final String transactionId) {
+        this.transactionId = transactionId;
+    }
     /**
      * <p>The actual value set which will be used when filling each doc part.</p>
      * <p>There are two kinds of contexts:</p>
@@ -32,6 +48,7 @@ public class ValueSet implements JsonModel {
      *     <li>other given value: template element related - the value objects in the context root element
      *     will be only used when generating the template element specified by the templateElementId</li>
      * </ol>
+     * @return Map the template contexts for each template element
      */
     public Map<TemplateElementId, TemplateContext> getValues() {
         return values;
@@ -57,8 +74,12 @@ public class ValueSet implements JsonModel {
         return transactionId;
     }
 
+    /**
+     * Returns the global template context (named 'model')
+     * @return TemplateContext the context if specified
+     */
     public Optional<TemplateContext> getGlobalContext() {
-        final TemplateContext c = this.values.get(TemplateElementId.TEMPLATE_KIND_GLOBAL);
+        final TemplateContext c = this.values.get(TemplateElementId.getGlobalTemplateElementId());
         if (c != null) {
             return Optional.of(c);
         } else {
@@ -66,6 +87,11 @@ public class ValueSet implements JsonModel {
         }
     }
 
+    /**
+     * Returns the template context for a given template element
+     * @param elementId the template element id
+     * @return TemplateContext the context if specified
+     */
     public Optional<TemplateContext> getContext(final TemplateElementId elementId) {
         final TemplateContext c = this.values.get(elementId);
 
@@ -76,6 +102,14 @@ public class ValueSet implements JsonModel {
         }
     }
 
+    /**
+     * Adds an object to the given template element to the specified context
+     * @param elementId the template element (the object can be referred as a placeholder in this template
+     * @param contextKey the placeholder prefix context name in the template
+     * @param dto the value object to add
+     * @param <T> the value object type
+     * @return The related valueset (created on first, extended otherwise)
+     */
     public <T> ValueSet addContext(final String elementId,
                                    final String contextKey,
                                    final T dto) {
@@ -84,6 +118,14 @@ public class ValueSet implements JsonModel {
         return this.addContext(elementId, ctx);
     }
 
+    /**
+     * Adds an object for the given template element's default context (use this, if you do not want to use
+     * multiple contexts within the template)
+     * @param elementId the template element (the object can be referred as a placeholder in this template
+     * @param dto the value object to add
+     * @param <T> the value object type
+     * @return The related valueset (created on first, extended otherwise)
+     */
     public <T> ValueSet addDefaultContext(final String elementId,
                                    final T dto) {
         final TemplateContext ctx = new TemplateContext().addValueObject(TemplateContext.CONTEXT_ROOT_KEY_MODEL, dto);
@@ -91,7 +133,13 @@ public class ValueSet implements JsonModel {
         return this.addContext(elementId, ctx);
     }
 
-
+    /**
+     * Adds an existing context to the given template element, or replaces the existing occurrence of the context key
+     * in the valueset.
+     * @param elementId the template element (the object can be referred as a placeholder in this template
+     * @param context the context to add
+     * @return The related valueset (created on first, extended otherwise)
+     */
     public ValueSet addContext(final String elementId,
                                    final TemplateContext context) {
         this.values.put(new TemplateElementId(elementId), context);
