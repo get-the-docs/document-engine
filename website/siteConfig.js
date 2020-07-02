@@ -20,10 +20,10 @@ const users = [
 const siteConfig = {
   title: 'Template utils',
   tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application ',
-  url: 'https://videki.github.io/template-utils',
-  baseUrl: '/',
+  url: 'https://videki.github.io',
+  baseUrl: '/template-utils/',
 
-  projectName: 'Template utils',
+  projectName: 'template-utils',
   organizationName: 'videki',
 
 
