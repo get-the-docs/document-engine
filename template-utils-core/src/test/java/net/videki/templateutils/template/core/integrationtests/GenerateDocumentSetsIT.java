@@ -1,16 +1,12 @@
 package net.videki.templateutils.template.core.integrationtests;
 
-import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
-import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
-import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
-import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
-import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
+import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
 import net.videki.templateutils.template.test.dto.DocDataFactory;
@@ -28,40 +24,57 @@ import java.util.Locale;
 
 import static org.junit.Assert.*;
 
-public class FullExampleIT {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateServiceParamTest.class);
+public class GenerateDocumentSetsIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateDocumentSetsIT.class);
 
     private static final Locale LC_HU = new Locale("hu", "HU");
 
     private static final String TL_COVER_KEY = "cover";
-    private static final String TL_COVER_FILE = "01-cover_v03.docx";
-
     private static final String TL_CONTRACT_KEY = "contract";
-    private static final String TL_CONTRACT_FILE_HU = "02-contract_v09_hu.docx";
-    private static final String TL_CONTRACT_FILE_EN = "02-contract_v09_en.docx";
-
     private static final String TL_TERMS_KEY = "terms";
-    private static final String TL_TERMS_FILE = "03-terms_v02.docx";
-
     private static final String TL_CONDITIONS_KEY = "terms";
-    private static final String TL_CONDITIONS_FILE = "04-conditions_v11.xlsx";
-
-    private static final String inputDir = "full-example";
 
     private final TemplateService templateService = TemplateServiceRegistry.getInstance();
 
     @Test
-    public void fillAndSaveStructuredTemplateTest() {
+    public void generateSeparateDocumentsIT() {
         try {
-            final DocumentStructure templateStructure = getContractDocStructure();
-            final ValueSet testData = getTestData();
+            final ValueSet testData = getTestData("generateSeparateDocumentsIT");
 
-            final StoredGenerationResult result = this.templateService.fillAndSave(templateStructure, testData);
+            final StoredGenerationResult result = this.templateService
+                    .fillAndSaveDocumentStructureByName(
+                            "contract/vintage/contract-vintage_v02-separate.yml",
+                            testData);
 
-            assertFalse(result.getResults().isEmpty());
-            assertTrue(result.getResults().get(0).isGenerated());
+            assertArrayEquals(new Boolean[]{true, true, true}, result.getResults()
+                    .stream()
+                    .map(StoredResultDocument::isGenerated)
+                    .toArray(Boolean[]::new));
         } catch (TemplateNotFoundException | TemplateServiceException e) {
-            LOGGER.error("Error: ", e);
+            LOGGER.error("Error creating the result documents.", e);
+            fail();
+        }
+
+        assertTrue(true);
+    }
+
+
+    @Test
+    public void generateSinglePdfDocumentIT() {
+        try {
+            final ValueSet testData = getTestData("generateSinglePdfDocumentIT");
+
+            final StoredGenerationResult result = this.templateService
+                    .fillAndSaveDocumentStructureByName(
+                            "contract/vintage/contract-vintage_v02-concatenated_pdf.yml",
+                            testData);
+
+            assertArrayEquals(new Boolean[]{true, true, true}, result.getResults()
+                    .stream()
+                    .map(StoredResultDocument::isGenerated)
+                    .toArray(Boolean[]::new));
+        } catch (TemplateNotFoundException | TemplateServiceException e) {
+            LOGGER.error("Error creating the result document.", e);
             fail();
         }
 
@@ -94,33 +107,9 @@ public class FullExampleIT {
         return context;
     }
 
-    private DocumentStructure getContractDocStructure() throws TemplateServiceConfigurationException {
-        final DocumentStructure result = new DocumentStructure();
+    private ValueSet getTestData(final String transactionId) {
 
-        result.getElements().add(
-                new TemplateElement(TL_COVER_KEY, FileSystemHelper.getFullPath(inputDir, TL_COVER_FILE), LC_HU));
-
-        result.getElements().add(
-                new TemplateElement(TL_CONTRACT_KEY)
-                    .withTemplateName(FileSystemHelper.getFullPath(inputDir, TL_CONTRACT_FILE_HU), LC_HU)
-                    .withTemplateName(FileSystemHelper.getFullPath(inputDir, TL_CONTRACT_FILE_EN), Locale.ENGLISH)
-                    .withDefaultLocale(LC_HU)
-        );
-
-        result.getElements().add(
-                new TemplateElement(TL_TERMS_KEY, FileSystemHelper.getFullPath(inputDir, TL_TERMS_FILE), LC_HU));
-
-        result.getElements().add(
-                new TemplateElement(TL_CONDITIONS_KEY, FileSystemHelper.getFullPath(inputDir, TL_CONDITIONS_FILE),
-                        LC_HU));
-
-        return result;
-    }
-
-    private ValueSet getTestData() {
-
-        final ValueSet result = new ValueSet("FullExampleIT");
-        final String transactionId = result.getTransactionId();
+        final ValueSet result = new ValueSet(transactionId);
         result
                 .addContext(TL_COVER_KEY, getCoverData(transactionId))
                 .addContext(TL_CONTRACT_KEY, getContractTestData())
