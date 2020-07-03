@@ -2,8 +2,13 @@ package net.videki.templateutils.template.core.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.provider.documentstructure.DocumentStructureRepository;
+import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
+import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.provider.templaterepository.TemplateRepository;
 import net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository;
@@ -46,7 +51,7 @@ import net.videki.templateutils.template.core.service.TemplateService;
  * <p># This setting specifies where to store the generated documents.                                                  </p>
  * <p># By default the filesystem is used, but you can specify another directory (for example on a temporary fs)        </p>
  * <p>repository.result.provider=net.videki.templateutils.template.core.provider.resultstore.filesystem.FileSystemResultStore       </p>
- * <p>repository.result.provider.FileSystemResultStore.basedir=template-utils/template-utils-core/target/test-results/test          </p>
+ * <p>repository.result.provider.FileSystemResultStore.basedir=target/test-results/generated-documents                  </p>
  * <p>#                                                                                                                             </p>
  * <p># <b>Converters/PDF - Font library</b>                                                                            </p>
  * <p># -----------------------------                                                                                   </p>
@@ -96,12 +101,20 @@ public class TemplateServiceConfiguration {
     private static final String FONT_DIR = "converter.pdf.font-library.basedir";
     private static final String CONFIG_FILE_NAME = "template-utils.properties";
     private static final String LOG_APPENDER = "common.log.value-logcategory";
+
+    private static final String DOCUMENT_STRUCTURE_PROVIDER = "repository.documentstructure.provider";
+    private static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR = "repository.documentstructure.provider.basedir";
+    private static final String DOCUMENT_STRUCTURE_BUILDER = "repository.documentstructure.builder";
     private static final String TEMPLATE_REPOSITORY_PROVIDER = "repository.template.provider";
+    private static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
     private static final String RESULT_REPOSITORY_PROVIDER = "repository.result.provider";
+    private static final String RESULT_REPOSITORY_PROVIDER_BASEDIR = "repository.result.provider.basedir";
 
     private static final String PROPERTY_DELIMITER = ".";
 
     private static Properties properties;
+
+    private DocumentStructureRepository documentStructureRepository;
 
     private TemplateRepository templateRepository;
 
@@ -127,6 +140,7 @@ public class TemplateServiceConfiguration {
             LOGGER.warn("template-utils.properties configuration file not found, using default configuration.");
         }
         initFontLibrary(keys);
+        initDocumentStructureRepository();
         initTemplateRepository();
         initResultStore();
     }
@@ -165,20 +179,95 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    private void initDocumentStructureRepository() {
+        String repositoryProvider = "<Not configured or could not read properties file>";
+        try {
+            repositoryProvider = (String) properties.get(DOCUMENT_STRUCTURE_PROVIDER);
+
+            if (repositoryProvider != null) {
+                final DocumentStructureRepository tmpRepo = (DocumentStructureRepository)
+                        this.getClass().getClassLoader()
+                                .loadClass(repositoryProvider)
+                                .getDeclaredConstructor()
+                                .newInstance();
+
+                final String repositoryBaseDir = (String) properties.get(DOCUMENT_STRUCTURE_PROVIDER_BASEDIR);
+                final DocumentStructureRepositoryConfiguration drc =
+                        new DocumentStructureRepositoryConfiguration(loadDocumentStructureBuilder(),
+                                repositoryBaseDir);
+                tmpRepo.init(drc);
+
+                this.documentStructureRepository = tmpRepo;
+            } else {
+                final String msg = String.format("Document structure repository not specified, " +
+                        "using fallback built-in FileSystemTemplateRepository.");
+                LOGGER.info(msg);
+            }
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException e) {
+            final String msg = String.format("Error loading document structure repository: %s, " +
+                    "using fallback built-in FileSystemTemplateRepository.", repositoryProvider);
+            LOGGER.error(msg, e);
+
+            this.templateRepository = new FileSystemTemplateRepository();
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private DocumentStructureBuilder loadDocumentStructureBuilder() {
+        DocumentStructureBuilder documentStructureBuilder = new YmlDocStructureBuilder();
+
+        String repositoryProvider = "<Not configured or could not read properties file>";
+        try {
+            repositoryProvider = (String) properties.get(DOCUMENT_STRUCTURE_BUILDER);
+
+            if (repositoryProvider != null) {
+                documentStructureBuilder = (DocumentStructureBuilder)
+                        this.getClass().getClassLoader()
+                                .loadClass(repositoryProvider)
+                                .getDeclaredConstructor()
+                                .newInstance();
+            } else {
+                final String msg = String.format("Document structure builder not specified, " +
+                        "using built-in YmlDocStructureBuilder.");
+                LOGGER.info(msg);
+            }
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
+                NoSuchMethodException | InvocationTargetException e) {
+            final String msg = String.format("Error loading document structure builder: %s, " +
+                    "using built-in YmlDocStructureBuilder.", repositoryProvider);
+            LOGGER.error(msg, e);
+        }
+
+        return documentStructureBuilder;
+    }
+
     private void initTemplateRepository() {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
             repositoryProvider = (String) properties.get(TEMPLATE_REPOSITORY_PROVIDER);
 
             if (repositoryProvider != null) {
-                this.templateRepository = (TemplateRepository)
-                        this.getClass().getClassLoader().loadClass(repositoryProvider).newInstance();
+                final TemplateRepository tmpRepo = (TemplateRepository)
+                        this.getClass().getClassLoader()
+                                .loadClass(repositoryProvider)
+                                .getDeclaredConstructor()
+                                .newInstance();
+
+                final String repositoryBaseDir = (String) properties.get(TEMPLATE_REPOSITORY_PROVIDER_BASEDIR);
+                final RepositoryConfiguration rc =
+                        new RepositoryConfiguration(repositoryBaseDir);
+                tmpRepo.init(rc);
+
+                this.templateRepository = tmpRepo;
             } else {
                 final String msg = String.format("Template repository not specified, " +
                         "using fallback built-in FileSystemTemplateRepository.");
                 LOGGER.info(msg);
             }
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
+                NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading template repository: %s, " +
                     "using fallback built-in FileSystemTemplateRepository.", repositoryProvider);
             LOGGER.error(msg, e);
@@ -193,15 +282,26 @@ public class TemplateServiceConfiguration {
             repositoryProvider = (String) properties.get(RESULT_REPOSITORY_PROVIDER);
 
             if (repositoryProvider != null) {
-                this.resultStore = (ResultStore)
-                        this.getClass().getClassLoader().loadClass(repositoryProvider).newInstance();
+                ResultStore tmpRepo = (ResultStore)
+                        this.getClass().getClassLoader()
+                                .loadClass(repositoryProvider)
+                                .getDeclaredConstructor()
+                                .newInstance();
+
+                final String repositoryBaseDir = (String) properties.get(RESULT_REPOSITORY_PROVIDER_BASEDIR);
+                final RepositoryConfiguration rc =
+                        new RepositoryConfiguration(repositoryBaseDir);
+                tmpRepo.init(rc);
+
+                this.resultStore = tmpRepo;
             } else {
                 final String msg = String.format("Template result repository not specified, " +
                         "using fallback built-in FileSystemTemplateRepository.");
                 LOGGER.info(msg);
 
             }
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
+                NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading result store repository: %s, " +
                     "using fallback built-in FilesystemResultStore.", repositoryProvider);
             LOGGER.error(msg, e);
@@ -243,6 +343,10 @@ public class TemplateServiceConfiguration {
 
     public String getDocStructureLogCategory() {
         return this.properties.getProperty(LOG_APPENDER);
+    }
+
+    public DocumentStructureRepository getDocumentStructureRepository() {
+        return documentStructureRepository;
     }
 
     public TemplateRepository getTemplateRepository() {

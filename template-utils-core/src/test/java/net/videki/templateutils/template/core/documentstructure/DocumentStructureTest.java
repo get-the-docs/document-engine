@@ -32,7 +32,7 @@ public class DocumentStructureTest {
 
     private static final String TEMPLATE_CONTRACT = "contract";
     private static final TemplateService ts = TemplateServiceRegistry.getInstance();
-    private static final String inputDir = "templates/docx";
+    private static final String inputDir = "unittests/docx";
 
     private TemplateContext getContractTestData() {
         final Contract dto = ContractDataFactory.createContract();
@@ -82,7 +82,7 @@ public class DocumentStructureTest {
         GenerationResult result = null;
         try {
             docElement =
-                new TemplateElement(TEMPLATE_CONTRACT, FileSystemHelper.getFullPath(inputDir, fileName), LC_HU)
+                new TemplateElement(TEMPLATE_CONTRACT, FileSystemHelper.getFileNameWithPath(inputDir, fileName), LC_HU)
                     .withCount(2);
 
             structure.getElements().add(docElement);

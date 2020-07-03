@@ -25,8 +25,7 @@ public class DocxTemplateTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateTest.class);
 
-    private final String inputDir = "templates/docx";
-    private final String projectOutDir = "target/test-results/test";
+    private final String inputDir = "unittests/docx";
 
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
 
@@ -46,9 +45,9 @@ public class DocxTemplateTest {
         context.getCtx().put("contract", dto);
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName), context, OutputFormat.DOCX);
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName), context, OutputFormat.DOCX);
 
-            LOGGER.info("Done - Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done - Result file: {}.", resultFileName);
             Assert.assertTrue(result.isGenerated());
 
         } catch (TemplateServiceException e) {

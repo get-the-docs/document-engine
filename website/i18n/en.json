@@ -5,6 +5,9 @@
     "previous": "Previous",
     "tagline": "Create and impersonate single or multi-part docx and xlsx templates easily with your application ",
     "docs": {
+      "code-of-conduct": {
+        "title": "Code of Conduct"
+      },
       "faq": {
         "title": "FAQ"
       },
@@ -15,11 +18,7 @@
         "title": "Getting started"
       }
     },
-    "links": {
-      "Getting started": "Getting started",
-      "Features": "Features",
-      "Faq": "Faq"
-    },
+    "links": {},
     "categories": {
       "Docusaurus": "Docusaurus",
       "First Category": "First Category",

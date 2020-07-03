@@ -67,14 +67,31 @@ public class TemplateElement {
 
     @JsonIgnore
     public String getTemplateName() {
-        return this.templateNames.get(this.defaultLocale);
+        return getTemplateName(this.defaultLocale);
     }
 
     public String getTemplateName(final Locale locale) {
-        String result = this.templateNames.get(locale);
+        String result;
 
-        if (result == null) {
-            result = getTemplateName();
+        if (locale != null) {
+
+            final Optional<Locale> actLanguage = this.templateNames.keySet()
+                    .stream()
+                    .filter(t -> locale.getLanguage().split("_")[0]
+                            .equalsIgnoreCase(t.getLanguage().split("_")[0]))
+                    .findFirst();
+
+            if (actLanguage.isPresent()) {
+                result = this.templateNames.get(actLanguage.get());
+            } else {
+                if (this.templateNames.keySet().size() > 1) {
+                    result = this.templateNames.get(this.defaultLocale);
+                } else {
+                    result = this.templateNames.values().stream().findFirst().get();
+                }
+            }
+        } else {
+            result = null;
         }
 
         return result;
@@ -107,7 +124,12 @@ public class TemplateElement {
 
     @JsonIgnore
     public InputFormat getFormat() {
-        return format;
+        InputFormat result = this.format;
+        if (this.format == null) {
+            result = InputFormat.getInputFormatForFileName(this.getTemplateName());
+        }
+
+        return result;
     }
 
     public void setFormat(InputFormat format) {

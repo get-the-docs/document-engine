@@ -33,12 +33,12 @@ public class DocxToPdfConverterTest {
     public void convertValidTemplateOk() {
         OutputStream result;
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "templates/unittests/docx";
         final String fileName = "SimpleContract_v1_21.docx";
 
         final Converter x = new DocxToPdfConverter();
 
-        final InputStream is = getTemplate(FileSystemHelper.getFullPath(inputDir, fileName));
+        final InputStream is = getTemplate(FileSystemHelper.getFileNameWithPath(inputDir, fileName));
 
         result = x.convert(is);
 
@@ -47,12 +47,12 @@ public class DocxToPdfConverterTest {
 
     @Test
     public void convertInValidTemplate() {
-        final String inputDir = "templates/docx";
+        final String inputDir = "templates/unittests/docx";
         final String fileName = "there_is_no_such_file.docx";
 
         final Converter x = new DocxToPdfConverter();
 
-        final InputStream is = getTemplate(FileSystemHelper.getFullPath(inputDir, fileName));
+        final InputStream is = getTemplate(FileSystemHelper.getFileNameWithPath(inputDir, fileName));
 
         try {
             x.convert(is);
@@ -67,14 +67,12 @@ public class DocxToPdfConverterTest {
 
     @Test
     public void convertInValidTemplateFormat() {
-        final String inputDir = "templates/docx";
+        final String inputDir = "templates/unittests/docx";
         final String fileName = "invalidFile.docx";
 
-        final Converter x = new DocxToPdfConverter();
-
-        final InputStream is = getTemplate(FileSystemHelper.getFullPath(inputDir, fileName));
-
         try {
+            final InputStream is = getTemplate(FileSystemHelper.getFileNameWithPath(inputDir, fileName));
+            final Converter x = new DocxToPdfConverter();
             x.convert(is);
 
             Assert.assertFalse(false);

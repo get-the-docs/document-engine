@@ -83,7 +83,7 @@ public class TemplateServiceParamTest {
     @Test
     public void fillSimpleTemplatePojoTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
@@ -92,7 +92,7 @@ public class TemplateServiceParamTest {
         final Contract dto = ContractDataFactory.createContract();
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName), dto, OutputFormat.DOCX);
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName), dto, OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
 
@@ -107,14 +107,14 @@ public class TemplateServiceParamTest {
     @Test
     public void fillSimpleTemplateMapTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillSimpleTemplateMapTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
                     getContractTestData().getCtx(),
                     OutputFormat.DOCX);
 
@@ -131,14 +131,14 @@ public class TemplateServiceParamTest {
     @Test
     public void fillSimpleTemplateTemplateContextTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillSimpleTemplateTemplateContextTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
                     getContractTestData(), OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
@@ -154,11 +154,11 @@ public class TemplateServiceParamTest {
 
     @Test(expected = net.videki.templateutils.template.core.service.exception.TemplateNotFoundException.class)
     public void fillSimpleTemplateNonexistingTemplateFile() throws Exception {
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
+        ts.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
 
         fail();
     }
@@ -166,7 +166,7 @@ public class TemplateServiceParamTest {
     @Test
     public void fillSimpleTemplateViaDocumentStructureTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
 
         final String fileName = "SimpleContract_v1_21.docx";
 
@@ -175,7 +175,7 @@ public class TemplateServiceParamTest {
         GenerationResult result = null;
         try {
             docElement =
-                new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName), LC_HU)
+                new TemplateElement("contract", FileSystemHelper.getFileNameWithPath(inputDir, fileName), LC_HU)
                     .withCount(1);
 
             structure.getElements().add(docElement);
@@ -255,7 +255,7 @@ public class TemplateServiceParamTest {
     @Test
     public void fillAndSaveSimpleTemplatePojoTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
@@ -264,7 +264,7 @@ public class TemplateServiceParamTest {
         final Contract dto = ContractDataFactory.createContract();
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName), dto, OutputFormat.DOCX);
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName), dto, OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
 
@@ -279,14 +279,14 @@ public class TemplateServiceParamTest {
     @Test
     public void fillAndSaveSimpleTemplateMapTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillAndSaveSimpleTemplateMapTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
                     getContractTestData().getCtx(),
                     OutputFormat.DOCX);
 
@@ -303,14 +303,14 @@ public class TemplateServiceParamTest {
     @Test
     public void fillAndSaveSimpleTemplateTemplateContextTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
         final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillAndSaveSimpleTemplateTemplateContextTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFullPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
                     getContractTestData(), OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
@@ -326,11 +326,11 @@ public class TemplateServiceParamTest {
 
     @Test(expected = net.videki.templateutils.template.core.service.exception.TemplateNotFoundException.class)
     public void fillAndSaveSimpleTemplateNonexistingTemplateFileTest() throws Exception {
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(FileSystemHelper.getFullPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
+        ts.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
 
         fail();
     }
@@ -338,7 +338,7 @@ public class TemplateServiceParamTest {
     @Test
     public void fillAndSaveSimpleTemplateViaDocumentStructureTest() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
 
         final String fileName = "SimpleContract_v1_21.docx";
 
@@ -347,13 +347,13 @@ public class TemplateServiceParamTest {
         GenerationResult result = null;
         try {
             docElement =
-                    new TemplateElement("contract", FileSystemHelper.getFullPath(inputDir, fileName), LC_HU)
+                    new TemplateElement("contract", FileSystemHelper.getFileNameWithPath(inputDir, fileName), LC_HU)
                             .withCount(1);
 
             structure.getElements().add(docElement);
 
             final ValueSet values = new ValueSet("fillAndSaveSimpleTemplateTemplateContextTest-" +
-                    UUID.randomUUID().toString());
+                    UUID.randomUUID().toString(), LC_HU);
             values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
 
             result = ts.fill(structure, values);

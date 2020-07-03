@@ -159,30 +159,26 @@ public class TemplateServiceImpl implements TemplateService {
             LOGGER.debug("Getting context for template: friendly name: {}, context: {}.",
                     actTemplate.getTemplateElementId(), actContext);
 
-            final Optional<OutputStream> actFilledDocument;
+            final ResultDocument actFilledDocument;
 
+            final String templateFileName = actTemplate.getTemplateName(values.getLocale());
             if (actContext.isPresent()) {
-                actFilledDocument = Optional.ofNullable(
-                        this.fill(actTemplate.getTemplateName(values.getLocale()),
+                actFilledDocument = new ResultDocument(templateFileName,
+                        this.fill(templateFileName,
                                 getLocalTemplateContext(globalContext, actContext)).getContent());
             } else {
                 actFilledDocument =
-                        Optional.ofNullable(TemplateProcessorRegistry.getNoopProcessor()
-                                .fill(actTemplate.getTemplateName(values.getLocale()), null));
+                        new ResultDocument(templateFileName, TemplateProcessorRegistry.getNoopProcessor()
+                                .fill(templateFileName, null));
             }
 
-            final Optional<OutputStream> actContent =
-                    convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
+            final ResultDocument actContent = convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
 
-            if (actContent.isPresent()) {
-                final ResultDocument arContent =
-                        new ResultDocument(
-                        FileSystemHelper.getFileName(actTemplate.getTemplateName(values.getLocale())),
-                        actContent.get());
-                arContent.setTransactionId(values.getTransactionId());
+            if (actContent.getContent() != null) {
+                actContent.setTransactionId(values.getTransactionId());
 
                 results.addAll(
-                        Stream.generate(() -> arContent).limit(actTemplate.getCount()).collect(Collectors.toList()));
+                        Stream.generate(() -> actContent).limit(actTemplate.getCount()).collect(Collectors.toList()));
 
             }
 
@@ -197,6 +193,35 @@ public class TemplateServiceImpl implements TemplateService {
                 "Result document list size: %s", results.size()));
 
         return result;
+    }
+
+    private String getOutputFileName(final String templateFileName, final OutputFormat format) {
+        String result = null;
+
+        try {
+            int fileExtPos = templateFileName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
+            if (fileExtPos > 0) {
+                result = templateFileName.substring(0, fileExtPos) +
+                        FileSystemHelper.FILENAME_COLON + format.name().toLowerCase();
+
+            } else {
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e) {
+            final String msg = String.format("Unhandled template file format. Filename: %s", templateFileName);
+            throw new TemplateProcessException("9fcf0c32-4096-4647-9f46-bbbe4564cdd7", msg);
+        }
+
+        return result;
+    }
+
+    @Override
+    public GenerationResult fillDocumentStructureByName(final String documentStructureFile, final ValueSet values)
+            throws TemplateServiceException {
+        final DocumentStructure ds = TemplateServiceConfiguration.getInstance()
+                .getDocumentStructureRepository().getDocumentStructure(documentStructureFile);
+        return this.fill(ds, values);
+
     }
 
     @Override
@@ -228,26 +253,39 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
-    private Optional<OutputStream> convertToOutputFormat(final DocumentStructure documentStructure,
-                                                         final TemplateElement actTemplate,
-                                                         final Optional<OutputStream> actFilledDocument)
+    @Override
+    public StoredGenerationResult fillAndSaveDocumentStructureByName(final String documentStructureFile, final ValueSet values)
+            throws TemplateServiceException {
+        final DocumentStructure ds = TemplateServiceConfiguration.getInstance()
+                .getDocumentStructureRepository().getDocumentStructure(documentStructureFile);
+        return this.fillAndSave(ds, values);
+
+    }
+
+    private ResultDocument convertToOutputFormat(final DocumentStructure documentStructure,
+                                                 final TemplateElement actTemplate,
+                                                 final ResultDocument actFilledDocument)
             throws TemplateProcessException {
 
-        Optional<OutputStream> actResult;
-        if (actFilledDocument.isPresent() &&
+        OutputStream actResult;
+        String actResultFileName = null;
+        if (actFilledDocument.getContent() != null &&
                 !documentStructure.getOutputFormat().isSameFormat(actTemplate.getFormat())) {
             switch (documentStructure.getOutputFormat()) {
                 case UNCHANGED:
-                    actResult = actFilledDocument;
+                    actResult = actFilledDocument.getContent();
+                    actResultFileName = actFilledDocument.getFileName();
                     break;
                 case PDF:
                     LOGGER.trace("Output: PDF");
                     switch (actTemplate.getFormat()) {
                         case DOCX:
-                            actResult = Optional.ofNullable(new DocxToPdfConverter()
-                                    .convert(FileSystemHelper.getInputStream(actFilledDocument.get())));
+                            actResult = new DocxToPdfConverter()
+                                    .convert(FileSystemHelper.getInputStream(actFilledDocument.getContent()));
+                            actResultFileName = getOutputFileName(actFilledDocument.getFileName(), OutputFormat.PDF);
                             break;
                         case XLSX:
+                            /*
                             final String msg = String.format("Invalid document structure. " +
                                     "The current template cannot be converted to the desired format: " +
                                             "template: %s/%s, source format: %s - target format: %s",
@@ -256,13 +294,23 @@ public class TemplateServiceImpl implements TemplateService {
                                     actTemplate.getFormat(),
                                     documentStructure.getOutputFormat());
                             throw new TemplateProcessException("89688dfe-7b60-453d-ab2a-90f8e9605cdf", msg);
+
+                             */
+
+                            // Keeping the format if not convertible
+                            actResult = actFilledDocument.getContent();
+                            actResultFileName = actFilledDocument.getFileName();
+
+                            break;
                         default:
-                            actResult = actFilledDocument;
+                            actResult = actFilledDocument.getContent();
+                            actResultFileName = actFilledDocument.getFileName();
                             LOGGER.trace("  No conversion needed for the actual template.");
                     }
                     break;
                 case DOCX:
-                    actResult = actFilledDocument;
+                    actResult = actFilledDocument.getContent();
+                    actResultFileName = actFilledDocument.getFileName();
                     LOGGER.trace("  No conversion needed for the actual template.");
                     break;
                 default:
@@ -272,8 +320,11 @@ public class TemplateServiceImpl implements TemplateService {
                     throw new TemplateProcessException("a520da67-15b9-4fac-8f2f-15b68c13815b", msg);
             }
         } else {
-            actResult = actFilledDocument;
-        } return actResult;
+            actResult = actFilledDocument.getContent();
+            actResultFileName = actFilledDocument.getFileName();
+        }
+
+        return new ResultDocument(actResultFileName, actResult);
     }
 
     private TemplateContext getLocalTemplateContext(final Optional<TemplateContext> globalContext,

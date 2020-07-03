@@ -20,7 +20,7 @@ public class TemplateServiceInputFormatTest {
     public void processorDocxOKTest() {
 
         try {
-            final StoredResultDocument result = ts.fillAndSave("templates/docx/SimpleContract_v1_21-pojo.docx",
+            final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-pojo.docx",
                     ContractDataFactory.createContract());
 
             Assert.assertTrue(result.isGenerated());
@@ -38,7 +38,7 @@ public class TemplateServiceInputFormatTest {
     public void processorDocxToPdfOKTest() {
 
         try {
-            final StoredResultDocument result = ts.fillAndSave("templates/docx/SimpleContract_v1_21-pojo.docx",
+            final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-pojo.docx",
                     ContractDataFactory.createContract(), OutputFormat.PDF);
 
             Assert.assertTrue(result.isGenerated());

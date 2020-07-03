@@ -30,20 +30,20 @@ public class DocxInputTemplateProcessorTest {
     @Test
     public void fillValidTemplateMatchingFormat() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
-        this.processor.fill(FileSystemHelper.getFullPath(inputDir, fileName), getContractTestData());
+        this.processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName), getContractTestData());
     }
 
     @Test
     public void fillTemplateNotFound() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
 
         final String fileName = "this_template_file_does_not_exist.docx";
 
-        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFullPath(inputDir, fileName),
+        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
                 getContractTestData())) {
 
             Assert.assertFalse(false);
@@ -57,11 +57,11 @@ public class DocxInputTemplateProcessorTest {
     @Test
     public void fillValidTemplatePlaceholderError() {
 
-        final String inputDir = "templates/docx";
+        final String inputDir = "unittests/docx";
 
         final String fileName = "SimpleContract_v1_21-pojo-placeholder_error.docx";
 
-        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFullPath(inputDir, fileName),
+        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
                 getContractTestData())) {
 
             Assert.assertFalse(false);

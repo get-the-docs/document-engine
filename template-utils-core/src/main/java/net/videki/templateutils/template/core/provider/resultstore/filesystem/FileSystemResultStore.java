@@ -1,6 +1,6 @@
 package net.videki.templateutils.template.core.provider.resultstore.filesystem;
 
-import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
+import net.videki.templateutils.template.core.configuration.RepositoryConfiguration;
 import net.videki.templateutils.template.core.documentstructure.ResultDocument;
 import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
@@ -21,7 +21,13 @@ import java.util.List;
 public class FileSystemResultStore implements ResultStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemResultStore.class);
-    private static final String CONFIG_PROPERTY_BASEDIR = "repository.result.provider.FileSystemResultStore.basedir";
+
+    private String baseDir;
+
+    @Override
+    public void init(final RepositoryConfiguration props) {
+        this.baseDir = props.getBaseDir();
+    }
 
     @Override
     public StoredResultDocument save(final ResultDocument result) {
@@ -29,15 +35,11 @@ public class FileSystemResultStore implements ResultStore {
             throw new TemplateProcessException("cb05a816-dea2-4498-823a-33fb4ece1565", "No result caught.");
         }
 
-        final TemplateServiceConfiguration configuration = TemplateServiceConfiguration.getInstance();
-        final String projectOutDir =
-                configuration.getConfigurationProperties().getProperty(CONFIG_PROPERTY_BASEDIR);
-
         String transactionDir = result.getTransactionId();
         if (transactionDir == null) {
             transactionDir = ".";
         }
-        final String resultDir = FileSystemHelper.getFullPath(projectOutDir, transactionDir);
+        final String resultDir = FileSystemHelper.getFileNameWithPath(this.baseDir, transactionDir);
 
         synchronized (this) {
             final File subdir = new File(resultDir);
@@ -48,7 +50,7 @@ public class FileSystemResultStore implements ResultStore {
             }
         }
 
-        final String resultFileName = FileSystemHelper.getFullPath(resultDir, result.getFileName());
+        final String resultFileName = FileSystemHelper.getFileNameWithPath(resultDir, result.getFileName());
         boolean actSuccessFlag = false;
 
         LOGGER.info("Result file: {}.", resultFileName);

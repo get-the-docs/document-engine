@@ -31,6 +31,7 @@ public class ValueSet implements JsonModel {
      */
     public ValueSet() {
         this.transactionId = UUID.randomUUID().toString();
+        this.locale = Locale.getDefault();
     }
 
     /**
@@ -39,7 +40,20 @@ public class ValueSet implements JsonModel {
      */
     public ValueSet(final String transactionId) {
         this.transactionId = transactionId;
+        this.locale = Locale.getDefault();
+
     }
+
+    /**
+     * Constructor - specifying a given transaction id
+     * @param transactionId the requested transaction id
+     * @param locale the value sets' preferred locale (based on the data provided)
+     */
+    public ValueSet(String transactionId, Locale locale) {
+        this.transactionId = transactionId;
+        this.locale = locale;
+    }
+
     /**
      * <p>The actual value set which will be used when filling each doc part.</p>
      * <p>There are two kinds of contexts:</p>

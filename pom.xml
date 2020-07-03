@@ -67,7 +67,6 @@
         <module>template-utils-core-dto-extensions</module>
         <module>template-utils-core</module>
         <module>template-utils-core-test-dto</module>
-        <module>template-utils-documentstructure-builder</module>
     </modules>
 
     <build>

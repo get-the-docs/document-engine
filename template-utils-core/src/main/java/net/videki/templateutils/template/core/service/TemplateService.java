@@ -48,6 +48,17 @@ public interface TemplateService {
   GenerationResult fill(final DocumentStructure documentStructure, final ValueSet values)
           throws TemplateServiceException;
 
+  /** Process a multipart template (consisting of one or more template files) and return one or more result documents.
+   * @param documentStructureFile the document structure file name to be filled with the specified values.
+   * @param values the value objects for the document parts. The values are organized into contexts where
+   *               each document part may have its own value objects and a global one - see the template contexts
+   *               in @see ValueSet.
+   * @throws TemplateServiceException if invalid parameters caught
+   * @return GenerationResult the result documents generated based on the input documentstructure and value set
+   * */
+  GenerationResult fillDocumentStructureByName(final String documentStructureFile, final ValueSet values)
+          throws TemplateServiceException;
+
   /** <p>Fills the given single file template specified by its name and return the filled document
    * in the templates format.</p>
    * <p>The template file format has to be in the configured template provider - @see TemplateServiceConfiguration</p>
@@ -85,4 +96,17 @@ public interface TemplateService {
    * */
   StoredGenerationResult fillAndSave(final DocumentStructure documentStructure, final ValueSet values)
           throws TemplateServiceException;
+
+
+  /** Process a multipart template (consisting of one or more template files) and return one or more result documents.
+   * @param documentStructureFile the document structure file name to be filled with the specified values.
+   * @param values the value objects for the document parts. The values are organized into contexts where
+   *               each document part may have its own value objects and a global one - see the template contexts
+   *               in @see ValueSet.
+   * @throws TemplateServiceException if invalid parameters caught
+   * @return GenerationResult the result documents generated based on the input documentstructure and value set
+   * */
+  StoredGenerationResult fillAndSaveDocumentStructureByName(final String documentStructureFile, final ValueSet values)
+          throws TemplateServiceException;
+
 }
