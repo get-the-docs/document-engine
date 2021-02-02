@@ -122,6 +122,8 @@ public class TemplateServiceConfiguration {
 
     private Map<String, Map<FontStyle, FontConfig>> styles = new TreeMap<>();
 
+    private String fontDir;
+
     TemplateServiceConfiguration() {
         init();
     }
@@ -147,7 +149,9 @@ public class TemplateServiceConfiguration {
 
     private void initFontLibrary(Set<Object> keys) {
         if (keys != null && !keys.isEmpty()) {
-            final String basedir = (String) properties.get(FONT_DIR);
+            this.fontDir = (String) properties.get(FONT_DIR);
+
+
 
             for (Object actKey : keys) {
                 final String s = (String) actKey;
@@ -163,7 +167,7 @@ public class TemplateServiceConfiguration {
                             final FontConfig f = new FontConfig();
                             f.setFontFamily(actFamily);
                             f.setStyle(fs);
-                            f.setBasedir(basedir);
+                            f.setBasedir(this.fontDir);
                             f.setFileName(fileForStyle);
 
                             Map<FontStyle, FontConfig> fm = styles.get(actFamily);
@@ -341,6 +345,18 @@ public class TemplateServiceConfiguration {
         return null;
     }
 
+    public List<FontConfig> getFontConfig() {
+        final List<FontConfig> result = new LinkedList<>();
+
+        final Set<String> families = this.styles.keySet();
+        for (final String actKey : families) {
+            final Map<FontStyle, FontConfig> fm = this.styles.get(actKey);
+            result.addAll(fm.values());
+        }
+
+        return result;
+    }
+
     public String getDocStructureLogCategory() {
         return this.properties.getProperty(LOG_APPENDER);
     }
@@ -382,5 +398,9 @@ public class TemplateServiceConfiguration {
 
     public Properties getConfigurationProperties() {
         return properties;
+    }
+
+    public String getFontDir() {
+        return fontDir;
     }
 }

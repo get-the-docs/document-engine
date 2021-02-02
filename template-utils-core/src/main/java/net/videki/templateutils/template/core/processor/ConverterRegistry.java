@@ -1,7 +1,7 @@
 package net.videki.templateutils.template.core.processor;
 
 import net.videki.templateutils.template.core.processor.converter.Converter;
-import net.videki.templateutils.template.core.processor.converter.pdf.DocxToPdfConverter;
+import net.videki.templateutils.template.core.processor.converter.pdf.docx4j.DocxToPdfConverter;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;

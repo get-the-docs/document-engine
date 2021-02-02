@@ -1,4 +1,4 @@
-package net.videki.templateutils.template.core.processor.converter.pdf;
+package net.videki.templateutils.template.core.processor.converter.pdf.docx4j;
 
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.processor.converter.ConversionException;
