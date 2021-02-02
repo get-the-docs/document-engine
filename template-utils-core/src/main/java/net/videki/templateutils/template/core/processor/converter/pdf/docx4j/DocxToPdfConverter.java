@@ -21,14 +21,17 @@ import java.util.List;
 public class DocxToPdfConverter implements Converter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DocxToPdfConverter.class);
+  private static final Mapper FONTMAPPER_INSTANCE = new IdentityPlusMapper();
 
   static {
 
     try {
       PhysicalFonts.discoverPhysicalFonts();
 
-    } catch (Exception e) {
-      e.printStackTrace();
+      final TemplateServiceConfiguration fontConfiguration = TemplateServiceConfiguration.getInstance();
+      AdditionalFontFinder.discoverFonts(fontConfiguration.getFontConfig());
+    } catch (final Exception e) {
+      LOGGER.warn("Error initializing OS level fonts", e);
     }
 
   }
@@ -51,23 +54,12 @@ public class DocxToPdfConverter implements Converter {
       throw new ConversionException("7d90a4a1-14df-4d1a-87d8-fd9b146357e8", "Null input caught.");
     }
 
-    final TemplateServiceConfiguration fontConfiguration = TemplateServiceConfiguration.getInstance();
-
-    result = FileSystemHelper.getOutputStream();
-
     try {
+      result = FileSystemHelper.getOutputStream();
 
       final WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(source);
-      final List<SectionWrapper> sections = wordMLPackage.getDocumentModel().getSections();
-      for (int i = 0; i < sections.size(); i++) {
-        wordMLPackage.getDocumentModel().getSections().get(i).getPageDimensions();
-      }
 
-      final Mapper fontMapper = new IdentityPlusMapper();
-
-      AdditionalFontFinder.discoverFonts(fontConfiguration.getFontConfig());
-
-      wordMLPackage.setFontMapper(fontMapper);
+      wordMLPackage.setFontMapper(FONTMAPPER_INSTANCE);
 
       Docx4J.toPDF(wordMLPackage, result);
 
