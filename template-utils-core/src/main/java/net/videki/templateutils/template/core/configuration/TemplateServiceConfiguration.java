@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.provider.documentstructure.DocumentStructureRepository;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
@@ -123,7 +122,7 @@ public class TemplateServiceConfiguration {
 
     private ResultStore resultStore;
 
-    private Map<String, Map<FontStyle, FontConfig>> styles = new TreeMap<>();
+    private final Map<String, Map<FontStyle, FontConfig>> styles = new TreeMap<>();
 
     private String fontDir;
 
@@ -173,11 +172,7 @@ public class TemplateServiceConfiguration {
                             f.setBasedir(this.fontDir);
                             f.setFileName(fileForStyle);
 
-                            Map<FontStyle, FontConfig> fm = styles.get(actFamily);
-                            if (fm == null) {
-                                fm = new TreeMap<>();
-                                styles.put(actFamily, fm);
-                            }
+                            Map<FontStyle, FontConfig> fm = styles.computeIfAbsent(actFamily, k -> new TreeMap<>());
                             fm.put(fs, f);
                         }
                     }
@@ -206,8 +201,8 @@ public class TemplateServiceConfiguration {
 
                 this.documentStructureRepository = tmpRepo;
             } else {
-                final String msg = String.format("Document structure repository not specified, " +
-                        "using fallback built-in FileSystemTemplateRepository.");
+                final String msg = "Document structure repository not specified, " +
+                        "using fallback built-in FileSystemTemplateRepository.";
                 LOGGER.info(msg);
             }
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException e) {
@@ -236,8 +231,8 @@ public class TemplateServiceConfiguration {
                                 .getDeclaredConstructor()
                                 .newInstance();
             } else {
-                final String msg = String.format("Document structure builder not specified, " +
-                        "using built-in YmlDocStructureBuilder.");
+                final String msg = "Document structure builder not specified, " +
+                        "using built-in YmlDocStructureBuilder.";
                 LOGGER.info(msg);
             }
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
@@ -269,8 +264,8 @@ public class TemplateServiceConfiguration {
 
                 this.templateRepository = tmpRepo;
             } else {
-                final String msg = String.format("Template repository not specified, " +
-                        "using fallback built-in FileSystemTemplateRepository.");
+                final String msg = "Template repository not specified, " +
+                        "using fallback built-in FileSystemTemplateRepository.";
                 LOGGER.info(msg);
             }
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
@@ -302,8 +297,8 @@ public class TemplateServiceConfiguration {
 
                 this.resultStore = tmpRepo;
             } else {
-                final String msg = String.format("Template result repository not specified, " +
-                        "using fallback built-in FileSystemTemplateRepository.");
+                final String msg = "Template result repository not specified, " +
+                        "using fallback built-in FileSystemTemplateRepository.";
                 LOGGER.info(msg);
 
             }
@@ -361,7 +356,7 @@ public class TemplateServiceConfiguration {
     }
 
     public String getDocStructureLogCategory() {
-        return this.properties.getProperty(LOG_APPENDER);
+        return properties.getProperty(LOG_APPENDER);
     }
 
     public DocumentStructureRepository getDocumentStructureRepository() {
@@ -383,9 +378,7 @@ public class TemplateServiceConfiguration {
                 result = INSTANCE = new TemplateServiceConfiguration();
             }
         }
-        if (result == null) {
-            LOGGER.error("Could not create TemplateServiceConfiguration.");
-        }
+
         return result;
     }
 
@@ -402,11 +395,14 @@ public class TemplateServiceConfiguration {
     /**
      * Initializes the service configuration with a custom config instance.
      * Can be used to override repository provider, etc. logic.
+     * @param newConfiguration custom configuration
+     * @throws TemplateServiceConfigurationException when invalid template caught.
      */
-    public static void load(final TemplateServiceConfiguration c) throws TemplateServiceConfigurationException {
-        if (c != null) {
+    public static void load(final TemplateServiceConfiguration newConfiguration)
+            throws TemplateServiceConfigurationException {
+        if (newConfiguration != null) {
             synchronized (INSTANCE) {
-                INSTANCE = c;
+                INSTANCE = newConfiguration;
             }
         } else {
             throw new TemplateServiceConfigurationException("876075ed-6e23-4d84-95ba-05f45ba9193a",
@@ -414,14 +410,26 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Returns the service configuration.
+     * @return properties
+     */
     public Properties getConfigurationProperties() {
         return properties;
     }
 
+    /**
+     * Returns the font basedir - @see converter.pdf.font-library.basedir.
+     * @return String the font dir
+     */
     public String getFontDir() {
         return fontDir;
     }
 
+    /**
+     * Sets the font dir for custom config.
+     * @param fontDir the new font dir
+     */
     protected void setFontDir(String fontDir) {
         this.fontDir = fontDir;
     }
