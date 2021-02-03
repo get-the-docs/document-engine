@@ -74,12 +74,15 @@ public class DocxInputTemplateProcessorTest {
 
     private TemplateContext getContractTestData() {
         final Contract dto = ContractDataFactory.createContract();
-        final OrganizationUnit orgUnit = OrgUnitDataFactory.createOrgUnit();
-        final Officer officer = OfficerDataFactory.createOfficer();
+//        final OrganizationUnit orgUnit = OrgUnitDataFactory.createOrgUnit();
+//        final Officer officer = OfficerDataFactory.createOfficer();
 
         final TemplateContext context = new TemplateContext();
-        context.getCtx().put(TemplateContext.CONTEXT_ROOT_KEY_MODEL, dto);
+        context.addValueObject(dto);
+//        context.addValueObject(orgUnit);
+//        context.addValueObject(officer);
 
+        System.out.println(context.toJson());
         return context;
     }
 }

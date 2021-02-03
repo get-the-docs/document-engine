@@ -56,7 +56,7 @@ public class DocxInputTemplateProcessor extends AbstractTemplateProcessor implem
       throw e;
 
     } catch (final UnresolvedExpressionException e) {
-      final String msg = String.format("Placholder error in file: %s", templateFileName);
+      final String msg = String.format("Placeholder error in file: %s", templateFileName);
       LOGGER.warn(msg, e);
 
       throw new PlaceholderEvalException("ff03cf41-25fb-463a-829d-e2b411df4c16", msg, e);

@@ -21,7 +21,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <maven-enforcer-maven.version>3.3.9</maven-enforcer-maven.version>
-        <spring.version>2.3.0.RELEASE</spring.version>
+        <spring.version>2.4.2</spring.version>
+        <docx4j.version>11.2.8</docx4j.version>
+        <poi.version>5.0.0</poi.version>
         <lombok.version>1.18.6</lombok.version>
         <mapstruct.version>1.3.1.Final</mapstruct.version>
         <jackson.dataformat-xml.version>2.10.2</jackson.dataformat-xml.version>
@@ -105,6 +107,10 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-dataformat-yaml</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.docx4j</groupId>
+                    <artifactId>docx4j</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -112,7 +118,7 @@
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls</artifactId>
-            <version>2.6.0</version>
+            <version>2.8.0</version>
         </dependency>
         <dependency>
             <groupId>org.jxls</groupId>
@@ -122,7 +128,7 @@
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls-poi</artifactId>
-            <version>1.0.13</version>
+            <version>2.8.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
@@ -142,28 +148,21 @@
             </exclusions>
         </dependency>
 
-        <!--  implementation('org.apache.commons:commons-jexl:2.1.1') -->
-
         <!-- PDF -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.16</version>
+            <version>${poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.16</version>
+            <version>${poi.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>ooxml-schemas</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.lowagie</groupId>
-            <artifactId>itext</artifactId>
-            <version>2.1.7</version>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -182,12 +181,19 @@
             <version>3.24.0-GA</version>
         </dependency>
 
-        <!-- Docx->pdf converter (requires poi3, itext<5) -->
+        <!-- Docx->pdf converter -->
         <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
-            <version>2.0.1</version>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j-export-fo</artifactId>
+            <version>${docx4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+            <version>${docx4j.version}</version>
+        </dependency>
+
+
 
         <!-- Pdf merger -->
         <dependency>

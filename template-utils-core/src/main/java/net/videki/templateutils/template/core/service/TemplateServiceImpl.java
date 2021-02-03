@@ -12,12 +12,13 @@ import java.util.stream.Stream;
 import com.google.common.base.Strings;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.documentstructure.*;
+import net.videki.templateutils.template.core.processor.ConverterRegistry;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.processor.TemplateProcessorRegistry;
-import net.videki.templateutils.template.core.processor.converter.pdf.DocxToPdfConverter;
+import net.videki.templateutils.template.core.processor.converter.pdf.docx4j.DocxToPdfConverter;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
@@ -60,7 +61,7 @@ public class TemplateServiceImpl implements TemplateService {
         } else {
             LOGGER.debug("POJO context caught.");
             context = new TemplateContext();
-            context.getCtx().put(TemplateContext.CONTEXT_ROOT_KEY_MODEL, dto);
+            context.addValueObject(dto);
         }
 
         LOGGER.debug("Context object: {}", context.toJson());
@@ -108,6 +109,7 @@ public class TemplateServiceImpl implements TemplateService {
         OutputStream result = null;
 
         final Optional<ResultDocument> filledDoc = Optional.ofNullable(fill(templateName, dto));
+        final InputFormat inputFormat = InputFormat.getInputFormatForFileName(templateName);
 
         if (filledDoc.isPresent()) {
             switch (outputFormat) {
@@ -116,13 +118,13 @@ public class TemplateServiceImpl implements TemplateService {
                     break;
                 case PDF:
                     final InputStream filledInputStream = FileSystemHelper.getInputStream(filledDoc.get().getContent());
-                    result = new DocxToPdfConverter().convert(filledInputStream);
+                    result = ConverterRegistry.getConverter(inputFormat, OutputFormat.PDF).convert(filledInputStream);
                     break;
                 default:
                     LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
             }
         }
-        return new ResultDocument(templateName, result);
+        return new ResultDocument(getOutputFileName(templateName, outputFormat), result);
     }
 
     @Override
