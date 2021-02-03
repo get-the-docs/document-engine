@@ -12,10 +12,13 @@ import net.videki.templateutils.template.core.provider.documentstructure.builder
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.provider.templaterepository.TemplateRepository;
 import net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.videki.templateutils.template.core.service.TemplateService;
+
+import static net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS;
 
 /**
  * Template service configuration.
@@ -124,11 +127,11 @@ public class TemplateServiceConfiguration {
 
     private String fontDir;
 
-    TemplateServiceConfiguration() {
+    protected TemplateServiceConfiguration() {
         init();
     }
 
-    private void init() {
+    protected void init() {
 
         properties = new Properties();
         Set<Object> keys = Collections.emptySet();
@@ -388,11 +391,26 @@ public class TemplateServiceConfiguration {
 
     /**
      * Re-initializes the whole service configuration.
-     * Can be used to relase caches, re-login to the repository providers, etc.
+     * Can be used to release caches, re-login to the repository providers, etc.
      */
     public static void reload() {
         synchronized (INSTANCE) {
             INSTANCE = new TemplateServiceConfiguration();
+        }
+    }
+
+    /**
+     * Initializes the service configuration with a custom config instance.
+     * Can be used to override repository provider, etc. logic.
+     */
+    public static void load(final TemplateServiceConfiguration c) throws TemplateServiceConfigurationException {
+        if (c != null) {
+            synchronized (INSTANCE) {
+                INSTANCE = c;
+            }
+        } else {
+            throw new TemplateServiceConfigurationException("876075ed-6e23-4d84-95ba-05f45ba9193a",
+                    String.format("%s - trying to set the template service config to null.", MSG_INVALID_PARAMETERS) );
         }
     }
 
@@ -402,5 +420,9 @@ public class TemplateServiceConfiguration {
 
     public String getFontDir() {
         return fontDir;
+    }
+
+    protected void setFontDir(String fontDir) {
+        this.fontDir = fontDir;
     }
 }

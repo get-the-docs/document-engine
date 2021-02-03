@@ -1,5 +1,8 @@
 package net.videki.templateutils.template.core.processor.converter.pdf.docx4j;
 
+import net.videki.templateutils.template.core.configuration.FontConfig;
+import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.processor.converter.ConversionException;
 import net.videki.templateutils.template.core.processor.converter.Converter;
@@ -12,6 +15,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DocxToPdfConverterTest {
+
+    public static class TemplateServiceConfigurationTest extends TemplateServiceConfiguration {
+        @Override
+        protected void setFontDir(String fontDir) {
+            super.setFontDir(fontDir);
+        }
+    }
 
     @Test
     public void inputFormatTest() {
@@ -83,6 +93,46 @@ public class DocxToPdfConverterTest {
         }
     }
 
+    @Test
+    public void fontConfigInvalid() {
+        try {
+            TemplateServiceConfiguration.load(null);
+        } catch (final TemplateServiceConfigurationException e) {
+            Assert.assertEquals("876075ed-6e23-4d84-95ba-05f45ba9193a", e.getCode());
+        } catch (final Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void fontConfigAddExtraNoFontDirEmpty() {
+        try {
+            TemplateServiceConfigurationTest configuration = new TemplateServiceConfigurationTest();
+            configuration.setFontDir("");
+            TemplateServiceConfiguration.load(configuration);
+        } catch (final TemplateServiceConfigurationException e) {
+            Assert.assertEquals("656dca28-bc61-4059-991f-7bb65ec916e6", e.getCode());
+        } catch (final Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void fontConfigAddExtraFontDir() {
+        try {
+            TemplateServiceConfiguration configuration = new TemplateServiceConfigurationTest();
+            final FontConfig myFont = new FontConfig();
+            myFont.setBasedir("/fonts");
+            configuration.getFontConfig().add(myFont);
+
+            TemplateServiceConfiguration.load(configuration);
+
+            Assert.assertTrue(true);
+        } catch (final Exception e) {
+            Assert.fail();
+        }
+    }
+
     private static InputStream getTemplate(final String templateFile) {
         InputStream result;
 
@@ -91,6 +141,5 @@ public class DocxToPdfConverterTest {
         return result;
 
     }
-
 
 }
