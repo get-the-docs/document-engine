@@ -1,9 +1,12 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
+// See https://docusaurus.io/docs/site-config for all the possible
+// site configuration options.
 
 // List of projects/orgs using your project for the users page.
 const users = [
@@ -19,23 +22,23 @@ const users = [
 
 const siteConfig = {
   title: 'Template utils',
-  tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application ',
+  tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application',
   url: 'https://videki.github.io',
   baseUrl: '/template-utils/',
+  repoUrl: 'https://github.com/videki/template-utils',
 
+  // Used for publishing and more
   projectName: 'template-utils',
   organizationName: 'videki',
 
-
-  // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-//    {doc: 'getting-started', label: 'Getting started'},
-//    {doc: 'features', label: 'Features'},
-//    {doc: 'faq', label: 'Faq'},
+    {doc: 'getting-started', label: 'Getting started'},
+    {doc: 'documentation', label: 'Documentation'},
+    {doc: 'samples', label: 'Examples'},
   ],
 
   // If you have users set above, you add it here:
-  //users,
+  users,
 
   /* path to images for header/footer */
   headerIcon: 'img/favicon.ico',
@@ -94,7 +97,7 @@ const siteConfig = {
 
   // You may provide arbitrary config keys to be used as needed by your
   // template. For example, if you need your repo's URL...
-  //   repoUrl: 'https://github.com/facebook/test-site',
+  // repoUrl: 'https://github.com/facebook/test-site',
 };
 
 module.exports = siteConfig;

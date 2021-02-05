@@ -3,13 +3,26 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "Create and impersonate single or multi-part docx and xlsx templates easily with your application ",
+    "tagline": "Create and impersonate single or multi-part docx and xlsx templates easily with your application",
     "docs": {
       "code-of-conduct": {
         "title": "Code of Conduct"
+      },
+      "documentation": {
+        "title": "Documentation"
+      },
+      "getting-started": {
+        "title": "Getting started"
+      },
+      "samples": {
+        "title": "Examples"
       }
     },
-    "links": {},
+    "links": {
+      "Getting started": "Getting started",
+      "Documentation": "Documentation",
+      "Examples": "Examples"
+    },
     "categories": {
       "Docusaurus": "Docusaurus",
       "First Category": "First Category",
