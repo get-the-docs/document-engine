@@ -24,7 +24,7 @@
     </logger>
 
     <logger name="net.videki">
-        <level value="DEBUG"/>
+        <level value="TRACE"/>
     </logger>
 
 </log4j:configuration>

@@ -4,8 +4,8 @@ import net.videki.templateutils.documentstructure.builder.core.service.DocumentS
 import net.videki.templateutils.documentstructure.builder.core.service.impl.YmlDocStructureBuilder;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,6 +24,23 @@ public class DocumentStructureOptionsTest {
             final DocumentStructureOptions dso = dsBuilder.buildOptions("/contract_v02-options.yml");
 
         } catch (TemplateNotFoundException | TemplateServiceException e) {
+            e.printStackTrace();
+            fail();
+        }
+
+    }
+
+    @Test
+    public void readDocStructureNonExistentFile() {
+        try {
+            final DocumentStructureOptionsBuilder dsBuilder = new YmlDocStructureBuilder();
+
+            final DocumentStructureOptions dso =
+                    dsBuilder.buildOptions("/contract_v02-options-this_file_does_not_exist.yml");
+
+        } catch (TemplateServiceConfigurationException e) {
+            Assert.assertEquals("bf4dbf44-8b7b-4cba-b449-906083eabf0d", e.getCode());
+        } catch (Exception e) {
             e.printStackTrace();
             fail();
         }

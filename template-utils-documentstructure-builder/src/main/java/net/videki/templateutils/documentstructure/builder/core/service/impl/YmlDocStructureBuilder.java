@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class YmlDocStructureBuilder implements DocumentStructureBuilder, DocumentStructureOptionsBuilder {
 
@@ -68,8 +69,12 @@ public class YmlDocStructureBuilder implements DocumentStructureBuilder, Documen
 
         mapper.registerModule(module);
         try {
-            result = mapper.readValue(YmlDocStructureBuilder.class.getResourceAsStream(dsConfig),
-                    DocumentStructureOptions.class);
+            final InputStream is = YmlDocStructureBuilder.class.getResourceAsStream(dsConfig);
+            if (is == null) {
+                throw new FileNotFoundException();
+            }
+
+            result = mapper.readValue(is, DocumentStructureOptions.class);
             if (LOGGER.isDebugEnabled()) {
                 final String msg = String.format("DocumentStructureOptions loaded: configFile: %s", dsConfig);
 
@@ -79,7 +84,7 @@ public class YmlDocStructureBuilder implements DocumentStructureBuilder, Documen
                 final String msg = String.format("DocumentStructureOptions loaded: configFile: %s, content: %s", dsConfig,
                         ReflectionToStringBuilder.toString(result, ToStringStyle.MULTI_LINE_STYLE));
 
-                LOGGER.debug(msg);
+                LOGGER.trace(msg);
             }
         } catch (FileNotFoundException e) {
             final String msg = String.format("DocumentStructureOptions configuration file not found: %s", dsConfig);
