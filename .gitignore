@@ -1,14 +1,6 @@
-/.idea/
-/.gradle/
-/template-utils-core-test-dto/build/
-/template-utils-core/target/
-/template-utils-core-dto-extensions/target/
-/template-utils-core-test-dto/target/
-/template-utils-documentstructure-builder/target/
-/website/node_modules/
-/template-utils-core/template-utils-core.iml
-/template-utils-core-dto-extensions/template-utils-core-dto-extensions.iml
-/template-utils-core-test-dto/template-utils-core-test-dto.iml
-/template-utils-core-test-dto/template-utils-core-test-dto (1).iml
-/template-utils-documentstructure-builder/template-utils-core-test-dto (2).iml
-/template-utils-documentstructure-builder/template-utils-documentstructure-builder.iml
+/**/*.iml
+/**/node_modules/
+/**/.idea/
+/**/target/
+/**/.docusaurus
+/**/.cache-loader

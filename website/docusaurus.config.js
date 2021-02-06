@@ -1,111 +1,106 @@
-const fs = require('fs');
-const path = require('path');
-const parseYaml = require("js-yaml").safeLoad;
-
-const loadYaml = relativePath => parseYaml(fs.readFileSync(path.join(__dirname, relativePath), "utf8"));
-
-// See https://docusaurus.io/docs/site-config for all the possible
-// site configuration options.
-
-const team = loadYaml("src/dynamic/team.yml");
-const users = loadYaml("src/dynamic/users.yml");
-const sponsors = loadYaml("src/dynamic/sponsors.yml");
-const baseUrl = '/template-utils/';
-
-const docusaurusConfig = {
+module.exports = {
   title: 'Template utils',
-  tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application',
+  tagline: 'Create and impersonate single or multi-part Word and Excel templates easily with your application',
   url: 'https://videki.github.io',
-  baseUrl: baseUrl,
-  favicon: 'img/favicon.png',
-  organizationName: 'template-utils',
-  projectName: 'videki',
-
-//  plugins: ['@docusaurus/plugin-google-analytics'],
-
+  baseUrl: '/template-utils/',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+  favicon: 'img/favicon.ico',
+  organizationName: 'videki',
+  projectName: 'template-utils',
   themeConfig: {
-    // Open Graph and Twitter card images.
-    image: 'img/docusaurus.png',
-
-    sidebarCollapsible: true,
-
-    prism: {
-      theme: require('prism-react-renderer/themes/dracula'),
-      defaultLanguage: 'bash',
-    },
-
     navbar: {
       title: 'Template utils',
       logo: {
-        src: 'img/template-utils-logo.png',
         alt: 'Template utils logo',
+        src: 'img/template-utils-logo.png',
       },
-
-      links: [
-        {to: 'docs/getting-started', label: 'Getting Started'},
-        {to: 'docs/documentation', label: 'Documentation'},
+      items: [
+        {
+          to: 'docs/getting-started/overview/',
+          activeBasePath: 'docs/getting-started',
+          label: 'Getting started',
+          position: 'left',
+        },
+        {
+          to: 'docs/documentation/architecture/',
+          activeBasePath: 'docs/documentation',
+          label: 'Documentation',
+          position: 'left',
+        },
+        {
+          to: 'docs/about/roadmap/',
+          activeBasePath: 'docs/about',
+          label: 'Roadmap',
+          position: 'left',
+        },
+        {
+          href: 'https://github.com/videki/template-utils',
+          label: 'GitHub',
+          position: 'right',
+        },
       ],
     },
-
     footer: {
       style: 'dark',
-
-      logo: {
-        alt: 'Template utiles',
-        src: 'img/template-utils-logo.svg',
-        href: 'https://videki.github.io/template-utils/',
-      },
-
-      copyright:  `Copyright © ${new Date().getFullYear()} contributors of the template-utils project`
+      links: [
+        {
+          title: 'Related links',
+          items: [
+            {
+              label: 'Docx stamper',
+              href: 'https://github.com/thombergs/docx-stamper',
+            },
+            {
+              label: 'Samples',
+              href: 'https://github.com/videki/template-utils/tree/master/template-utils-samples',
+            },
+          ],
+        },
+        {
+          title: 'Community',
+          items: [
+            {
+              label: 'Twitter',
+              href: 'https://twitter.com/template_utils',
+            },
+          ],
+        },
+        {
+          title: 'More',
+          items: [
+            {
+              label: 'GitHub',
+              href: 'https://github.com/videki/template-utils',
+            },
+            {
+              label: 'Mvn repository',
+              href: 'https://mvnrepository.com/artifact/net.videki/template-utils',
+            },
+            {
+              label: 'License',
+              href: 'https://github.com/videki/template-utils/blob/master/LICENSE',
+            },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} contributors of the Template Utils Project.`,
     },
   },
   presets: [
     [
       '@docusaurus/preset-classic',
       {
+        docs: {
+          sidebarPath: require.resolve('./sidebars.js'),
+          // Please change this to your repo.
+          editUrl:
+              'https://github.com/videki/template-utils',
+        },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
-        },
-
-        docs: {
-          // docs folder path relative to website dir.
-          path: '../docs',
-          include: ['**/*.md', '**/*.mdx'],
-
-          // sidebars file relative to website dir.
-          sidebarPath: require.resolve('./sidebars.js'),
-
-          /**
-           * Theme components used by the docs pages
-           */
-          docLayoutComponent: '@theme/DocPage',
-          docItemComponent: '@theme/DocItem',
-
-          editUrl: 'https://github.com/OpenAPITools/openapi-generator/edit/master/website',
-
-          // Equivalent to `docsUrl`.
-          routeBasePath: 'docs',
-          // Remark and Rehype plugins passed to MDX. Replaces `markdownOptions` and `markdownPlugins`.
-          remarkPlugins: [],
-          rehypePlugins: [],
-          // Equivalent to `enableUpdateBy`.
-          showLastUpdateAuthor: true,
-          // Equivalent to `enableUpdateTime`.
-          showLastUpdateTime: true,
         },
       },
     ],
   ],
-
-  // Add custom scripts here that would be placed in <script> tags.
-  scripts: [
-      'https://buttons.github.io/buttons.js',
-  ],
-  customFields: {
-    users: users,
-    sponsors: sponsors,
-    team: team
-  },
 };
-
-module.exports = docusaurusConfig;
