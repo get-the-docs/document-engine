@@ -52,7 +52,7 @@ public class DocumentStructure implements JsonModel {
         Optional<TemplateElementId> result = Optional.empty();
 
         for (final TemplateElement actElement : this.elements) {
-            if (actElement.getTemplateElementId().equals(friendlyName)) {
+            if (actElement.getTemplateElementId().getId().equals(friendlyName)) {
                 result = Optional.of(actElement.getTemplateElementId());
             }
         }
@@ -86,6 +86,17 @@ public class DocumentStructure implements JsonModel {
 
     public String getDocumentStructureId() {
         return documentStructureId;
+    }
+
+    public Optional<TemplateElement> getElementByFriendlyName(final String friendlyName) {
+        Optional<TemplateElement> result = Optional.empty();
+
+        for (final TemplateElement actElement : this.elements) {
+            if (actElement.getTemplateElementId().getId().equals(friendlyName)) {
+                result = Optional.of(actElement);
+            }
+        }
+        return result;
     }
 
     @Override

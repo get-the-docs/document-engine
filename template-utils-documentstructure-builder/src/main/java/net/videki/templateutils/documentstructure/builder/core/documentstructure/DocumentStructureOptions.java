@@ -33,7 +33,8 @@ public class DocumentStructureOptions {
         Optional<TemplateElementId> result = Optional.empty();
 
         for (final TemplateElement actElement : this.elements) {
-            if (actElement.getTemplateElementId().equals(friendlyName)) {
+            if (actElement.getTemplateElementId() != null &&
+                    actElement.getTemplateElementId().getId().equals(friendlyName)) {
                 result = Optional.of(actElement.getTemplateElementId());
             }
         }
@@ -42,6 +43,17 @@ public class DocumentStructureOptions {
 
     public String getDocumentStructureId() {
         return documentStructureId;
+    }
+
+    public Optional<OptionalTemplateElement> getElementByFriendlyName(final String friendlyName) {
+        Optional<OptionalTemplateElement> result = Optional.empty();
+
+        for (final OptionalTemplateElement actElement : this.elements) {
+            if (actElement.getTemplateElementId().getId().equals(friendlyName)) {
+                result = Optional.of(actElement);
+            }
+        }
+        return result;
     }
 
     @Override
