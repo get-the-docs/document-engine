@@ -67,17 +67,17 @@
 
         <!-- Project dependencies -->
         <dependency>
-            <groupId>net.videki</groupId>
+            <groupId>net.videki.template-utils</groupId>
             <artifactId>template-utils-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.videki</groupId>
+            <groupId>net.videki.template-utils</groupId>
             <artifactId>template-utils-core-dto-extensions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.videki</groupId>
+            <groupId>net.videki.template-utils</groupId>
             <artifactId>template-utils-core-test-dto</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

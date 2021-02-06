@@ -32,7 +32,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>net.videki</groupId>
+            <groupId>net.videki.template-utils</groupId>
             <artifactId>template-utils-core-dto-extensions</artifactId>
             <version>1.0.1</version>
         </dependency>
