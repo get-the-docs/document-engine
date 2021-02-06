@@ -39,4 +39,4 @@ control elements (placeholders, add-in functions and paragraph control markers).
 
 ## Dependencies
 
-## Licencing
+## Licensing

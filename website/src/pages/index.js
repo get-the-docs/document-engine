@@ -60,19 +60,6 @@ const callouts = [
         </div>
     ),
   },
-  {
-    id: 'kkktemplates',
-    imageUrl: 'img/template-placeholders.png',
-    imageAlign: 'right',
-    title: 'Tkkkkkemplates',
-    content: (
-        <div><span><p>This is a java library, which aggregates and extends the capabilities of
-            the underlying template engine and converter tools.<br/>
-            For the value replacement it currently only supports pojo value objects.</p>
-            </span>
-        </div>
-    ),
-  },
 ];
 
 function Feature({imageUrl, title, description}) {
