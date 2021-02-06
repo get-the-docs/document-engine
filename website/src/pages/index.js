@@ -112,7 +112,7 @@ function Callout({id, title, imageUrl, imageAlign, content}) {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={useBaseUrl('docs/')}>
+              to={useBaseUrl('docs/getting-started/overview')}>
               Get Started
             </Link>
           </div>
