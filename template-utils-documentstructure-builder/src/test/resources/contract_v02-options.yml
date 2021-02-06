@@ -8,6 +8,7 @@ elements:
       id: "conditions"
     templateNames:
       hu: "/full-example-rulebased/templates/04-conditions-vintage_basic_underaged_v01.xlsx"
+    option: "REPLACE"
     defaultLocale: "hu"
     count: 1
   - templateElementId:
@@ -16,6 +17,7 @@ elements:
       id: "conditions"
     templateNames:
       hu: "/full-example-rulebased/templates/04-conditions-vintage_basic_v01.xlsx"
+    option: "REPLACE"
     defaultLocale: "hu"
     count: 1
   - templateElementId:
@@ -24,6 +26,7 @@ elements:
       id: "conditions"
     templateNames:
       hu: "/full-example-rulebased/templates/04-conditions-vintage_family_v01.xlsx"
+    option: "REPLACE"
     defaultLocale: "hu"
     count: 1
   - templateElementId:
@@ -32,12 +35,14 @@ elements:
       id: "conditions"
     templateNames:
       hu: "/full-example-rulebased/templates/04-conditions-vintage_gold_v01.xlsx"
+    option: "REPLACE"
     defaultLocale: "hu"
     count: 1
   - templateElementId:
       id: "terms-vintage_gold_plus"
     templateNames:
       hu: "/full-example-rulebased/templates/03-terms-vintage_gold_plus_v02.docx"
+    option: "REPLACE"
     defaultLocale: "hu"
     count: 1
   - templateElementId:
@@ -46,5 +51,6 @@ elements:
       id: "conditions-vintage_gold_plus"
     templateNames:
       hu: "/full-example-rulebased/templates/03-terms-vintage_gold_plus_v02.docx"
+    option: "REPLACE"
     defaultLocale: "hu"
     count: 1

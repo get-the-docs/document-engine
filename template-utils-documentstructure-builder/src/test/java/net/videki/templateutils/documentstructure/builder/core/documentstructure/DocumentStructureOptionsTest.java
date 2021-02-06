@@ -68,14 +68,72 @@ public class DocumentStructureOptionsTest {
             final DocumentStructure ds = dsBuilder.build("/contract-vintage_v02.yml");
             final DocumentStructureOptions dso = dsBuilder.buildOptions("/contract_v02-options.yml");
 
-            Optional<TemplateElement> baseElement = ds.getElementByFriendlyName("conditions");
-            Optional<OptionalTemplateElement> option =
+            final Optional<TemplateElement> baseElement = ds.getElementByFriendlyName("conditions");
+            final Optional<OptionalTemplateElement> option =
                     dso.getElementByFriendlyName("conditions-vintage_basic_underaged");
             if (baseElement.isPresent() && option.isPresent()) {
-                option.get().applyElement(baseElement.get());
+                final TemplateElement baseElementData = baseElement.get();
+                final OptionalTemplateElement optionData = option.get();
+                optionData.applyElement(baseElement.get());
 
                 Assert.assertEquals("conditions-vintage_basic_underaged",
-                        baseElement.get().getTemplateElementId().getId());
+                        baseElementData.getTemplateElementId().getId());
+            } else {
+                fail();
+            }
+
+        } catch (TemplateNotFoundException | TemplateServiceException e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void docStructureOptionsReplaceElementWithOptionAsTemplateElementOk() {
+        try {
+            final YmlDocStructureBuilder dsBuilder = new YmlDocStructureBuilder();
+
+            final DocumentStructure ds = dsBuilder.build("/contract-vintage_v02.yml");
+            final DocumentStructureOptions dso = dsBuilder.buildOptions("/contract_v02-options.yml");
+
+            final Optional<TemplateElement> baseElement = ds.getElementByFriendlyName("conditions");
+            final Optional<OptionalTemplateElement> option =
+                    dso.getElementByFriendlyName("conditions-vintage_basic_underaged");
+            if (baseElement.isPresent() && option.isPresent()) {
+                final TemplateElement baseElementData = baseElement.get();
+                final OptionalTemplateElement optionData = option.get();
+                optionData.applyElement(baseElement.get());
+
+                Assert.assertEquals("conditions-vintage_basic_underaged",
+                        optionData.asTemplateElement().getTemplateElementId().getId());
+
+            } else {
+                fail();
+            }
+
+        } catch (TemplateNotFoundException | TemplateServiceException e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void docStructureOptionsGetElementOption() {
+        try {
+            final YmlDocStructureBuilder dsBuilder = new YmlDocStructureBuilder();
+
+            final DocumentStructure ds = dsBuilder.build("/contract-vintage_v02.yml");
+            final DocumentStructureOptions dso = dsBuilder.buildOptions("/contract_v02-options.yml");
+
+            final Optional<TemplateElement> baseElement = ds.getElementByFriendlyName("conditions");
+            final Optional<OptionalTemplateElement> option =
+                    dso.getElementByFriendlyName("conditions-vintage_basic_underaged");
+            if (baseElement.isPresent() && option.isPresent()) {
+                final OptionalTemplateElement optionData = option.get();
+                optionData.applyElement(baseElement.get());
+
+                Assert.assertEquals(TemplateElementOption.REPLACE, optionData.getOption());
+
             } else {
                 fail();
             }

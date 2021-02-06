@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import net.videki.templateutils.documentstructure.builder.core.documentstructure.OptionalTemplateElement;
+import net.videki.templateutils.documentstructure.builder.core.documentstructure.TemplateElementOption;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 
 import java.io.IOException;
@@ -44,6 +45,10 @@ public class OptionalTemplateElementDeserializer extends StdDeserializer<Optiona
 
         }
 
+        final JsonNode optionNode = teNode.get("option");
+        if (optionNode != null) {
+            templateElement.setOption(TemplateElementOption.valueOf(optionNode.textValue()));
+        }
         templateElement.setDefaultLocale(new Locale(teNode.get("defaultLocale").textValue()));
         templateElement.setCount(teNode.get("count").asInt());
 
