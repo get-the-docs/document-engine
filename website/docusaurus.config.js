@@ -6,8 +6,8 @@ module.exports = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'videki',
-  projectName: 'template-utils',
+  organizationName: 'videki.github.io',
+  projectName: 'videki',
   themeConfig: {
     navbar: {
       title: 'Template utils',
