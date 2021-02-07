@@ -17,11 +17,6 @@
     </parent>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -56,12 +51,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.core.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -75,6 +70,10 @@
             <artifactId>docx-stamper</artifactId>
             <version>1.4.0</version>
             <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-core</artifactId>
@@ -95,6 +94,10 @@
                     <groupId>org.docx4j</groupId>
                     <artifactId>docx4j</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -108,6 +111,12 @@
             <groupId>org.jxls</groupId>
             <artifactId>jxls-jexcel</artifactId>
             <version>1.0.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jxls</groupId>
