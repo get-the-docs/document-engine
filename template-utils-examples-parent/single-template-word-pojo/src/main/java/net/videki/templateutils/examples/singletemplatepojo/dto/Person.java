@@ -1,4 +1,4 @@
-package net.videki.templateutils.template.test.dto.contract;
+package net.videki.templateutils.examples.singletemplatepojo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,4 +13,5 @@ import java.time.LocalDate;
 public class Person implements ITemplate {
     private String name;
     private LocalDate birthDate;
+    private LocalDate signDate;
 }
