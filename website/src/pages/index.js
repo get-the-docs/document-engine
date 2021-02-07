@@ -8,21 +8,21 @@ import styles from './styles.module.css';
 
 const features = [
   {
+    title: 'Model driven document generation',
+    imageUrl: 'img/undraw_react.svg',
+    description: (
+        <>
+          Generate different documents (language branches, property values) based on the actual data.
+        </>
+    ),
+  },
+  {
     title: 'Document sets',
     imageUrl: 'img/undraw_File_bundle_xl7g.svg',
     description: (
       <>
         Create multi-part document printouts,
         define document sets for complex workflows by collecting the required template versions.
-      </>
-    ),
-  },
-  {
-    title: 'Model driven document generation',
-    imageUrl: 'img/undraw_react.svg',
-    description: (
-      <>
-        Generate different documents (language branches, property values) based on the actual data.
       </>
     ),
   },

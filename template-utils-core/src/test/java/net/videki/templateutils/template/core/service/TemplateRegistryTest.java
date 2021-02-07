@@ -6,14 +6,14 @@ import org.junit.Test;
 public class TemplateRegistryTest {
 
     @Test
-    public void TemplateServiceInstanceTest() {
+    public void templateServiceInstanceTest() {
         final TemplateService ts = TemplateServiceRegistry.getInstance();
 
         Assert.assertNotNull(ts);
     }
 
     @Test
-    public void TemplateServiceInstanceIsSingletonTest() {
+    public void templateServiceInstanceIsSingletonTest() {
         final TemplateService ts1 = TemplateServiceRegistry.getInstance();
         final TemplateService ts2 = TemplateServiceRegistry.getInstance();
 
@@ -21,7 +21,7 @@ public class TemplateRegistryTest {
     }
 
     @Test
-    public void TemplateServiceSetInstanceTest() {
+    public void templateServiceSetInstanceTest() {
         final TemplateService ts1 = TemplateServiceRegistry.getInstance();
         final var registry = new TemplateServiceRegistry();
         registry.setTemplateService(null);
@@ -30,9 +30,8 @@ public class TemplateRegistryTest {
         Assert.assertNotEquals(ts1, ts2);
     }
 
-
     @Test
-    public void TemplateServiceCheckInstanceReinitTest() {
+    public void templateServiceCheckInstanceReinitTest() {
         final var registry = new TemplateServiceRegistry();
         registry.setTemplateService(null);
         final TemplateService ts2 = TemplateServiceRegistry.getInstance();

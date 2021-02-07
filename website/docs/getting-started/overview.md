@@ -76,19 +76,16 @@ Basically these are capabilities to
 A detailed description of these elements can be found at the 
 [docx-stamper project home](https://github.com/thombergs/docx-stamper).
 
-| Comment expression           | Effect |
-| ---------------------------- | ------ |
-| displayParagraphIf\(boolean\)  | The commented paragraph is only displayed in the resulting .docx document if the boolean condition resolves to true. |
-| displayTableRowIf\(boolean\)   | The table row surrounding the commented paragraph is only displayed in the resulting .docx document if the boolean condition resolves to true. |
-| displayTableIf\(boolean\)      | The whole table surrounding the commented paragraph is only displayed in the resulting .docx document if the boolean condition resolves to true. |
-| repeatTableRow\(List\<Object\>\) | The table row surrounding the commented paragraph is copied once for each object in the passed-in list. Expressions found in the cells of the table row are evaluated against the object from the list. |
-| repeatDocPart\(List\<Object\>\)  | Repeats the part of the document surrounded by the comment. The document part is copied once for each object in the passed-in list. Expressions found in the elements of the document part are evaluated against the object from the list. Can be used instead repeatTableRow and repeatParagraph if you want to repeat more than table rows and paragraphs. |
-| replaceWordWith\(expression\)  | Replaces the commented word (must be a single word!) with the value of the given expression. |
+| Comment expression             | Effect |
+| ------------------------------ | ------ |
+| `displayParagraphIf(boolean)`  | The commented paragraph is only displayed in the resulting .docx document if the boolean condition resolves to `true`.|
+| `displayTableRowIf(boolean)`   | The table row surrounding the commented paragraph is only displayed in the resulting .docx document if the boolean condition resolves to `true`.|
+| `displayTableIf(boolean)`      | The whole table surrounding the commented paragraph is only displayed in the resulting .docx document if the boolean condition resolves to `true`.|
+| `repeatTableRow(List<Object>)` | The table row surrounding the commented paragraph is copied once for each object in the passed-in list. Expressions found in the cells of the table row are evaluated against the object from the list.
+| `repeatDocPart(List<Object>)`  | Repeats the part of the document surrounded by the comment. The document part is copied once for each object in the passed-in list. Expressions found in the elements of the document part are evaluated against the object from the list. Can be used instead repeatTableRow and repeatParagraph if you want to repeat more than table rows and paragraphs.
+| `replaceWordWith(expression)`  | Replaces the commented word (must be a single word!) with the value of the given expression. |
 
-(Copied from the [docx-stamper project home](https://github.com/thombergs/docx-stamper))
-
-
-## Creating a filled document  
+(The table above is copied from the [docx-stamper project home](https://github.com/thombergs/docx-stamper))
 
 
 ## Document sets
