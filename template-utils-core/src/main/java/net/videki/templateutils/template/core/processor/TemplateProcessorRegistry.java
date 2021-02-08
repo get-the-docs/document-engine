@@ -1,9 +1,8 @@
 package net.videki.templateutils.template.core.processor;
 
+import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
-import net.videki.templateutils.template.core.processor.input.docx.DocxInputTemplateProcessor;
 import net.videki.templateutils.template.core.processor.input.noop.NoopTemplateProcessor;
-import net.videki.templateutils.template.core.processor.input.xlsx.XlsxInputTemplateProcessor;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
@@ -37,9 +36,7 @@ public class TemplateProcessorRegistry {
     protected static void init() {
         processors.clear();
 
-        processors.put(InputFormat.DOCX, new DocxInputTemplateProcessor());
-        processors.put(InputFormat.XLSX, new XlsxInputTemplateProcessor());
-
+        processors.putAll(TemplateServiceConfiguration.getInstance().getInputProcessors());
     }
 
     public static InputTemplateProcessor getInputTemplateProcessor(final InputFormat format) {

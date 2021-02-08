@@ -1,10 +1,12 @@
 package net.videki.templateutils.template.core.provider.resultstore;
 
-import net.videki.templateutils.template.core.configuration.RepositoryConfiguration;
 import net.videki.templateutils.template.core.documentstructure.ResultDocument;
 import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
+
+import java.util.Properties;
 
 /**
  * Adapter interface for saving the template generation results through the desired implementation set
@@ -16,7 +18,7 @@ import net.videki.templateutils.template.core.documentstructure.StoredGeneration
  */
 public interface ResultStore {
 
-    void init(RepositoryConfiguration props);
+    void init(Properties props) throws TemplateServiceConfigurationException;
 
     /**
      * Saves a single template based result document.

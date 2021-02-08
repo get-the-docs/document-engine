@@ -17,8 +17,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class XlsxInputTemplateProcessorTest {
-    private InputTemplateProcessor processor = new XlsxInputTemplateProcessor();
+public class JxlsInputTemplateProcessorTest {
+    private InputTemplateProcessor processor = new JxlsInputTemplateProcessor();
 
     @Test
     public void getInputFormatTest() {

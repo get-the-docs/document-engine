@@ -1,12 +1,12 @@
 package net.videki.templateutils.template.core.provider.resultstore.filesystem;
 
-import net.videki.templateutils.template.core.configuration.RepositoryConfiguration;
 import net.videki.templateutils.template.core.documentstructure.ResultDocument;
 import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +17,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 public class FileSystemResultStore implements ResultStore {
+    private static final String RESULT_REPOSITORY_PROVIDER_BASEDIR = "repository.result.provider.basedir";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemResultStore.class);
 
     private String baseDir;
 
     @Override
-    public void init(final RepositoryConfiguration props) {
-        this.baseDir = props.getBaseDir();
+    public void init(final Properties props) throws TemplateServiceConfigurationException {
+        if (props == null) {
+            throw new TemplateServiceConfigurationException("f962f1ac-c29d-482e-a402-4815068d4de5",
+                    "Null or invalid template properties caught.");
+        }
+
+        this.baseDir = (String) props.get(RESULT_REPOSITORY_PROVIDER_BASEDIR);
     }
 
     @Override

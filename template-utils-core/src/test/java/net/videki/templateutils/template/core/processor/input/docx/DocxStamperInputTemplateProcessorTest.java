@@ -7,20 +7,16 @@ import net.videki.templateutils.template.core.processor.input.PlaceholderEvalExc
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
-import net.videki.templateutils.template.test.dto.OfficerDataFactory;
-import net.videki.templateutils.template.test.dto.OrgUnitDataFactory;
 import net.videki.templateutils.template.test.dto.contract.Contract;
-import net.videki.templateutils.template.test.dto.officer.Officer;
-import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class DocxInputTemplateProcessorTest {
+public class DocxStamperInputTemplateProcessorTest {
 
-    private InputTemplateProcessor processor = new DocxInputTemplateProcessor();
+    private InputTemplateProcessor processor = new DocxStamperInputTemplateProcessor();
 
     @Test
     public void getInputFormatTest() {

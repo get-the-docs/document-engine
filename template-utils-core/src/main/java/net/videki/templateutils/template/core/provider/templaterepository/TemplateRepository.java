@@ -1,13 +1,14 @@
 package net.videki.templateutils.template.core.provider.templaterepository;
 
-import net.videki.templateutils.template.core.configuration.RepositoryConfiguration;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
 import java.io.InputStream;
+import java.util.Properties;
 
 public interface TemplateRepository {
 
-    void init(RepositoryConfiguration props);
+    void init(Properties props) throws TemplateServiceConfigurationException;
 
-    InputStream getTemplate(final String templateFile);
+    InputStream getTemplate(String templateFile);
 
 }

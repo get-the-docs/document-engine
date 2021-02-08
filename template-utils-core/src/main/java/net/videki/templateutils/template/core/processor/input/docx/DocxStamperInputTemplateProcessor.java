@@ -16,9 +16,9 @@ import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
 
-public class DocxInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
+public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DocxInputTemplateProcessor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DocxStamperInputTemplateProcessor.class);
 
   @Override
   public InputFormat getInputFormat() {

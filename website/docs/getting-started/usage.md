@@ -77,6 +77,10 @@ repository.documentstructure.provider.basedir=documentstructures
 repository.template.provider=net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository
 repository.template.provider.basedir=templates
 
+# InputTemplate processors
+processors.docx=net.videki.templateutils.template.core.processor.input.docx.DocxStamperInputTemplateProcessor
+processors.xlsx=net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
+
 # Result repository provider class
 repository.result.provider=net.videki.templateutils.template.core.provider.resultstore.filesystem.FileSystemResultStore
 repository.result.provider.basedir=generated-documents
