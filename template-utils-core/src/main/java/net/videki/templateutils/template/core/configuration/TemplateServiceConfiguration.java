@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 import net.videki.templateutils.template.core.provider.documentstructure.DocumentStructureRepository;
-import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
-import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.provider.templaterepository.TemplateRepository;
 import net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository;
+import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,13 +106,10 @@ public class TemplateServiceConfiguration {
     private static final String CONFIG_FILE_NAME = "template-utils.properties";
     private static final String LOG_APPENDER = "common.log.value-logcategory";
 
-    private static final String DOCUMENT_STRUCTURE_PROVIDER = "repository.documentstructure.provider";
-    private static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR = "repository.documentstructure.provider.basedir";
-    private static final String DOCUMENT_STRUCTURE_BUILDER = "repository.documentstructure.builder";
     private static final String TEMPLATE_REPOSITORY_PROVIDER = "repository.template.provider";
-    private static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
+    private static final String DOCUMENT_STRUCTURE_PROVIDER = "repository.documentstructure.provider";
     private static final String RESULT_REPOSITORY_PROVIDER = "repository.result.provider";
-    private static final String RESULT_REPOSITORY_PROVIDER_BASEDIR = "repository.result.provider.basedir";
+    private static final String PROCESSORS = "processors";
 
     private static final String PROPERTY_DELIMITER = ".";
 
@@ -119,6 +118,8 @@ public class TemplateServiceConfiguration {
     private DocumentStructureRepository documentStructureRepository;
 
     private TemplateRepository templateRepository;
+
+    private List<InputTemplateProcessor> inputProcessors = new LinkedList<>();
 
     private ResultStore resultStore;
 
@@ -140,20 +141,19 @@ public class TemplateServiceConfiguration {
             if (!keys.isEmpty()) {
                 LOGGER.info("template-utils.properties configuration file found.");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.warn("template-utils.properties configuration file not found, using default configuration.");
         }
         initFontLibrary(keys);
         initDocumentStructureRepository();
         initTemplateRepository();
         initResultStore();
+        initProcessors();
     }
 
     private void initFontLibrary(Set<Object> keys) {
         if (keys != null && !keys.isEmpty()) {
             this.fontDir = (String) properties.get(FONT_DIR);
-
-
 
             for (Object actKey : keys) {
                 final String s = (String) actKey;
@@ -192,12 +192,7 @@ public class TemplateServiceConfiguration {
                                 .loadClass(repositoryProvider)
                                 .getDeclaredConstructor()
                                 .newInstance();
-
-                final String repositoryBaseDir = (String) properties.get(DOCUMENT_STRUCTURE_PROVIDER_BASEDIR);
-                final DocumentStructureRepositoryConfiguration drc =
-                        new DocumentStructureRepositoryConfiguration(loadDocumentStructureBuilder(),
-                                repositoryBaseDir);
-                tmpRepo.init(drc);
+                tmpRepo.init(properties);
 
                 this.documentStructureRepository = tmpRepo;
             } else {
@@ -212,37 +207,14 @@ public class TemplateServiceConfiguration {
 
             this.templateRepository = new FileSystemTemplateRepository();
             e.printStackTrace();
+        } catch (final TemplateServiceConfigurationException e) {
+            final String msg = "Configuration error.";
+            LOGGER.error(msg, e);
+
+            throw new TemplateServiceRuntimeException(msg);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-    }
-
-    private DocumentStructureBuilder loadDocumentStructureBuilder() {
-        DocumentStructureBuilder documentStructureBuilder = new YmlDocStructureBuilder();
-
-        String repositoryProvider = "<Not configured or could not read properties file>";
-        try {
-            repositoryProvider = (String) properties.get(DOCUMENT_STRUCTURE_BUILDER);
-
-            if (repositoryProvider != null) {
-                documentStructureBuilder = (DocumentStructureBuilder)
-                        this.getClass().getClassLoader()
-                                .loadClass(repositoryProvider)
-                                .getDeclaredConstructor()
-                                .newInstance();
-            } else {
-                final String msg = "Document structure builder not specified, " +
-                        "using built-in YmlDocStructureBuilder.";
-                LOGGER.info(msg);
-            }
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
-                NoSuchMethodException | InvocationTargetException e) {
-            final String msg = String.format("Error loading document structure builder: %s, " +
-                    "using built-in YmlDocStructureBuilder.", repositoryProvider);
-            LOGGER.error(msg, e);
-        }
-
-        return documentStructureBuilder;
     }
 
     private void initTemplateRepository() {
@@ -257,10 +229,7 @@ public class TemplateServiceConfiguration {
                                 .getDeclaredConstructor()
                                 .newInstance();
 
-                final String repositoryBaseDir = (String) properties.get(TEMPLATE_REPOSITORY_PROVIDER_BASEDIR);
-                final RepositoryConfiguration rc =
-                        new RepositoryConfiguration(repositoryBaseDir);
-                tmpRepo.init(rc);
+                tmpRepo.init(properties);
 
                 this.templateRepository = tmpRepo;
             } else {
@@ -268,13 +237,17 @@ public class TemplateServiceConfiguration {
                         "using fallback built-in FileSystemTemplateRepository.";
                 LOGGER.info(msg);
             }
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
-                NoSuchMethodException | InvocationTargetException e) {
+        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading template repository: %s, " +
                     "using fallback built-in FileSystemTemplateRepository.", repositoryProvider);
             LOGGER.error(msg, e);
 
             this.templateRepository = new FileSystemTemplateRepository();
+        } catch (final TemplateServiceConfigurationException e) {
+            final String msg = "Configuration error.";
+            LOGGER.error(msg, e);
+
+            throw new TemplateServiceRuntimeException(msg);
         }
     }
 
@@ -290,10 +263,7 @@ public class TemplateServiceConfiguration {
                                 .getDeclaredConstructor()
                                 .newInstance();
 
-                final String repositoryBaseDir = (String) properties.get(RESULT_REPOSITORY_PROVIDER_BASEDIR);
-                final RepositoryConfiguration rc =
-                        new RepositoryConfiguration(repositoryBaseDir);
-                tmpRepo.init(rc);
+                tmpRepo.init(properties);
 
                 this.resultStore = tmpRepo;
             } else {
@@ -307,16 +277,52 @@ public class TemplateServiceConfiguration {
             final String msg = String.format("Error loading result store repository: %s, " +
                     "using fallback built-in FilesystemResultStore.", repositoryProvider);
             LOGGER.error(msg, e);
+        } catch (final TemplateServiceConfigurationException e) {
+            final String msg = "Configuration error.";
+            LOGGER.error(msg, e);
+
+            throw new TemplateServiceRuntimeException(msg);
+        }
+    }
+
+    private void initProcessors() {
+        try {
+            if (properties != null) {
+                final Set<Object> processors =
+                        properties.keySet()
+                                .stream()
+                                .filter(o -> ((String) o).startsWith(PROCESSORS))
+                                .collect(Collectors.toSet());
+
+                for (final var o : processors) {
+                    final var actProcessor = (String) properties.get(o);
+                    LOGGER.info("Using template processor: {}", actProcessor);
+
+                    InputTemplateProcessor tmpProcessor = (InputTemplateProcessor)
+                            this.getClass().getClassLoader()
+                                    .loadClass(actProcessor)
+                                    .getDeclaredConstructor()
+                                    .newInstance();
+
+                    this.inputProcessors.add(tmpProcessor);
+                }
+            } else {
+                final String msg = "Empty config caught.";
+                LOGGER.error(msg);
+
+            }
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
+                NoSuchMethodException | InvocationTargetException e) {
+            final String msg = String.format("Error loading template processors.", e);
+            LOGGER.error(msg, e);
+
+            throw new TemplateServiceRuntimeException(msg);
         }
     }
 
     private static InputStream getResource(String filename) throws java.io.IOException {
         java.net.URL url = TemplateServiceConfiguration.class.getClassLoader().getResource(filename);
-/*
-        if (url == null) {
-            url = Thread.currentThread().getContextClassLoader().getResource(filename);
-        }
-*/
+
         if (url == null) {
             LOGGER.warn("Couldn't get resource: " + filename);
             throw new IOException(filename + " not found via classloader.");
@@ -377,6 +383,20 @@ public class TemplateServiceConfiguration {
             synchronized (INSTANCE) {
                 result = INSTANCE = new TemplateServiceConfiguration();
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the configured input processors.
+     * @return inputProcessors
+     */
+    public Map<InputFormat, InputTemplateProcessor> getInputProcessors() {
+        final Map<InputFormat, InputTemplateProcessor> result = new EnumMap<>(InputFormat.class);
+
+        for (final InputTemplateProcessor actItem : this.inputProcessors) {
+            result.putIfAbsent(actItem.getInputFormat(), actItem);
         }
 
         return result;

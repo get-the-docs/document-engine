@@ -6,8 +6,11 @@ module.exports = {
     ],
     'Documentation': [
       'documentation/architecture',
-      'documentation/usage',
+      'documentation/components',
+      'documentation/features',
       'samples/samples',
+      'documentation/customization',
+      'samples/customization-examples',
     ],
     'About': [
       'about/roadmap',

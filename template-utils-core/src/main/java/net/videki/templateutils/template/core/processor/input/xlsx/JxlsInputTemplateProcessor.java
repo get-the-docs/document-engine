@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 
-public class XlsxInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
+public class JxlsInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(XlsxInputTemplateProcessor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JxlsInputTemplateProcessor.class);
 
   @Override
   public InputFormat getInputFormat() {

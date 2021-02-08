@@ -1,10 +1,9 @@
 package net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem;
 
-import net.videki.templateutils.template.core.configuration.DocumentStructureRepositoryConfiguration;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.provider.documentstructure.DocumentStructureRepository;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
-import net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository;
+import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import org.slf4j.Logger;
@@ -12,8 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 
 public class FileSystemDocumentStructureRepository implements DocumentStructureRepository {
+    private static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR =
+            "repository.documentstructure.provider.filesystem.basedir";
+    private static final String DOCUMENT_STRUCTURE_BUILDER = "repository.documentstructure.builder";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemDocumentStructureRepository.class);
 
@@ -21,9 +25,14 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
     private String basedir;
 
     @Override
-    public void init(final DocumentStructureRepositoryConfiguration configuration) {
-        this.basedir = configuration.getBaseDir();
-        this.documentStructureBuilder = configuration.getBuilder();
+    public void init(final Properties props) throws TemplateServiceConfigurationException {
+        if (props == null) {
+            throw new TemplateServiceConfigurationException("28f5041e-f1db-483d-97ec-fd3bda9bc11c",
+                    "Null or invalid template properties caught.");
+        }
+
+        this.basedir = (String) props.get(DOCUMENT_STRUCTURE_PROVIDER_BASEDIR);
+        this.documentStructureBuilder = loadDocumentStructureBuilder(props);
     }
 
     public DocumentStructure getDocumentStructure(final String documentStructureFile)
@@ -44,7 +53,33 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
 
             return this.documentStructureBuilder.build(dsAsStream);
         }
-
     }
 
+    private DocumentStructureBuilder loadDocumentStructureBuilder(final Properties props) {
+        DocumentStructureBuilder documentStructureBuilder = new YmlDocStructureBuilder();
+
+        String repositoryProvider = "<Not configured or could not read properties file>";
+        try {
+            repositoryProvider = (String) props.get(DOCUMENT_STRUCTURE_BUILDER);
+
+            if (repositoryProvider != null) {
+                documentStructureBuilder = (DocumentStructureBuilder)
+                        this.getClass().getClassLoader()
+                                .loadClass(repositoryProvider)
+                                .getDeclaredConstructor()
+                                .newInstance();
+            } else {
+                final String msg = "Document structure builder not specified, " +
+                        "using built-in YmlDocStructureBuilder.";
+                LOGGER.info(msg);
+            }
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
+                NoSuchMethodException | InvocationTargetException e) {
+            final String msg = String.format("Error loading document structure builder: %s, " +
+                    "using built-in YmlDocStructureBuilder.", repositoryProvider);
+            LOGGER.error(msg, e);
+        }
+
+        return documentStructureBuilder;
+    }
 }

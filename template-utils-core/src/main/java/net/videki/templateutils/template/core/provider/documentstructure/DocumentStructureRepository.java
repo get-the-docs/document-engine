@@ -1,14 +1,14 @@
 package net.videki.templateutils.template.core.provider.documentstructure;
 
-import net.videki.templateutils.template.core.configuration.DocumentStructureRepositoryConfiguration;
-import net.videki.templateutils.template.core.configuration.RepositoryConfiguration;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
+import java.util.Properties;
+
 public interface DocumentStructureRepository {
 
-    void init(DocumentStructureRepositoryConfiguration props);
+    void init(Properties props) throws TemplateServiceConfigurationException;
 
-    DocumentStructure getDocumentStructure(final String ds) throws TemplateServiceConfigurationException;
+    DocumentStructure getDocumentStructure(String ds) throws TemplateServiceConfigurationException;
 
 }
