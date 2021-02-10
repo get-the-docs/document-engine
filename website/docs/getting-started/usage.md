@@ -18,7 +18,7 @@ For a showcase suppose the HR at your company uses the following document to sum
 
 1. Construct the DTO you will use within the templates
 
-As we can see in the form (and spec., etc. of course) we got, we have the provide the properties below
+As we can see in the form (and spec., etc. of course) we got, we have to provide the properties below
 (in most cases we will have these classes in our business logic already done):
 
 ```java

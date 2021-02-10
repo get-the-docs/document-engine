@@ -13,7 +13,7 @@ provide open source DMS functionality. To achieve this we are likely to add feat
 - Document set decision table support: rule based decision table control for template alternatives to 
   provide business editable template sets (Excel based Drools decision table)
 - DTO jsonpath and microservice support (to run the tool as a separate service without any impact of the DTO changes 
-  used in then templates)  
+  used in the templates)  
 - Document signing  
 
 (Note: These are improvement ideas of the core team, not scheduled tasks with deadlines)
