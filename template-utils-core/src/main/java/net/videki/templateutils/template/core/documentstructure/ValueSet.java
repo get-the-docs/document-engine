@@ -46,6 +46,7 @@ public class ValueSet implements JsonModel {
 
     /**
      * Constructor - specifying a given transaction id
+     * @param documentStructureId the document structure id, for that the value set is constructed
      * @param transactionId the requested transaction id
      */
     public ValueSet(final String documentStructureId, final String transactionId) {
