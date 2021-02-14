@@ -1,6 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure;
 
 import net.videki.templateutils.template.core.TestHelper;
+import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
@@ -11,9 +12,11 @@ import net.videki.templateutils.template.core.service.exception.TemplateNotFound
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
+import net.videki.templateutils.template.test.dto.DocDataFactory;
 import net.videki.templateutils.template.test.dto.OfficerDataFactory;
 import net.videki.templateutils.template.test.dto.OrgUnitDataFactory;
 import net.videki.templateutils.template.test.dto.contract.Contract;
+import net.videki.templateutils.template.test.dto.doc.DocumentProperties;
 import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 
@@ -22,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -34,16 +38,62 @@ public class DocumentStructureTest {
     private static final TemplateService ts = TemplateServiceRegistry.getInstance();
     private static final String inputDir = "unittests/docx";
 
-    private TemplateContext getContractTestData() {
+    private static final String TL_DOC_KEY = "doc";
+
+    private static final String inputDirDocStructureCovers = "/integrationtests/covers";
+    private static final String TL_COVER_KEY = "cover";
+    private static final String TL_COVER_FILE = "cover_v03.docx";
+
+    private static final String inputDirDocStructureContracts = "/integrationtests/contracts/vintage";
+    private static final String TL_CONTRACT_KEY = "contract";
+    private static final String TL_CONTRACT_FILE_HU = "contract_v09_hu.docx";
+    private static final String TL_CONTRACT_FILE_EN = "contract_v09_en.docx";
+
+    private static final String inputDirDocStructureTerms = "/integrationtests/terms";
+    private static final String TL_TERMS_KEY = "terms";
+    private static final String TL_TERMS_FILE = "terms_v02.docx";
+
+    private static final String inputDirDocStructureConditions = "/integrationtests/conditions/vintage";
+    private static final String TL_CONDITIONS_KEY = "conditions";
+    private static final String TL_CONDITIONS_FILE = "conditions_v11.xlsx";
+
+    private DocumentStructure getContractDocStructure() throws TemplateServiceConfigurationException {
+        final DocumentStructure result = new DocumentStructure();
+
+        result.getElements().add(
+                new TemplateElement(TL_COVER_KEY, FileSystemHelper.getFileNameWithPath(inputDirDocStructureCovers, TL_COVER_FILE))
+                        .withDefaultLocale(LC_HU));
+
+        result.getElements().add(
+                new TemplateElement(TL_CONTRACT_KEY)
+                        .withTemplateName(FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU), LC_HU)
+                        .withTemplateName(FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN), Locale.ENGLISH)
+                        .withDefaultLocale(LC_HU)
+        );
+
+        result.getElements().add(
+                new TemplateElement(TL_TERMS_KEY, FileSystemHelper.getFileNameWithPath(inputDirDocStructureTerms, TL_TERMS_FILE))
+                        .withDefaultLocale(LC_HU));
+
+        result.getElements().add(
+                new TemplateElement(TL_CONDITIONS_KEY, FileSystemHelper.getFileNameWithPath(inputDirDocStructureConditions, TL_CONDITIONS_FILE))
+                        .withDefaultLocale(LC_HU));
+
+        return result;
+    }
+
+    private TemplateContext getContractTestData(final String transactionId) {
         final Contract dto = ContractDataFactory.createContract();
         final OrganizationUnit orgUnit = OrgUnitDataFactory.createOrgUnit();
 
         final Officer officer = OfficerDataFactory.createOfficer();
+        final DocumentProperties documentProperties = DocDataFactory.createDocData(transactionId);
 
         final TemplateContext context = new TemplateContext();
         context.getCtx().put("org", orgUnit);
         context.getCtx().put("officer", officer);
         context.getCtx().put("contract", dto);
+        context.getCtx().put("doc", documentProperties);
 
         return context;
     }
@@ -88,13 +138,13 @@ public class DocumentStructureTest {
             structure.getElements().add(docElement);
 
             final ValueSet values = new ValueSet();
-            values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
+            values.getValues().put(docElement.getTemplateElementId(), getContractTestData("not_recorded"));
 
             result = null;
             result = ts.fill(structure, values);
 
             testResult = (result != null && result.getResults() != null && result.getResults().size() == 2);
-        } catch (TemplateNotFoundException | TemplateServiceException e) {
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
             testResult = false;
         } finally {
             TestHelper.closeResults(result);
@@ -117,9 +167,9 @@ public class DocumentStructureTest {
             result = ts.fill(structure, values);
 
             testResult = (0 == result.getResults().size());
-        } catch (TemplateNotFoundException e) {
+        } catch (final TemplateNotFoundException e) {
             testResult = true;
-        } catch (TemplateServiceException e) {
+        } catch (final TemplateServiceException e) {
             e.printStackTrace();
 
             testResult = false;
@@ -137,6 +187,30 @@ public class DocumentStructureTest {
     @Test
     public void alternateLocalTest() {
         assertTrue(true);
+    }
+
+    @Test
+    public void docStructureGenerationTestOk() {
+        boolean testResult;
+
+        StoredGenerationResult result = null;
+        try {
+            final DocumentStructure structure = getContractDocStructure();
+
+            final var tranId = UUID.randomUUID().toString();
+
+            final ValueSet values = new ValueSet(structure.getDocumentStructureId(), tranId);
+            values.getValues().put(TemplateElementId.getGlobalTemplateElementId(), getContractTestData(tranId));
+
+            result = ts.fillAndSave(structure, values);
+
+            testResult = (result != null && result.getResults() != null && result.getResults().size() == 4);
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
+            testResult = false;
+        }
+
+        assertTrue(testResult);
+
     }
 
 }

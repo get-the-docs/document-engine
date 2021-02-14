@@ -39,7 +39,7 @@ public class YmlDocumentStructureBuilderTest {
     private static final String TL_CONDITIONS_FILE = "04-conditions_v11.xlsx";
 
     private static final String inputDir = "/full-example";
-    private final String projectOutDir = System.getProperty("user.dir") + "/build";
+    private final String projectOutDir = System.getProperty("user.dir") + "/target";
 
     private final TemplateServiceConfiguration templateServiceConfiguration = TemplateServiceConfiguration.getInstance();
 

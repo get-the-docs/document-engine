@@ -152,3 +152,101 @@ public class SingleTemplateDocxPojo {
 }
 ```
 Done.
+
+## Dealing with multiple documents in a workflow 
+
+In many cases more than one document has to be generated in a workflow. To support this, we introduced 
+document structures to be handled by the engine. The idea is to collect data during the workflow and generate the 
+required documents based on the actual data in a single step at the end of the process (this also ensures that at the
+end of the process only the required set of documents will be generated with up to date content, instead of 
+re-generating and filtering previously processed results).  
+
+
+**Showcase**
+
+Suppose we are writing a software for a phone provider company, and our task is to generate contract documents 
+for new clients. Due legal purposes the contracts have to be signed by the clients personally at the company's 
+seller offices. These offices have multiple teller desks sharing one multifunctional printer per office.
+
+The contract consists of the following parts:
+- the customer contract itself (contains client and officer data)
+- conditions and fees (contains client data)
+- terms of use (static text)
+
+The contract depends on the client's nationality. If a contract with the client's language is available, 
+that one shall be used, english otherwise. All other documents have to be generated in the given format.
+The document headers should contain the office, and the officer reference with each page having a QR code 
+with a link pointing to the client's profile in company's CRM.
+To separate the handouts a cover page has to be printed for all contract with the officer's name, and 
+the generation time.
+
+So, in our case the documents for an officer should look like below:
+
+1. Cover page
+![cover page](assets/docs-getting_started-docstructure-cover-result-large.png)
+
+2. Contract
+![contract](assets/docs-getting_started-docstructure-contract-result-large.png)
+   
+3. Terms
+![terms](assets/docs-getting_started-docstructure-terms-result-large.png)
+
+
+**In our case the following document structure can be used:**
+
+(note: the ids given are generated uuid-s, but you can use any according to the actual needs)
+
+```yaml
+# contract_v02.yml
+---
+documentStructureId: "109a562d-8290-407d-98e1-e5e31c9808b7"
+elements:
+  - templateElementId:
+      id: "cover"
+    templateNames:
+      hu_HU: "/covers/cover_v03.docx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "contract"
+    templateNames:
+      en: "/contracts/vintage/contract_v09_en.docx"
+      hu: "/contracts/vintage/contract_v09_hu.docx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "terms"
+    templateNames:
+      hu: "/term/terms_v02.docx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "conditions"
+    templateNames:
+      hu: "/conditions/vintage/conditions_eco_v11.xlsx"
+    defaultLocale: "hu_HU"
+    count: 1
+resultMode: "SEPARATE_DOCUMENTS"
+outputFormat: "UNCHANGED"
+copies: 1
+
+```
+
+Generating the actual result can be done like below:
+
+```java
+        try {
+            final DocumentStructure structure = getContractDocStructure();
+
+            final var tranId = UUID.randomUUID().toString();
+
+            final ValueSet values = new ValueSet(structure.getDocumentStructureId(), tranId);
+            values.getValues().put(TemplateElementId.getGlobalTemplateElementId(), getContractTestData(tranId));
+
+            result = ts.fillAndSave(structure, values);
+
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
+            testResult = false;
+        }
+```
+Well, that's it.

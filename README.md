@@ -8,6 +8,12 @@ Docx, xlsx template engine and pdf converter to provide enterprise document gene
 
 The module is a java wrapper to other tools integrate their capabilities.
 
+
+**Note:**
+
+This project is in incubation phase. Hold on, we will deploy it on Maven Central as soon as we can. 
+If you find the functionality covered by the engine useful, please give it a star. 
+
 ## Main features
 
 - Impersonate simple docx and xlsx documents via pojo data

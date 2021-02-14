@@ -9,7 +9,9 @@ public enum OutputFormat {
 
     public boolean isSameFormat(final Object a) {
         if (a != null) {
-            if (a instanceof InputFormat) {
+            if (UNCHANGED.name().equals(this.name())) {
+                return true;
+            } else if ((a instanceof InputFormat)) {
                 return ((InputFormat) a).name().equals(this.name());
             }
         }
