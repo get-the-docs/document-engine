@@ -46,6 +46,18 @@ public class ValueSet implements JsonModel {
 
     /**
      * Constructor - specifying a given transaction id
+     * @param documentStructureId the document structure id, for that the value set is constructed
+     * @param transactionId the requested transaction id
+     */
+    public ValueSet(final String documentStructureId, final String transactionId) {
+        this.documentStructureId = documentStructureId;
+        this.transactionId = transactionId;
+        this.locale = Locale.getDefault();
+
+    }
+
+    /**
+     * Constructor - specifying a given transaction id
      * @param transactionId the requested transaction id
      * @param locale the value sets' preferred locale (based on the data provided)
      */

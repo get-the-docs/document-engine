@@ -90,4 +90,5 @@ A detailed description of these elements can be found at the
 
 ## Document sets
 
-Document structures are templates organized into business defined groups. 
+Document structures are templates organized into business defined groups.
+(See [usage](usage.md) and the [component documentation](../documentation/components.md))

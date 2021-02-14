@@ -164,7 +164,7 @@ public class TemplateServiceImpl implements TemplateService {
             final ResultDocument actFilledDocument;
 
             final String templateFileName = actTemplate.getTemplateName(values.getLocale());
-            if (actContext.isPresent()) {
+            if (actContext.isPresent() || globalContext.isPresent()) {
                 actFilledDocument = new ResultDocument(templateFileName,
                         this.fill(templateFileName,
                                 getLocalTemplateContext(globalContext, actContext)).getContent());
