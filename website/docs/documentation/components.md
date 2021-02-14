@@ -116,6 +116,7 @@ processors.docx=net.videki.templateutils.template.core.processor.input.docx.Docx
 processors.xlsx=net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
 ```
 
+
 **Template contexts**
 
 The engine supports multiple values to be handed over to the processors. These are called template contexts.
@@ -205,6 +206,7 @@ Converts docx documents into pdf using [PDF box](https://pdfbox.apache.org/).
 
 ## Input and output types
 
+
 ### Document structures
 
 Document structures are a set of templates, or template alternatives (we call these <code>TemplateElement</code>)
@@ -286,5 +288,7 @@ The transaction can be bound to the surrounding business transaction.
 
 A generation result is another holder object containing the result document stream (when using streams
 without saving the result into the result store), or descriptors of the saved results. 
+
+
 
 
