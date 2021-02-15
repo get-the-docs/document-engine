@@ -98,7 +98,7 @@ public class TemplateElement {
         if (actLanguage.isPresent()) {
             result = this.templateNames.get(actLanguage.get());
         } else {
-            if (this.templateNames.keySet().size() > 1) {
+            if (this.templateNames.keySet().size() > 0) {
                 result = this.templateNames.get(this.defaultLocale);
             } else {
                 result = null;
