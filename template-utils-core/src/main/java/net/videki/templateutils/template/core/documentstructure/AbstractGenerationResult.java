@@ -1,6 +1,8 @@
 package net.videki.templateutils.template.core.documentstructure;
 
 import java.time.Instant;
+import java.util.UUID;
+
 /**
  * Document template generation result for a document structure.
  * It contains the generated document streams. The whole generation is linked through the transaction id,
@@ -10,9 +12,13 @@ import java.time.Instant;
  */
 public abstract class AbstractGenerationResult {
 
-    private String transactionId;
-    private Instant generationStartTime;
-    private Instant generationEndTime;
+    protected String transactionId;
+    protected Instant generationStartTime;
+    protected Instant generationEndTime;
+
+    public AbstractGenerationResult() {
+        this.transactionId = UUID.randomUUID().toString();
+    }
 
     public String getTransactionId() {
         return transactionId;
@@ -30,20 +36,11 @@ public abstract class AbstractGenerationResult {
         this.generationStartTime = generationStartTime;
     }
 
-    public Instant getGetGenerationEndTime() {
+    public Instant getGenerationEndTime() {
         return generationEndTime;
     }
 
     public void setGenerationEndTime(Instant getGenerationEndTime) {
         this.generationEndTime = getGenerationEndTime;
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractGenerationResult{" +
-                ", transactionId='" + this.transactionId + '\'' +
-                ", generationStartTime=" + this.generationStartTime +
-                ", getGenerationEndTime=" + this.generationEndTime +
-                '}';
     }
 }

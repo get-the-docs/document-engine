@@ -15,9 +15,6 @@ import java.util.List;
 public class StoredGenerationResult extends AbstractGenerationResult {
 
     private final List<StoredResultDocument> results;
-    private String transactionId;
-    private Instant generationStartTime;
-    private Instant getGenerationEndTime;
 
     public StoredGenerationResult(final List<StoredResultDocument> results) {
         super();
@@ -39,37 +36,13 @@ public class StoredGenerationResult extends AbstractGenerationResult {
         return results;
     }
 
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public Instant getGenerationStartTime() {
-        return generationStartTime;
-    }
-
-    public void setGenerationStartTime(Instant generationStartTime) {
-        this.generationStartTime = generationStartTime;
-    }
-
-    public Instant getGetGenerationEndTime() {
-        return getGenerationEndTime;
-    }
-
-    public void setGenerationEndTime(Instant getGenerationEndTime) {
-        this.getGenerationEndTime = getGenerationEndTime;
-    }
-
     @Override
     public String toString() {
         return "GenerationResult{" +
                 "results=" + this.results +
-                ", transactionId='" + this.transactionId + '\'' +
-                ", generationStartTime=" + this.generationStartTime +
-                ", getGenerationEndTime=" + this.getGenerationEndTime +
+                ", transactionId='" + this.getTransactionId() + '\'' +
+                ", generationStartTime=" + this.getGenerationStartTime() +
+                ", getGenerationEndTime=" + this.getGenerationEndTime() +
                 '}';
     }
 }

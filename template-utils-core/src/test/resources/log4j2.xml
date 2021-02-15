@@ -10,7 +10,7 @@
             <AppenderRef ref="LogToConsole"/>
         </Root>
 
-        <Logger name="net.videki" level="DEBUG" additivity="false">
+        <Logger name="net.videki" level="TRACE" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Logger name="org.wickedsource" level="DEBUG" additivity="false">
