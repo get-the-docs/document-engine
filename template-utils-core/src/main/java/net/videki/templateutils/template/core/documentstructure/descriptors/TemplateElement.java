@@ -73,37 +73,38 @@ public class TemplateElement {
     public String getTemplateName(final Locale locale) {
         String result;
 
-        if (locale != null) {
+        Locale searchLocale = locale;
+        if (searchLocale == null) {
+            searchLocale = defaultLocale;
+        }
 
-            final String locStr = locale.getLanguage().split("_")[0];
+            final String locStr = searchLocale.getLanguage().split("_")[0];
             Optional<Locale> actLanguage = Optional.empty();
 
-            if (locale.getCountry() != null) {
-                actLanguage = this.templateNames.keySet()
-                        .stream()
-                        .filter(locale::equals)
-                        .findFirst();
+        if (searchLocale.getCountry() != null) {
+            actLanguage = this.templateNames.keySet()
+                    .stream()
+                    .filter(searchLocale::equals)
+                    .findFirst();
 
-            }
-            if (actLanguage.isEmpty()) {
-                actLanguage = this.templateNames.keySet()
-                        .stream()
-                        .filter(t -> locStr.equalsIgnoreCase(t.getLanguage()))
-                        .findFirst();
-            }
-
-            if (actLanguage.isPresent()) {
-                result = this.templateNames.get(actLanguage.get());
-            } else {
-                if (this.templateNames.keySet().size() > 1) {
-                    result = this.templateNames.get(this.defaultLocale);
-                } else {
-                    result = null;
-                }
-            }
-        } else {
-            result = null;
         }
+        if (actLanguage.isEmpty()) {
+            actLanguage = this.templateNames.keySet()
+                    .stream()
+                    .filter(t -> locStr.equalsIgnoreCase(t.getLanguage().split("_")[0]))
+                    .findFirst();
+        }
+
+        if (actLanguage.isPresent()) {
+            result = this.templateNames.get(actLanguage.get());
+        } else {
+            if (this.templateNames.keySet().size() > 1) {
+                result = this.templateNames.get(this.defaultLocale);
+            } else {
+                result = null;
+            }
+        }
+
 
         return result;
     }

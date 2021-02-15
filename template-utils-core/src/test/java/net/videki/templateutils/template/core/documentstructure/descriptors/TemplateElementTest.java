@@ -162,7 +162,7 @@ public class TemplateElementTest {
     }
 
     @Test
-    public void builderTestLocaleNullShouldReturnNull() {
+    public void builderTestLocaleNullShouldReturnDefault() {
 
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY)
@@ -174,7 +174,9 @@ public class TemplateElementTest {
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU);
 
-            Assert.assertNull(te.getTemplateName(null));
+            Assert.assertEquals(
+                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                    te.getTemplateName(null));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);
 
