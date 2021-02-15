@@ -11,8 +11,8 @@ elements:
   - templateElementId:
       id: "contract"
     templateNames:
-      en: "integrationtests/contracts/vintage/contract_v09_en.docx"
-      hu: "integrationtests/contracts/vintage/contract_v09_hu.docx"
+      en: "integrationtests/contracts/contract_v09_en.docx"
+      hu: "integrationtests/contracts/contract_v09_hu.docx"
     defaultLocale: "hu_HU"
     count: 1
   - templateElementId:

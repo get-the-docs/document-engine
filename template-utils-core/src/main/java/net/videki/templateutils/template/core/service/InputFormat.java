@@ -28,6 +28,10 @@ public enum InputFormat {
   public static InputFormat getInputFormatForFileName(final String templateName) {
     InputFormat format;
     try {
+      if (templateName == null) {
+        return null;
+      }
+
       int fileExtPos = templateName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
       if (fileExtPos > 0) {
         format = InputFormat

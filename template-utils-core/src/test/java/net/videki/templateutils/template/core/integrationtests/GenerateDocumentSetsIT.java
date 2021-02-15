@@ -1,9 +1,7 @@
 package net.videki.templateutils.template.core.integrationtests;
 
 import net.videki.templateutils.template.core.context.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
-import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
-import net.videki.templateutils.template.core.documentstructure.ValueSet;
+import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
@@ -37,6 +35,39 @@ public class GenerateDocumentSetsIT {
     private final TemplateService templateService = TemplateServiceRegistry.getInstance();
 
     @Test
+    public void generateSeparateDocumentsDontSaveIT() {
+        GenerationResult result = new GenerationResult(null);
+        try {
+            final ValueSet testData = getTestData("generateSeparateDocumentsIT");
+
+            result = this.templateService
+                    .fillDocumentStructureByName(
+                            "contract/vintage/contract-vintage_v02-separate.yml",
+                            testData);
+
+            assertArrayEquals(new Boolean[]{true, true, true}, result.getResults()
+                    .stream()
+                    .map(t -> t.getContent() != null)
+                    .toArray(Boolean[]::new));
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
+            LOGGER.error("Error creating the result documents.", e);
+            fail();
+        } finally {
+            result.getResults()
+                    .forEach(t -> {
+                        try {
+                            LOGGER.debug("Closing generated result...");
+                            t.close();
+                        } catch(final Exception e) {
+                            LOGGER.error("Error closing a generated result");
+                        }
+                    });
+        }
+
+        assertTrue(true);
+    }
+
+    @Test
     public void generateSeparateDocumentsIT() {
         try {
             final ValueSet testData = getTestData("generateSeparateDocumentsIT");
@@ -57,7 +88,6 @@ public class GenerateDocumentSetsIT {
 
         assertTrue(true);
     }
-
 
     @Test
     public void generateSinglePdfDocumentIT() {

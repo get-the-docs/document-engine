@@ -15,6 +15,8 @@ public class GenerationResult extends AbstractGenerationResult {
     private final List<ResultDocument> results;
 
     public GenerationResult(List<ResultDocument> results) {
+        super();
+
         if (results != null) {
             this.results = results;
         } else {
@@ -32,7 +34,7 @@ public class GenerationResult extends AbstractGenerationResult {
                 "results=" + results +
                 ", transactionId='" + this.getTransactionId() + '\'' +
                 ", generationStartTime=" + this.getGenerationStartTime() +
-                ", generationEndTime=" + this.getGetGenerationEndTime() +
+                ", generationEndTime=" + this.getGenerationEndTime() +
                 '}';
     }
 }
