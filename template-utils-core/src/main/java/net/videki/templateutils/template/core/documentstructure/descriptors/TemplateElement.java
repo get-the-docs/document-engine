@@ -75,7 +75,7 @@ public class TemplateElement {
 
         if (locale != null) {
 
-            final String locStr = locale.getLanguage();
+            final String locStr = locale.getLanguage().split("_")[0];
             Optional<Locale> actLanguage = Optional.empty();
 
             if (locale.getCountry() != null) {

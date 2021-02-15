@@ -42,7 +42,7 @@ public class StoredGenerationResult extends AbstractGenerationResult {
                 "results=" + this.results +
                 ", transactionId='" + this.getTransactionId() + '\'' +
                 ", generationStartTime=" + this.getGenerationStartTime() +
-                ", getGenerationEndTime=" + this.getGenerationEndTime() +
+                ", generationEndTime=" + this.getGenerationEndTime() +
                 '}';
     }
 }
