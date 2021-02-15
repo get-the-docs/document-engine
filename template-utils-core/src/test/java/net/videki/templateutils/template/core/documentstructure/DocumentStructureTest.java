@@ -44,7 +44,7 @@ public class DocumentStructureTest {
     private static final String TL_COVER_KEY = "cover";
     private static final String TL_COVER_FILE = "cover_v03.docx";
 
-    private static final String inputDirDocStructureContracts = "/integrationtests/contracts/vintage";
+    private static final String inputDirDocStructureContracts = "/integrationtests/contracts";
     private static final String TL_CONTRACT_KEY = "contract";
     private static final String TL_CONTRACT_FILE_HU = "contract_v09_hu.docx";
     private static final String TL_CONTRACT_FILE_EN = "contract_v09_en.docx";

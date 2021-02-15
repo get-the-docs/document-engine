@@ -1,9 +1,9 @@
 package net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem;
 
-import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.provider.documentstructure.DocumentStructureRepository;
-import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
-import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
+import net.videki.templateutils.template.core.documentstructure.descriptors.DocumentStructureOptions;
+import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureOptionsBuilder;
+import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlConfigurableDocStructureBuilder;
+import net.videki.templateutils.template.core.provider.documentstructure.repository.ConfigurableDocumentStructureRepository;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import org.slf4j.Logger;
@@ -14,20 +14,23 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-public class FileSystemDocumentStructureRepository implements DocumentStructureRepository {
+public class FileSystemConfigurableDocumentStructureRepository extends FileSystemDocumentStructureRepository
+        implements ConfigurableDocumentStructureRepository {
     private static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR =
             "repository.documentstructure.provider.filesystem.basedir";
     private static final String DOCUMENT_STRUCTURE_BUILDER = "repository.documentstructure.builder";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemDocumentStructureRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemConfigurableDocumentStructureRepository.class);
 
-    private DocumentStructureBuilder documentStructureBuilder;
+    private DocumentStructureOptionsBuilder documentStructureBuilder;
     private String basedir;
 
     @Override
     public void init(final Properties props) throws TemplateServiceConfigurationException {
+        super.init(props);
+
         if (props == null) {
-            throw new TemplateServiceConfigurationException("28f5041e-f1db-483d-97ec-fd3bda9bc11c",
+            throw new TemplateServiceConfigurationException("f883e70a-a314-4156-84d7-789f20529ed4",
                     "Null or invalid template properties caught.");
         }
 
@@ -36,11 +39,11 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
     }
 
     @Override
-    public DocumentStructure getDocumentStructure(final String documentStructureFile)
+    public DocumentStructureOptions getDocumentStructureOptions(final String documentStructureFile)
             throws TemplateServiceConfigurationException {
         final String pathToFile = this.basedir + File.separator + documentStructureFile;
 
-        final InputStream dsAsStream = FileSystemDocumentStructureRepository.class
+        final InputStream dsAsStream = FileSystemConfigurableDocumentStructureRepository.class
                 .getClassLoader()
                 .getResourceAsStream(pathToFile);
 
@@ -52,19 +55,19 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
         } else {
             LOGGER.debug("DocumentStructure found. File: {}. ", documentStructureFile);
 
-            return this.documentStructureBuilder.build(dsAsStream);
+            return this.documentStructureBuilder.buildOptions(dsAsStream);
         }
     }
 
-    private DocumentStructureBuilder loadDocumentStructureBuilder(final Properties props) {
-        DocumentStructureBuilder documentStructureBuilder = new YmlDocStructureBuilder();
+    private DocumentStructureOptionsBuilder loadDocumentStructureBuilder(final Properties props) {
+        DocumentStructureOptionsBuilder documentStructureBuilder = new YmlConfigurableDocStructureBuilder();
 
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
             repositoryProvider = (String) props.get(DOCUMENT_STRUCTURE_BUILDER);
 
             if (repositoryProvider != null) {
-                documentStructureBuilder = (DocumentStructureBuilder)
+                documentStructureBuilder = (DocumentStructureOptionsBuilder)
                         this.getClass().getClassLoader()
                                 .loadClass(repositoryProvider)
                                 .getDeclaredConstructor()
@@ -77,7 +80,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
                 NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading document structure builder: %s, " +
-                    "using built-in YmlDocStructureBuilder.", repositoryProvider);
+                    "using built-in YmlConfigurableDocStructureBuilder.", repositoryProvider);
             LOGGER.error(msg, e);
         }
 

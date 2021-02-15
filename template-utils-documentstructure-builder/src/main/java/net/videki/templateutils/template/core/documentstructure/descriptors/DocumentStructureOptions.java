@@ -1,7 +1,4 @@
-package net.videki.templateutils.documentstructure.builder.core.documentstructure;
-
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
+package net.videki.templateutils.template.core.documentstructure.descriptors;
 
 import java.util.LinkedList;
 import java.util.List;

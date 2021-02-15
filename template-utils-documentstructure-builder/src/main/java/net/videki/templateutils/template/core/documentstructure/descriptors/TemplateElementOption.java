@@ -1,4 +1,4 @@
-package net.videki.templateutils.documentstructure.builder.core.documentstructure;
+package net.videki.templateutils.template.core.documentstructure.descriptors;
 
 public enum TemplateElementOption {
     ADD,

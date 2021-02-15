@@ -1,11 +1,11 @@
-package net.videki.templateutils.documentstructure.builder.core.service.impl;
+package net.videki.templateutils.template.core.provider.documentstructure.builder.yaml;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import net.videki.templateutils.documentstructure.builder.core.documentstructure.OptionalTemplateElement;
-import net.videki.templateutils.documentstructure.builder.core.documentstructure.TemplateElementOption;
+import net.videki.templateutils.template.core.documentstructure.descriptors.OptionalTemplateElement;
+import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementOption;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 
 import java.io.IOException;
