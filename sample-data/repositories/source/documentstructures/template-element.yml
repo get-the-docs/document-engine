@@ -1,0 +1,8 @@
+---
+templateElementId:
+  id: "contract"
+templateNames:
+  hu_HU: "contracts/cover_v09_hu.docx"
+  en: "contracts/cover_v09_en.docx"
+defaultLocale: "hu_HU"
+count: 1
