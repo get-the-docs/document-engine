@@ -1,6 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure;
 
 import java.nio.file.Paths;
+import java.util.UUID;
 
 /**
  * <p>If multiple documents have to be generated, the DocumentStructure contains
@@ -18,6 +19,7 @@ public abstract class AbstractResultDocument {
     private final String fileName;
 
     public AbstractResultDocument(final String fileName) {
+        this.transactionId = UUID.randomUUID().toString();
         this.fileName = Paths.get(fileName).getFileName().toString();
     }
 

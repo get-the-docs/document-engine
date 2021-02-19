@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class FileSystemTemplateRepository implements TemplateRepository {
@@ -31,7 +33,13 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         InputStream result;
 
         final String pathToFile = this.baseDir + File.separator + templateFile;
-                result = FileSystemTemplateRepository.class.getClassLoader().getResourceAsStream(pathToFile);
+        try {
+            result = Paths.get(pathToFile).toUri().toURL().openStream();
+        } catch (final IOException e) {
+            result = null;
+        }
+//                result = FileSystemTemplateRepository.class.getClassLoader().getResourceAsStream(pathToFile);
+
         if (result == null) {
             LOGGER.error("Template not found. File: {}. ", pathToFile);
         } else {

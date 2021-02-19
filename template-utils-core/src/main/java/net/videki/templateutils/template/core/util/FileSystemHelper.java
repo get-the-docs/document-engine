@@ -2,6 +2,7 @@ package net.videki.templateutils.template.core.util;
 
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.nio.file.Paths;
 
 public class FileSystemHelper {
@@ -17,7 +18,11 @@ public class FileSystemHelper {
     }
 
     public static String getFileNameWithPath(final String path, final String fileName) {
-        return path + File.separator + fileName;
+        var tmpPath = path;
+        if (tmpPath.endsWith("\\") || tmpPath.endsWith("/")) {
+            tmpPath = tmpPath.substring(0, tmpPath.length() - 1);
+        }
+        return Paths.get(tmpPath + File.separator + fileName).normalize().toUri().getPath();
     }
 
     public static String getFileName(final String fileName) {

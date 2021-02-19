@@ -38,7 +38,7 @@ public class FileSystemResultStore implements ResultStore {
 
     @Override
     public StoredResultDocument save(final ResultDocument result) {
-        if (result == null) {
+        if (result == null || result.getContent() == null) {
             throw new TemplateProcessException("cb05a816-dea2-4498-823a-33fb4ece1565", "No result caught.");
         }
 
@@ -46,7 +46,7 @@ public class FileSystemResultStore implements ResultStore {
         if (transactionDir == null) {
             transactionDir = ".";
         }
-        final String resultDir = FileSystemHelper.getFileNameWithPath(this.baseDir, transactionDir);
+        final String resultDir = this.baseDir + File.separator + transactionDir;
 
         synchronized (this) {
             final File subdir = new File(resultDir);
@@ -57,13 +57,12 @@ public class FileSystemResultStore implements ResultStore {
             }
         }
 
-        final String resultFileName = FileSystemHelper.getFileNameWithPath(resultDir, result.getFileName());
+        final String resultFileName = resultDir + File.separator + result.getFileName();
         boolean actSuccessFlag = false;
 
         LOGGER.info("Result file: {}.", resultFileName);
 
-        try (FileOutputStream o =
-                     new FileOutputStream(resultFileName, false)) {
+        try (FileOutputStream o = new FileOutputStream(resultFileName, false)) {
 
             o.write(((ByteArrayOutputStream) result.getContent()).toByteArray());
             o.flush();
@@ -92,7 +91,16 @@ public class FileSystemResultStore implements ResultStore {
         }
 
         for (final ResultDocument actResult : generationResult.getResults()) {
-            storedResults.add(save(actResult));
+            if (actResult == null) {
+                throw new TemplateProcessException("d82bfd82-e745-4c71-8835-98c64145307a",
+                        "No result caught.");
+            }
+            if (actResult.getContent() != null) {
+                storedResults.add(save(actResult));
+            } else {
+                LOGGER.warn("Result document or part not generated - possible due errors. " +
+                        "TransactionId: {}, fileName: {}", actResult.getTransactionId(), actResult.getFileName());
+            }
         }
 
         LOGGER.info("Done.");

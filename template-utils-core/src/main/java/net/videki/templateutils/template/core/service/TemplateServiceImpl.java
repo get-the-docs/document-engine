@@ -10,8 +10,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
+import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.processor.ConverterRegistry;
+import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
@@ -49,7 +51,11 @@ public class TemplateServiceImpl implements TemplateService {
     private <T> TemplateContext getContextObject(final T dto) {
         TemplateContext context;
 
-        if (dto instanceof Map) {
+        if (dto instanceof String) {
+            LOGGER.debug("JSON context caught.");
+            context = new TemplateContext();
+            context.addValueObject(new JsonValueObject((String) dto));
+        } else if (dto instanceof Map) {
             LOGGER.debug("Map context caught.");
             context = new TemplateContext();
             for (Object actKey : ((Map) dto).keySet()) {
@@ -64,8 +70,9 @@ public class TemplateServiceImpl implements TemplateService {
             context.addValueObject(dto);
         }
 
-        LOGGER.debug("Context object: {}", context.toJson());
-
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Context object: {}", context.toJson());
+        }
         return context;
     }
 
@@ -92,7 +99,12 @@ public class TemplateServiceImpl implements TemplateService {
                         templateName, processor.getClass()));
             }
         }
-        return new ResultDocument(templateName, processor.fill(templateName, context));
+
+        try {
+            return new ResultDocument(templateName, processor.fill(templateName, context));
+        } catch (final PlaceholderEvalException e) {
+            return new ResultDocument(templateName, null);
+        }
 
     }
 
@@ -124,7 +136,12 @@ public class TemplateServiceImpl implements TemplateService {
                     LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
             }
         }
-        return new ResultDocument(getOutputFileName(templateName, outputFormat), result);
+
+        try {
+            return new ResultDocument(getOutputFileName(templateName, outputFormat), result);
+        } catch (final PlaceholderEvalException e) {
+            return new ResultDocument(templateName, null);
+        }
     }
 
     @Override

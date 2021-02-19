@@ -10,8 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class FileSystemDocumentStructureRepository implements DocumentStructureRepository {
@@ -40,9 +42,16 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
             throws TemplateServiceConfigurationException {
         final String pathToFile = this.basedir + File.separator + documentStructureFile;
 
-        final InputStream dsAsStream = FileSystemDocumentStructureRepository.class
-                .getClassLoader()
-                .getResourceAsStream(pathToFile);
+        InputStream dsAsStream;
+        try {
+            dsAsStream = Paths.get(pathToFile).toUri().toURL().openStream();
+        } catch (final IOException e) {
+            dsAsStream = null;
+        }
+
+//        final InputStream dsAsStream = FileSystemDocumentStructureRepository.class
+//                .getClassLoader()
+//                .getResourceAsStream(pathToFile);
 
         if (dsAsStream == null) {
             final String msg = String.format("DocumentStructure not found. File: %s. ", documentStructureFile);

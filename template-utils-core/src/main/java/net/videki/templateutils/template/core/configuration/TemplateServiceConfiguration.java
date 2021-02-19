@@ -1,8 +1,9 @@
 package net.videki.templateutils.template.core.configuration;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import net.videki.templateutils.template.core.provider.templaterepository.filesy
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +108,7 @@ public class TemplateServiceConfiguration {
     private static final String CONFIG_FILE_NAME = "template-utils.properties";
     private static final String LOG_APPENDER = "common.log.value-logcategory";
 
+    private static final String CONFIG_ENV_FILENAME = "configFile";
     private static final String TEMPLATE_REPOSITORY_PROVIDER = "repository.template.provider";
     private static final String DOCUMENT_STRUCTURE_PROVIDER = "repository.documentstructure.provider";
     private static final String RESULT_REPOSITORY_PROVIDER = "repository.result.provider";
@@ -136,13 +139,24 @@ public class TemplateServiceConfiguration {
         properties = new Properties();
         Set<Object> keys = Collections.emptySet();
         try {
-            properties.load(TemplateServiceConfiguration.getResource(CONFIG_FILE_NAME));
-            keys = properties.keySet();
-            if (!keys.isEmpty()) {
-                LOGGER.info("template-utils.properties configuration file found.");
+            final var configPath = System.getenv(CONFIG_ENV_FILENAME);
+            URL path = getClass().getClassLoader().getResource(CONFIG_FILE_NAME);
+            if (StringUtils.isNotEmpty(configPath)) {
+                path = new File(configPath).toURI().toURL();
             }
+
+            if (path != null) {
+                final InputStream propFile = path.openStream();
+                properties.load(propFile);
+
+                LOGGER.info("template-utils.properties configuration file found at location: {}", path.getPath());
+            } else {
+                LOGGER.error("No template-utils.properties configuration file found");
+            }
+
+            keys = properties.keySet();
         } catch (final Exception e) {
-            LOGGER.warn("template-utils.properties configuration file not found, using default configuration.");
+            LOGGER.error("template-utils.properties configuration file not found, using default configuration.");
         }
         initFontLibrary(keys);
         initDocumentStructureRepository();

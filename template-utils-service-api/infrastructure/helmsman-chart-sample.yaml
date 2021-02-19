@@ -1,0 +1,39 @@
+# version: v3.4.0
+
+context: local
+
+metadata:
+  org: "github.io/videki/"
+  maintainer: "Levente Ban"
+  description: "Sample docx gene Desired State File."
+
+settings:
+  kubeContext: "docker-desktop"
+  globalMaxHistory: 5
+
+# define your environments and their k8s namespaces
+namespaces:
+  docs:
+    protected: false
+    labels:
+      env: "sample"
+
+helmRepos:
+  argo: "https://argoproj.github.io/argo-helm"
+  jfrog: "https://charts.jfrog.io"
+  helm-stable: "https://charts.helm.sh/stable"
+  bitnami: "https://charts.bitnami.com/bitnami"
+
+apps:
+
+  kafka:
+    namespace: project-portfolio-be
+    enabled: true
+    chart: bitnami/kafka
+    version: 12.7.4
+
+  kafdrop:
+    namespace: project-portfolio-be
+    enabled: false
+    chart: "../helm-charts/kafdrop.tgz"
+    version: 0.1.0

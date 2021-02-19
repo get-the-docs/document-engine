@@ -1,5 +1,7 @@
 package net.videki.templateutils.template.core.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -22,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public interface ITemplate {
   Locale LC_HU = new Locale("hu", "HU");
@@ -101,6 +104,20 @@ public interface ITemplate {
     String result;
     if (value != null) {
       result = value.format(DATE_FORMAT_DATE);
+    } else {
+      result = PLACEHOLDER_EMPTY;
+    }
+    return result;
+  }
+
+  default String fmtDate(final Map<?, ?> value) {
+    String result;
+    if (value != null) {
+      final ObjectMapper mapper = new ObjectMapper();
+      mapper.registerModule(new JavaTimeModule());
+      //LocalDate.of((Integer) value.get("year"), (Integer) value.get("month"), (Integer) value.get("day"))
+      LocalDate d = mapper.convertValue(value.values().toArray(), LocalDate.class);
+      result = d.format(DATE_FORMAT_DATE);
     } else {
       result = PLACEHOLDER_EMPTY;
     }
@@ -188,6 +205,13 @@ public interface ITemplate {
     }
 
     return docImage;
+  }
+
+  default String concat(final Map<String, Object> args) {
+    return args.values()
+            .stream()
+            .map(Object::toString)
+            .collect(Collectors.joining(" "));
   }
 
 }

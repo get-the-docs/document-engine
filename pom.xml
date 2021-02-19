@@ -79,7 +79,7 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j.version}</version>
@@ -96,7 +96,7 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
 
     </dependencies>
 
@@ -105,6 +105,7 @@
         <module>template-utils-core</module>
         <module>template-utils-core-test-dto</module>
         <module>template-utils-documentstructure-builder</module>
+        <!--module>template-utils-service-api</module-->
     </modules>
 
     <build>

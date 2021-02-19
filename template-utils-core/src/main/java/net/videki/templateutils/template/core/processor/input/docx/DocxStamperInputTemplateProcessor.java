@@ -57,14 +57,24 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
 
     } catch (final UnresolvedExpressionException e) {
       final String msg = String.format("Placeholder error in file: %s", templateFileName);
-      LOGGER.warn(msg, e);
+      LOGGER.warn(msg);
+
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Expression eval error: ", e);
+      }
 
       throw new PlaceholderEvalException("ff03cf41-25fb-463a-829d-e2b411df4c16", msg, e);
 
     } catch (final IOException e) {
       LOGGER.error("Error reading/closing template file: {} or creating the output.", templateFileName);
     } catch (final Exception e) {
-      LOGGER.error("Error stamping the template file: {}. {}", templateFileName, e);
+      final String msg = String.format("Error stamping the template file: %s", templateFileName);
+      LOGGER.warn(msg);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(msg, e);
+      }
+
+      throw new PlaceholderEvalException("36f17397-f921-44c6-9a6c-e2858d959c70", msg, e);
     }
 
     return result;
