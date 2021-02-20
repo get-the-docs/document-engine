@@ -15,6 +15,8 @@ import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -92,7 +94,7 @@ public class TemplateServiceParamTest {
         final Contract dto = ContractDataFactory.createContract();
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName), dto, OutputFormat.DOCX);
+            final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName, dto, OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
 
@@ -114,7 +116,7 @@ public class TemplateServiceParamTest {
         final String resultFileName = "fillSimpleTemplateMapTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
                     getContractTestData().getCtx(),
                     OutputFormat.DOCX);
 
@@ -138,7 +140,7 @@ public class TemplateServiceParamTest {
         final String resultFileName = "fillSimpleTemplateTemplateContextTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
                     getContractTestData(), OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
@@ -158,7 +160,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
+        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX);
 
         fail();
     }
@@ -175,7 +177,7 @@ public class TemplateServiceParamTest {
         GenerationResult result = null;
         try {
             docElement =
-                new TemplateElement("contract", FileSystemHelper.getFileNameWithPath(inputDir, fileName), LC_HU)
+                new TemplateElement("contract", inputDir + File.separator + fileName, LC_HU)
                     .withCount(1);
 
             structure.getElements().add(docElement);
@@ -264,7 +266,7 @@ public class TemplateServiceParamTest {
         final Contract dto = ContractDataFactory.createContract();
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName), dto, OutputFormat.DOCX);
+            final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName, dto, OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
 
@@ -286,7 +288,7 @@ public class TemplateServiceParamTest {
         final String resultFileName = "fillAndSaveSimpleTemplateMapTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
                     getContractTestData().getCtx(),
                     OutputFormat.DOCX);
 
@@ -310,7 +312,7 @@ public class TemplateServiceParamTest {
         final String resultFileName = "fillAndSaveSimpleTemplateTemplateContextTest-" + fileName;
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+            final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
                     getContractTestData(), OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
@@ -330,7 +332,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName), getContractTestData(), OutputFormat.DOCX);
+        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX);
 
         fail();
     }
@@ -347,7 +349,7 @@ public class TemplateServiceParamTest {
         GenerationResult result = null;
         try {
             docElement =
-                    new TemplateElement("contract", FileSystemHelper.getFileNameWithPath(inputDir, fileName), LC_HU)
+                    new TemplateElement("contract", inputDir + File.separator + fileName, LC_HU)
                             .withCount(1);
 
             structure.getElements().add(docElement);

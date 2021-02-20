@@ -18,6 +18,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -45,7 +47,7 @@ public class DocxTemplateTest {
         context.getCtx().put("contract", dto);
 
         try {
-            final StoredResultDocument result = ts.fillAndSave(FileSystemHelper.getFileNameWithPath(inputDir, fileName), context, OutputFormat.DOCX);
+            final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName, context, OutputFormat.DOCX);
 
             LOGGER.info("Done - Result file: {}.", resultFileName);
             Assert.assertTrue(result.isGenerated());

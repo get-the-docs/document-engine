@@ -11,6 +11,7 @@ import net.videki.templateutils.template.test.dto.contract.Contract;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -29,7 +30,7 @@ public class DocxStamperInputTemplateProcessorTest {
         final String inputDir = "unittests/docx";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
-        this.processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName), getContractTestData());
+        this.processor.fill(inputDir + File.separator + fileName, getContractTestData());
     }
 
     @Test
@@ -39,7 +40,7 @@ public class DocxStamperInputTemplateProcessorTest {
 
         final String fileName = "this_template_file_does_not_exist.docx";
 
-        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+        try (final OutputStream ignore = processor.fill(inputDir + File.separator + fileName,
                 getContractTestData())) {
 
             Assert.assertFalse(false);
@@ -57,7 +58,7 @@ public class DocxStamperInputTemplateProcessorTest {
 
         final String fileName = "SimpleContract_v1_21-pojo-placeholder_error.docx";
 
-        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+        try (final OutputStream ignore = processor.fill(inputDir + File.separator + fileName,
                 getContractTestData())) {
 
             Assert.assertFalse(false);

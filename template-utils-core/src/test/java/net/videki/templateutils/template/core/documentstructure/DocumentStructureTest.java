@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -40,20 +41,20 @@ public class DocumentStructureTest {
 
     private static final String TL_DOC_KEY = "doc";
 
-    private static final String inputDirDocStructureCovers = "/integrationtests/covers";
+    private static final String inputDirDocStructureCovers = "integrationtests/covers";
     private static final String TL_COVER_KEY = "cover";
     private static final String TL_COVER_FILE = "cover_v03.docx";
 
-    private static final String inputDirDocStructureContracts = "/integrationtests/contracts";
+    private static final String inputDirDocStructureContracts = "integrationtests/contracts";
     private static final String TL_CONTRACT_KEY = "contract";
     private static final String TL_CONTRACT_FILE_HU = "contract_v09_hu.docx";
     private static final String TL_CONTRACT_FILE_EN = "contract_v09_en.docx";
 
-    private static final String inputDirDocStructureTerms = "/integrationtests/terms";
+    private static final String inputDirDocStructureTerms = "integrationtests/terms";
     private static final String TL_TERMS_KEY = "terms";
     private static final String TL_TERMS_FILE = "terms_v02.docx";
 
-    private static final String inputDirDocStructureConditions = "/integrationtests/conditions/vintage";
+    private static final String inputDirDocStructureConditions = "integrationtests/conditions/vintage";
     private static final String TL_CONDITIONS_KEY = "conditions";
     private static final String TL_CONDITIONS_FILE = "conditions_v11.xlsx";
 
@@ -61,22 +62,22 @@ public class DocumentStructureTest {
         final DocumentStructure result = new DocumentStructure();
 
         result.getElements().add(
-                new TemplateElement(TL_COVER_KEY, FileSystemHelper.getFileNameWithPath(inputDirDocStructureCovers, TL_COVER_FILE))
+                new TemplateElement(TL_COVER_KEY, inputDirDocStructureCovers + File.separator + TL_COVER_FILE)
                         .withDefaultLocale(LC_HU));
 
         result.getElements().add(
                 new TemplateElement(TL_CONTRACT_KEY)
-                        .withTemplateName(FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU), LC_HU)
-                        .withTemplateName(FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN), Locale.ENGLISH)
+                        .withTemplateName(inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU, LC_HU)
+                        .withTemplateName(inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN, Locale.ENGLISH)
                         .withDefaultLocale(LC_HU)
         );
 
         result.getElements().add(
-                new TemplateElement(TL_TERMS_KEY, FileSystemHelper.getFileNameWithPath(inputDirDocStructureTerms, TL_TERMS_FILE))
+                new TemplateElement(TL_TERMS_KEY, inputDirDocStructureTerms + File.separator + TL_TERMS_FILE)
                         .withDefaultLocale(LC_HU));
 
         result.getElements().add(
-                new TemplateElement(TL_CONDITIONS_KEY, FileSystemHelper.getFileNameWithPath(inputDirDocStructureConditions, TL_CONDITIONS_FILE))
+                new TemplateElement(TL_CONDITIONS_KEY, inputDirDocStructureConditions + File.separator + TL_CONDITIONS_FILE)
                         .withDefaultLocale(LC_HU));
 
         return result;
@@ -132,7 +133,7 @@ public class DocumentStructureTest {
         GenerationResult result = null;
         try {
             docElement =
-                new TemplateElement(TEMPLATE_CONTRACT, FileSystemHelper.getFileNameWithPath(inputDir, fileName), LC_HU)
+                new TemplateElement(TEMPLATE_CONTRACT, inputDir + File.separator + fileName, LC_HU)
                     .withCount(2);
 
             structure.getElements().add(docElement);

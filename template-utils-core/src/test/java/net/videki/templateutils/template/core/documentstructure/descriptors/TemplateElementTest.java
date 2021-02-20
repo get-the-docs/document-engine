@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,16 +30,16 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY, 2)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU)
                     .withLocales(List.of(Locale.ITALIAN, Locale.CANADA));
 
             Assert.assertEquals(
-                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                    inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                     te.getTemplateName(new Locale("es")));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);
@@ -53,7 +54,7 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY, 2)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withDefaultLocale(LC_HU);
 
@@ -73,10 +74,10 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY, 2)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, "contract_v09_en.xlsx"),
+                            inputDirDocStructureContracts + File.separator + "contract_v09_en.xlsx",
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU);
 
@@ -98,15 +99,15 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU);
 
             Assert.assertEquals(
-                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                    inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                     te.getTemplateName(LC_HU));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);
@@ -121,15 +122,15 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU);
 
             Assert.assertEquals(
-                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                    inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                     te.getTemplateName(Locale.ENGLISH));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);
@@ -144,15 +145,15 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU);
 
             Assert.assertEquals(
-                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                    inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                     te.getTemplateName(Locale.GERMAN));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);
@@ -167,15 +168,15 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU);
 
             Assert.assertEquals(
-                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                    inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                     te.getTemplateName(null));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);
@@ -190,16 +191,16 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU)
                     .withLocales(List.of(Locale.ITALIAN, Locale.CANADA));
 
             Assert.assertEquals(
-                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                    inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                     te.getTemplateName(Locale.CANADA));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);
@@ -214,16 +215,16 @@ public class TemplateElementTest {
         try {
             final var te = new TemplateElement(TL_CONTRACT_KEY)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                             LC_HU)
                     .withTemplateName(
-                            FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_EN),
+                            inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_EN,
                             Locale.ENGLISH)
                     .withDefaultLocale(LC_HU)
                     .withLocales(List.of(Locale.ITALIAN, Locale.CANADA));
 
             Assert.assertEquals(
-                    FileSystemHelper.getFileNameWithPath(inputDirDocStructureContracts, TL_CONTRACT_FILE_HU),
+                    inputDirDocStructureContracts + File.separator + TL_CONTRACT_FILE_HU,
                     te.getTemplateName(new Locale("es")));
         } catch (final Exception e) {
             LOGGER.error("Wrong template caught.", e);

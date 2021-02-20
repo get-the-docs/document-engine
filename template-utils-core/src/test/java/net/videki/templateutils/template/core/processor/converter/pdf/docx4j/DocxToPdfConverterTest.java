@@ -11,6 +11,7 @@ import net.videki.templateutils.template.core.service.OutputFormat;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -48,7 +49,7 @@ public class DocxToPdfConverterTest {
 
         final Converter x = new DocxToPdfConverter();
 
-        final InputStream is = getTemplate(FileSystemHelper.getFileNameWithPath(inputDir, fileName));
+        final InputStream is = getTemplate(inputDir + File.separator + fileName);
 
         result = x.convert(is);
 
@@ -81,7 +82,7 @@ public class DocxToPdfConverterTest {
         final String fileName = "invalidFile.docx";
 
         try {
-            final InputStream is = getTemplate(FileSystemHelper.getFileNameWithPath(inputDir, fileName));
+            final InputStream is = getTemplate(inputDir + File.separator + fileName);
             final Converter x = new DocxToPdfConverter();
             x.convert(is);
 

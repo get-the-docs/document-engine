@@ -1,0 +1,299 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: oss.levente.ban@gmail.com
+    name: Levente Ban
+  description: "An API for listing available templates, and impersonating."
+  title: Document generation API
+  version: 1.0.1
+servers:
+  - url: https://localhost:8080/api/v1
+paths:
+  /template/{id}:
+    post:
+      operationId: postTemplateGenerationJob
+      parameters:
+        - name: id
+          description: "integrationtests.contracts:contract_v09_hu.docx"
+          example: "integrationtests.contracts:contract_v09_hu.docx"
+          explode: true
+          in: path
+          required: true
+          schema:
+            minLength: 1
+            maxLength: 4000
+            type: string
+      requestBody:
+        description: data provided for generation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TemplateContext"
+      responses:
+        "202":
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplateJobApiResponse"
+        default:
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplateJobApiResponse"
+        "400":
+          description: Invalid DTO
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "404":
+          description: Template not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+      summary: Posts a template generation with the given data
+      x-contentType: application/json
+      x-accepts: application/json
+
+  /documentstructure/{id}:
+    get:
+      operationId: getTemplate
+      parameters:
+        - name: id
+          description: template id in the template repository
+          explode: true
+          in: path
+          required: true
+          schema:
+            minLength: 1
+            maxLength: 200
+            pattern: "^[a-zA-Z0-9_]*$"
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/DocStructureJobApiResponse"
+          description: Returns the
+        default:
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocStructureJobApiResponse"
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+      summary: Returns a document structure from the registered doc structure repository
+      x-contentType: application/json
+      x-accepts: application/json
+
+  /documentstructure/{id}/{transactionId}:
+    post:
+      operationId: postDocumentStructureGenerationJob
+      parameters:
+        - name: id
+          description: document structure id in the document structure repository
+          explode: true
+          in: path
+          required: true
+          schema:
+            minLength: 1
+            maxLength: 200            
+            pattern: "^[a-zA-Z0-9_\\/-]*$"
+            type: string
+        - name: transactionId
+          description: transaction id to be used for the generation
+          explode: true
+          in: path
+          required: true
+          schema:
+            minLength: 1
+            maxLength: 200            
+            pattern: "^[a-zA-Z0-9_\\/-]*$"
+            type: string
+      requestBody:
+        description: data provided for generation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValueSet"          
+      responses:
+        "202":
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocStructureJobApiResponse"
+        default:
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocStructureJobApiResponse"
+        "400":
+          description: Invalid DTO
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "404":
+          description: Template not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseApiResponse"
+      summary: Posts a template generation with the given data
+      x-contentType: application/json
+      x-accepts: application/json
+
+components:
+  schemas:
+    BaseApiResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        requestContext:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+          format: uri
+        errorFlag:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+          maxLength: 21
+
+    ValueSet:
+      type: object
+      additionalProperties: false
+      properties:
+        documentStructureId:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          example: 050bca79-5aba-4e32-a34d-9409edcb0a68
+        transactionId:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          example: contracts-54f9b669-d582-4049-95de-9fded66b884f
+        locale:
+          type: string
+          minLength: 0
+          maxLength: 10
+          example: en_US
+        values:
+          items:
+            $ref: "#/components/schemas/TemplateContext"
+          type: array
+          maxItems: 32767
+          
+    TemplateContext:
+      type: object
+
+    TemplateJobApiResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        transactionId:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_\\/-]*$"
+        message:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+
+    DocStructureJobApiResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        transactionId:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_\\/-]*$"
+        message:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+
+
+
+  securitySchemes:
+    ApiKeyAuth:        
+      type: apiKey
+      in: header       
+      name: X-API-KEY  
+
+security:
+  - ApiKeyAuth: []
