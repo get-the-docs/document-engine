@@ -6,12 +6,12 @@
 
 Docx, xlsx template engine and pdf converter to provide enterprise document generation feautures.
 
-The module is a Helm package with a REST API to generate documents from WYSIWYG templates, or template structures with JSON actual data via jsonpath and SPEL expression-like placeholders. The engine core is a java wrapper to other tools integrate their capabilities and can be used with typed DTO-s as a dependency also.
+The module is a Helm package with a REST API to generate documents from WYSIWYG templates, or template structures with JSON actual data via jsonpath and SpEL expression-like placeholders. The engine core is a java wrapper to other tools integrate their capabilities and can be used with typed DTO-s as a dependency also.
 
 
 **Note:**
 
-This project is in incubation phase. Hold on, we will deploy it on Maven Central as soon as we can. 
+This project is in incubation phase. Hold on, we will deploy it on Maven Central and ghcr.io as soon as we can. 
 If you find the functionality covered by the engine useful, please give it a star. 
 
 ## Main features
