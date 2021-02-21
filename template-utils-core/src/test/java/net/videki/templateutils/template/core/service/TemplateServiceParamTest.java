@@ -155,7 +155,7 @@ public class TemplateServiceParamTest {
     }
 
     @Test(expected = net.videki.templateutils.template.core.service.exception.TemplateNotFoundException.class)
-    public void fillSimpleTemplateNonexistingTemplateFile() throws Exception {
+    public void fillSimpleTemplateNonExistingTemplateFile() throws Exception {
         final String inputDir = "unittests/docx";
 
         final String fileName = "there_is_no_such_template_file.docx";

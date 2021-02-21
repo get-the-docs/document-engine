@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: {{ include "spring-boot.name" . }}
     helm.sh/chart: {{ include "spring-boot.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/managed-by: {{ .Values.service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -51,30 +51,32 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: http
+              port: 9001
             initialDelaySeconds: 60
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: http
+              port: 9001
             initialDelaySeconds: 20
           volumeMounts:
           - mountPath: /repositories/source/documentstructures
             name: documentstructures
           - mountPath: /repositories/source/templates
             name: templates
+          - mountPath: /fonts
+            name: fonts
           - mountPath: /repositories/target/generated-documents
             name: generated-documents
       volumes:
-      - name: fonts
-        persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-pvc-fonts
       - name: documentstructures
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-pvc-documentstructures
       - name: templates
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-pvc-templates
+      - name: fonts
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-pvc-fonts
       - name: generated-documents
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-pvc-generateddocuments

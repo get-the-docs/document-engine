@@ -14,15 +14,15 @@ paths:
       operationId: postTemplateGenerationJob
       parameters:
         - name: id
-          description: "integrationtests.contracts:contract_v09_hu.docx"
-          example: "integrationtests.contracts:contract_v09_hu.docx"
+          description: "Posts a single template generation."
+          examples:
+            contract:
+              value: "integrationtests.contracts:contract_v09_hu.docx"
           explode: true
           in: path
           required: true
           schema:
-            minLength: 1
-            maxLength: 4000
-            type: string
+            $ref: "#/components/schemas/TemplateElementId"
       requestBody:
         description: data provided for generation
         required: true
@@ -77,64 +77,11 @@ paths:
       x-contentType: application/json
       x-accepts: application/json
 
-  /documentstructure/{id}:
-    get:
-      operationId: getTemplate
-      parameters:
-        - name: id
-          description: template id in the template repository
-          explode: true
-          in: path
-          required: true
-          schema:
-            minLength: 1
-            maxLength: 200
-            pattern: "^[a-zA-Z0-9_]*$"
-            type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref:  "#/components/schemas/DocStructureJobApiResponse"
-          description: Returns the
-        default:
-          description: Default
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DocStructureJobApiResponse"
-        "401":
-          description: Bad credentials
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BaseApiResponse"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BaseApiResponse"
-        "404":
-          description: Project not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BaseApiResponse"
-        "429":
-          description: Too many requests
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BaseApiResponse"
-      summary: Returns a document structure from the registered doc structure repository
-      x-contentType: application/json
-      x-accepts: application/json
 
-  /documentstructure/{id}/{transactionId}:
+  /documentstructure/{id}:
     post:
       operationId: postDocumentStructureGenerationJob
+      description: Posts data for a document structure to be generated.
       parameters:
         - name: id
           description: document structure id in the document structure repository
@@ -142,27 +89,14 @@ paths:
           in: path
           required: true
           schema:
-            minLength: 1
-            maxLength: 200            
-            pattern: "^[a-zA-Z0-9_\\/-]*$"
-            type: string
-        - name: transactionId
-          description: transaction id to be used for the generation
-          explode: true
-          in: path
-          required: true
-          schema:
-            minLength: 1
-            maxLength: 200            
-            pattern: "^[a-zA-Z0-9_\\/-]*$"
-            type: string
+            $ref: "#/components/schemas/DocumentStructureId"
       requestBody:
-        description: data provided for generation
+        description: Data provided for generation
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ValueSet"          
+              $ref: "#/components/schemas/ValueSet"
       responses:
         "202":
           description: Default
@@ -229,15 +163,25 @@ components:
           format: date-time
           maxLength: 21
 
+    TemplateElementId:
+      type: string
+      minLength: 0
+      maxLength: 4000
+      pattern: "^[a-zA-Z0-9_\\/-]*$"
+
+    DocumentStructureId:
+      type: string
+      minLength: 0
+      maxLength: 4000
+      pattern: "^[a-zA-Z0-9_\\/-]*$"
+      example: 050bca79-5aba-4e32-a34d-9409edcb0a68
+
     ValueSet:
       type: object
       additionalProperties: false
       properties:
         documentStructureId:
-          type: string
-          minLength: 0
-          maxLength: 4000
-          example: 050bca79-5aba-4e32-a34d-9409edcb0a68
+          $ref: "#/components/schemas/DocumentStructureId"
         transactionId:
           type: string
           minLength: 0
@@ -250,10 +194,19 @@ components:
           example: en_US
         values:
           items:
-            $ref: "#/components/schemas/TemplateContext"
+            $ref: "#/components/schemas/ValueSetItem"
           type: array
           maxItems: 32767
-          
+
+    ValueSetItem:
+      type: object
+      additionalProperties: false
+      properties:
+        templateElementId:
+          $ref: "#/components/schemas/TemplateElementId"
+        value:
+          $ref: "#/components/schemas/TemplateContext"
+
     TemplateContext:
       type: object
 

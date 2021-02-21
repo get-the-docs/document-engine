@@ -29,7 +29,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-19T13:46:54.021161300+01:00[Europe/Prague]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-21T16:03:21.030101500+01:00[Europe/Prague]")
 
 @Validated
 @Api(value = "documentstructure", description = "the documentstructure API")
@@ -40,50 +40,11 @@ public interface DocumentstructureApi {
     }
 
     /**
-     * GET /documentstructure/{id} : Returns a document structure from the registered doc structure repository
-     *
-     * @param id template id in the template repository (required)
-     * @return Returns the (status code 200)
-     *         or Bad credentials (status code 401)
-     *         or Forbidden (status code 403)
-     *         or Project not found (status code 404)
-     *         or Too many requests (status code 429)
-     *         or Default (status code 200)
-     */
-    @ApiOperation(value = "Returns a document structure from the registered doc structure repository", nickname = "getTemplate", notes = "", response = DocStructureJobApiResponse.class, authorizations = {
-        @Authorization(value = "ApiKeyAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Returns the", response = DocStructureJobApiResponse.class),
-        @ApiResponse(code = 401, message = "Bad credentials", response = BaseApiResponse.class),
-        @ApiResponse(code = 403, message = "Forbidden", response = BaseApiResponse.class),
-        @ApiResponse(code = 404, message = "Project not found", response = BaseApiResponse.class),
-        @ApiResponse(code = 429, message = "Too many requests", response = BaseApiResponse.class),
-        @ApiResponse(code = 200, message = "Default", response = DocStructureJobApiResponse.class) })
-    @RequestMapping(value = "/documentstructure/{id}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    default ResponseEntity<DocStructureJobApiResponse> getTemplate(@Pattern(regexp="^[a-zA-Z0-9_]*$") @Size(min=1,max=200) @ApiParam(value = "template id in the template repository",required=true) @PathVariable("id") String id) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"message\" : \"message\", \"transactionId\" : \"transactionId\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * POST /documentstructure/{id}/{transactionId} : Posts a template generation with the given data
+     * POST /documentstructure/{id} : Posts a template generation with the given data
+     * Posts data for a document structure to be generated.
      *
      * @param id document structure id in the document structure repository (required)
-     * @param transactionId transaction id to be used for the generation (required)
-     * @param valueSet data provided for generation (required)
+     * @param valueSet Data provided for generation (required)
      * @return Default (status code 202)
      *         or Invalid DTO (status code 400)
      *         or Bad credentials (status code 401)
@@ -92,7 +53,7 @@ public interface DocumentstructureApi {
      *         or Too many requests (status code 429)
      *         or Default (status code 200)
      */
-    @ApiOperation(value = "Posts a template generation with the given data", nickname = "postDocumentStructureGenerationJob", notes = "", response = DocStructureJobApiResponse.class, authorizations = {
+    @ApiOperation(value = "Posts a template generation with the given data", nickname = "postDocumentStructureGenerationJob", notes = "Posts data for a document structure to be generated.", response = DocStructureJobApiResponse.class, authorizations = {
         @Authorization(value = "ApiKeyAuth")
     }, tags={  })
     @ApiResponses(value = { 
@@ -103,11 +64,11 @@ public interface DocumentstructureApi {
         @ApiResponse(code = 404, message = "Template not found", response = BaseApiResponse.class),
         @ApiResponse(code = 429, message = "Too many requests", response = BaseApiResponse.class),
         @ApiResponse(code = 200, message = "Default", response = DocStructureJobApiResponse.class) })
-    @RequestMapping(value = "/documentstructure/{id}/{transactionId}",
+    @RequestMapping(value = "/documentstructure/{id}",
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    default ResponseEntity<DocStructureJobApiResponse> postDocumentStructureGenerationJob(@Pattern(regexp="^[a-zA-Z0-9_/-]*$") @Size(min=1,max=200) @ApiParam(value = "document structure id in the document structure repository",required=true) @PathVariable("id") String id,@Pattern(regexp="^[a-zA-Z0-9_/-]*$") @Size(min=1,max=200) @ApiParam(value = "transaction id to be used for the generation",required=true) @PathVariable("transactionId") String transactionId,@ApiParam(value = "data provided for generation" ,required=true )  @Valid @RequestBody ValueSet valueSet) {
+    default ResponseEntity<DocStructureJobApiResponse> postDocumentStructureGenerationJob(@Pattern(regexp="^[a-zA-Z0-9_/-]*$") @Size(min=0,max=4000) @ApiParam(value = "document structure id in the document structure repository",required=true) @PathVariable("id") String id,@ApiParam(value = "Data provided for generation" ,required=true )  @Valid @RequestBody ValueSet valueSet) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {

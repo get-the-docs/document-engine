@@ -28,7 +28,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-19T13:46:54.021161300+01:00[Europe/Prague]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-21T16:03:21.030101500+01:00[Europe/Prague]")
 
 @Validated
 @Api(value = "template", description = "the template API")
@@ -41,7 +41,7 @@ public interface TemplateApi {
     /**
      * POST /template/{id} : Posts a template generation with the given data
      *
-     * @param id template id in the template repository. Important: The directory separator characters should be replaced to &#39;|&#39; (required)
+     * @param id Posts a single template generation. (required)
      * @param body data provided for generation (required)
      * @return Default (status code 202)
      *         or Invalid DTO (status code 400)
@@ -66,7 +66,7 @@ public interface TemplateApi {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    default ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(@Size(min=1,max=4000) @ApiParam(value = "template id in the template repository. Important: The directory separator characters should be replaced to '|'",required=true) @PathVariable("id") String id,@ApiParam(value = "data provided for generation" ,required=true )  @Valid @RequestBody Object body) {
+    default ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(@Pattern(regexp="^[a-zA-Z0-9_/-]*$") @Size(min=0,max=4000) @ApiParam(value = "Posts a single template generation.",required=true) @PathVariable("id") String id,@ApiParam(value = "data provided for generation" ,required=true )  @Valid @RequestBody Object body) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {

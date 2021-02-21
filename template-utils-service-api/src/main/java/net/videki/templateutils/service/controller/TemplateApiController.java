@@ -1,18 +1,16 @@
 package net.videki.templateutils.service.controller;
 
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.service.model.TemplateJobApiResponse;
 import net.videki.templateutils.service.service.TemplateApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.*;
 
@@ -40,12 +38,8 @@ public class TemplateApiController implements TemplateApi {
 
     @Override
     public ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(
-            @Size(min=1,max=4000)
-            @ApiParam(value = "template id in the template repository. Important: The directory separator characters should be replaced to '|'",required=true)
-            @PathVariable("id") String id,
-            @ApiParam(value = "data provided for generation" ,required=true )
-            @Valid @RequestBody Object body) {
-
+            @Pattern(regexp = "^[a-zA-Z0-9_/-]*$") @Size(min = 0, max = 4000) String id,
+            @Valid Object body) {
         final TemplateJobApiResponse result = new TemplateJobApiResponse();
 
         result.setTransactionId(this.templateApiService.postTemplateGenerationJob(id, body));

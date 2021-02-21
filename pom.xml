@@ -62,7 +62,6 @@
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <json.version>20190722</json.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <log4j.version>2.13.2</log4j.version>
         <junit.version>4.13.1</junit.version>
     </properties>
 
@@ -79,24 +78,6 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-            <scope>test</scope>
-        </dependency-->
 
     </dependencies>
 

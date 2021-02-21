@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: {{ include "spring-boot.name" . }}
     helm.sh/chart: {{ include "spring-boot.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/managed-by: {{ .Values.service }}
   namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
@@ -25,7 +25,7 @@ metadata:
     app.kubernetes.io/name: {{ include "spring-boot.name" . }}
     helm.sh/chart: {{ include "spring-boot.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/managed-by: {{ .Values.service }}
   namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
@@ -44,7 +44,7 @@ metadata:
     app.kubernetes.io/name: {{ include "spring-boot.name" . }}
     helm.sh/chart: {{ include "spring-boot.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/managed-by: {{ .Values.service }}
   namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
@@ -63,11 +63,11 @@ metadata:
     app.kubernetes.io/name: {{ include "spring-boot.name" . }}
     helm.sh/chart: {{ include "spring-boot.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/managed-by: {{ .Values.service }}
   namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
   volumeMode: Filesystem
   resources:
     requests:

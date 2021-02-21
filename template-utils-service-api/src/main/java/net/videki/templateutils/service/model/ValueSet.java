@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import net.videki.templateutils.service.model.ValueSetItem;
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -14,7 +15,7 @@ import javax.validation.constraints.*;
 /**
  * ValueSet
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-19T13:46:54.021161300+01:00[Europe/Prague]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-21T16:06:36.835247500+01:00[Europe/Prague]")
 
 public class ValueSet   {
   @JsonProperty("documentStructureId")
@@ -28,7 +29,7 @@ public class ValueSet   {
 
   @JsonProperty("values")
   @Valid
-  private List<Object> values = null;
+  private List<ValueSetItem> values = null;
 
   public ValueSet documentStructureId(String documentStructureId) {
     this.documentStructureId = documentStructureId;
@@ -41,7 +42,7 @@ public class ValueSet   {
   */
   @ApiModelProperty(example = "050bca79-5aba-4e32-a34d-9409edcb0a68", value = "")
 
-@Size(min=0,max=4000) 
+@Pattern(regexp="^[a-zA-Z0-9_/-]*$") @Size(min=0,max=4000) 
   public String getDocumentStructureId() {
     return documentStructureId;
   }
@@ -90,12 +91,12 @@ public class ValueSet   {
     this.locale = locale;
   }
 
-  public ValueSet values(List<Object> values) {
+  public ValueSet values(List<ValueSetItem> values) {
     this.values = values;
     return this;
   }
 
-  public ValueSet addValuesItem(Object valuesItem) {
+  public ValueSet addValuesItem(ValueSetItem valuesItem) {
     if (this.values == null) {
       this.values = new ArrayList<>();
     }
@@ -109,12 +110,13 @@ public class ValueSet   {
   */
   @ApiModelProperty(value = "")
 
+  @Valid
 @Size(max=32767) 
-  public List<Object> getValues() {
+  public List<ValueSetItem> getValues() {
     return values;
   }
 
-  public void setValues(List<Object> values) {
+  public void setValues(List<ValueSetItem> values) {
     this.values = values;
   }
 

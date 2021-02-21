@@ -12,7 +12,7 @@ import javax.validation.constraints.*;
 /**
  * DocStructureJobApiResponse
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-16T18:11:50.335294800+01:00[Europe/Prague]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-21T16:06:36.835247500+01:00[Europe/Prague]")
 
 public class DocStructureJobApiResponse   {
   @JsonProperty("transactionId")
