@@ -35,6 +35,7 @@ jobs:
     - name: Codecov
       uses: codecov/codecov-action@v2
       with:
+        name: template-utils
 #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
 #    files: ./coverage1.xml,./coverage2.xml # optional
 #    flags: unittests # optional
