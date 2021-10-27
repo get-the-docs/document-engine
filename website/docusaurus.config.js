@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Template utils',
   tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application',
-  url: 'https://videki.github.io',
+  url: 'https://wwww.getthedoccs.tech',
   baseUrl: '/template-utils/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
