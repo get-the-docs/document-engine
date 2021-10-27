@@ -2,7 +2,7 @@ module.exports = {
   title: 'Template utils',
   tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application',
   url: 'https://wwww.getthedoccs.tech',
-  baseUrl: '/template-utils/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
