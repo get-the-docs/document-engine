@@ -58,7 +58,7 @@ public class TemplateServiceImpl implements TemplateService {
         } else if (dto instanceof Map) {
             LOGGER.debug("Map context caught.");
             context = new TemplateContext();
-            for (Object actKey : ((Map) dto).keySet()) {
+            for (final Object actKey : ((Map) dto).keySet()) {
                 context.getCtx().put((String) actKey, ((Map) dto).get(actKey));
             }
         } else if (dto instanceof TemplateContext) {
@@ -226,7 +226,7 @@ public class TemplateServiceImpl implements TemplateService {
             } else {
                 throw new IllegalArgumentException();
             }
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             final String msg = String.format("Unhandled template file format. Filename: %s", templateFileName);
             throw new TemplateProcessException("9fcf0c32-4096-4647-9f46-bbbe4564cdd7", msg);
         }

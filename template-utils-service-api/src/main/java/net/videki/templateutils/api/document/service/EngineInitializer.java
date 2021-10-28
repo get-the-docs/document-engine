@@ -1,4 +1,4 @@
-package net.videki.templateutils.service.service;
+package net.videki.templateutils.api.document.service;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import org.springframework.beans.factory.InitializingBean;

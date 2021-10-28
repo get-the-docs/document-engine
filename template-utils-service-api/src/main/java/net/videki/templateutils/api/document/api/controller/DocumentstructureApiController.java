@@ -1,9 +1,8 @@
-package net.videki.templateutils.service.controller;
+package net.videki.templateutils.api.document.api.controller;
 
-import net.videki.templateutils.service.model.DocStructureJobApiResponse;
-import net.videki.templateutils.service.model.TemplateJobApiResponse;
-import net.videki.templateutils.service.model.ValueSet;
-import net.videki.templateutils.service.service.TemplateApiService;
+import net.videki.templateutils.api.document.service.DocumentStructureApiService;
+import net.videki.templateutils.api.document.api.model.DocStructureJobApiResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,9 +21,8 @@ public class DocumentstructureApiController implements DocumentstructureApi {
 
     private final NativeWebRequest request;
 
-
     @Autowired
-    private TemplateApiService templateApiService;
+    private DocumentStructureApiService documentStructureApiService;
 
     @Autowired
     public DocumentstructureApiController(NativeWebRequest request) {
@@ -38,11 +36,12 @@ public class DocumentstructureApiController implements DocumentstructureApi {
 
     @Override
     public ResponseEntity<DocStructureJobApiResponse> postDocumentStructureGenerationJob(
-            @Pattern(regexp = "^[a-zA-Z0-9_/-]*$") @Size(min = 1, max = 200) String id,
-            @Valid ValueSet valueSet) {
+            @Pattern(regexp = "^[a-zA-Z0-9_/-]*$") @Size(min = 0, max = 4000) String id,
+            net.videki.templateutils.api.document.api.model.@Valid ValueSet valueSet) {
+
         final DocStructureJobApiResponse result = new DocStructureJobApiResponse();
 
-        result.setTransactionId(this.templateApiService.postDocumentStructureGenerationJob(id, valueSet));
+        result.setTransactionId(this.documentStructureApiService.postDocumentStructureGenerationJob(id, valueSet));
 
         return ResponseEntity.accepted().body(result);
     }

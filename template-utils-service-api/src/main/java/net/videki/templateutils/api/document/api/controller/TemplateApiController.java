@@ -1,8 +1,9 @@
-package net.videki.templateutils.service.controller;
+package net.videki.templateutils.api.document.api.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import net.videki.templateutils.service.model.TemplateJobApiResponse;
-import net.videki.templateutils.service.service.TemplateApiService;
+import net.videki.templateutils.api.document.service.TemplateApiService;
+import net.videki.templateutils.api.document.api.model.TemplateJobApiResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package net.videki.templateutils.service.configuration;
+package net.videki.templateutils.api.document.api.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

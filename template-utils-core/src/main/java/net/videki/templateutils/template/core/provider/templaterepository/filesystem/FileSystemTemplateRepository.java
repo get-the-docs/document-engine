@@ -1,7 +1,11 @@
 package net.videki.templateutils.template.core.provider.templaterepository.filesystem;
 
+import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.provider.templaterepository.TemplateRepository;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
+import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 public class FileSystemTemplateRepository implements TemplateRepository {
@@ -27,6 +33,16 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         }
 
         this.baseDir = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BASEDIR);
+    }
+
+    @Override
+    public List<TemplateDocument> getTemplates(final Pageable page) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Optional<TemplateDocument> getTemplateDocumentById(String id) throws TemplateServiceException {
+        throw new UnsupportedOperationException();
     }
 
     public InputStream getTemplate(final String templateFile) {

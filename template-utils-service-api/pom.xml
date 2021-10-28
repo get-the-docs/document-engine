@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.2</version>
+        <version>2.5.6</version>
         <relativePath/>
     </parent>
 
@@ -19,16 +19,17 @@
         <java.version>11</java.version>
         <maven-enforcer-maven.version>3.3.9</maven-enforcer-maven.version>
         <junit.version>4.13.1</junit.version>
-        <springfox-version>2.8.0</springfox-version>
+        <springfox-version>2.9.2</springfox-version>
         <docker.baseimage>adoptopenjdk/openjdk11:jre-11.0.7_10-alpine</docker.baseimage>
         <jib.maven-plugin-version>2.7.1</jib.maven-plugin-version>
-        <jackson.core.version>2.11.0</jackson.core.version>
-        <jackson.databind.version>2.11.0</jackson.databind.version>
-        <jackson.dataformat-xml.version>2.10.2</jackson.dataformat-xml.version>
+        <jackson.core.version>2.13.0</jackson.core.version>
+        <jackson.databind.version>2.13.0</jackson.databind.version>
+        <jackson.dataformat-xml.version>2.13.0</jackson.dataformat-xml.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <json.version>20190722</json.version>
-        <lombok.version>1.18.18</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
     </properties>
 
     <dependencies>
@@ -36,8 +37,40 @@
         <dependency>
             <groupId>net.videki.template-utils</groupId>
             <artifactId>template-utils-core</artifactId>
-            <version>1.0.1</version>
+            <version>${project.version}</version>
         </dependency>
+
+        <!-- Spring boot -->
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-core</artifactId>
+                </exclusion>
+                <exclusion>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-resource-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 
         <!-- json DTO handling -->
         <dependency>
@@ -63,8 +96,8 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.11.0</version>
-        </dependency>
+            <version>${jackson.core.version}</version>
+        </dependency>        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -82,19 +115,45 @@
         </dependency>
 
         <!--Spring boot dependencies -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<!-- Fix duplicated occurrences of org.json.JSONObject on the classpath -->
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+        <!-- Mappings -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstruct.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
         <!--SpringFox dependencies -->
         <dependency>
@@ -112,32 +171,90 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.2.11</version>
         </dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.1.0</version>
-        </dependency>
-        <!-- Bean Validation API support -->
+
+		<!-- Bean Validation API support -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.1</version>
+		</dependency>
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>3.3.0</version>
+		</dependency>
 
+        <!-- Dev dependencies -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+	    </dependency>
+
     </dependencies>
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>5.3.0</version>
+				<executions>
+					<execution>
+						<id>api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/api/openapi.yaml</inputSpec>
+							<ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>
+							<generatorName>spring</generatorName>
+							<configOptions>
+								<library>spring-boot</library>
+								<interfaceOnly>true</interfaceOnly>
+								<sourceFolder>src/gen/java/main</sourceFolder>
+								<basePackage>net.videki.templateutils.api.document</basePackage>
+								<configPackage>net.videki.templateutils.api.document.api.configuration</configPackage>
+								<apiPackage>net.videki.templateutils.api.document.api.controller</apiPackage>
+								<modelPackage>net.videki.templateutils.api.document.api.model</modelPackage>
+								<enablePostProcessFile>true</enablePostProcessFile>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -155,6 +272,9 @@
     <profiles>
         <profile>
             <id>fatjar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -164,121 +284,6 @@
                             <execution>
                                 <goals>
                                     <goal>repackage</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>jib</id>
-            <activation>
-                <property>
-                    <name>env.repo_url</name>
-                </property>
-            </activation>
-            <properties>
-                <docker.url>${env.repo_url}</docker.url>
-                <!--suppress UnresolvedMavenProperty -->
-                <docker.tag>${env.docker_tag}</docker.tag>
-                <!--suppress UnresolvedMavenProperty -->
-                <docker.username>${env.docker_username}</docker.username>
-                <!--suppress UnresolvedMavenProperty -->
-                <docker.password>${env.docker_password}</docker.password>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.google.cloud.tools</groupId>
-                        <artifactId>jib-maven-plugin</artifactId>
-                        <version>${jib.maven-plugin-version}</version>
-                        <configuration>
-                            <from>
-                                <image>${docker.baseimage}</image>
-                            </from>
-                            <to>
-                                <image>${docker.url}/${project.artifactId}:${docker.tag}</image>
-                                <auth>
-                                    <username>${docker.username}</username>
-                                    <password>${docker.password}</password>
-                                </auth>
-                            </to>
-                            <extraDirectories>
-                                <paths>src/main/jib</paths>
-                                <permissions>
-                                    <permission>
-                                        <file>/jib-entrypoint.sh</file>
-                                        <mode>755</mode>
-                                    </permission>
-                                </permissions>
-                            </extraDirectories>
-
-                            <container>
-                                <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                                <entrypoint>/jib-entrypoint.sh</entrypoint>
-                                <jvmFlags>
-                                    <jvmFlag>-server</jvmFlag>
-                                </jvmFlags>
-                            </container>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>build-and-push-docker-image</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>skaffold</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.google.cloud.tools</groupId>
-                        <artifactId>jib-maven-plugin</artifactId>
-                        <version>${jib.maven-plugin-version}</version>
-                        <configuration>
-                            <from>
-                                <image>${docker.baseimage}</image>
-                            </from>
-                            <to>
-                                <image>${project.artifactId}:latest</image>
-                            </to>
-                            <extraDirectories>
-                                <paths>src/main/jib</paths>
-                                <permissions>
-                                    <permission>
-                                        <file>/jib-entrypoint.sh</file>
-                                        <mode>755</mode>
-                                    </permission>
-                                </permissions>
-                            </extraDirectories>
-
-                            <container>
-                                <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                                <entrypoint>/jib-entrypoint.sh</entrypoint>
-                                <jvmFlags>
-                                    <jvmFlag>-server</jvmFlag>
-                                </jvmFlags>
-                            </container>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>build-skaffold</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>dockerBuild</goal>
                                 </goals>
                             </execution>
                         </executions>
