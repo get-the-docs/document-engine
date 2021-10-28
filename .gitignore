@@ -4,3 +4,9 @@
 /**/target/
 /**/.docusaurus
 /**/.cache-loader
+/.history/
+/**/.project
+/**/.classpath
+/**/.factorypath
+/**/.settings/
+/website/build/

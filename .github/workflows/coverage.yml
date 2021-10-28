@@ -1,8 +1,5 @@
 name: Coverage
 
-env:
-  CODECOV_TOKEN: 39e3c96b-a8b8-4e07-b52c-13880a73db37
-
 on:
   push:
     paths:
@@ -36,18 +33,14 @@ jobs:
       run: mvn -B verify --file pom.xml -Pcoverage
 
     - name: Codecov
-      uses: codecov/codecov-action@v1.0.7
+      uses: codecov/codecov-action@v2
       with:
         name: template-utils
-        token: 39e3c96b-a8b8-4e07-b52c-13880a73db37
-        # Path to coverage file to upload
-#        file: # optional
-        # Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)
-#        flags: # optional
-        # Environment variables to tag the upload with (e.g. PYTHON | OS,PYTHON)
-#        env_vars: # optional
-        # Specify whether or not CI build should fail if Codecov runs into an error during upload
-#        fail_ci_if_error: # optional
+#    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+#    files: ./coverage1.xml,./coverage2.xml # optional
+#    flags: unittests # optional
+#    fail_ci_if_error: true # optional (default = false)
+#    verbose: true # optional (default = false)
 
     - name: Codecov upload
       run: bash <(curl -s https://codecov.io/bash)
