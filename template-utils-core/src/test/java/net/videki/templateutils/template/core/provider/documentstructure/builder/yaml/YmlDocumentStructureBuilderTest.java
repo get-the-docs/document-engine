@@ -57,7 +57,7 @@ public class YmlDocumentStructureBuilderTest {
             final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             mapper.writeValue(
                     new File(FileSystemHelper.getFileNameWithPath(projectOutDir, "result.yml")), templateStructure);
-        } catch (TemplateNotFoundException | TemplateServiceException | IOException e) {
+        } catch (final TemplateNotFoundException | TemplateServiceException | IOException e) {
             LOGGER.error("Error saving doc structure.", e);
 
             fail();
@@ -83,7 +83,7 @@ public class YmlDocumentStructureBuilderTest {
                             ReflectionToStringBuilder.toString(result, ToStringStyle.MULTI_LINE_STYLE));
 
                 LOGGER.debug("Template element read successfully: {}", msg);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOGGER.error("Error saving doc structure.", e);
 
                 fail();
@@ -101,9 +101,9 @@ public class YmlDocumentStructureBuilderTest {
 
             dsBuilder.build(dsFileAsStream);
 
-        } catch (TemplateProcessException e) {
+        } catch (final TemplateProcessException e) {
             assertEquals("cfb09b69-cb69-4cb9-b7b0-b060c0717cf3", e.getCode());
-        } catch (TemplateServiceException e) {
+        } catch (final TemplateServiceException e) {
             LOGGER.error("Error reading doc structure.", e);
 
             fail();
