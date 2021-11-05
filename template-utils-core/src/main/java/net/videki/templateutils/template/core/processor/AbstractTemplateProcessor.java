@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.service.TemplateService;
-import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

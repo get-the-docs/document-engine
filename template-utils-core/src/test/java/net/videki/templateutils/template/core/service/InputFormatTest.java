@@ -38,7 +38,7 @@ public class InputFormatTest {
 
         try {
             Assert.assertEquals(InputFormat.getInputFormatForFileName("myTestFile.qwe"), InputFormat.DOCX);
-        } catch (TemplateProcessException e) {
+        } catch (final TemplateProcessException e) {
             Assert.assertEquals("c14d63df-8db2-45a2-bf21-e62fe60a23a0", e.getCode());
         }
     }
@@ -47,7 +47,7 @@ public class InputFormatTest {
     public void getStrValueTest() {
         final InputFormat iFormat= InputFormat.valueOf(InputFormat.DOCX.name());
 
-        Assert.assertEquals(InputFormat.DOCX.getStrValue(), "DOCX");
+        Assert.assertEquals("DOCX", iFormat.getStrValue());
     }
 
 
@@ -55,7 +55,7 @@ public class InputFormatTest {
     public void getInputFormatForFileNameNoExtensionTest() {
         try {
             Assert.assertEquals(InputFormat.getInputFormatForFileName("myTestFile"), InputFormat.DOCX);
-        } catch (TemplateProcessException e) {
+        } catch (final TemplateProcessException e) {
             Assert.assertEquals("c14d63df-8db2-45a2-bf21-e62fe60a23a0", e.getCode());
         }
     }

@@ -1,6 +1,5 @@
 package net.videki.templateutils.template.test.dto.doc;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**

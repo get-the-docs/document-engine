@@ -1,18 +1,12 @@
 package net.videki.templateutils.documentstructure.builder.core.documentstructure.repository.filesystem;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureOptionsBuilder;
-import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlConfigurableDocStructureBuilder;
 import net.videki.templateutils.template.core.provider.documentstructure.repository.ConfigurableDocumentStructureRepository;
-import net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem.FileSystemConfigurableDocumentStructureRepository;
-import net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 

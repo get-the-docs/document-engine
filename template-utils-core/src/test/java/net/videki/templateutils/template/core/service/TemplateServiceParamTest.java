@@ -2,7 +2,6 @@ package net.videki.templateutils.template.core.service;
 
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.documentstructure.*;
-import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
@@ -206,7 +205,7 @@ public class TemplateServiceParamTest {
         String resultCode;
 
         try {
-            final StoredResultDocument ignore = ts.fillAndSave((String)null, null);
+            ts.fillAndSave((String)null, null);
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
 
@@ -222,7 +221,7 @@ public class TemplateServiceParamTest {
         String resultCode;
 
         try {
-            final StoredResultDocument ignored = ts.fillAndSave(null, null, null);
+            ts.fillAndSave(null, null, null);
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
 

@@ -2,7 +2,6 @@ package net.videki.templateutils.template.core.util;
 
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.nio.file.Paths;
 
 public class FileSystemHelper {

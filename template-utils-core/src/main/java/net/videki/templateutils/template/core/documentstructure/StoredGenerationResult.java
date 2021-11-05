@@ -1,6 +1,5 @@
 package net.videki.templateutils.template.core.documentstructure;
 
-import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 

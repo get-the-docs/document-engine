@@ -3,7 +3,6 @@ package net.videki.templateutils.template.core.configuration;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -334,6 +333,7 @@ public class TemplateServiceConfiguration {
         }
     }
 
+/*
     private static InputStream getResource(String filename) throws java.io.IOException {
         java.net.URL url = TemplateServiceConfiguration.class.getClassLoader().getResource(filename);
 
@@ -349,7 +349,7 @@ public class TemplateServiceConfiguration {
         }
         return is;
     }
-
+*/
     public FontConfig getFontConfig(final String familyName, final FontStyle style) {
         Set<String> families = styles.keySet();
         for (final String actKey : families) {

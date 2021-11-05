@@ -3,7 +3,6 @@ package net.videki.templateutils.template.core.documentstructure;
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
-import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.TemplateService;
@@ -38,8 +37,6 @@ public class DocumentStructureTest {
     private static final String TEMPLATE_CONTRACT = "contract";
     private static final TemplateService ts = TemplateServiceRegistry.getInstance();
     private static final String inputDir = "unittests/docx";
-
-    private static final String TL_DOC_KEY = "doc";
 
     private static final String inputDirDocStructureCovers = "integrationtests/covers";
     private static final String TL_COVER_KEY = "cover";

@@ -45,7 +45,7 @@ public class GenerateDocumentSetsIT {
                             "contract/vintage/contract-vintage_v02-separate.yml",
                             testData);
 
-            assertArrayEquals(new Boolean[]{true, true, true}, result.getResults()
+            assertArrayEquals(new Boolean[]{true, true, true, true}, result.getResults()
                     .stream()
                     .map(t -> t.getContent() != null)
                     .toArray(Boolean[]::new));
@@ -77,7 +77,7 @@ public class GenerateDocumentSetsIT {
                             "contract/vintage/contract-vintage_v02-separate.yml",
                             testData);
 
-            assertArrayEquals(new Boolean[]{true, true, true}, result.getResults()
+            assertArrayEquals(new Boolean[]{true, true, true, true}, result.getResults()
                     .stream()
                     .map(StoredResultDocument::isGenerated)
                     .toArray(Boolean[]::new));
@@ -99,11 +99,11 @@ public class GenerateDocumentSetsIT {
                             "contract/vintage/contract-vintage_v02-concatenated_pdf.yml",
                             testData);
 
-            assertArrayEquals(new Boolean[]{true, true, true}, result.getResults()
+            assertArrayEquals(new Boolean[]{true, true, true, true}, result.getResults()
                     .stream()
                     .map(StoredResultDocument::isGenerated)
                     .toArray(Boolean[]::new));
-        } catch (TemplateNotFoundException | TemplateServiceException e) {
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
             LOGGER.error("Error creating the result document.", e);
             fail();
         }

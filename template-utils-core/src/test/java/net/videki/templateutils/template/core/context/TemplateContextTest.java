@@ -1,18 +1,8 @@
 package net.videki.templateutils.template.core.context;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONValue;
-import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
-import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Map;
 
 @Slf4j
 public class TemplateContextTest {

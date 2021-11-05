@@ -2,7 +2,6 @@ package net.videki.templateutils.template.core.documentstructure.descriptors;
 
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
-import net.videki.templateutils.template.core.util.FileSystemHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

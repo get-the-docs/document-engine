@@ -1,11 +1,9 @@
 package net.videki.templateutils.template.core.context.dto;
 
-import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 import org.junit.Assert;
 import org.junit.Test;
 
-@Slf4j
 public class JsonValueObjectTest {
 
     private final String jsonData = "{\n" +

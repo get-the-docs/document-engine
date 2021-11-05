@@ -2,14 +2,9 @@ package net.videki.templateutils.template.core.processor;
 
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 import net.videki.templateutils.template.core.service.InputFormat;
-import net.videki.templateutils.template.core.service.TemplateServiceInputFormatTest;
-import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 public class TemplateProcessorRegistryTest {
 

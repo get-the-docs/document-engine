@@ -99,7 +99,7 @@ public class YmlDocumentStructureBuilderTest {
             final InputStream dsFileAsStream = FileSystemDocumentStructureRepository
                     .class.getClassLoader().getResourceAsStream("contracts/vintage/contract-vintage_v02.yml");
 
-            final DocumentStructure ignore = dsBuilder.build(dsFileAsStream);
+            dsBuilder.build(dsFileAsStream);
 
         } catch (TemplateProcessException e) {
             assertEquals("cfb09b69-cb69-4cb9-b7b0-b060c0717cf3", e.getCode());

@@ -7,7 +7,6 @@ import net.videki.templateutils.template.core.documentstructure.StoredGeneration
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
-import net.videki.templateutils.template.core.util.FileSystemHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
