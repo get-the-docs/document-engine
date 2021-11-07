@@ -10,14 +10,38 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+/**
+ * JSON value object to represent JSON data as a model object.
+ * 
+ * @author Levente Ban
+ */
 public class JsonValueObject extends ContextObject {
+
+    /**
+     * Class logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextObject.class);
 
+    /**
+     * JSON path prefix for expression evaluation. 
+     */
     private static final String JSONPATH_PREFIX = "$.";
 
+    /**
+     * Document context from the caught JSON.
+     */
     private final transient DocumentContext dc;
+
+    /**
+     * The actual json data as plain string.
+     */
     private final String data;
 
+    /**
+     * Initializes the context with a JSON as string.
+     * @param dc the JSON data as a string.
+     * @throws TemplateServiceRuntimeException on parse errors.
+     */
     public JsonValueObject(final String dc) {
         try {
             this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(dc);
@@ -34,6 +58,11 @@ public class JsonValueObject extends ContextObject {
         }
     }
 
+   /**
+     * Returns a single value based on the JSON path caught.
+     * @param path the JSONpath to be evaluated.
+     * @return the model object if found by the given JSON path.
+     */ 
     @Override
     public Object getValue(final String path) {
         if (LOGGER.isTraceEnabled()) {
@@ -42,6 +71,11 @@ public class JsonValueObject extends ContextObject {
         return this.dc.read(JSONPATH_PREFIX + path);
     }
 
+    /**
+     * Returns a list of values based on the JSON path caught.
+     * @param path the JSONpath to be evaluated.
+     * @return the list of model object if found by the given JSON path.
+     */    
     @Override
     public List<Object> getItems(final String path) {
         if (LOGGER.isTraceEnabled()) {
@@ -50,22 +84,45 @@ public class JsonValueObject extends ContextObject {
         return this.dc.read(JSONPATH_PREFIX + path);
     }
 
+    /**
+     * Template placeholder convenience mehod to return a single model object based on the caught path. 
+     * @param path the JSON path on the actual model.
+     * @return the result model object if found.
+     */
     public Object jsonpath(final String path) {
         return getValue(path);
     }
 
+    /**
+     * Template placeholder convenience mehod to return a single model object based on the caught path. 
+     * @param path the JSON path on the actual model.
+     * @return the result model object if found.
+     */
     public Object jp(final String path) {
         return getValue(path);
     }
 
+    /**
+     * Template placeholder convenience mehod to return a list of model object based on the caught path. 
+     * @param path the JSON path on the actual model.
+     * @return the result list of model objects if found.
+     */    
     public List<Object> items(final String path) {
         return getItems(path);
     }
 
+    /**
+     * Returns the original JSON string to build the context.
+     * @return the JSON string.
+     */    
     public String getData() {
         return this.data;
     }
 
+    /**
+     * Returns the original JSON string to build the context.
+     * @return the JSON string.
+     */    
     @Override
     public String toJson() {
         return data;

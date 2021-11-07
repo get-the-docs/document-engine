@@ -12,20 +12,38 @@ import org.slf4j.LoggerFactory;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Registry to hold the configured document converters like docx->pdf (Input format, output format pairs).
+ * @author Levente Ban
+ */
 public class ConverterRegistry {
+
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
 
+    /**
+     * The internal converter map.
+     */
     private static Map<InputFormat, Map<OutputFormat, Converter>> converters = new EnumMap<>(InputFormat.class);
 
     static {
         init();
     }
 
+    /**
+     * Sets the converter map to the given set of converters.
+     * @param param the set of converters.
+     */
     public static void setConverters(Map<InputFormat, Map<OutputFormat, Converter>> param) {
         converters.clear();
         converters.putAll(param);
     }
 
+    /**
+     * Initializes the converter registry.
+     */
     protected static void init() {
         converters.clear();
 
@@ -35,6 +53,12 @@ public class ConverterRegistry {
 
     }
 
+    /**
+     * Returns the converter for a given input format.
+     * @param inputFormat
+     * @param outputFormat
+     * @return
+     */
     public static Converter getConverter(final InputFormat inputFormat, final OutputFormat outputFormat) {
         Converter result = null;
 

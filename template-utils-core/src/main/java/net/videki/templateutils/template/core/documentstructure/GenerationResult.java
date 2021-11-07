@@ -12,9 +12,16 @@ import java.util.List;
  */
 public class GenerationResult extends AbstractGenerationResult {
 
+    /**
+     * The list of the result documents.
+     */
     private final List<ResultDocument> results;
 
-    public GenerationResult(List<ResultDocument> results) {
+    /**
+     * Initializes the container with a list of result documents.
+     * @param results the list of result documents.
+     */
+    public GenerationResult(final List<ResultDocument> results) {
         super();
 
         if (results != null) {
@@ -24,10 +31,17 @@ public class GenerationResult extends AbstractGenerationResult {
         }
     }
 
+    /**
+     * Returns the list of reesult documents.
+     * @return the result documents.
+     */
     public List<ResultDocument> getResults() {
         return results;
     }
 
+    /**
+     * Convencience method for logging.
+     */
     @Override
     public String toString() {
         return "GenerationResult{" +

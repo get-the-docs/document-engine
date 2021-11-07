@@ -1,7 +1,10 @@
 package net.videki.templateutils.template.core.provider.templaterepository.filesystem;
 
+import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.provider.templaterepository.TemplateRepository;
+import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
+import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
@@ -12,10 +15,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class FileSystemTemplateRepository implements TemplateRepository {
 
@@ -36,13 +42,71 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     }
 
     @Override
-    public List<TemplateDocument> getTemplates(final Pageable page) {
-        throw new UnsupportedOperationException();
+    public Page<TemplateDocument> getTemplates(final Pageable page) throws TemplateServiceException{
+
+        try {
+            final Page<TemplateDocument> result = new Page<>();
+
+            final Path basePath = Paths.get(this.baseDir).toAbsolutePath();
+            final List<TemplateDocument> items = Files.walk(basePath)
+              .filter(file -> !Files.isDirectory(file))
+              .map(basePath::relativize)
+              .map(Path::toString)
+              .map(t -> new TemplateDocument(t))
+              .collect(Collectors.toList());
+
+            if (page != null && page.isPaged()) {
+                result.setData(items.subList(page.getOffset(), Math.min(page.getOffset() + page.getSize(), Math.max(items.size()-1, 0))));
+            } else {
+                result.setData(items);
+            }
+            result.setNumber(page.getPage());
+            result.setSize(page.getSize());
+            result.setTotalElements(Long.valueOf(items.size()));
+            result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
+
+            return result;
+
+        } catch (final IOException e) {
+            final  String msg = String.format("Error retrieving the template list - baseDir: [{}]", this.baseDir);
+            LOGGER.error(msg, e);
+
+            throw new TemplateServiceException("68b79868-c05c-4d14-8d94-1d8815625c8f", msg);
+        }
     }
 
     @Override
-    public Optional<TemplateDocument> getTemplateDocumentById(String id) throws TemplateServiceException {
-        throw new UnsupportedOperationException();
+    public Optional<TemplateDocument> getTemplateDocumentById(final String id, final String version, final boolean withBinary) throws TemplateServiceException {
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("getTemplateDocumentById - {} (version handling not supported, omiting). binary: {}", id, withBinary);
+        }
+
+        final TemplateDocument result = new TemplateDocument(id, version);
+
+        try (final InputStream is = getTemplate(id)) {
+
+            if (is != null) {
+                if (withBinary) {
+                    result.setBinary(is.readAllBytes());
+                }
+            } else {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("getTemplateDocumentById - template not found: {}", id);
+                }
+                throw new TemplateNotFoundException("be3be068-78fc-49bc-a4ec-76db86bd1f55", String.format("Template not found: {]", id));
+            }
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("getTemplateDocumentById end - {}. result: {}", id, result);
+            }
+            return Optional.of(result);
+
+        } catch (final TemplateNotFoundException e) {
+            return Optional.empty();
+        } catch (final IOException e) {
+            throw new TemplateProcessException("5204f592-5f4a-4a86-9cdf-0d3c6912cf5f", String.format("Error reading the template - id: {}", id));
+        }
     }
 
     public InputStream getTemplate(final String templateFile) {

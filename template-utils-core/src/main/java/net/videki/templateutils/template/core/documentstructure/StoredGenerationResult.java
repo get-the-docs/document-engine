@@ -13,8 +13,15 @@ import java.util.List;
  */
 public class StoredGenerationResult extends AbstractGenerationResult {
 
+    /**
+     * The list of result documents.
+     */
     private final List<StoredResultDocument> results;
 
+    /**
+     * Initializes the container with a list of result documents with a random transaction id.
+     * @param results the list of the result documents.
+     */
     public StoredGenerationResult(final List<StoredResultDocument> results) {
         super();
 
@@ -25,16 +32,28 @@ public class StoredGenerationResult extends AbstractGenerationResult {
         }
     }
 
+    /**
+     * Initializes the container with a predefined transaction id and result document set.
+     * @param transactionId the document structure generation transaction id.
+     * @param results the result document list (list of their streams).
+     */
     public StoredGenerationResult(final String transactionId, final List<StoredResultDocument> results) {
         this(results);
 
         setTransactionId(transactionId);
     }
 
+    /**
+     * Returns the result documents' descriptors (file names, etc.).
+     * @return the list of the result document descriptors.
+     */
     public List<StoredResultDocument> getResults() {
         return results;
     }
 
+    /**
+     * Convenience method for logging.
+     */
     @Override
     public String toString() {
         return "GenerationResult{" +

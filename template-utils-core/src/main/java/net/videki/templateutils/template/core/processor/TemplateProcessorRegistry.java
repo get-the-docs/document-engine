@@ -13,7 +13,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Template processor registry.
+ * The container holds the processors for the supported input formats to impersonate the them. 
+ * @author Levente Ban
+ */
 public class TemplateProcessorRegistry {
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
 
     private static Map<InputFormat, InputTemplateProcessor> processors = new EnumMap<>(InputFormat.class);

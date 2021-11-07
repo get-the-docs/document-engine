@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"net.videki.templateutils.api.document", "net.videki.templateutils.api.document.api.configuration"})
+@ComponentScan(basePackages = {"net.videki.templateutils.api.document"})
 public class ServiceApplication {
 
     public static void main(String[] args) throws Exception {

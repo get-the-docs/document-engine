@@ -21,16 +21,43 @@ import java.util.*;
  */
 public class TemplateElement {
 
+    /**
+     * Template element id.
+     */
     private TemplateElementId templateElementId;
+
+    /**
+     * The template names (the actual template ids to refer to)
+     */
     private Map<Locale, String> templateNames;
+
+    /**
+     * The template's input format.
+     */
     private InputFormat format;
+
+    /**
+     * The default locale with which the template should be used (see the language it was written).
+     */
     private Locale defaultLocale;
+
+    /**
+     * The number of copies the generation result should contain. 
+     */
     private int count;
 
+    /**
+     * Default constructor.
+     */
     public TemplateElement() {
         super();
     }
 
+    /**
+     * Inizializes the container with a given template element id.
+     * Using this, the system default locale with one copy will be used.
+     * @param templateElementId the template elemeent id.
+     */
     public TemplateElement(final String templateElementId) {
         super();
 
@@ -42,6 +69,13 @@ public class TemplateElement {
         this.count = 1;
     }
 
+    /**
+     * Initializes the container with a given id, template name and locality.
+     * @param templateElementId the template id (see friendly name).
+     * @param templateName the template name in the template repository.
+     * @param defaultLocale the locale the template should be generated for.
+     * @throws TemplateServiceConfigurationException thrown if the input format cannot be determined from the template name or is not supported.
+     */
     public TemplateElement(final String templateElementId, final String templateName, final Locale defaultLocale)
             throws TemplateServiceConfigurationException {
         this(templateElementId);
@@ -49,27 +83,51 @@ public class TemplateElement {
         withTemplateName(templateName, this.defaultLocale);
     }
 
+    /**
+     * Initializes the container with a given id and template name to be used with the default locale.
+     * @param templateElementId the template id (see friendly name).
+     * @param templateName the template name in the template repository.
+     * @throws TemplateServiceConfigurationException thrown if the input format cannot be determined from the template name or is not supported.
+     */
     public TemplateElement(final String templateElementId, final String templateName)
             throws TemplateServiceConfigurationException {
         this(templateElementId);
         withTemplateName(templateName, this.defaultLocale);
     }
 
+    /**
+     * Initializes the container with a given template name to be used with the default locale.
+     * The id will be the same as the template name.
+     * @param templateName the template name in the template repository.
+     * @param count the number of copies the e generated.
+     */
     public TemplateElement(final String templateName, int count) {
         this(templateName);
 
         this.count = count;
     }
 
+    /**
+     * Internal initializer.
+     */
     private void init() {
         this.templateNames = new HashMap<>();
     }
 
+    /**
+     * Returns the template name.
+     * @return the template name.
+     */
     @JsonIgnore
     public String getTemplateName() {
         return getTemplateName(this.defaultLocale);
     }
 
+    /**
+     * Returns the template name for a given locale.
+     * @param locale the locale.
+     * @return the template name for the given locale if found.
+     */
     public String getTemplateName(final Locale locale) {
         String result;
 
@@ -109,31 +167,59 @@ public class TemplateElement {
         return result;
     }
 
+    /**
+     * The number of copies.
+     * @return the number of copies.
+     */
     public int getCount() {
         return count;
     }
 
+    /**
+     * Sets the number of copies.
+     * @param count the number of copies.
+     */
     public void setCount(int count) {
         this.count = count;
     }
 
+    /**
+     * Returns the template element id (see friendly name).
+     * @return the template element id.
+     */
     public TemplateElementId getTemplateElementId() {
         return templateElementId;
     }
 
+    /**
+     * Returns the default locale to be used.
+     * @return the default locale.
+     */
     public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
+    /**
+     * Sets the default locale.
+     * @param locale the locale.
+     */
     public void setDefaultLocale(Locale locale) {
         this.defaultLocale = locale;
     }
 
+    /**
+     * Returns the default locale with which the template should be generated.
+     * @return the default locale.
+     */
     @JsonIgnore
     public List<Locale> getLocales() {
         return new LinkedList<>(this.templateNames.keySet());
     }
 
+    /**
+     * Returns the template's input format.
+     * @return the input format.
+     */
     @JsonIgnore
     public InputFormat getFormat() {
         InputFormat result = this.format;
@@ -144,14 +230,31 @@ public class TemplateElement {
         return result;
     }
 
+    /**
+     * Sets the input format.
+     * To be used in case the template element name does not contain the format, or it cannot be determined from it 
+     * (because of the template repository type, etc.).
+     * @param format the input format.
+     */
     public void setFormat(InputFormat format) {
         this.format = format;
     }
 
+    /**
+     * Returns the template names and localities configured for the template element.
+     * @return the list of template names and localities.
+     */
     public Map<Locale, String> getTemplateNames() {
         return templateNames;
     }
 
+    /**
+     * Builder method to initialize the container with a template name and locale.
+     * @param templateName the template name.
+     * @param locale the locale for which the template will be used (for those locales with no explicit template definition the default locale will be used). 
+     * @return the container.
+     * @throws TemplateServiceConfigurationException thrown if the input format cannot be determined from the template name.
+     */
     public TemplateElement withTemplateName(final String templateName, final Locale locale)
             throws TemplateServiceConfigurationException {
 
@@ -188,6 +291,11 @@ public class TemplateElement {
         return this;
     }
 
+    /**
+     * Builder method to set the default locale.
+     * @param locale the default locale.
+     * @return the conatiner.
+     */
     public TemplateElement withDefaultLocale(final Locale locale) {
 
         this.defaultLocale = locale;
@@ -195,6 +303,11 @@ public class TemplateElement {
         return this;
     }
 
+    /**
+     * Builder method to define the list of default locales.
+     * @param newLocales the list of locales.
+     * @return the container.
+     */
     public TemplateElement withLocales(final List<Locale> newLocales) {
         if (newLocales != null) {
             final String templateNameForDefaultLocale = this.templateNames.get(this.defaultLocale);
@@ -207,12 +320,20 @@ public class TemplateElement {
         return this;
     }
 
+    /**
+     * Builder method to set the copy count.
+     * @param count the copy count.
+     * @return the container.
+     */
     public TemplateElement withCount(int count) {
         this.count = count;
 
         return this;
     }
 
+    /**
+     * Convenience method for logging.
+     */
     @Override
     public String toString() {
         return "TemplateElement{" +

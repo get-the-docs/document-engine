@@ -156,5 +156,17 @@ public class Pageable   {
     this.sort = sort;
   }
 
+
+  @Override
+  public String toString() {
+    return "{" +
+      " page='" + getPage() + "'" +
+      ", size='" + getSize() + "'" +
+      ", offset='" + getOffset() + "'" +
+      ", paged='" + isPaged() + "'" +
+      ", sort='" + getSort() + "'" +
+      "}";
+  }
+
 }
 

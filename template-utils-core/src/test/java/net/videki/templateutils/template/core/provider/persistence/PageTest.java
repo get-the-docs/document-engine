@@ -58,9 +58,8 @@ public class PageTest {
     p.getData().add(templateDocument);
     p.setNumber(5);
     p.setTotalPages(2);
-    p.setTotalElements(25l);
 
-    Assert.assertTrue(p.getSize() == p.getNumberOfElements() && p.getNumber() == 5 && p.getTotalPages() == 2);
+    Assert.assertTrue(1 == p.getNumberOfElements() && p.getNumber() == 5 && p.getTotalPages() == 2);
 
   }
 

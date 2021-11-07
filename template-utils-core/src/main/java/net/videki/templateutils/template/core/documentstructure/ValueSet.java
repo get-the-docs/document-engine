@@ -80,22 +80,42 @@ public class ValueSet implements JsonModel {
         return values;
     }
 
+    /**
+     * Returns the document structure id.
+     * @return the document structure id.
+     */
     public String getDocumentStructureId() {
         return documentStructureId;
     }
 
+    /**
+     * Sets the document structure id.
+     * @param documentStructureId the document structure id.
+     */
     public void setDocumentStructureId(String documentStructureId) {
         this.documentStructureId = documentStructureId;
     }
 
+    /**
+     * Returns the locale used for document generation.
+     * @return the locale.
+     */
     public Locale getLocale() {
         return locale;
     }
 
+    /**
+     * Sets the locale to be used for document generation.
+     * @param locale the locale.
+     */
     public void setLocale(final Locale locale) {
         this.locale = locale;
     }
 
+    /**
+     * Returns the transaction id for which the document generation is targeted (where these values will be used).
+     * @return the transaction id.
+     */
     public String getTransactionId() {
         return transactionId;
     }
@@ -173,12 +193,20 @@ public class ValueSet implements JsonModel {
         return this;
     }
 
+    /**
+     * Builder method for defining the locale to be used during generation. 
+     * @param locale the locale.
+     * @return the container.
+     */
     public ValueSet withLocale(final Locale locale) {
         this.locale = locale;
 
         return this;
     }
 
+    /**
+     * Convenience method for logging.
+     */
     @Override
     public String toString() {
         return "ValueSet{" +

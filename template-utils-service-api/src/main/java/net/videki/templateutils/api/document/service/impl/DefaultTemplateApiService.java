@@ -28,11 +28,17 @@ public class DefaultTemplateApiService implements TemplateApiService {
   @Override
   public Page<TemplateDocument> getTemplates(final Pageable page) {    
     try {
-      final Page<TemplateDocument> result = new Page<>();
+      if (log.isDebugEnabled()) {
+        log.debug("getTemplates - {}", page);
+      }
 
-      result.getData().addAll(TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplates(page));
+      final Page<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplates(page);
 
+      if (log.isDebugEnabled()) {
+        log.debug("getTemplates end - {}, item count: {}", page, result.getData().size());
+      }
       return result;
+
     } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
       log.warn("Error processing request: {}", page);
 
@@ -41,12 +47,22 @@ public class DefaultTemplateApiService implements TemplateApiService {
   }
 
   @Override
-  public Optional<TemplateDocument> getTemplateById(final String id) {
+  public Optional<TemplateDocument> getTemplateById(final String id, final String version, final boolean withBinary) {
     try {
+      if (log.isDebugEnabled()) {
+        log.debug("getTemplateById - {}/{}, binary: {}", id, version, withBinary);
+      }
 
-      final Optional<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplateDocumentById(id);
+      final Optional<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplateDocumentById(id, version, withBinary);
 
+      if (log.isDebugEnabled()) {
+        log.debug("getTemplateById end - {}", id);
+      }
+      if (log.isTraceEnabled()) {
+        log.trace("getTemplateById end - {}, data: [{}]", id, result);
+      }
       return result;
+
     } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
       log.warn("Error processing request: {}", id);
 
@@ -56,11 +72,24 @@ public class DefaultTemplateApiService implements TemplateApiService {
 
   public String postTemplateGenerationJob(final String id, final Object body) {
     try {
+      if (log.isDebugEnabled()) {
+        log.debug("postTemplateGenerationJob - {}", id);
+      }
+      if (log.isTraceEnabled()) {
+        log.trace("postTemplateGenerationJob - {}, data: [{}]", id, body);
+      }
+
       final var templateId = decodeTemplateId(id);
       final var context = getContext(body);
 
       final var genResult = TemplateServiceRegistry.getInstance().fillAndSave(templateId, context);
 
+      if (log.isDebugEnabled()) {
+        log.debug("postTemplateGenerationJob end - {}", id);
+      }
+      if (log.isTraceEnabled()) {
+        log.trace("postTemplateGenerationJob end - {}, data: [{}]", id, genResult);
+      }      
       return genResult.getTransactionId();
     } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
       log.warn("Error processing request: {}", id);

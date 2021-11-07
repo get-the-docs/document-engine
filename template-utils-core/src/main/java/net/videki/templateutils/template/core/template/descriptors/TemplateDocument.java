@@ -3,6 +3,7 @@ package net.videki.templateutils.template.core.template.descriptors;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
+import java.beans.Transient;
 import java.util.*;
 
 /**
@@ -35,6 +36,7 @@ public class TemplateDocument {
   private final Locale locale;
   private final String version;
   private final String internalKey;
+  private byte[] binary;
 
   public TemplateDocument(final String templateName) {
     this(templateName, Locale.getDefault(), null, null);
@@ -42,6 +44,18 @@ public class TemplateDocument {
 
   public TemplateDocument(final String templateName, final Locale locale) throws TemplateServiceConfigurationException {
     this(templateName, Locale.getDefault(), null, null);
+  }
+
+  public TemplateDocument(final String templateName, final String version) {
+    this(templateName, Locale.getDefault(), version, null);
+  }
+
+  public TemplateDocument(final String templateName, final String version, final String internalKey) {
+    this.templateName = templateName;
+    this.locale = Locale.getDefault();
+    this.format = InputFormat.getInputFormatForFileName(this.getTemplateName());
+    this.version = version;
+    this.internalKey = internalKey;
   }
 
   public TemplateDocument(final String templateName, final Locale locale, final String version,
@@ -75,6 +89,16 @@ public class TemplateDocument {
 
     return internalKey;
   }
+
+  @Transient
+  public byte[] getBinary() {
+    return this.binary;
+  }
+
+  public void setBinary(byte[] binary) {
+    this.binary = binary;
+  }
+
 
   @Override
   public String toString() {

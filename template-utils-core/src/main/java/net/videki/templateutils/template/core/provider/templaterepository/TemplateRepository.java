@@ -1,5 +1,6 @@
 package net.videki.templateutils.template.core.provider.templaterepository;
 
+import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
@@ -30,16 +31,17 @@ public interface TemplateRepository {
      * @throws TemplateServiceException thrown in case of query error
      * @return the template element list
      */
-    List<TemplateDocument> getTemplates(Pageable page) throws TemplateServiceException;
-
+    Page<TemplateDocument> getTemplates(Pageable page) throws TemplateServiceException;
 
     /**
      * Returns a given template document, if the repository provides this feature and found.
      * @param id the requested descriptor, if found
+     * @param version the template version for the id
+     * @param withBinary true, if the template binary should be part of the response 
      * @throws TemplateServiceException thrown in case of query error
      * @return the template document
      */
-    Optional<TemplateDocument> getTemplateDocumentById(String id) throws TemplateServiceException;
+    Optional<TemplateDocument> getTemplateDocumentById(String id, String version, boolean withBinary) throws TemplateServiceException;
     
     /**
      * Returns a given template as a stream, or null if not found.

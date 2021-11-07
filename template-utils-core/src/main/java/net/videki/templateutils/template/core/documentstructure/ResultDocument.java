@@ -15,16 +15,28 @@ public class ResultDocument extends AbstractResultDocument implements AutoClosea
      */
     private final OutputStream content;
 
+    /**
+     * Initializes the container with an actual content.
+     * @param fileName the filename to store the result under.
+     * @param content the actual contents.
+     */
     public ResultDocument(final String fileName, final OutputStream content) {
         super(fileName);
 
         this.content = content;
     }
 
+    /**
+     * Returns the document contents (the binary stream in the appropriate format).
+     * @return the result document.
+     */
     public OutputStream getContent() {
         return content;
     }
 
+    /**
+     * Closes the result document stream.
+     */
     @Override
     public void close() throws Exception {
         if (this.content != null) {

@@ -13,6 +13,11 @@ public class StoredResultDocument extends AbstractResultDocument {
      */
     private final boolean generated;
 
+    /**
+     * Initializes the container with a result document name and its success flag (whether it was generated successfully or not).
+     * @param fileName the result document file name.
+     * @param generated true, if the generation was successful.
+     */
     public StoredResultDocument(final String fileName, final boolean generated) {
         super(fileName);
 

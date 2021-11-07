@@ -31,6 +31,14 @@ public class Page<T extends Object>   {
   */
   private Integer number;
 
+
+  /**
+   * Returns the maximum number of the current Slice. Is always non-negative.
+   * minimum: 0
+   * maximum: 32768
+  */
+  private Integer size;
+
   /**
    * The page contents.
    */
@@ -83,21 +91,27 @@ public class Page<T extends Object>   {
   }
 
   /**
+   * Sets the maximum number of the current Slice. Is always non-negative.
+   * @param number the number of the current Slice.
+   */
+  public void setSize(Integer size) {
+    this.size = size;
+  }
+
+  /**
+   * Returns the maximum number of the current Slice. Is always non-negative.
+   * @return the current page number.
+   */
+  public Integer getSize() {
+    return this.size;
+  }
+
+  /**
    * Sets the number of the current Slice. Is always non-negative.
    * @param number the number of the current Slice.
    */
   public void setNumber(Integer number) {
     this.number = number;
-  }
-
-  /**
-   * Returns the number of elements currently on this Slice.
-   * minimum: 0
-   * maximum: 32768
-   * @return the number of elements currently on this Slice.
-   */
-  public Integer getSize() {
-    return getNumberOfElements();
   }
 
   /**

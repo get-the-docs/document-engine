@@ -129,10 +129,17 @@ public class TemplateServiceConfiguration {
 
     private String fontDir;
 
+    /**
+     * Initializes the template service configuration.
+     * The config is read from the first file on the classpath named template-utils.properties.
+     */
     protected TemplateServiceConfiguration() {
         init();
     }
 
+    /**
+     * Initializes the template service.
+     */
     protected void init() {
 
         properties = new Properties();
@@ -164,6 +171,10 @@ public class TemplateServiceConfiguration {
         initProcessors();
     }
 
+    /**
+     * Initialzes the custom fonts for pdf conversion.
+     * @param keys System properties (see config file - template-utils.properties).
+     */
     private void initFontLibrary(Set<Object> keys) {
         if (keys != null && !keys.isEmpty()) {
             this.fontDir = (String) properties.get(FONT_DIR);
@@ -194,6 +205,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the document structure repository for the implementation class configured in the configuration parameters.
+     */
     private void initDocumentStructureRepository() {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
@@ -230,6 +244,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the template repository for the implementation class configured in the configuration parameters.
+     */
     private void initTemplateRepository() {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
@@ -264,6 +281,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the result store repository for the implementation class configured in the configuration parameters.
+     */
     private void initResultStore() {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
@@ -298,6 +318,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the document processor the implementation classes configured in the configuration parameters.
+     */
     private void initProcessors() {
         try {
             if (properties != null) {
@@ -350,6 +373,14 @@ public class TemplateServiceConfiguration {
         return is;
     }
 */
+
+    /**
+     * Returns whether there is a font configuration in the custom font library configured in the system properties. 
+     * The font config is used by the pdf converter engine (if configured).
+     * @param familyName the font family to be added.
+     * @param style the font style.
+     * @return the font configuration DTO, if found.
+     */
     public FontConfig getFontConfig(final String familyName, final FontStyle style) {
         Set<String> families = styles.keySet();
         for (final String actKey : families) {
@@ -363,6 +394,10 @@ public class TemplateServiceConfiguration {
         return null;
     }
 
+    /**
+     * Returns the custom fonts installed to the font lib dir and configured in the system properties.
+     * @return the list of the configured additional fonts.
+     */
     public List<FontConfig> getFontConfig() {
         final List<FontConfig> result = new LinkedList<>();
 
@@ -375,22 +410,47 @@ public class TemplateServiceConfiguration {
         return result;
     }
 
+    /**
+     * Returns the log category of the document structure handling implementations. 
+     * Is used by the doc structure implementations to ensure consistent logging.
+     * @return the documentstructure log category.
+     */
     public String getDocStructureLogCategory() {
         return properties.getProperty(LOG_APPENDER);
     }
 
+    /**
+     * Returns the configured document structure repository implementation.
+     * For configuration options see the system configuration (template-utils.properties)
+     * @return the document structure implementation.
+     */
     public DocumentStructureRepository getDocumentStructureRepository() {
         return documentStructureRepository;
     }
 
+    /**
+     * Returns the template repository implementation.
+     * For configuration options see the system configuration (template-utils.properties)
+     * @return the template repository implementation.
+     */
     public TemplateRepository getTemplateRepository() {
         return this.templateRepository;
     }
 
+    /**
+     * Returns the result store repository implementation.
+     * For configuration options see the system configuration (template-utils.properties)
+     * @return the result store repository implementation.
+     */
     public ResultStore getResultStore() {
         return this.resultStore;
     }
 
+    /**
+     * Returns the actual template service configuration.
+     * This is the entrypoint of the configuration.
+     * @return the actual template servic configuration.
+     */
     public static TemplateServiceConfiguration getInstance() {
         TemplateServiceConfiguration result = INSTANCE;
         if (result == null) {

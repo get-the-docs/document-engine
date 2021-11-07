@@ -30,13 +30,7 @@ paths:
         - $ref: "#/components/parameters/pageable"
       responses:
         "200":
-          description: Default
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetTemplatesResponse"
-        default:
-          description: Default
+          description: "Request processed successfully and data is present."
           content:
             application/json:
               schema:
@@ -76,20 +70,31 @@ paths:
       x-accepts: application/json
       parameters:
         - name: id
-          $ref: "#/components/schemas/TemplateElementId"
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TemplateElementId"
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 0
+            maxLength: 4000
+            pattern: "^[a-zA-Z0-9_/\\]*$"
       responses:
         "200":
           description: Default
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TemplateElement"
+                $ref: "#/components/schemas/TemplateDocument"
         default:
           description: Default
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TemplateElement"
+                $ref: "#/components/schemas/TemplateDocument"
         "401":
           description: Bad credentials
           content:
@@ -113,7 +118,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BaseApiResponse"
+                $ref: "#/components/schemas/EmptyResponse"
     post:
       tags:
         - templates    
@@ -452,23 +457,10 @@ components:
           maximum: 32768
           default: 10
           example: 10
-        offset:
-          type: integer
-          description: "The offset to be taken."
-          format: int32
-          minimum: 0
-          maximum: 32768
-          default: 0
-          example: 0
         paged:
           type: boolean
           description: "Returns whether the current Pageable contains pagination information."
           default: true
-        unpaged:
-          type: boolean
-          description: "Returns whether the current Pageable does not contain pagination information."          
-          default: false
-          example: false
         sort:
           type: array
           description: "Sort orders in the format fieldname,asc|desc. You may define multiple sort criteria."
@@ -550,6 +542,37 @@ components:
       minLength: 0
       maxLength: 4000
       pattern: "^[a-zA-Z0-9_\\/-]*$"
+
+    TemplateDocument:
+      type: object
+      additionalProperties: false
+      properties:
+        templateName:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+        format:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+          enum: [DOCX, XLSX]  
+        locale:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_-/]*$"
+        version:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+        internalKey:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
 
     TemplateElement:
       type: object
@@ -645,18 +668,19 @@ components:
       type: object
 
     GetTemplatesResponse:
+      type: object
       description: "Response type for returning the available templates"
-      additionalProperties: true 
-      allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        properties:
-          contents:
-            type: array
-            description: "List of template elements."
-            items:
-              $ref: '#/components/schemas/TemplateElement'
-            maxItems: 32768
+      additionalProperties: false 
+      properties:
+        page:
+          $ref: '#/components/schemas/Page'
+
+        contents:
+          type: array
+          description: "List of template elements."
+          items:
+            $ref: '#/components/schemas/TemplateDocument'
+          maxItems: 32768
 
 
     TemplateJobApiResponse:
