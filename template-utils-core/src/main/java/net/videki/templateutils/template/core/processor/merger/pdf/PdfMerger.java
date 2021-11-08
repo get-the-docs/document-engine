@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Document merger implementation based on the Apache Pdfbox library.
- * @see https://pdfbox.apache.org/
+ * see https://pdfbox.apache.org/
  * @author Levente Ban
  */
 public class PdfMerger implements OutputMerger {

@@ -17,7 +17,7 @@ import net.videki.templateutils.template.core.processor.input.InputTemplateProce
 
 /**
  * Xlsx template processor implementation based on the jXls library.
- * @see http://jxls.sourceforge.net/ 
+ * see http://jxls.sourceforge.net/ 
  * @author Levente Ban
  */
 public class JxlsInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
