@@ -16,9 +16,20 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
+/**
+ * Docx to pdf converter implementation using docx4j. 
+ * @author Levente Ban
+ */
 public class DocxToPdfConverter implements Converter {
 
+  /**
+   * Logger.
+   */
   private static final Logger LOGGER = LoggerFactory.getLogger(DocxToPdfConverter.class);
+
+  /**
+   * Docx4j font mapper.
+   */
   private static final Mapper FONTMAPPER_INSTANCE = new IdentityPlusMapper();
 
   static {
@@ -34,16 +45,29 @@ public class DocxToPdfConverter implements Converter {
 
   }
 
+  /**
+   * Returns the input format.
+   * @return the input format.
+   */
   @Override
   public InputFormat getInputFormat() {
     return InputFormat.DOCX;
   }
 
+  /**
+   * Returns the output format.
+   * @return the output format.
+   */
   @Override
   public OutputFormat getOutputFormat() {
     return OutputFormat.PDF;
   }
 
+  /**
+   * Entry point for the document conversion.
+   * @param source the input document.
+   * @return the converted document if the conversion was successful.
+   */
   @Override
   public OutputStream convert(final InputStream source) {
     OutputStream result;

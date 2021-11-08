@@ -14,10 +14,22 @@ import java.util.List;
 
 import static net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS;
 
+/**
+ * Helper class for the pdf converter to register custom, non-default fonts to embedded in the pdf document.
+ * @author Levente Ban
+ */
 public class AdditionalFontFinder {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(DocxToPdfConverter.class);
 
+    /**
+     * Parses the specified font directory for the font mappings provided in the parameters.
+     * @param fontConfigList the font mappings specified in the configuration (see template-utils.properties).
+     * @throws TemplateServiceConfigurationException thrown if the font urls or the mapping is invalid.
+     */
     public static void discoverFonts(final List<FontConfig> fontConfigList) throws TemplateServiceConfigurationException {
         if (fontConfigList == null) {
             throw new TemplateServiceConfigurationException("037e44ac-3dcf-4344-8989-31cf3fcfc624",

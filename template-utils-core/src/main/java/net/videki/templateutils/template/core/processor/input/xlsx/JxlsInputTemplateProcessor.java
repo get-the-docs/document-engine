@@ -15,15 +15,33 @@ import org.slf4j.LoggerFactory;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 
+/**
+ * Xlsx template processor implementation based on the jXls library.
+ * @see http://jxls.sourceforge.net/ 
+ * @author Levente Ban
+ */
 public class JxlsInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
 
+  /**
+   * Logger.
+   */
   private static final Logger LOGGER = LoggerFactory.getLogger(JxlsInputTemplateProcessor.class);
 
+  /**
+   * Returns the input format the processor supports.
+   * @return the input format (xlsx).
+   */
   @Override
   public InputFormat getInputFormat() {
     return InputFormat.XLSX;
   }
 
+  /**
+     * Entry point to process the template. (all sheets in the spreadsheet)
+     * @param templateFileName the template name in the template repository.
+     * @param dto the model object. 
+     * @return the result document stream.
+   */
   @Override
   public <T> OutputStream fill(final String templateFileName, T dto) {
     OutputStream result;

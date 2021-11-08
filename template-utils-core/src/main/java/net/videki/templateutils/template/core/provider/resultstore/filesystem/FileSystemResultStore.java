@@ -18,13 +18,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * File system based result store implementation.
+ * It stores the generation results of single template and document structure processings. 
+ * @author Levente Ban
+ */
 public class FileSystemResultStore implements ResultStore {
+
+    /**
+     * Configuration property key in the system properties to define the basedir of the result store.
+     */
     private static final String RESULT_REPOSITORY_PROVIDER_BASEDIR = "repository.result.provider.basedir";
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemResultStore.class);
 
+    /**
+     * The actual basedir.
+     */
     private String baseDir;
 
+    /**
+     * Initializer entry point to bootstrap the repository.
+     * @param props the system properties (see template-utils.properties)
+     */
     @Override
     public void init(final Properties props) throws TemplateServiceConfigurationException {
         if (props == null) {
@@ -35,6 +54,11 @@ public class FileSystemResultStore implements ResultStore {
         this.baseDir = (String) props.get(RESULT_REPOSITORY_PROVIDER_BASEDIR);
     }
 
+    /**
+     * Entry point to save a single result document in the repository.
+     * @param result the result document descriptor.
+     * @return the descriptor with the storage results (related transaction, file location, etc.).
+     */
     @Override
     public StoredResultDocument save(final ResultDocument result) {
         if (result == null || result.getContent() == null) {
@@ -80,6 +104,11 @@ public class FileSystemResultStore implements ResultStore {
         return new StoredResultDocument(resultFileName, actSuccessFlag);
     }
 
+    /**
+     * Entryp point to save a multi document result (the results of a document structure generation).
+     * @param generationResult the generation result container.
+     * @return the storage result descriptor.
+     */
     @Override
     public StoredGenerationResult save(final GenerationResult generationResult) {
         final List<StoredResultDocument> storedResults = new LinkedList<>();

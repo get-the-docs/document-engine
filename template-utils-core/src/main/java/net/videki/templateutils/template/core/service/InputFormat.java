@@ -3,19 +3,48 @@ package net.videki.templateutils.template.core.service;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 
+/**
+ * Supported input formats.
+ * @author Levente Ban
+ */
 public enum InputFormat {
-  DOCX("DOCX"), XLSX("XLSX");
 
+  /**
+   * Docx format.
+   */
+  DOCX("DOCX"), 
+
+  /**
+   * xlsx format.
+   */
+  XLSX("XLSX");
+
+  /**
+   * The format string.
+   */
   private final String strValue;
 
+  /**
+   * Constructor with the format string.
+   * @param pValue the format.
+   */
   InputFormat(final String pValue) {
     this.strValue = pValue;
   }
 
+  /**
+   * Returns the format.
+   * @return the format.
+   */
   public String getStrValue() {
     return strValue;
   }
 
+  /**
+   * Checks a format to check that they have the same format.
+   * @param a the format to check.
+   * @return true if the parameter has the same format.
+   */
   public boolean isSameFormat(final Object a) {
     if (a != null) {
       if (a instanceof OutputFormat) {
@@ -25,6 +54,12 @@ public enum InputFormat {
     return false;
   }
 
+  /**
+   * Tries to determine the the input format from a file name by extension.
+   * @param templateName the template name (in form of a file name).
+   * @return the input format, if it is supported.
+   * @throws IllegalArgumentException thrown in case of unhandled or indeterminable format.
+   */
   public static InputFormat getInputFormatForFileName(final String templateName) {
     InputFormat format;
     try {

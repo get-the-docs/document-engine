@@ -23,14 +23,31 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+/**
+ * File system based template repository implementation.
+ * @author Levente Ban
+ */
 public class FileSystemTemplateRepository implements TemplateRepository {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemTemplateRepository.class);
 
+    /**
+     * Configuration property key in the system properties (see template-utils.properties).
+     */
     private static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
 
+    /**
+     * The current basedir.
+     */
     private String baseDir;
 
+    /**
+     * Entry point for repo initialization.
+     * @param props the system properties (see template-utils.properties)
+     */
     @Override
     public void init(final Properties props) throws TemplateServiceConfigurationException {
         if (props == null) {
@@ -41,6 +58,12 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         this.baseDir = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BASEDIR);
     }
 
+    /**
+     * Returns the requested page of the actual template documents. 
+     * @param page the requested page.
+     * @return the request page of templates if found. 
+     * @throws TemplateServiceException thrown in case of query or repo configuration errors.
+     */
     @Override
     public Page<TemplateDocument> getTemplates(final Pageable page) throws TemplateServiceException{
 
@@ -75,6 +98,14 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         }
     }
 
+    /**
+     * Returns a template descriptor for the given id (template name).
+     * The template version is omitted in this implementation.
+     * @param id the template name (relative path from the basedir).
+     * @param version document version - NOT USED in this implementation.
+     * @param withBinary true to return the template binary also.
+     * @return the template document if found.
+     */
     @Override
     public Optional<TemplateDocument> getTemplateDocumentById(final String id, final String version, final boolean withBinary) throws TemplateServiceException {
 
@@ -109,6 +140,11 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         }
     }
 
+    /**
+     * Returns a template for a given template name.
+     * @param templateFile the template name (relative path from the basedir).
+     * @return the template document as stream if found.
+     */
     public InputStream getTemplate(final String templateFile) {
         InputStream result;
 

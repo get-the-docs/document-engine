@@ -16,16 +16,42 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+/**
+ * File system based document structure repository.
+ * @author Levente Ban
+ */
 public class FileSystemDocumentStructureRepository implements DocumentStructureRepository {
+    /**
+     * Configuration property key for the basedir where the document structures will be stored.
+     */
     private static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR =
             "repository.documentstructure.provider.filesystem.basedir";
+
+    /**
+     * Configuration property key for the builder implementation to (de)serialize the document structure descriptors.
+     */
     private static final String DOCUMENT_STRUCTURE_BUILDER = "repository.documentstructure.builder";
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemDocumentStructureRepository.class);
 
+    /**
+     * The configured document structure builder.
+     */
     private DocumentStructureBuilder documentStructureBuilder;
+
+    /**
+     * The actual basedir.
+     */
     private String basedir;
 
+    /**
+     * Initializes the repository based on the system properties caught.
+     * @param props the system properties (see template-utils.properties)
+     * @throws TemplateServiceConfigurationException thrown in case of configuration errors.
+     */
     @Override
     public void init(final Properties props) throws TemplateServiceConfigurationException {
         if (props == null) {
@@ -37,6 +63,12 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
         this.documentStructureBuilder = loadDocumentStructureBuilder(props);
     }
 
+    /**
+     * Returns a document structure by its id in the current repository (a descriptor named as the document structure id).
+     * @param documentStructureFile the document structure id (is equal to the filename).
+     * @return the document structure descriptor if the provided id was found.
+     * @throws TemplateServiceConfigurationException thrown in case of repository configuration errors. 
+     */
     @Override
     public DocumentStructure getDocumentStructure(final String documentStructureFile)
             throws TemplateServiceConfigurationException {
@@ -65,6 +97,11 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
         }
     }
 
+    /**
+     * Factory method to initialize the descriptor builder implementation.  
+     * @param props the system properties (see template-utils.properties)
+     * @return the builder instance
+     */
     private DocumentStructureBuilder loadDocumentStructureBuilder(final Properties props) {
         DocumentStructureBuilder documentStructureBuilder = new YmlDocStructureBuilder();
 

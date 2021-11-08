@@ -92,7 +92,7 @@ public class Page<T extends Object>   {
 
   /**
    * Sets the maximum number of the current Slice. Is always non-negative.
-   * @param number the number of the current Slice.
+   * @param size the number of the current Slice.
    */
   public void setSize(Integer size) {
     this.size = size;

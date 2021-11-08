@@ -13,14 +13,32 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+/**
+ * Document merger implementation based on the Apache Pdfbox library.
+ * @see https://pdfbox.apache.org/
+ * @author Levente Ban
+ */
 public class PdfMerger implements OutputMerger {
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER         = LoggerFactory.getLogger(OutputMerger.class);
 
+    /**
+     * Returns the supported output format.
+     * @return the output format (pdf).
+     */
     @Override
     public OutputFormat getOutputFormat() {
         return OutputFormat.PDF;
     }
 
+    /**
+     * Entry point for document merging.
+     * The merge will happen in the order specified by the pdfPart parameter's order.
+     * @param pdfParts the list of pdf documents to merge. 
+     * @return the merged pdf document if the merge was successful.
+     */
     @Override
     public OutputStream merge(final List<InputStream> pdfParts) {
         OutputStream result = FileSystemHelper.getOutputStream();

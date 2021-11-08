@@ -11,11 +11,25 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Template element deserializer for yaml document structures.
+ * @author Levente Ban
+ */
 public class TemplateElementDeserializer extends StdDeserializer<TemplateElement> {
+
+    /**
+     * Default constructor.
+     */
     protected TemplateElementDeserializer() {
         super(TemplateElement.class);
     }
 
+    /**
+     * Node deserializer templateElement nodes.
+     * @param jp json parser.
+     * @param ctxt deserialization context.
+     * @return the template element on successful parse.
+     */
     @Override
     public TemplateElement deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {

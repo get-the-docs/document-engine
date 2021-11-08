@@ -16,10 +16,24 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+/**
+ * Yaml document structure builder.
+ * Creates DocumentStructure descriptors from yaml documents. 
+ * @author Levente Ban
+ */
 public class YmlDocStructureBuilder implements DocumentStructureBuilder {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(YmlDocStructureBuilder.class);
 
+    /**
+     * Entry point to build a DocumentStructure descriptor from an input stream containing a yaml document.
+     * @param dsConfig the document structure descriptor in yaml format. 
+     * @return the DocumentStructure descriptor if the parse was successful. 
+     * @throws TemplateServiceConfigurationException thnrown in case of configuration errors.
+     */
     @Override
     public DocumentStructure build(final InputStream dsConfig) throws TemplateServiceConfigurationException {
 

@@ -24,29 +24,51 @@ public class TemplateProcessorRegistry {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
 
+    /**
+     * The registered input processors.
+     */
     private static Map<InputFormat, InputTemplateProcessor> processors = new EnumMap<>(InputFormat.class);
+
+    /**
+     * A built-in pass-through processor to produce a template untouched as a result document.
+     */
     private static InputTemplateProcessor noopProcessor = new NoopTemplateProcessor();
     static {
         init();
     }
 
+    /**
+     * Sets the template processor set to the provided set.
+     * @param param the list of template processors.
+     */
     public static void setProcessors(Map<InputFormat, InputTemplateProcessor> param) {
         processors.clear();
         processors.putAll(param);
     }
 
+    /**
+     * Reinitializes the template processors.
+     */
     public static void resetProcessors() {
         synchronized (TemplateProcessorRegistry.processors) {
             init();
         }
     }
 
+    /**
+     * Internal initializer.
+     */
     protected static void init() {
         processors.clear();
 
         processors.putAll(TemplateServiceConfiguration.getInstance().getInputProcessors());
     }
 
+    /**
+     * Returns the input processor for a given format, if registered.
+     * @param format the input format.
+     * @return the template processor, if present.
+     */
     public static InputTemplateProcessor getInputTemplateProcessor(final InputFormat format) {
         InputTemplateProcessor result;
 
@@ -65,6 +87,10 @@ public class TemplateProcessorRegistry {
         return result;
     }
 
+    /**
+     * Returns the built-in identity processor.
+     * @return
+     */
     public static InputTemplateProcessor getNoopProcessor() {
         return noopProcessor;
     }
