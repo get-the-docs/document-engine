@@ -14,8 +14,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Template processor registry.
- * The container holds the processors for the supported input formats to impersonate the them. 
+ * Template processor registry. The container holds the processors for the
+ * supported input formats to impersonate the them.
+ * 
  * @author Levente Ban
  */
 public class TemplateProcessorRegistry {
@@ -30,7 +31,8 @@ public class TemplateProcessorRegistry {
     private static Map<InputFormat, InputTemplateProcessor> processors = new EnumMap<>(InputFormat.class);
 
     /**
-     * A built-in pass-through processor to produce a template untouched as a result document.
+     * A built-in pass-through processor to produce a template untouched as a result
+     * document.
      */
     private static InputTemplateProcessor noopProcessor = new NoopTemplateProcessor();
     static {
@@ -39,6 +41,7 @@ public class TemplateProcessorRegistry {
 
     /**
      * Sets the template processor set to the provided set.
+     * 
      * @param param the list of template processors.
      */
     public static void setProcessors(Map<InputFormat, InputTemplateProcessor> param) {
@@ -66,6 +69,7 @@ public class TemplateProcessorRegistry {
 
     /**
      * Returns the input processor for a given format, if registered.
+     * 
      * @param format the input format.
      * @return the template processor, if present.
      */
@@ -75,12 +79,11 @@ public class TemplateProcessorRegistry {
         result = processors.get(format);
 
         if (result == null) {
-            final String supportedFormats = processors.keySet()
-                    .stream()
-                    .map(s -> s.getStrValue()).collect(Collectors.joining(", "));
+            final String supportedFormats = processors.keySet().stream().map(s -> s.getStrValue())
+                    .collect(Collectors.joining(", "));
             final String msg = String.format(
-                    "Unhandled input format %s. Has been a new one defined? Supporetd formats are: %s",
-                    format, supportedFormats);
+                    "Unhandled input format %s. Has been a new one defined? Supporetd formats are: %s", format,
+                    supportedFormats);
             LOGGER.error(msg);
             throw new TemplateProcessException("d320e547-b4c6-45b2-bdd9-19ac0b699c97", msg);
         }
@@ -89,7 +92,8 @@ public class TemplateProcessorRegistry {
 
     /**
      * Returns the built-in identity processor.
-     * @return
+     * 
+     * @return the processor implementation.
      */
     public static InputTemplateProcessor getNoopProcessor() {
         return noopProcessor;

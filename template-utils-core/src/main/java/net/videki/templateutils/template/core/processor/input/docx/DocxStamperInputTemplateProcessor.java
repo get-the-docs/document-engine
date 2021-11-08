@@ -16,15 +16,36 @@ import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
 
+/**
+ * Docx input template processor based on the docx stamper library. See
+ * https://github.com/thombergs/docx-stamper
+ * 
+ * @author Levente Ban
+ */
 public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
 
+  /**
+   * Logger.
+   */
   private static final Logger LOGGER = LoggerFactory.getLogger(DocxStamperInputTemplateProcessor.class);
 
+  /**
+   * Returns the input format.
+   * 
+   * @return the input format. (docx)
+   */
   @Override
   public InputFormat getInputFormat() {
     return InputFormat.DOCX;
   }
 
+  /**
+   * Entry point for document generation.
+   * 
+   * @param templateFileName the template name in the template repository.
+   * @param dto              the model object.
+   * @return the result document if the processing was successful.
+   */
   @Override
   public <T> OutputStream fill(final String templateFileName, T dto) {
     LOGGER.debug("Start docx fill...");

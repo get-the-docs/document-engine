@@ -13,7 +13,9 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Registry to hold the configured document converters like docx->pdf (Input format, output format pairs).
+ * Registry to hold the configured document converters like docx->pdf (Input
+ * format, output format pairs).
+ * 
  * @author Levente Ban
  */
 public class ConverterRegistry {
@@ -34,6 +36,7 @@ public class ConverterRegistry {
 
     /**
      * Sets the converter map to the given set of converters.
+     * 
      * @param param the set of converters.
      */
     public static void setConverters(Map<InputFormat, Map<OutputFormat, Converter>> param) {
@@ -54,10 +57,11 @@ public class ConverterRegistry {
     }
 
     /**
-     * Returns the converter for a given input format.
-     * @param inputFormat
-     * @param outputFormat
-     * @return
+     * Returns the converter for a given input format, if registered.
+     * 
+     * @param inputFormat  the source format the converter accepts.
+     * @param outputFormat the target output format the converter converts to.
+     * @return the converter, if found.
      */
     public static Converter getConverter(final InputFormat inputFormat, final OutputFormat outputFormat) {
         Converter result = null;
@@ -70,8 +74,9 @@ public class ConverterRegistry {
         }
 
         if (convertersForInputFormat == null || result == null) {
-            final String msg = String.format("No converter found for the source format to the given output type. " +
-                    "Source: %s, Target: %s.", inputFormat, outputFormat);
+            final String msg = String.format(
+                    "No converter found for the source format to the given output type. " + "Source: %s, Target: %s.",
+                    inputFormat, outputFormat);
             LOGGER.error(msg);
             throw new TemplateProcessException("9a27e2a0-6260-40d7-ac10-ad158f356e16", msg);
 

@@ -31,12 +31,31 @@ import net.videki.templateutils.template.core.processor.input.InputTemplateProce
 
 import static net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS;
 
+/**
+ * Default template service implementation.
+ * 
+ * @author Levente Ban
+ */
 public class TemplateServiceImpl implements TemplateService {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
+
+    /**
+     * The service log category to collect underlying logs into this category.
+     */
     private static Logger LOGGER_VALUE;
+
+    /**
+     * The actual service configuration.
+     */
     private final TemplateServiceConfiguration configuration;
 
+    /**
+     * Deafult constructor.
+     */
     TemplateServiceImpl() {
         this.configuration = TemplateServiceConfiguration.getInstance();
 
@@ -48,6 +67,13 @@ public class TemplateServiceImpl implements TemplateService {
         }
     }
 
+    /**
+     * Returns the context object for a given DTO.
+     * 
+     * @param <T> the model class.
+     * @param dto the model object.
+     * @return the template context.
+     */
     private <T> TemplateContext getContextObject(final T dto) {
         TemplateContext context;
 
@@ -76,13 +102,22 @@ public class TemplateServiceImpl implements TemplateService {
         return context;
     }
 
+    /**
+     * Entry point to fill a single template with a given model.
+     * 
+     * @param templateName the template name (id) in the template repository.
+     * @param <T>          the model class.
+     * @param dto          the model object.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     * @return the filled document if the fill was successful.
+     */
     @Override
     public <T> ResultDocument fill(final String templateName, final T dto) throws TemplateServiceException {
 
-        if (Strings.isNullOrEmpty(templateName) || dto == null ) {
+        if (Strings.isNullOrEmpty(templateName) || dto == null) {
             throw new TemplateServiceConfigurationException("070f463e-743f-4cb2-a651-bd11e844728d",
-                    String.format("%s - templateFileName: %s, dto: %s",
-                            MSG_INVALID_PARAMETERS, templateName, dto) );
+                    String.format("%s - templateFileName: %s, dto: %s", MSG_INVALID_PARAMETERS, templateName, dto));
         }
 
         TemplateContext context = getContextObject(dto);
@@ -108,14 +143,26 @@ public class TemplateServiceImpl implements TemplateService {
 
     }
 
+    /**
+     * Entry point to fill a single template with a given model and convert it to
+     * the given format.
+     * 
+     * @param templateName the template name (id) in the template repository.
+     * @param <T>          the model class.
+     * @param dto          the model object.
+     * @param outputFormat the desired output format.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retriev or fill.
+     * @return the filled document if the fill was successful.
+     */
     @Override
     public <T> ResultDocument fill(final String templateName, final T dto, final OutputFormat outputFormat)
             throws TemplateServiceException {
 
-        if (Strings.isNullOrEmpty(templateName) || dto == null || outputFormat == null ) {
+        if (Strings.isNullOrEmpty(templateName) || dto == null || outputFormat == null) {
             throw new TemplateServiceConfigurationException("c936e550-8b0e-4577-bffa-7f36b211d981",
-                    String.format("%s - templateFileName: %s, dto: %s, outputFormat: %s",
-                            MSG_INVALID_PARAMETERS, templateName, dto, outputFormat) );
+                    String.format("%s - templateFileName: %s, dto: %s, outputFormat: %s", MSG_INVALID_PARAMETERS,
+                            templateName, dto, outputFormat));
         }
 
         OutputStream result = null;
@@ -125,15 +172,15 @@ public class TemplateServiceImpl implements TemplateService {
 
         if (filledDoc.isPresent()) {
             switch (outputFormat) {
-                case DOCX:
-                    result = filledDoc.get().getContent();
-                    break;
-                case PDF:
-                    final InputStream filledInputStream = FileSystemHelper.getInputStream(filledDoc.get().getContent());
-                    result = ConverterRegistry.getConverter(inputFormat, OutputFormat.PDF).convert(filledInputStream);
-                    break;
-                default:
-                    LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
+            case DOCX:
+                result = filledDoc.get().getContent();
+                break;
+            case PDF:
+                final InputStream filledInputStream = FileSystemHelper.getInputStream(filledDoc.get().getContent());
+                result = ConverterRegistry.getConverter(inputFormat, OutputFormat.PDF).convert(filledInputStream);
+                break;
+            default:
+                LOGGER.warn("Unhandled output format {}. Has been a new one defined?", outputFormat);
             }
         }
 
@@ -144,13 +191,21 @@ public class TemplateServiceImpl implements TemplateService {
         }
     }
 
+    /**
+     * Entry point to fill a document structure with a given set of models.
+     * 
+     * @param documentStructure the document structure descriptor.
+     * @param values            the model objects.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     * @return the filled document if the fill was successful.
+     */
     @Override
     public GenerationResult fill(final DocumentStructure documentStructure, final ValueSet values)
             throws TemplateServiceException {
-        if (documentStructure == null || values == null ) {
-            throw new TemplateServiceConfigurationException("bdaa9376-28b4-4718-9859-2ef5d88ab3b0",
-                    String.format("%s - documentStructure: %s, values: %s",
-                            MSG_INVALID_PARAMETERS, documentStructure, values) );
+        if (documentStructure == null || values == null) {
+            throw new TemplateServiceConfigurationException("bdaa9376-28b4-4718-9859-2ef5d88ab3b0", String.format(
+                    "%s - documentStructure: %s, values: %s", MSG_INVALID_PARAMETERS, documentStructure, values));
         }
 
         final List<ResultDocument> results = new LinkedList<>();
@@ -160,17 +215,16 @@ public class TemplateServiceImpl implements TemplateService {
 
         final Optional<TemplateContext> globalContext = values.getGlobalContext();
 
-        LOGGER.debug("Start processing document structure: element size: {}",
-                documentStructure.getElements().size());
+        LOGGER.debug("Start processing document structure: element size: {}", documentStructure.getElements().size());
 
         if (LOGGER_VALUE.isDebugEnabled()) {
-            LOGGER_VALUE.debug(String.format("Transaction id: [%s] - %s %s",
-                    values.getTransactionId(), documentStructure, values));
+            LOGGER_VALUE.debug(String.format("Transaction id: [%s] - %s %s", values.getTransactionId(),
+                    documentStructure, values));
         }
 
         for (final TemplateElement actTemplate : documentStructure.getElements()) {
-            LOGGER.debug("Processing template: friendly name: {}, id: {}.",
-                    actTemplate.getTemplateName(), actTemplate.getTemplateElementId());
+            LOGGER.debug("Processing template: friendly name: {}, id: {}.", actTemplate.getTemplateName(),
+                    actTemplate.getTemplateElementId());
 
             final TemplateElementId actTemplateElementId = actTemplate.getTemplateElementId();
             final Optional<TemplateContext> actContext = values.getContext(actTemplateElementId);
@@ -183,12 +237,10 @@ public class TemplateServiceImpl implements TemplateService {
             final String templateFileName = actTemplate.getTemplateName(values.getLocale());
             if (actContext.isPresent() || globalContext.isPresent()) {
                 actFilledDocument = new ResultDocument(templateFileName,
-                        this.fill(templateFileName,
-                                getLocalTemplateContext(globalContext, actContext)).getContent());
+                        this.fill(templateFileName, getLocalTemplateContext(globalContext, actContext)).getContent());
             } else {
-                actFilledDocument =
-                        new ResultDocument(templateFileName, TemplateProcessorRegistry.getNoopProcessor()
-                                .fill(templateFileName, null));
+                actFilledDocument = new ResultDocument(templateFileName,
+                        TemplateProcessorRegistry.getNoopProcessor().fill(templateFileName, null));
             }
 
             final ResultDocument actContent = convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
@@ -208,20 +260,27 @@ public class TemplateServiceImpl implements TemplateService {
                     actTemplate.getTemplateElementId());
         }
 
-        LOGGER.debug(String.format("End processing document structure. " +
-                "Result document list size: %s", results.size()));
+        LOGGER.debug(
+                String.format("End processing document structure. " + "Result document list size: %s", results.size()));
 
         return result;
     }
 
+    /**
+     * Return the output filename for a given format.
+     * 
+     * @param templateFileName the input template name.
+     * @param format           the output format.
+     * @return the result filename.
+     */
     private String getOutputFileName(final String templateFileName, final OutputFormat format) {
         String result = null;
 
         try {
             int fileExtPos = templateFileName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
             if (fileExtPos > 0) {
-                result = templateFileName.substring(0, fileExtPos) +
-                        FileSystemHelper.FILENAME_COLON + format.name().toLowerCase();
+                result = templateFileName.substring(0, fileExtPos) + FileSystemHelper.FILENAME_COLON
+                        + format.name().toLowerCase();
 
             } else {
                 throw new IllegalArgumentException();
@@ -234,109 +293,170 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
+    /**
+     * Entry point to fill a document structure with a given set of models.
+     * 
+     * @param documentStructureFile the document structure name (id) in the document
+     *                              structure repository.
+     * @param values                the model objects.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     * @return the filled document if the fill was successful.
+     */
     @Override
     public GenerationResult fillDocumentStructureByName(final String documentStructureFile, final ValueSet values)
             throws TemplateServiceException {
-        final DocumentStructure ds = TemplateServiceConfiguration.getInstance()
-                .getDocumentStructureRepository().getDocumentStructure(documentStructureFile);
+        final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
+                .getDocumentStructure(documentStructureFile);
         return this.fill(ds, values);
 
     }
 
+    /**
+     * Processes a single template document by filling it with the given model
+     * object and saves it in the configured result store.
+     * 
+     * @param templateName the template document name in the template repository.
+     * @param <T>          the model class.
+     * @param dto          the model object.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
     @Override
-    public <T> StoredResultDocument fillAndSave(final String templateName, final T dto) throws TemplateServiceException {
+    public <T> StoredResultDocument fillAndSave(final String templateName, final T dto)
+            throws TemplateServiceException {
         final ResultDocument result = this.fill(templateName, dto);
 
         return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
     }
 
+    /**
+     * Processes a single template document by filling it with the given model
+     * object, converts it to the desired output format and saves it in the
+     * configured result store.
+     * 
+     * @param templateName the template document name in the template repository.
+     * @param <T>          the model class.
+     * @param dto          the model object.
+     * @param format       the desired output format.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
     @Override
-    public <T> StoredResultDocument fillAndSave(final String templateName, final T dto, final OutputFormat format) throws TemplateServiceException {
+    public <T> StoredResultDocument fillAndSave(final String templateName, final T dto, final OutputFormat format)
+            throws TemplateServiceException {
         final ResultDocument result = this.fill(templateName, dto, format);
 
         return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
     }
 
+    /**
+     * Processes a single template document by filling it with the given model
+     * object, converts it to the desired output format and saves it in the
+     * configured result store.
+     * 
+     * @param documentStructure the document structure descriptor.
+     * @param values            the model objects.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
     @Override
-    public StoredGenerationResult fillAndSave(final DocumentStructure documentStructure, final ValueSet values) throws TemplateServiceException {
+    public StoredGenerationResult fillAndSave(final DocumentStructure documentStructure, final ValueSet values)
+            throws TemplateServiceException {
         final GenerationResult generationResult = this.fill(documentStructure, values);
 
-        final List<StoredResultDocument> ResultDocuments =
-                generationResult.getResults().parallelStream()
-                        .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
-                        .collect(Collectors.toList());
+        final List<StoredResultDocument> ResultDocuments = generationResult.getResults().parallelStream()
+                .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
+                .collect(Collectors.toList());
 
-        final StoredGenerationResult result =
-                new StoredGenerationResult(generationResult.getTransactionId(), ResultDocuments);
+        final StoredGenerationResult result = new StoredGenerationResult(generationResult.getTransactionId(),
+                ResultDocuments);
 
         return result;
     }
 
+    /**
+     * Processes a single template document by filling it with the given model
+     * object, converts it to the desired output format and saves it in the
+     * configured result store.
+     * 
+     * @param documentStructureFile the document structure id in the document
+     *                              structure repository.
+     * @param values                the model objects.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
     @Override
-    public StoredGenerationResult fillAndSaveDocumentStructureByName(final String documentStructureFile, final ValueSet values)
-            throws TemplateServiceException {
-        final DocumentStructure ds = TemplateServiceConfiguration.getInstance()
-                .getDocumentStructureRepository().getDocumentStructure(documentStructureFile);
+    public StoredGenerationResult fillAndSaveDocumentStructureByName(final String documentStructureFile,
+            final ValueSet values) throws TemplateServiceException {
+        final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
+                .getDocumentStructure(documentStructureFile);
         return this.fillAndSave(ds, values);
 
     }
 
+    /**
+     * Converts a result document generated for a document structure to the given
+     * format.
+     * 
+     * @param documentStructure the document structure descriptor.
+     * @param actTemplate       the actual template element.
+     * @param actFilledDocument the actual processing result.
+     * @return the converted document if the conversion is supported and was
+     *         successful.
+     * @throws TemplateProcessException thrown on processing related errors.
+     */
     private ResultDocument convertToOutputFormat(final DocumentStructure documentStructure,
-                                                 final TemplateElement actTemplate,
-                                                 final ResultDocument actFilledDocument)
-            throws TemplateProcessException {
+            final TemplateElement actTemplate, final ResultDocument actFilledDocument) throws TemplateProcessException {
 
         OutputStream actResult;
         String actResultFileName = null;
-        if (actFilledDocument.getContent() != null &&
-                !documentStructure.getOutputFormat().isSameFormat(actTemplate.getFormat())) {
+        if (actFilledDocument.getContent() != null
+                && !documentStructure.getOutputFormat().isSameFormat(actTemplate.getFormat())) {
             switch (documentStructure.getOutputFormat()) {
-                case UNCHANGED:
+            case UNCHANGED:
+                actResult = actFilledDocument.getContent();
+                actResultFileName = actFilledDocument.getFileName();
+                break;
+            case PDF:
+                LOGGER.trace("Output: PDF");
+                switch (actTemplate.getFormat()) {
+                case DOCX:
+                    actResult = new DocxToPdfConverter()
+                            .convert(FileSystemHelper.getInputStream(actFilledDocument.getContent()));
+                    actResultFileName = getOutputFileName(actFilledDocument.getFileName(), OutputFormat.PDF);
+                    break;
+                case XLSX:
+                    /*
+                     * final String msg = String.format("Invalid document structure. " +
+                     * "The current template cannot be converted to the desired format: " +
+                     * "template: %s/%s, source format: %s - target format: %s",
+                     * actTemplate.getTemplateElementId(), actTemplate.getTemplateName(),
+                     * actTemplate.getFormat(), documentStructure.getOutputFormat()); throw new
+                     * TemplateProcessException("89688dfe-7b60-453d-ab2a-90f8e9605cdf", msg);
+                     * 
+                     */
+
+                    // Keeping the format if not convertible
                     actResult = actFilledDocument.getContent();
                     actResultFileName = actFilledDocument.getFileName();
+
                     break;
-                case PDF:
-                    LOGGER.trace("Output: PDF");
-                    switch (actTemplate.getFormat()) {
-                        case DOCX:
-                            actResult = new DocxToPdfConverter()
-                                    .convert(FileSystemHelper.getInputStream(actFilledDocument.getContent()));
-                            actResultFileName = getOutputFileName(actFilledDocument.getFileName(), OutputFormat.PDF);
-                            break;
-                        case XLSX:
-                            /*
-                            final String msg = String.format("Invalid document structure. " +
-                                    "The current template cannot be converted to the desired format: " +
-                                            "template: %s/%s, source format: %s - target format: %s",
-                                    actTemplate.getTemplateElementId(),
-                                    actTemplate.getTemplateName(),
-                                    actTemplate.getFormat(),
-                                    documentStructure.getOutputFormat());
-                            throw new TemplateProcessException("89688dfe-7b60-453d-ab2a-90f8e9605cdf", msg);
-
-                             */
-
-                            // Keeping the format if not convertible
-                            actResult = actFilledDocument.getContent();
-                            actResultFileName = actFilledDocument.getFileName();
-
-                            break;
-                        default:
-                            actResult = actFilledDocument.getContent();
-                            actResultFileName = actFilledDocument.getFileName();
-                            LOGGER.trace("  No conversion needed for the actual template.");
-                    }
-                    break;
-                case DOCX:
+                default:
                     actResult = actFilledDocument.getContent();
                     actResultFileName = actFilledDocument.getFileName();
                     LOGGER.trace("  No conversion needed for the actual template.");
-                    break;
-                default:
-                    final String msg = String.format("Unhandled output format: [%s].",
-                            documentStructure.getOutputFormat());
-                    LOGGER.error(msg);
-                    throw new TemplateProcessException("a520da67-15b9-4fac-8f2f-15b68c13815b", msg);
+                }
+                break;
+            case DOCX:
+                actResult = actFilledDocument.getContent();
+                actResultFileName = actFilledDocument.getFileName();
+                LOGGER.trace("  No conversion needed for the actual template.");
+                break;
+            default:
+                final String msg = String.format("Unhandled output format: [%s].", documentStructure.getOutputFormat());
+                LOGGER.error(msg);
+                throw new TemplateProcessException("a520da67-15b9-4fac-8f2f-15b68c13815b", msg);
             }
         } else {
             actResult = actFilledDocument.getContent();
@@ -346,8 +466,18 @@ public class TemplateServiceImpl implements TemplateService {
         return new ResultDocument(actResultFileName, actResult);
     }
 
+    /**
+     * Returns local template context.
+     * 
+     * @param globalContext the actual global context.
+     * @param localContext  the current context for evaluating the actual
+     *                      placeholder.
+     * @return the template context with the context accessible at the current
+     *         location (object in the local context plus contents of the global
+     *         context).
+     */
     private TemplateContext getLocalTemplateContext(final Optional<TemplateContext> globalContext,
-                                                    final Optional<TemplateContext> localContext) {
+            final Optional<TemplateContext> localContext) {
         final TemplateContext result = new TemplateContext();
         globalContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));
         localContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));
@@ -356,7 +486,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     protected static InputStream getInputStream(final OutputStream out) {
-        return new ByteArrayInputStream(((ByteArrayOutputStream)out).toByteArray());
+        return new ByteArrayInputStream(((ByteArrayOutputStream) out).toByteArray());
 
     }
 

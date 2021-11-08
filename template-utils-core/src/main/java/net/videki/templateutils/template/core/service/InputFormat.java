@@ -5,6 +5,7 @@ import net.videki.templateutils.template.core.service.exception.TemplateProcessE
 
 /**
  * Supported input formats.
+ * 
  * @author Levente Ban
  */
 public enum InputFormat {
@@ -12,7 +13,7 @@ public enum InputFormat {
   /**
    * Docx format.
    */
-  DOCX("DOCX"), 
+  DOCX("DOCX"),
 
   /**
    * xlsx format.
@@ -26,6 +27,7 @@ public enum InputFormat {
 
   /**
    * Constructor with the format string.
+   * 
    * @param pValue the format.
    */
   InputFormat(final String pValue) {
@@ -34,6 +36,7 @@ public enum InputFormat {
 
   /**
    * Returns the format.
+   * 
    * @return the format.
    */
   public String getStrValue() {
@@ -42,6 +45,7 @@ public enum InputFormat {
 
   /**
    * Checks a format to check that they have the same format.
+   * 
    * @param a the format to check.
    * @return true if the parameter has the same format.
    */
@@ -56,9 +60,11 @@ public enum InputFormat {
 
   /**
    * Tries to determine the the input format from a file name by extension.
+   * 
    * @param templateName the template name (in form of a file name).
    * @return the input format, if it is supported.
-   * @throws IllegalArgumentException thrown in case of unhandled or indeterminable format.
+   * @throws IllegalArgumentException thrown in case of unhandled or
+   *                                  indeterminable format.
    */
   public static InputFormat getInputFormatForFileName(final String templateName) {
     InputFormat format;
@@ -70,16 +76,15 @@ public enum InputFormat {
       int fileExtPos = templateName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
       if (fileExtPos > 0) {
         format = InputFormat
-                .valueOf(
-                        templateName.toUpperCase().substring(fileExtPos)
-                                .replace(FileSystemHelper.FILENAME_COLON, ""));
+            .valueOf(templateName.toUpperCase().substring(fileExtPos).replace(FileSystemHelper.FILENAME_COLON, ""));
 
       } else {
         throw new IllegalArgumentException();
       }
     } catch (IllegalArgumentException e) {
-      final String msg = String.format("Unhandled template file format " +
-              "(input processor for the filename extension not found). Filename: %s", templateName);
+      final String msg = String.format(
+          "Unhandled template file format " + "(input processor for the filename extension not found). Filename: %s",
+          templateName);
       throw new TemplateProcessException("c14d63df-8db2-45a2-bf21-e62fe60a23a0", msg);
     }
 
