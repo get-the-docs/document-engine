@@ -13,7 +13,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Registry to hold the configured document converters like docx->pdf (Input
+ * Registry to hold the configured document converters like docx-pdf (Input
  * format, output format pairs).
  * 
  * @author Levente Ban

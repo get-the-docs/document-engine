@@ -27,7 +27,7 @@ public class TemplateProcessException extends TemplateServiceRuntimeException {
     /**
      * Returns the error code.
      * 
-     * @return
+     * @return the error code.
      */
     public String getCode() {
         return code;
