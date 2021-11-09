@@ -156,7 +156,7 @@ public class TemplateServiceImpl implements TemplateService {
      * @return the filled document if the fill was successful.
      */
     @Override
-    public <T> ResultDocument fill(final String templateName, final T dto, final OutputFormat outputFormat)
+    public <T> ResultDocument fill(final String templateName, final T dto, final OutputFormat outputFormat, final String transactionId)
             throws TemplateServiceException {
 
         if (Strings.isNullOrEmpty(templateName) || dto == null || outputFormat == null) {
@@ -185,9 +185,9 @@ public class TemplateServiceImpl implements TemplateService {
         }
 
         try {
-            return new ResultDocument(getOutputFileName(templateName, outputFormat), result);
+            return new ResultDocument(transactionId, getOutputFileName(templateName, outputFormat), result);
         } catch (final PlaceholderEvalException e) {
-            return new ResultDocument(templateName, null);
+            return new ResultDocument(transactionId, templateName, null);
         }
     }
 
@@ -345,7 +345,28 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public <T> StoredResultDocument fillAndSave(final String templateName, final T dto, final OutputFormat format)
             throws TemplateServiceException {
-        final ResultDocument result = this.fill(templateName, dto, format);
+        final ResultDocument result = this.fill(templateName, dto, format, null);
+
+        return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+    }
+
+    /**
+     * Processes a single template document by filling it with the given model
+     * object, converts it to the desired output format and saves it in the
+     * configured result store.
+     * 
+     * @param transactionId The tranasction id, if defined
+     * @param templateName  the template document name in the template repository.
+     * @param <T>           the model class.
+     * @param dto           the model object.
+     * @param format        the desired output format.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
+    @Override
+    public <T> StoredResultDocument fillAndSave(final String transactionId, final String templateName, final T dto,
+            final OutputFormat format) throws TemplateServiceException {
+        final ResultDocument result = this.fill(templateName, dto, format, transactionId);
 
         return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
     }

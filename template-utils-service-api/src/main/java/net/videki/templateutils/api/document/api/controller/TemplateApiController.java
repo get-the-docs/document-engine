@@ -37,7 +37,7 @@ public class TemplateApiController implements TemplateApi {
     }
 
     @Override
-    public ResponseEntity<GetTemplatesResponse> getTemplates(final @Valid Pageable pageable) {
+    public ResponseEntity<GetTemplatesResponse> getTemplates(final @Valid String templateId, final @Valid Pageable pageable) {
 
         try {
             if (pageable != null) {
@@ -60,4 +60,41 @@ public class TemplateApiController implements TemplateApi {
         }
     }
 
+    /*
+     * @Override public ResponseEntity<TemplateDocument> getTemplateById(final
+     * String id, final String version) {
+     * 
+     * final Optional<net.videki.templateutils.template.core.template.descriptors.
+     * TemplateDocument> resultDoc = this.templateApiService .getTemplateById(id,
+     * version, false); if (resultDoc.isPresent()) { return
+     * ResponseEntity.ok(TemplateDocumentToApiModelMapper.INSTANCE.entityToApiModel(
+     * resultDoc.get())); } else { return ResponseEntity.notFound().build(); } }
+     */
+    @Override
+    public ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(final String id, final Object body, final String notificationUrl) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("postTemplateGenerationJob - id: [{}]", id);
+        }
+        if (log.isTraceEnabled()) {
+            log.debug("postTemplateGenerationJob - id: [{}], data: [{}]", id, body);
+        }
+
+        final TemplateJobApiResponse result = new TemplateJobApiResponse();
+
+        final String transactionId = this.templateApiService.postTemplateGenerationJob(id, body, notificationUrl);
+
+        result.setTransactionId(transactionId);
+
+        if (transactionId != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("postTemplateGenerationJob - result: [{}]", result);
+            }
+
+            return ResponseEntity.accepted().body(result);
+
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

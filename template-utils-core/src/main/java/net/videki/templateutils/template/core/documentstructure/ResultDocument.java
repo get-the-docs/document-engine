@@ -3,8 +3,10 @@ package net.videki.templateutils.template.core.documentstructure;
 import java.io.OutputStream;
 
 /**
- * <p>If multiple documents have to be generated, the DocumentStructure contains
- * the template file name and its binary.</p>
+ * <p>
+ * If multiple documents have to be generated, the DocumentStructure contains
+ * the template file name and its binary.
+ * </p>
  *
  * @author Levente Ban
  */
@@ -17,8 +19,9 @@ public class ResultDocument extends AbstractResultDocument implements AutoClosea
 
     /**
      * Initializes the container with an actual content.
+     * 
      * @param fileName the filename to store the result under.
-     * @param content the actual contents.
+     * @param content  the actual contents.
      */
     public ResultDocument(final String fileName, final OutputStream content) {
         super(fileName);
@@ -27,7 +30,21 @@ public class ResultDocument extends AbstractResultDocument implements AutoClosea
     }
 
     /**
+     * Initializes the container with an actual content.
+     * 
+     * @param transactionId the transaction id if defined.
+     * @param fileName      the filename to store the result under.
+     * @param content       the actual contents.
+     */
+    public ResultDocument(final String transactionId, final String fileName, final OutputStream content) {
+        super(transactionId, fileName);
+
+        this.content = content;
+    }
+
+    /**
      * Returns the document contents (the binary stream in the appropriate format).
+     * 
      * @return the result document.
      */
     public OutputStream getContent() {

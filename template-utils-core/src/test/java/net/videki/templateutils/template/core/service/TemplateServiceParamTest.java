@@ -49,7 +49,7 @@ public class TemplateServiceParamTest {
     public void fillNoParamsSingleDocTemplateAndDtoAndFormatTest() {
         String resultCode;
 
-        try(final ResultDocument ignored = ts.fill(null, null, null)) {
+        try(final ResultDocument ignored = ts.fill(null, null, null, null)) {
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
 
@@ -159,7 +159,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX);
+        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX, null);
 
         fail();
     }
@@ -331,7 +331,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX);
+        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX, null);
 
         fail();
     }

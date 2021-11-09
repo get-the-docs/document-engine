@@ -42,6 +42,31 @@ public class StoredResultDocument extends AbstractResultDocument {
         this.binary = binary;
     }
 
+
+    /**
+     * Initializes the container with a result document name and its success flag (whether it was generated successfully or not).
+     * @param transactionId the transaction id, if defined.
+     * @param fileName the result document file name.
+     * @param generated true, if the generation was successful.
+     */
+    public StoredResultDocument(final String transactionId, final String fileName, final boolean generated) {
+        this(transactionId, fileName, generated, null);
+    }
+
+    /**
+     * Initializes the container with a result document name and its success flag (whether it was generated successfully or not).
+     * @param transactionId the transaction id, if defined.
+     * @param fileName the result document file name.
+     * @param generated true, if the generation was successful.
+     * @param binary the result document, if requested.
+     */
+    public StoredResultDocument(final String transactionId, final String fileName, final boolean generated, final byte[] binary) {
+        super(transactionId, fileName);
+
+        this.generated = generated;
+        this.binary = binary;
+    }
+
     /**
      * Indicates whether the document was generated and saved successfully by the result store.
      * @return true on success, false otherwise

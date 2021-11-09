@@ -115,7 +115,7 @@ public class FileSystemResultStore implements ResultStore {
             }
         }
 
-        return new StoredResultDocument(resultFileName, actSuccessFlag);
+        return new StoredResultDocument(result.getTransactionId(), resultFileName, actSuccessFlag);
     }
 
     /**

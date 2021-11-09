@@ -4,8 +4,10 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
- * <p>If multiple documents have to be generated, the DocumentStructure contains
- * the template file name.</p>
+ * <p>
+ * If multiple documents have to be generated, the DocumentStructure contains
+ * the template file name.
+ * </p>
  *
  * @author Levente Ban
  */
@@ -20,15 +22,32 @@ public abstract class AbstractResultDocument {
 
     /**
      * Initializes the container for a given file name.
+     * 
      * @param fileName the document file name.
      */
     public AbstractResultDocument(final String fileName) {
-        this.transactionId = UUID.randomUUID().toString();
+        this(null, fileName);
+    }
+
+    /**
+     * Initializes the container for a given file name.
+     * 
+     * @param transactionId the transaction id, if defined.
+     * @param fileName      the document file name.
+     */
+    public AbstractResultDocument(final String transactionId, final String fileName) {
+        if (transactionId != null) {
+            this.transactionId = transactionId; 
+        } else {
+            this.transactionId = UUID.randomUUID().toString();
+        }
+
         this.fileName = Paths.get(fileName).getFileName().toString();
     }
 
     /**
      * Returns the file name.
+     * 
      * @return the file name.
      */
     public String getFileName() {
@@ -37,6 +56,7 @@ public abstract class AbstractResultDocument {
 
     /**
      * Returns the transaction id.
+     * 
      * @return the transaction id.
      */
     public String getTransactionId() {
@@ -45,7 +65,8 @@ public abstract class AbstractResultDocument {
 
     /**
      * Sets the transaction id under which the document generation was performed.
-     * (it equals with the container - folder name, etc. - of the result store)  
+     * (it equals with the container - folder name, etc. - of the result store)
+     * 
      * @param transactionId the transcation id.
      */
     public void setTransactionId(String transactionId) {

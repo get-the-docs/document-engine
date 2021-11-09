@@ -1,7 +1,9 @@
 package net.videki.templateutils.api.document.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONValue;
+import net.videki.templateutils.api.document.service.NotificationService;
 import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.context.JsonTemplateContext;
@@ -15,24 +17,27 @@ import net.videki.templateutils.template.core.template.descriptors.TemplateDocum
 
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class DefaultTemplateApiService implements TemplateApiService {
 
+  private final NotificationService notificationService;
+
   @Override
-  public Page<TemplateDocument> getTemplates(final Pageable page) {    
+  public Page<TemplateDocument> getTemplates(final Pageable page) {
     try {
       if (log.isDebugEnabled()) {
         log.debug("getTemplates - {}", page);
       }
 
-      final Page<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplates(page);
+      final Page<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository()
+          .getTemplates(page);
 
       if (log.isDebugEnabled()) {
         log.debug("getTemplates end - {}, item count: {}", page, result.getData().size());
@@ -53,7 +58,8 @@ public class DefaultTemplateApiService implements TemplateApiService {
         log.debug("getTemplateById - {}/{}, binary: {}", id, version, withBinary);
       }
 
-      final Optional<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplateDocumentById(id, version, withBinary);
+      final Optional<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository()
+          .getTemplateDocumentById(id, version, withBinary);
 
       if (log.isDebugEnabled()) {
         log.debug("getTemplateById end - {}", id);
@@ -70,50 +76,51 @@ public class DefaultTemplateApiService implements TemplateApiService {
     }
   }
 
-  public String postTemplateGenerationJob(final String id, final Object body) {
+  @Override
+  public String postTemplateGenerationJob(final String id, final Object body, final String notificationUrl) {
     try {
       if (log.isDebugEnabled()) {
-        log.debug("postTemplateGenerationJob - {}", id);
+        log.debug("postTemplateGenerationJob - id:[{}], notification url: [{}]", id, notificationUrl);
       }
       if (log.isTraceEnabled()) {
         log.trace("postTemplateGenerationJob - {}, data: [{}]", id, body);
       }
 
-//      final var templateId = decodeTemplateId(id);
       final var context = getContext(body);
 
       final var genResult = TemplateServiceRegistry.getInstance().fillAndSave(id, context);
 
+      this.notificationService.notifyRequestor(notificationUrl, genResult.getTransactionId(), genResult.getFileName(),
+          genResult.isGenerated());
+
       if (log.isDebugEnabled()) {
-        log.debug("postTemplateGenerationJob end - {}", id);
+        log.debug("postTemplateGenerationJob end - id:[{}], notification url: [{}]", id, notificationUrl);
       }
       if (log.isTraceEnabled()) {
         log.trace("postTemplateGenerationJob end - {}, data: [{}]", id, genResult);
-      }      
+      }
       return genResult.getTransactionId();
     } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
-      log.warn("Error processing request: {}", id);
+      log.warn("Error processing request: id:[{}], notification url: [{}]", id, notificationUrl);
     }
 
     return null;
   }
-/*
-  private String decodeTemplateId(final String templateId) {
-    if (templateId == null) {
-      throw new TemplateServiceRuntimeException("No template id");
-    }
 
-    final String[] pathParts = templateId.split(TEMPLATE_PACKAGE_TEMPLATE_SEPARATOR);
-
-    var path = pathParts[0].replace(TEMPLATE_PACKAGE_SEPARATOR, File.separator);
-    var fileName = (pathParts.length > 1 ? pathParts[1] : "");
-    if (path.endsWith("\\") || path.endsWith("/")) {
-      path = path.substring(0, path.length() - 1);
-    }
-
-    return path + File.separator + fileName;
-  }
-*/
+  /*
+   * private String decodeTemplateId(final String templateId) { if (templateId ==
+   * null) { throw new TemplateServiceRuntimeException("No template id"); }
+   * 
+   * final String[] pathParts =
+   * templateId.split(TEMPLATE_PACKAGE_TEMPLATE_SEPARATOR);
+   * 
+   * var path = pathParts[0].replace(TEMPLATE_PACKAGE_SEPARATOR, File.separator);
+   * var fileName = (pathParts.length > 1 ? pathParts[1] : ""); if
+   * (path.endsWith("\\") || path.endsWith("/")) { path = path.substring(0,
+   * path.length() - 1); }
+   * 
+   * return path + File.separator + fileName; }
+   */
   private TemplateContext getContext(final Object data) {
     if (data instanceof Map) {
       final StringWriter sw = new StringWriter();

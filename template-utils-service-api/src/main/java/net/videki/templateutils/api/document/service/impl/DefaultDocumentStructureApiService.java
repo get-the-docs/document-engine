@@ -15,7 +15,6 @@ import net.videki.templateutils.template.core.service.exception.TemplateServiceR
 
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Locale;
@@ -27,7 +26,7 @@ import java.util.Optional;
 public class DefaultDocumentStructureApiService implements DocumentStructureApiService {
 
   @Override
-  public Page<DocumentStructure> getDocumentStructures(final String id, final Pageable page) {
+  public Page<DocumentStructure> getDocumentStructures(final Pageable page) {
     throw new UnsupportedOperationException("Not implemented yet.");
   }
 
@@ -36,12 +35,11 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
     throw new UnsupportedOperationException("Not implemented yet.");
   }
 
-  public String postDocumentStructureGenerationJob(final String id, final Object body) {
+  public String postDocumentStructureGenerationJob(final String id, final Object body, final String notificationUrl) {
     try {
-      final var docStructureId = decodeTemplateId(id);
       final var valueSet = getValueSet(body);
 
-      final var genResult = TemplateServiceRegistry.getInstance().fillAndSaveDocumentStructureByName(docStructureId,
+      final var genResult = TemplateServiceRegistry.getInstance().fillAndSaveDocumentStructureByName(id,
           valueSet);
 
       return genResult.getTransactionId();
@@ -50,22 +48,6 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
 
       return null;
     }
-  }
-
-  private String decodeTemplateId(final String templateId) {
-    if (templateId == null) {
-      throw new TemplateServiceRuntimeException("No template id");
-    }
-
-    final String[] pathParts = templateId.split(TEMPLATE_PACKAGE_TEMPLATE_SEPARATOR);
-
-    var path = pathParts[0].replace(TEMPLATE_PACKAGE_SEPARATOR, File.separator);
-    var fileName = (pathParts.length > 1 ? pathParts[1] : "");
-    if (path.endsWith("\\") || path.endsWith("/")) {
-      path = path.substring(0, path.length() - 1);
-    }
-
-    return path + File.separator + fileName;
   }
 
   private net.videki.templateutils.template.core.documentstructure.ValueSet getValueSet(final Object data) {
