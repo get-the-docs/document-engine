@@ -5,20 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
 import net.videki.templateutils.api.document.api.mapper.TemplateDocumentToApiModelMapper;
+import net.videki.templateutils.api.document.api.model.GenerationResult;
 import net.videki.templateutils.api.document.api.model.GetTemplatesResponse;
 import net.videki.templateutils.api.document.api.model.Pageable;
-import net.videki.templateutils.api.document.api.model.TemplateDocument;
 import net.videki.templateutils.api.document.api.model.TemplateJobApiResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -37,7 +35,8 @@ public class TemplateApiController implements TemplateApi {
     }
 
     @Override
-    public ResponseEntity<GetTemplatesResponse> getTemplates(final @Valid String templateId, final @Valid Pageable pageable) {
+    public ResponseEntity<GetTemplatesResponse> getTemplates(final @Valid String templateId,
+            final @Valid Pageable pageable) {
 
         try {
             if (pageable != null) {
@@ -46,13 +45,14 @@ public class TemplateApiController implements TemplateApi {
                 log.info("Querying full template list.");
             }
 
-            final GetTemplatesResponse result = TemplateDocumentToApiModelMapper.INSTANCE
-                    .pageToApiModel(templateApiService.getTemplates(PageableMapper.INSTANCE.map(pageable)));
+            GetTemplatesResponse result = TemplateDocumentToApiModelMapper.INSTANCE
+                    .pageToApiModel(templateApiService.getTemplates(templateId, PageableMapper.INSTANCE.map(pageable)));
 
             if (log.isDebugEnabled()) {
                 log.debug("getTemplates - result: [{}]", result);
             }
             return ResponseEntity.ok(result);
+
         } catch (final Exception e) {
             log.error("Error querying template list.", e);
 
@@ -60,18 +60,9 @@ public class TemplateApiController implements TemplateApi {
         }
     }
 
-    /*
-     * @Override public ResponseEntity<TemplateDocument> getTemplateById(final
-     * String id, final String version) {
-     * 
-     * final Optional<net.videki.templateutils.template.core.template.descriptors.
-     * TemplateDocument> resultDoc = this.templateApiService .getTemplateById(id,
-     * version, false); if (resultDoc.isPresent()) { return
-     * ResponseEntity.ok(TemplateDocumentToApiModelMapper.INSTANCE.entityToApiModel(
-     * resultDoc.get())); } else { return ResponseEntity.notFound().build(); } }
-     */
     @Override
-    public ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(final String id, final Object body, final String notificationUrl) {
+    public ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(final String id, final Object body,
+            final String notificationUrl) {
 
         if (log.isDebugEnabled()) {
             log.debug("postTemplateGenerationJob - id: [{}]", id);
@@ -96,5 +87,17 @@ public class TemplateApiController implements TemplateApi {
         } else {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @Override
+    public ResponseEntity<GenerationResult> getResultDocumentByTransactionId(final String transactionId) {
+        return TemplateApi.super.getResultDocumentByTransactionId(transactionId);
+    }
+
+    @Override
+    public ResponseEntity<Resource> getResultDocumentForTemplateByTransactionIdAndResultDocumentId(
+            final String transactionId, final String resultDocumentId) {
+        return TemplateApi.super.getResultDocumentForTemplateByTransactionIdAndResultDocumentId(transactionId,
+                resultDocumentId);
     }
 }

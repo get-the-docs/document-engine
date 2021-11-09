@@ -19,11 +19,12 @@ public interface TemplateApiService {
     /**
      * Returns a page of templates from the configured template repository service.
      * 
-     * @param page the page to retrieve (effective only if the template repository
-     *             implementation has paging capability).
+     * @param templateId Optional template id to search for.
+     * @param page       the page to retrieve (effective only if the template
+     *                   repository implementation has paging capability).
      * @return the requested page, if exists.
      */
-    Page<TemplateDocument> getTemplates(Pageable page);
+    Page<TemplateDocument> getTemplates(String templateId, Pageable page);
 
     /**
      * Returns a template descriptor by id.

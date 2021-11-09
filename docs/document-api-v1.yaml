@@ -3,7 +3,17 @@ info:
   contact:
     email: oss.levente.ban@gmail.com
     name: Levente Ban
-  description: "API for listing available templates, and impersonating."
+  description: |
+    "API for listing available templates, document structures and generating impersonated documents with provided data.
+    The API has two operation groups: 
+      - templates for generating single documents and 
+      - documentstructures for generating document sets.
+    The service is base on a template repository, a document structure repository and a result store. 
+    These can be freely configured but once configured, have the same setup has to be used 
+    for the template and document structure repositories since they have to be consitent. 
+    
+    The document generation is asynchronous, when posting a job you will get a transcation id (or provide by yourself) and 
+    you can query and download the results based on that."  
   title: Document generation API
   version: 1.0.1
 servers:
@@ -21,22 +31,22 @@ paths:
   /template:
     get:
       tags:
-        - templates    
+        - templates
       operationId: "getTemplates"
-      summary: "Lists the available document templates."
+      summary: "Lists a page of the available document templates, or a given template in the template repository."
       x-contentType: application/json
       x-accepts: application/json
       parameters:
+        - name: templateId
+          description: "The template id as stored in the template repository."
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TemplateElementId"
         - $ref: "#/components/parameters/pageable"
       responses:
         "200":
-          description: Default
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetTemplatesResponse"
-        default:
-          description: Default
+          description: "Request processed successfully and data is present."
           content:
             application/json:
               schema:
@@ -66,72 +76,31 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /template/{id}:
-    get:
-      tags:
-        - templates    
-      operationId: "getTemplateById"
-      summary: "Returns a given document template."
-      x-contentType: application/json
-      x-accepts: application/json
-      parameters:
-        - name: id
-          $ref: "#/components/schemas/TemplateElementId"
-      responses:
-        "200":
-          description: Default
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TemplateElement"
-        default:
-          description: Default
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TemplateElement"
-        "401":
-          description: Bad credentials
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "404":
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "429":
-          description: Too many requests
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BaseApiResponse"
+  /template/fill:
     post:
       tags:
-        - templates    
-      operationId: postTemplateGenerationJob
-      summary: Posts a template generation with the given data
+        - templates
+      operationId: "postTemplateGenerationJob"
+      summary: "Posts a template generation with the given data"
       x-contentType: application/json
       x-accepts: application/json
       parameters:
-        - name: id
-          description: "Posts a single template generation."
-          examples:
-            contract:
-              value: "integrationtests.contracts:contract_v09_hu.docx"
+        - name: templateId
+          description: "The template id in the template repository. (e.g. for filesystem repo the relative path from the basedir - see get /templates)"
           explode: true
-          in: path
+          in: query
           required: true
           schema:
             $ref: "#/components/schemas/TemplateElementId"
+        - name: notificationUrl
+          description: "Optional notification webhook to indicate the end of the generation job."
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 0
+            maxLength: 2048
+            format: url
       requestBody:
         description: data provided for generation
         required: true
@@ -183,16 +152,157 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
+  /template/fill/{transactionId}:
+    get:
+      tags:
+        - templates
+      operationId: "getResultDocumentByTransactionId"
+      summary: "Returns the result document for a given transaction id and result document."
+      x-contentType: application/json
+      x-accepts: application/json
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TransactionId"
+      responses:
+        "200":
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        default:
+          description: Default
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+
+  /template/fill/{transactionId}/doc:
+    get:
+      tags:
+        - templates
+      operationId: "getResultDocumentForTemplateByTransactionIdAndResultDocumentId"
+      summary: "Returns the result document for a given transaction id and result document."
+      x-contentType: application/json
+      x-accepts: application/json
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TransactionId"
+        - name: resultDocumentId
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/ResultDocumentId"
+      responses:
+        "200":
+          description: Default
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Default
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
 
   /documentstructure:
     get:
       tags:
-        - documentstructures    
+        - documentstructures
       operationId: "getDocumentStructures"
       summary: "Lists the available document structures."
       x-contentType: application/json
       x-accepts: application/json
       parameters:
+        - name: id
+          description: document structure id in the document structure repository
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DocumentStructureId"
         - $ref: "#/components/parameters/pageable"
       responses:
         "200":
@@ -232,65 +342,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /documentstructure/{id}:
-    get:
-      tags:
-        - documentstructures    
-      operationId: "getDocumentStructureById"
-      summary: "Returns a given document structure."
-      x-contentType: application/json
-      x-accepts: application/json
-      parameters:
-        - name: id
-          description: document structure id in the document structure repository
-          explode: true
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/DocumentStructureId"
-      responses:
-        "200":
-          description: "Default"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DocumentStructure"
-        default:
-          description: "Default"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DocumentStructure"
-        "400":
-          description: "Invalid DTO"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "401":
-          description: "Bad credentials"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "403":
-          description: "Forbidden"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "404":
-          description: "Not found"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "429":
-          description: "Too many requests"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
+  /documentstructure/fill:
     post:
       tags:
         - documentstructures
@@ -299,11 +351,19 @@ paths:
       parameters:
         - name: id
           description: document structure id in the document structure repository
-          explode: true
-          in: path
+          in: query
           required: true
           schema:
             $ref: "#/components/schemas/DocumentStructureId"
+        - name: notificationUrl
+          description: "Notification webhook."
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 0
+            maxLength: 2048
+            format: url
       requestBody:
         description: Data provided for generation
         required: true
@@ -358,9 +418,135 @@ paths:
       x-contentType: application/json
       x-accepts: application/json
 
+  /documentstructure/fill/{transactionId}:
+    get:
+      tags:
+        - documentstructures
+      operationId: "getGenerationResultByTransactionId"
+      summary: "Returns the generation results for a given transaction id."
+      x-contentType: application/json
+      x-accepts: application/json
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TransactionId"
+      responses:
+        "200":
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        default:
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+
+  /documentstructure/fill/{transactionId}/doc:
+    get:
+      tags:
+        - documentstructures
+      operationId: "getResultDocumentForDocStructureByTransactionIdAndResultDocumentId"
+      summary: "Returns the result document for a given transaction id and result document."
+      x-contentType: application/json
+      x-accepts: application/json
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TransactionId"
+        - name: resultDocumentId
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/ResultDocumentId"
+      responses:
+        "200":
+          description: Default
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Default
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+
 components:
   schemas:
-
     # Common schema types.
     # --------------------
     EmptyResponse:
@@ -378,7 +564,7 @@ components:
           description: "id"
           maxLength: 36
           minLength: 36
-          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
           example: "be5d2c3b-6235-4b86-95b6-88d64610e0d3"
 
     ErrorResponse:
@@ -396,7 +582,7 @@ components:
           description: "Error message"
           maxLength: 256
           example: "Request processing error."
-          pattern: '^[0-9a-zA-Z.-/_]+$'
+          pattern: "^[0-9a-zA-Z.-/_]+$"
 
     ValidationErrorField:
       type: object
@@ -408,28 +594,28 @@ components:
           description: "Field name"
           minLength: 0
           maxLength: 4000
-          pattern: '^[0-9a-zA-Z.-/_]+$'
+          pattern: "^[0-9a-zA-Z.-/_]+$"
           example: "data.name"
         message:
           type: string
           description: "Validation error - code/message"
           minLength: 0
           maxLength: 4000
-          pattern: '^[0-9a-zA-Z.-/_]+$'
+          pattern: "^[0-9a-zA-Z.-/_]+$"
           example: "Must be unique."
-          
+
     ValidationErrorResponse:
       additionalProperties: true
       allOf:
-      - $ref: '#/components/schemas/ErrorResponse'
-      - properties:
-          errors:
-            type: array
-            description: "List of the fields having validation errors."
-            items:
-              $ref: '#/components/schemas/ValidationErrorField'
-            maxItems: 32768
-        type: object
+        - $ref: "#/components/schemas/ErrorResponse"
+        - properties:
+            errors:
+              type: array
+              description: "List of the fields having validation errors."
+              items:
+                $ref: "#/components/schemas/ValidationErrorField"
+              maxItems: 32768
+          type: object
 
     Pageable:
       type: object
@@ -452,23 +638,10 @@ components:
           maximum: 32768
           default: 10
           example: 10
-        offset:
-          type: integer
-          description: "The offset to be taken."
-          format: int32
-          minimum: 0
-          maximum: 32768
-          default: 0
-          example: 0
         paged:
           type: boolean
           description: "Returns whether the current Pageable contains pagination information."
           default: true
-        unpaged:
-          type: boolean
-          description: "Returns whether the current Pageable does not contain pagination information."          
-          default: false
-          example: false
         sort:
           type: array
           description: "Sort orders in the format fieldname,asc|desc. You may define multiple sort criteria."
@@ -546,10 +719,49 @@ components:
           maxLength: 21
 
     TemplateElementId:
+      description: "The template id as it is stored in the template repository."
       type: string
       minLength: 0
       maxLength: 4000
       pattern: "^[a-zA-Z0-9_\\/-]*$"
+      example: "integrationtests/contracts/contract_v09_hu.docx"
+
+    TransactionId:
+      type: string
+      minLength: 0
+      maxLength: 4000
+      pattern: "^[a-zA-Z0-9_\\/-]*$"
+
+    TemplateDocument:
+      type: object
+      additionalProperties: false
+      properties:
+        templateName:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+        format:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+          enum: [DOCX, XLSX]
+        locale:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_-/]*$"
+        version:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+        internalKey:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
 
     TemplateElement:
       type: object
@@ -570,7 +782,7 @@ components:
           minLength: 0
           maxLength: 50
           pattern: "^[a-zA-Z0-9_/\\]*$"
-          enum: [DOCX, XLSX]  
+          enum: [DOCX, XLSX]
         defaultLocale:
           type: string
           minLength: 0
@@ -591,7 +803,7 @@ components:
     DocumentStructure:
       type: object
       additionalProperties: false
-      properties:      
+      properties:
         documentStructureId:
           $ref: "#/components/schemas/DocumentStructureId"
         elements:
@@ -617,10 +829,7 @@ components:
         documentStructureId:
           $ref: "#/components/schemas/DocumentStructureId"
         transactionId:
-          type: string
-          minLength: 0
-          maxLength: 4000
-          example: contracts-54f9b669-d582-4049-95de-9fded66b884f
+          $ref: "#/components/schemas/TransactionId"
         locale:
           type: string
           minLength: 0
@@ -641,23 +850,198 @@ components:
         value:
           $ref: "#/components/schemas/TemplateContext"
 
+    ResultDocument:
+      type: object
+      additionalProperties: false
+      properties:
+        documentName:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+        format:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+          enum: [DOCX, XLSX]
+        url:
+          type: string
+          minLength: 0
+          maxLength: 2048
+          format: url
+
+    GenerationResult:
+      type: object
+      additionalProperties: false
+      properties:
+        transactionId:
+          $ref: "#/components/schemas/TransactionId"
+        documentStructureId:
+          $ref: "#/components/schemas/DocumentStructureId"
+        elements:
+          items:
+            $ref: "#/components/schemas/ResultDocument"
+          type: array
+          maxItems: 32767
+
+    ResultDocumentId:
+      type: string
+      minLength: 0
+      maxLength: 2048
+      pattern: "^[a-zA-Z0-9_/\\]*$"
+
     TemplateContext:
       type: object
+      example: "
+        {
+        'ctx': {
+        'org': {
+        'orgCode': 'PB',
+        'name': 'Vintage Services - Palm beach',
+        'address': {
+        'zip': 'Y-1234567',
+        'city': 'Simply City',
+        'address': 'Main blvd 432'
+        }
+        },
+        'officer': {
+        'name': 'Chuck Norris',
+        'orgCode': 'PB-001',
+        'login': 'PB\\cnorris'
+        },
+        'contract': {
+        'contractor': {
+        'name': 'John Doe',
+        'birthDate': {
+        'year': 1970,
+        'month': 7,
+        'day': 20
+        }
+        },
+        'contractType': {
+        'contractTypeName': 'Vintage Gold',
+        'fee': 1500,
+        'paymentFrequency': 'MONTHLY'
+        },
+        'beneficiaries': [
+        {
+        'beneficiaries': [
+        {
+        'phoneNumber': '+1 800 2234 567',
+        'name': 'Jim Doe',
+        'birthDate': {
+        'year': 1975,
+        'month': 8,
+        'day': 11
+        }
+        },
+        {
+        'phoneNumber': '+1 800 2234 568',
+        'name': 'Tim Doe',
+        'birthDate': {
+        'year': 1976,
+        'month': 8,
+        'day': 12
+        }
+        },
+        {
+        'phoneNumber': '+1 800 2234 569',
+        'name': 'Pim Doe',
+        'birthDate': {
+        'year': 1977,
+        'month': 8,
+        'day': 13
+        }
+        },
+        {
+        'phoneNumber': '+1 800 3234 567',
+        'name': 'Jack Ryan',
+        'birthDate': {
+        'year': 1962,
+        'month': 8,
+        'day': 11
+        }
+        },
+        {
+        'phoneNumber': '+1 800 3234 568',
+        'name': 'John Goodall',
+        'birthDate': {
+        'year': 1946,
+        'month': 8,
+        'day': 11
+        }
+        },
+        {
+        'phoneNumber': '+1 800 3234 569',
+        'name': 'Mortimer Young',
+        'birthDate': {
+        'year': 1991,
+        'month': 8,
+        'day': 11
+        }
+        },
+        {
+        'phoneNumber': '+1 800 3234 560',
+        'name': 'Zack Black',
+        'birthDate': {
+        'year': 1987,
+        'month': 8,
+        'day': 11
+        }
+        }
+        ],
+        'phoneNumber': '+1 800 1234 567',
+        'name': 'Jane Doe',
+        'birthDate': {
+        'year': 1971,
+        'month': 4,
+        'day': 2
+        }
+        },
+        {
+        'beneficiaries': [],
+        'phoneNumber': '+1 800 1234 568',
+        'name': 'Jenny Mack',
+        'birthDate': {
+        'year': 1951,
+        'month': 8,
+        'day': 11
+        }
+        }
+        ],
+        'signDate': {
+        'year': 2021,
+        'month': 2,
+        'day': 16
+        }
+        },
+        'doc': {
+        'dmsUrl': 'http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68',
+        'login': 'PB\\cnorris',
+        'generationDate': {
+        'year': 1970,
+        'month': 7,
+        'day': 20
+        }
+        }
+        }
+        }"
 
     GetTemplatesResponse:
+      type: object
       description: "Response type for returning the available templates"
-      additionalProperties: true 
-      allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        properties:
-          contents:
-            type: array
-            description: "List of template elements."
-            items:
-              $ref: '#/components/schemas/TemplateElement'
-            maxItems: 32768
+      additionalProperties: false
+      properties:
+        page:
+          $ref: "#/components/schemas/Page"
 
+        contents:
+          type: array
+          description: "List of template elements."
+          items:
+            $ref: "#/components/schemas/TemplateDocument"
+          maxItems: 32768
 
     TemplateJobApiResponse:
       type: object
@@ -673,20 +1057,20 @@ components:
           minLength: 0
           maxLength: 4000
           pattern: "^[a-zA-Z0-9_/\\]*$"
-    
+
     GetDocumentStructuresResponse:
       description: "Response type for returning the available templates"
-      additionalProperties: true 
+      additionalProperties: true
       allOf:
-      - $ref: '#/components/schemas/Page'
-      - type: object
-        properties:
-          contents:
-            type: array
-            description: "List of template elements."
-            items:
-              $ref: '#/components/schemas/DocumentStructure'
-            maxItems: 32768
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            contents:
+              type: array
+              description: "List of template elements."
+              items:
+                $ref: "#/components/schemas/DocumentStructure"
+              maxItems: 32768
 
     DocStructureJobApiResponse:
       type: object
@@ -705,17 +1089,18 @@ components:
 
   parameters:
     pageable:
+      description: "The data page to be returned."
       in: query
       name: pageable
       required: false
       schema:
-        $ref: '#/components/schemas/Pageable'
+        $ref: "#/components/schemas/Pageable"
 
   securitySchemes:
-    ApiKeyAuth:        
+    ApiKeyAuth:
       type: apiKey
-      in: header       
-      name: X-API-KEY  
+      in: header
+      name: X-API-KEY
 
 security:
   - ApiKeyAuth: []

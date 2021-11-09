@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,20 +32,36 @@ public class DefaultTemplateApiService implements TemplateApiService {
   private final NotificationService notificationService;
 
   @Override
-  public Page<TemplateDocument> getTemplates(final Pageable page) {
+  public Page<TemplateDocument> getTemplates(String templateId, final Pageable page) {
     try {
       if (log.isDebugEnabled()) {
         log.debug("getTemplates - {}", page);
       }
 
-      final Page<TemplateDocument> result = TemplateServiceConfiguration.getInstance().getTemplateRepository()
-          .getTemplates(page);
+      Page<TemplateDocument> result = null;
+      if (templateId != null) {
+        result = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplates(page);
+
+      } else {
+        final Optional<TemplateDocument> doc = getTemplateById(templateId, null, false);
+
+        result = new Page<>();
+        final List<TemplateDocument> data = new LinkedList<>();
+        if (doc.isPresent()) {
+          data.add(doc.get());
+        }
+        result.setData(data);
+        result.setNumber(0);
+        result.setSize(data.size() > 0 ? 1 : 0);
+        result.setTotalElements((long) data.size());
+        result.setTotalPages(data.size() > 0 ? 1 : 0);
+      }
 
       if (log.isDebugEnabled()) {
         log.debug("getTemplates end - {}, item count: {}", page, result.getData().size());
       }
       return result;
-
+    
     } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
       log.warn("Error processing request: {}", page);
 
