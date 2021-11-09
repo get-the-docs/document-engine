@@ -5,6 +5,10 @@ import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Map;
 
 @Slf4j
@@ -140,6 +144,22 @@ public class JsonTemplateContextTest {
         final var result = new JsonTemplateContext(this.jsonDataMultiContext);
 
         log.debug("Data: {}", result.toJson());
+
+    }
+    
+    @Test
+    public void evalJsonPathStringValue() {
+        final var ctx = new JsonTemplateContext(this.jsonDataMultiContext);
+
+        assertEquals("John Doe", ctx.jsonpath("ctx['contract'].contractor.name"));
+
+    }
+
+    @Test
+    public void evalJsonPathDateValue() {
+        final var ctx = new JsonTemplateContext(this.jsonDataMultiContext);
+
+        assertEquals(ctx.fmtDate(LocalDate.of(1970, Month.JULY, 20)), ctx.fmtDate((Map<Object, Object>)ctx.jsonpath("ctx['contract'].contractor.birthDate")));
 
     }
 

@@ -1,5 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure;
 
+import java.beans.Transient;
+
 /**
  * @author Levente Ban
  *
@@ -14,14 +16,30 @@ public class StoredResultDocument extends AbstractResultDocument {
     private final boolean generated;
 
     /**
+     * The document binary, if requested.
+     */
+    private byte[] binary;
+
+    /**
      * Initializes the container with a result document name and its success flag (whether it was generated successfully or not).
      * @param fileName the result document file name.
      * @param generated true, if the generation was successful.
      */
     public StoredResultDocument(final String fileName, final boolean generated) {
+        this(fileName, generated, null);
+    }
+
+    /**
+     * Initializes the container with a result document name and its success flag (whether it was generated successfully or not).
+     * @param fileName the result document file name.
+     * @param generated true, if the generation was successful.
+     * @param binary the result document, if requested.
+     */
+    public StoredResultDocument(final String fileName, final boolean generated, final byte[] binary) {
         super(fileName);
 
         this.generated = generated;
+        this.binary = binary;
     }
 
     /**
@@ -32,4 +50,8 @@ public class StoredResultDocument extends AbstractResultDocument {
         return this.generated;
     }
 
+    @Transient
+    public byte[] getBinary() {
+        return this.binary;
+    }
 }

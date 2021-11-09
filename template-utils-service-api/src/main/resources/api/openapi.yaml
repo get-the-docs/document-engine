@@ -17,6 +17,14 @@ tags:
     description: Document structures
     externalDocs:
       url: "https://www.getthedocs.tech/docs/documentation/components"
+  - name: fill
+    description: Document generation
+    externalDocs:
+      url: "https://www.getthedocs.tech/docs/documentation/components"
+  - name: results
+    description: Result documents
+    externalDocs:
+      url: "https://www.getthedocs.tech/docs/documentation/components"
 paths:
   /template:
     get:
@@ -60,80 +68,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /template/{id}:
-    get:
-      tags:
-        - templates    
-      operationId: "getTemplateById"
-      summary: "Returns a given document template."
-      x-contentType: application/json
-      x-accepts: application/json
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/TemplateElementId"
-        - name: version
-          in: query
-          required: false
-          schema:
-            type: string
-            minLength: 0
-            maxLength: 4000
-            pattern: "^[a-zA-Z0-9_/\\]*$"
-      responses:
-        "200":
-          description: Default
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TemplateDocument"
-        default:
-          description: Default
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TemplateDocument"
-        "401":
-          description: Bad credentials
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "404":
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
-        "429":
-          description: Too many requests
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EmptyResponse"
+  /fill:
     post:
       tags:
-        - templates    
+        - fill    
       operationId: postTemplateGenerationJob
       summary: Posts a template generation with the given data
       x-contentType: application/json
       x-accepts: application/json
       parameters:
-        - name: id
-          description: "Posts a single template generation."
-          examples:
-            contract:
-              value: "integrationtests.contracts:contract_v09_hu.docx"
+        - name: templateId
+          description: "The template id in the template repository."
           explode: true
-          in: path
+          in: query
           required: true
           schema:
             $ref: "#/components/schemas/TemplateElementId"
@@ -363,6 +310,135 @@ paths:
       x-contentType: application/json
       x-accepts: application/json
 
+
+  /result/{transactionId}:
+    get:
+      tags:
+        - results    
+      operationId: "getGenerationResultByTransactionId"
+      summary: "Returns the generation results for a given transaction id."
+      x-contentType: application/json
+      x-accepts: application/json
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TransactionId"
+      responses:
+        "200":
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        default:
+          description: Default
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+      
+
+  /result/{transactionId}/{resultDocumentId}:
+    get:
+      tags:
+        - results    
+      operationId: "getResultDocumentByTransactionIdAndResultDocumentId"
+      summary: "Returns the result document for a given transaction id and result document."
+      x-contentType: application/json
+      x-accepts: application/json
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TransactionId"
+        - name: resultDocumentId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ResultDocumentId"
+      responses:
+        "200":
+          description: Default
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Default
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyResponse"
+
 components:
   schemas:
 
@@ -542,6 +618,13 @@ components:
       minLength: 0
       maxLength: 4000
       pattern: "^[a-zA-Z0-9_\\/-]*$"
+      example: "integrationtests/contracts/contract_v09_hu.docx"
+
+    TransactionId:
+      type: string
+      minLength: 0
+      maxLength: 4000
+      pattern: "^[a-zA-Z0-9_\\/-]*$"
 
     TemplateDocument:
       type: object
@@ -640,10 +723,7 @@ components:
         documentStructureId:
           $ref: "#/components/schemas/DocumentStructureId"
         transactionId:
-          type: string
-          minLength: 0
-          maxLength: 4000
-          example: contracts-54f9b669-d582-4049-95de-9fded66b884f
+          $ref: "#/components/schemas/TransactionId"
         locale:
           type: string
           minLength: 0
@@ -664,8 +744,183 @@ components:
         value:
           $ref: "#/components/schemas/TemplateContext"
 
+    ResultDocument:
+      type: object
+      additionalProperties: false
+      properties:
+        documentName:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+        format:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+          enum: [DOCX, XLSX]  
+        url:
+          type: string
+          minLength: 0
+          maxLength: 2048
+          format: url
+
+    GenerationResult:
+      type: object
+      additionalProperties: false
+      properties:      
+        transactionId:
+          $ref: "#/components/schemas/TransactionId"
+        documentStructureId:
+          $ref: "#/components/schemas/DocumentStructureId"
+        elements:
+          items:
+            $ref: "#/components/schemas/ResultDocument"
+          type: array
+          maxItems: 32767
+
+    ResultDocumentId:
+      type: string
+      minLength: 0
+      maxLength: 2048
+      pattern: "^[a-zA-Z0-9_/\\]*$"
+
     TemplateContext:
       type: object
+      example: "
+        {
+          'ctx': {
+            'org': {
+              'orgCode': 'PB',
+              'name': 'Vintage Services - Palm beach',
+              'address': {
+                'zip': 'Y-1234567',
+                'city': 'Simply City',
+                'address': 'Main blvd 432'
+              }
+            },
+            'officer': {
+              'name': 'Chuck Norris',
+              'orgCode': 'PB-001',
+              'login': 'PB\\cnorris'
+            },
+            'contract': {
+              'contractor': {
+                'name': 'John Doe',
+                'birthDate': {
+                  'year': 1970,
+                  'month': 7,
+                  'day': 20
+                }
+              },
+              'contractType': {
+                'contractTypeName': 'Vintage Gold',
+                'fee': 1500,
+                'paymentFrequency': 'MONTHLY'
+              },
+              'beneficiaries': [
+                {
+                  'beneficiaries': [
+                    {
+                      'phoneNumber': '+1 800 2234 567',
+                      'name': 'Jim Doe',
+                      'birthDate': {
+                        'year': 1975,
+                        'month': 8,
+                        'day': 11
+                      }
+                    },
+                    {
+                      'phoneNumber': '+1 800 2234 568',
+                      'name': 'Tim Doe',
+                      'birthDate': {
+                        'year': 1976,
+                        'month': 8,
+                        'day': 12
+                      }
+                    },
+                    {
+                      'phoneNumber': '+1 800 2234 569',
+                      'name': 'Pim Doe',
+                      'birthDate': {
+                        'year': 1977,
+                        'month': 8,
+                        'day': 13
+                      }
+                    },
+                    {
+                      'phoneNumber': '+1 800 3234 567',
+                      'name': 'Jack Ryan',
+                      'birthDate': {
+                        'year': 1962,
+                        'month': 8,
+                        'day': 11
+                      }
+                    },
+                    {
+                      'phoneNumber': '+1 800 3234 568',
+                      'name': 'John Goodall',
+                      'birthDate': {
+                        'year': 1946,
+                        'month': 8,
+                        'day': 11
+                      }
+                    },
+                    {
+                      'phoneNumber': '+1 800 3234 569',
+                      'name': 'Mortimer Young',
+                      'birthDate': {
+                        'year': 1991,
+                        'month': 8,
+                        'day': 11
+                      }
+                    },
+                    {
+                      'phoneNumber': '+1 800 3234 560',
+                      'name': 'Zack Black',
+                      'birthDate': {
+                        'year': 1987,
+                        'month': 8,
+                        'day': 11
+                      }
+                    }
+                  ],
+                  'phoneNumber': '+1 800 1234 567',
+                  'name': 'Jane Doe',
+                  'birthDate': {
+                    'year': 1971,
+                    'month': 4,
+                    'day': 2
+                  }
+                },
+                {
+                  'beneficiaries': [],
+                  'phoneNumber': '+1 800 1234 568',
+                  'name': 'Jenny Mack',
+                  'birthDate': {
+                    'year': 1951,
+                    'month': 8,
+                    'day': 11
+                  }
+                }
+              ],
+              'signDate': {
+                'year': 2021,
+                'month': 2,
+                'day': 16
+              }
+            },
+            'doc': {
+              'dmsUrl': 'http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68',
+              'login': 'PB\\cnorris',
+              'generationDate': {
+                'year': 1970,
+                'month': 7,
+                'day': 20
+              }
+            }
+          }
+        }"          
 
     GetTemplatesResponse:
       type: object

@@ -79,10 +79,10 @@ public class DefaultTemplateApiService implements TemplateApiService {
         log.trace("postTemplateGenerationJob - {}, data: [{}]", id, body);
       }
 
-      final var templateId = decodeTemplateId(id);
+//      final var templateId = decodeTemplateId(id);
       final var context = getContext(body);
 
-      final var genResult = TemplateServiceRegistry.getInstance().fillAndSave(templateId, context);
+      final var genResult = TemplateServiceRegistry.getInstance().fillAndSave(id, context);
 
       if (log.isDebugEnabled()) {
         log.debug("postTemplateGenerationJob end - {}", id);
@@ -97,7 +97,7 @@ public class DefaultTemplateApiService implements TemplateApiService {
 
     return null;
   }
-
+/*
   private String decodeTemplateId(final String templateId) {
     if (templateId == null) {
       throw new TemplateServiceRuntimeException("No template id");
@@ -113,7 +113,7 @@ public class DefaultTemplateApiService implements TemplateApiService {
 
     return path + File.separator + fileName;
   }
-
+*/
   private TemplateContext getContext(final Object data) {
     if (data instanceof Map) {
       final StringWriter sw = new StringWriter();

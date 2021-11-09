@@ -118,13 +118,23 @@ public class JsonTemplateContext extends TemplateContext {
         return getValue(path);
     }
 
+
+    /**
+     * Template placeholder convenience mehod to return a single context object based on the caught path. 
+     * @param path the JSON path on the actual model.
+     * @return the result context object if found.
+     */
+    public Object getJsonpath(final String path) {
+        return jsonpath(path);
+    }
+
     /**
      * Template placeholder convenience mehod to return a single context object based on the caught path. 
      * @param path the JSON path on the actual model.
      * @return the result context object if found.
      */
     public Object jp(final String path) {
-        return getValue(path);
+        return jsonpath(path);
     }
 
     /**
@@ -143,7 +153,6 @@ public class JsonTemplateContext extends TemplateContext {
     public String getData() {
         return this.jsonData;
     }
-
 
     /**
      * Returns the original JSON string to build the context.

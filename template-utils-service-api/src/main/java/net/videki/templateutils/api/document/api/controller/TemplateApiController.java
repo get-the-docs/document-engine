@@ -24,7 +24,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 @Controller
-@RequestMapping("${openapi.documentGeneration.base-path:/api/v1}")
+@RequestMapping("${app.api.base-path:/api/v1}")
 public class TemplateApiController implements TemplateApi {
 
     private final NativeWebRequest request;
@@ -37,7 +37,7 @@ public class TemplateApiController implements TemplateApi {
     }
 
     @Override
-    public ResponseEntity<GetTemplatesResponse> getTemplates(@Valid Pageable pageable) {
+    public ResponseEntity<GetTemplatesResponse> getTemplates(final @Valid Pageable pageable) {
 
         try {
             if (pageable != null) {
@@ -46,7 +46,8 @@ public class TemplateApiController implements TemplateApi {
                 log.info("Querying full template list.");
             }
 
-            final GetTemplatesResponse result = TemplateDocumentToApiModelMapper.INSTANCE.pageToApiModel(templateApiService.getTemplates(PageableMapper.INSTANCE.map(pageable)));
+            final GetTemplatesResponse result = TemplateDocumentToApiModelMapper.INSTANCE
+                    .pageToApiModel(templateApiService.getTemplates(PageableMapper.INSTANCE.map(pageable)));
 
             if (log.isDebugEnabled()) {
                 log.debug("getTemplates - result: [{}]", result);
@@ -57,28 +58,6 @@ public class TemplateApiController implements TemplateApi {
 
             return ResponseEntity.badRequest().build();
         }
-    }
-
-    @Override
-    public ResponseEntity<TemplateDocument> getTemplateById(String id, String version) {
-
-        final Optional<net.videki.templateutils.template.core.template.descriptors.TemplateDocument> resultDoc = this.templateApiService.getTemplateById(id, version, false);
-        if (resultDoc.isPresent()) {
-            return ResponseEntity.ok(TemplateDocumentToApiModelMapper.INSTANCE.entityToApiModel(resultDoc.get()));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @Override
-    public ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(
-            @Pattern(regexp = "^[a-zA-Z0-9_/-]*$") @Size(min = 0, max = 4000) String id,
-            @Valid Object body) {
-        final TemplateJobApiResponse result = new TemplateJobApiResponse();
-
-        result.setTransactionId(this.templateApiService.postTemplateGenerationJob(id, body));
-
-        return ResponseEntity.accepted().body(result);
     }
 
 }

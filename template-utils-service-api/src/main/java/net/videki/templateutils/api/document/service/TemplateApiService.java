@@ -14,7 +14,7 @@ import net.videki.templateutils.template.core.template.descriptors.TemplateDocum
 public interface TemplateApiService {
 
     String TEMPLATE_PACKAGE_TEMPLATE_SEPARATOR = ":";
-    String TEMPLATE_PACKAGE_SEPARATOR = ".";
+    String TEMPLATE_PACKAGE_SEPARATOR = "\\";
 
     /**
      * Returns a page of templates from the configured template repository service. 
