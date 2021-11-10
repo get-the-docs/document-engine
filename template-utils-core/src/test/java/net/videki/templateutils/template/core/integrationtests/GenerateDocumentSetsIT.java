@@ -61,7 +61,7 @@ public class GenerateDocumentSetsIT {
             final ValueSet testData = getTestData("generateSeparateDocumentsIT");
 
             result = this.templateService
-                    .fillDocumentStructureByName(
+                    .fillDocumentStructureByName(null, 
                             "contract/vintage/contract-vintage_v02-separate.yml",
                             testData);
 

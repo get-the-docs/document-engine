@@ -85,7 +85,7 @@ public class TemplateServiceParamTest {
         String resultCode;
 
         try {
-            ts.fill((DocumentStructure) null, null);
+            ts.fill(null, (DocumentStructure) null, null);
 
             LOGGER.error("Error: TemplateServiceConfigurationException expected.");
 
@@ -179,7 +179,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX, null);
+        ts.fill(null, inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX);
 
         fail();
     }
@@ -205,7 +205,7 @@ public class TemplateServiceParamTest {
                     UUID.randomUUID().toString());
             values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
 
-            result = ts.fill(structure, values);
+            result = ts.fill(null, structure, values);
 
             LOGGER.info("Done.");
             assertNotNull(result);
@@ -241,7 +241,7 @@ public class TemplateServiceParamTest {
         String resultCode;
 
         try {
-            ts.fillAndSave(null, null, null);
+            ts.fillAndSave(null, null, null, null);
         } catch (TemplateServiceConfigurationException e) {
             resultCode = e.getCode();
 
@@ -351,7 +351,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "there_is_no_such_template_file.docx";
 
-        ts.fill(inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX, null);
+        ts.fill(null, inputDir + File.separator + fileName, getContractTestData(), OutputFormat.DOCX);
 
         fail();
     }
@@ -377,7 +377,7 @@ public class TemplateServiceParamTest {
                     UUID.randomUUID().toString(), LC_HU);
             values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
 
-            result = ts.fill(structure, values);
+            result = ts.fill(null, structure, values);
 
             LOGGER.info("Done.");
             assertNotNull(result);

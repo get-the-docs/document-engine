@@ -139,6 +139,9 @@
                                 <root>src/main/java</root>
                                 <root>src/test</root>
                             </roots>
+                            <excludes>
+                                <exclude>*.json</exclude>
+                              </excludes>                            
                         </configuration>
                     </execution>
                 </executions>

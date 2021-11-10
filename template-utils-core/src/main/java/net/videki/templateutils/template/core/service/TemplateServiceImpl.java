@@ -94,6 +94,7 @@ public class TemplateServiceImpl implements TemplateService {
      * @param dto the model object.
      * @return the template context.
      */
+    @SuppressWarnings("rawtypes")
     private <T> TemplateContext getContextObject(final T dto) {
         TemplateContext context;
 
@@ -167,17 +168,18 @@ public class TemplateServiceImpl implements TemplateService {
      * Entry point to fill a single template with a given model and convert it to
      * the given format.
      * 
-     * @param templateName the template name (id) in the template repository.
-     * @param <T>          the model class.
-     * @param dto          the model object.
-     * @param outputFormat the desired output format.
+     * @param transactionId the transaction id.
+     * @param templateName  the template name (id) in the template repository.
+     * @param <T>           the model class.
+     * @param dto           the model object.
+     * @param outputFormat  the desired output format.
      * @throws TemplateServiceException thrown on processing related errors during
      *                                  template retriev or fill.
      * @return the filled document if the fill was successful.
      */
     @Override
-    public <T> ResultDocument fill(final String templateName, final T dto, final OutputFormat outputFormat, final String transactionId)
-            throws TemplateServiceException {
+    public <T> ResultDocument fill(final String transactionId, final String templateName, final T dto,
+            final OutputFormat outputFormat) throws TemplateServiceException {
 
         if (Strings.isNullOrEmpty(templateName) || dto == null || outputFormat == null) {
             throw new TemplateServiceConfigurationException("c936e550-8b0e-4577-bffa-7f36b211d981",
@@ -214,6 +216,7 @@ public class TemplateServiceImpl implements TemplateService {
     /**
      * Entry point to fill a document structure with a given set of models.
      * 
+     * @param transactionId     the transaction id.
      * @param documentStructure the document structure descriptor.
      * @param values            the model objects.
      * @throws TemplateServiceException thrown on processing related errors during
@@ -221,8 +224,8 @@ public class TemplateServiceImpl implements TemplateService {
      * @return the filled document if the fill was successful.
      */
     @Override
-    public GenerationResult fill(final DocumentStructure documentStructure, final ValueSet values)
-            throws TemplateServiceException {
+    public GenerationResult fill(final String transactionId, final DocumentStructure documentStructure,
+            final ValueSet values) throws TemplateServiceException {
         if (documentStructure == null || values == null) {
             throw new TemplateServiceConfigurationException("bdaa9376-28b4-4718-9859-2ef5d88ab3b0", String.format(
                     "%s - documentStructure: %s, values: %s", MSG_INVALID_PARAMETERS, documentStructure, values));
@@ -231,7 +234,8 @@ public class TemplateServiceImpl implements TemplateService {
         final List<ResultDocument> results = new LinkedList<>();
         final GenerationResult result = new GenerationResult(results);
         result.setGenerationStartTime(Instant.now());
-        result.setTransactionId(values.getTransactionId());
+        result.setTransactionId(transactionId);
+        result.setValueSetTransactionId(values.getTransactionId());
 
         final Optional<TemplateContext> globalContext = values.getGlobalContext();
 
@@ -316,6 +320,7 @@ public class TemplateServiceImpl implements TemplateService {
     /**
      * Entry point to fill a document structure with a given set of models.
      * 
+     * @param transactionId         the transaction id.
      * @param documentStructureFile the document structure name (id) in the document
      *                              structure repository.
      * @param values                the model objects.
@@ -324,11 +329,11 @@ public class TemplateServiceImpl implements TemplateService {
      * @return the filled document if the fill was successful.
      */
     @Override
-    public GenerationResult fillDocumentStructureByName(final String documentStructureFile, final ValueSet values)
-            throws TemplateServiceException {
+    public GenerationResult fillDocumentStructureByName(String transactionId, final String documentStructureFile,
+            final ValueSet values) throws TemplateServiceException {
         final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
                 .getDocumentStructure(documentStructureFile);
-        return this.fill(ds, values);
+        return this.fill(transactionId, ds, values);
 
     }
 
@@ -365,7 +370,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public <T> StoredResultDocument fillAndSave(final String templateName, final T dto, final OutputFormat format)
             throws TemplateServiceException {
-        final ResultDocument result = this.fill(templateName, dto, format, null);
+        final ResultDocument result = this.fill(null, templateName, dto, format);
 
         return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
     }
@@ -386,7 +391,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public <T> StoredResultDocument fillAndSave(final String transactionId, final String templateName, final T dto,
             final OutputFormat format) throws TemplateServiceException {
-        final ResultDocument result = this.fill(templateName, dto, format, transactionId);
+        final ResultDocument result = this.fill(transactionId, templateName, dto, format);
 
         return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
     }
@@ -404,7 +409,33 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public StoredGenerationResult fillAndSave(final DocumentStructure documentStructure, final ValueSet values)
             throws TemplateServiceException {
-        final GenerationResult generationResult = this.fill(documentStructure, values);
+        final GenerationResult generationResult = this.fill(null, documentStructure, values);
+
+        final List<StoredResultDocument> ResultDocuments = generationResult.getResults().parallelStream()
+                .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
+                .collect(Collectors.toList());
+
+        final StoredGenerationResult result = new StoredGenerationResult(generationResult.getTransactionId(),
+                ResultDocuments);
+
+        return result;
+    }
+
+    /**
+     * Processes a single template document by filling it with the given model
+     * object, converts it to the desired output format and saves it in the
+     * configured result store.
+     * 
+     * @param transactionId     the transaction id.
+     * @param documentStructure the document structure descriptor.
+     * @param values            the model objects.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
+    @Override
+    public StoredGenerationResult fillAndSave(final String transactionId, final DocumentStructure documentStructure,
+            final ValueSet values) throws TemplateServiceException {
+        final GenerationResult generationResult = this.fill(transactionId, documentStructure, values);
 
         final List<StoredResultDocument> ResultDocuments = generationResult.getResults().parallelStream()
                 .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
@@ -433,6 +464,27 @@ public class TemplateServiceImpl implements TemplateService {
         final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
                 .getDocumentStructure(documentStructureFile);
         return this.fillAndSave(ds, values);
+
+    }
+
+    /**
+     * Processes a single template document by filling it with the given model
+     * object, converts it to the desired output format and saves it in the
+     * configured result store.
+     * 
+     * @param transactionId         the transaction id.
+     * @param documentStructureFile the document structure id in the document
+     *                              structure repository.
+     * @param values                the model objects.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
+    @Override
+    public StoredGenerationResult fillAndSaveDocumentStructureByName(final String transactionId,
+            final String documentStructureFile, final ValueSet values) throws TemplateServiceException {
+        final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
+                .getDocumentStructure(documentStructureFile);
+        return this.fillAndSave(transactionId, ds, values);
 
     }
 

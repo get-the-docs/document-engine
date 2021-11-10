@@ -1,8 +1,8 @@
-package net.videki.templateutils.api.document.model;
+package net.videki.templateutils.template.core.documentstructure.descriptors;
 
 /*-
  * #%L
- * template-utils-service-api
+ * template-utils-core
  * %%
  * Copyright (C) 2021 Levente Ban
  * %%
@@ -20,14 +20,25 @@ package net.videki.templateutils.api.document.model;
  * #L%
  */
 
-import lombok.Data;
-
 /**
- * ValueSetItem.
+ * Status indicator for result documents.
+ * 
+ * @author Levente Ban
  */
-@Data
-public class ValueSetItem   {
-  private String templateElementId;
-  private Object value;
-}
+public enum StoredResultDocumentStatus {
 
+  /**
+   * Pending - document not yet available.
+   */
+  PENDING,
+
+  /**
+   * Document available for download.
+   */
+  AVAILABLE,
+
+  /**
+   * Document not found.
+   */
+  NOT_FOUND;
+}

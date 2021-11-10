@@ -8,44 +8,45 @@ Docx, xlsx template engine and pdf converter to provide enterprise document gene
 
 The module is a Helm package with a REST API to generate documents from WYSIWYG templates, or template structures with JSON actual data via jsonpath and SpEL expression-like placeholders. The engine core is a java wrapper to other tools integrate their capabilities and can be used with typed DTO-s as a dependency also.
 
-
 **Note:**
 
-This project is in incubation phase. Hold on, we will deploy it on Maven Central and ghcr.io as soon as we can. 
-If you find the functionality covered by the engine useful, please give it a star. 
+This project is in incubation phase. Hold on, we will deploy it on Maven Central and ghcr.io as soon as we can.
+If you find the functionality covered by the engine useful, please give it a star.
 
 ## Main features
 
 - Impersonate simple docx and xlsx documents via pojo data
 - Document generation based on multiple templates for handling complex hand-outs:
-    - Fix/optional templates
-    - Language dependent templates
-    - Copies
-    - Multiple value object handling for different data sources (e.g. capability for differentiating officer and customer data)
-    - Pdf concatenation for multi-part documents 
-    - Cover page for multi user environments
-    - QR code and picture embedding
-    - Ms office editable templates
-    
+  - Fix/optional templates
+  - Language dependent templates
+  - Copies
+  - Multiple value object handling for different data sources (e.g. capability for differentiating officer and customer data)
+  - Pdf concatenation for multi-part documents
+  - Cover page for multi user environments
+  - QR code and picture embedding
+  - Ms office editable templates
+
 ## Upcoming features
 
 - Template repository handling
     VCS based template store to provide template history
-- Rule based template structure 
+- Rule based template structure
     Xls based decision table support for template alternatives to provide business editable template sets  
-     
 
 ## Engine details
 
 Inputs:
+
 - docx
 - xlsx
 
 Output:
+
 - native
 - pdf (individual/concatenated)
 
 Uses:
+
 1. for docx templates:
     - docx-stamper (based on docx4j)
 2. for xlsx templates:
@@ -57,7 +58,7 @@ Uses:
 
 ### Single document
 
-To create a simple document 
+To create a simple document
 
 ```java
     public OutputStream generateContractDocument() {
@@ -65,7 +66,7 @@ To create a simple document
         return TemplateServiceRegistry.getInstance().fill("MyTemplate.docx", dto, OutputFormat.PDF);
     }
 ```
-    
+
 ### Document structure
 
 ```yaml

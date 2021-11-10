@@ -38,6 +38,11 @@ public class GenerationResult extends AbstractGenerationResult {
     private final List<ResultDocument> results;
 
     /**
+     * The value set transaction id.
+     */
+    private String valueSetTransactionId;
+
+    /**
      * Initializes the container with a list of result documents.
      * @param results the list of result documents.
      */
@@ -60,6 +65,22 @@ public class GenerationResult extends AbstractGenerationResult {
     }
 
     /**
+     * Sets the value set transaction id (it describes the business transaction to which the model objects belong).
+     * @param valueSetTransactionId the value set transaction id.
+     */
+    public void setValueSetTransactionId(String valueSetTransactionId) {
+        this.valueSetTransactionId = valueSetTransactionId;
+    }
+
+    /**
+     * Returns the value set's transaction id.
+     * @return the value set transaction id.
+     */
+    public String getValueSetTransactionId() {
+        return this.valueSetTransactionId; 
+    }
+    
+    /**
      * Convencience method for logging.
      */
     @Override
@@ -67,6 +88,7 @@ public class GenerationResult extends AbstractGenerationResult {
         return "GenerationResult{" +
                 "results=" + results +
                 ", transactionId='" + this.getTransactionId() + '\'' +
+                ", valueSetTransactionId='" + this.getTransactionId() + '\'' +
                 ", generationStartTime=" + this.getGenerationStartTime() +
                 ", generationEndTime=" + this.getGenerationEndTime() +
                 '}';

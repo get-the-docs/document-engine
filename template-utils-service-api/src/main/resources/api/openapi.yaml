@@ -1,8 +1,5 @@
 openapi: 3.0.3
 info:
-  contact:
-    email: oss.levente.ban@gmail.com
-    name: Levente Ban
   description: |
     "API for listing available templates, document structures and generating impersonated documents with provided data.
     The API has two operation groups: 

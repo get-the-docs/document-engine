@@ -1,5 +1,25 @@
 package net.videki.templateutils.api.document.service.impl;
 
+/*-
+ * #%L
+ * template-utils-service-api
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONValue;
 import net.videki.templateutils.api.document.model.ValueSetItem;
@@ -13,6 +33,7 @@ import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,18 +56,15 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
     throw new UnsupportedOperationException("Not implemented yet.");
   }
 
-  public String postDocumentStructureGenerationJob(final String id, final Object body, final String notificationUrl) {
+  @Async
+  public void postDocumentStructureGenerationJob(final String transactionId, final String id, final Object body, final String notificationUrl) {
     try {
       final var valueSet = getValueSet(body);
 
-      final var genResult = TemplateServiceRegistry.getInstance().fillAndSaveDocumentStructureByName(id,
-          valueSet);
+      TemplateServiceRegistry.getInstance().fillAndSaveDocumentStructureByName(transactionId, id, valueSet);
 
-      return genResult.getTransactionId();
     } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
       log.warn("Error processing request: {}", id);
-
-      return null;
     }
   }
 

@@ -159,7 +159,7 @@ public class DocumentStructureTest {
             values.getValues().put(docElement.getTemplateElementId(), getContractTestData("not_recorded"));
 
             result = null;
-            result = ts.fill(structure, values);
+            result = ts.fill(null, structure, values);
 
             testResult = (result != null && result.getResults() != null && result.getResults().size() == 2);
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
@@ -182,7 +182,7 @@ public class DocumentStructureTest {
 
         GenerationResult result = null;
         try {
-            result = ts.fill(structure, values);
+            result = ts.fill(null, structure, values);
 
             testResult = (0 == result.getResults().size());
         } catch (final TemplateNotFoundException e) {

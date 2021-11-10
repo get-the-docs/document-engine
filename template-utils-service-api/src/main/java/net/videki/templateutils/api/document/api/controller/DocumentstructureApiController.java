@@ -1,5 +1,25 @@
 package net.videki.templateutils.api.document.api.controller;
 
+/*-
+ * #%L
+ * template-utils-service-api
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
 import net.videki.templateutils.api.document.api.model.DocStructureJobApiResponse;
 import net.videki.templateutils.api.document.api.model.GenerationResult;
@@ -15,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -54,7 +75,10 @@ public class DocumentstructureApiController implements DocumentstructureApi {
 
         final DocStructureJobApiResponse result = new DocStructureJobApiResponse();
 
- //       result.setTransactionId(this.documentStructureApiService.postDocumentStructureGenerationJob(id, valueSet, notificationUrl));
+        final String transactionId = UUID.randomUUID().toString();
+        result.setTransactionId(transactionId);
+
+        this.documentStructureApiService.postDocumentStructureGenerationJob(transactionId, id, valueSet, notificationUrl);
 
         return ResponseEntity.accepted().body(result);
     }

@@ -175,6 +175,7 @@ public class JsonTemplateContextTest {
 
     }
 
+    @SuppressWarnings("unchecked") 
     @Test
     public void evalJsonPathDateValue() {
         final var ctx = new JsonTemplateContext(this.jsonDataMultiContext);

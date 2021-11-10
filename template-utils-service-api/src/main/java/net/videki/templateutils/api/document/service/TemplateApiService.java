@@ -1,15 +1,38 @@
 package net.videki.templateutils.api.document.service;
 
+/*-
+ * #%L
+ * template-utils-service-api
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import java.util.Optional;
 
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
 
 /**
- * @author Levente Ban
+ * Wraps the template registry for the API.
  * 
- *         Wraps the template registry for the API.
+ * @author Levente Ban
  */
 public interface TemplateApiService {
 
@@ -40,11 +63,30 @@ public interface TemplateApiService {
      * Posts a single doument generation for the given template identified by its
      * id.
      * 
+     * @param transactionId   the transaction id.
      * @param id              the template id.
      * @param body            the value object.
      * @param notificationUrl notification url, optional.
-     * @return the transaction id for the document generation.
      */
-    String postTemplateGenerationJob(String id, Object body, String notificationUrl);
+    void postTemplateGenerationJob(String transactionId, String id, Object body, String notificationUrl);
 
+    /**
+     * Returns a result document descriptor, if the generation process has finished.
+     * 
+     * @param transactionId the transaction id.
+     * @return the result document descriptor if found.
+     */
+    Optional<StoredGenerationResult> getResultDocumentByTransactionId(String transactionId)
+            throws TemplateServiceException;
+
+    /**
+     * Returns a result document descriptor, if the generation process has finished.
+     * 
+     * @param transactionId the transaction id.
+     * @param documentId    the document id as stored in the result store.
+     * @param withBinary    whether the document binary also has to be returned.
+     * @return the result document descriptor if found.
+     */
+    Optional<StoredResultDocument> getResultDocumentByTransactionIdAndDocumentId(String transactionId,
+            String documentId, boolean withBinary) throws TemplateServiceException;
 }

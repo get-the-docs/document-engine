@@ -22,6 +22,8 @@ package net.videki.templateutils.template.core.documentstructure;
 
 import java.beans.Transient;
 
+import net.videki.templateutils.template.core.documentstructure.descriptors.StoredResultDocumentStatus;
+
 /**
  * @author Levente Ban
  *
@@ -34,6 +36,12 @@ public class StoredResultDocument extends AbstractResultDocument {
      * Indicates whether the generation was successful
      */
     private final boolean generated;
+
+
+    /**
+     * Document status.
+     */
+    private StoredResultDocumentStatus status;
 
     /**
      * The document binary, if requested.
@@ -93,6 +101,22 @@ public class StoredResultDocument extends AbstractResultDocument {
      */
     public boolean isGenerated() {
         return this.generated;
+    }
+
+    /**
+     * Returns the document status. 
+     * @return the document status.
+     */
+    public StoredResultDocumentStatus getStatus() {
+        return this.status;
+    }
+
+    /**
+     * Sets the document status.
+     * @param status the document status.
+     */
+    public void setStatus(final StoredResultDocumentStatus status) {
+        this.status = status;
     }
 
     @Transient

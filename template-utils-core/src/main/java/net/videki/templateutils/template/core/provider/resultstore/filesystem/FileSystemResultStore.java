@@ -23,6 +23,7 @@ package net.videki.templateutils.template.core.provider.resultstore.filesystem;
 import net.videki.templateutils.template.core.documentstructure.ResultDocument;
 import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.descriptors.StoredResultDocumentStatus;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.service.exception.ResultNotFoundException;
@@ -94,12 +95,12 @@ public class FileSystemResultStore implements ResultStore {
      *         location, etc.).
      */
     @Override
-    public StoredResultDocument save(final ResultDocument result) {
-        if (result == null || result.getContent() == null) {
+    public StoredResultDocument save(final ResultDocument resultDocument) {
+        if (resultDocument == null || resultDocument.getContent() == null) {
             throw new TemplateProcessException("cb05a816-dea2-4498-823a-33fb4ece1565", "No result caught.");
         }
 
-        String transactionDir = result.getTransactionId();
+        String transactionDir = resultDocument.getTransactionId();
         if (transactionDir == null) {
             transactionDir = ".";
         }
@@ -114,14 +115,14 @@ public class FileSystemResultStore implements ResultStore {
             }
         }
 
-        final String resultFileName = resultDir + File.separator + result.getFileName();
+        final String resultFileName = resultDir + File.separator + resultDocument.getFileName();
         boolean actSuccessFlag = false;
 
         LOGGER.info("Result file: {}.", resultFileName);
 
         try (FileOutputStream o = new FileOutputStream(resultFileName, false)) {
 
-            o.write(((ByteArrayOutputStream) result.getContent()).toByteArray());
+            o.write(((ByteArrayOutputStream) resultDocument.getContent()).toByteArray());
             o.flush();
 
             actSuccessFlag = true;
@@ -129,13 +130,16 @@ public class FileSystemResultStore implements ResultStore {
             LOGGER.error("Error saving the result file.", e);
         } finally {
             try {
-                result.getContent().close();
+                resultDocument.getContent().close();
             } catch (IOException e) {
                 LOGGER.error("Error closing the result file.", e);
             }
         }
 
-        return new StoredResultDocument(result.getTransactionId(), resultFileName, actSuccessFlag);
+        final var result = new StoredResultDocument(resultDocument.getTransactionId(), resultFileName, actSuccessFlag);
+        result.setStatus(StoredResultDocumentStatus.AVAILABLE);
+        
+        return result;
     }
 
     /**

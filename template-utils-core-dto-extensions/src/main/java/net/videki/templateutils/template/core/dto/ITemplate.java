@@ -144,6 +144,7 @@ public interface ITemplate {
     return result;
   }
 
+  @SuppressWarnings("unchecked") 
   default String fmtDate(final Object value) {
     String result;
     if (value != null && value instanceof Map) {
