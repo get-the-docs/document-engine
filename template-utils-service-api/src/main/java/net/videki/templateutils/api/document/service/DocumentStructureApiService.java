@@ -38,11 +38,12 @@ public interface DocumentStructureApiService {
      * Returns a page of document structures from the configured document structure
      * repository service.
      * 
+     * @param id   the document structure's id in the repository.
      * @param page the page to retrieve (effective only if the document structure
      *             repository implementation has paging capability).
      * @return the requested page, if exists.
      */
-    Page<DocumentStructure> getDocumentStructures(Pageable page);
+    Page<DocumentStructure> getDocumentStructures(String id, Pageable page);
 
     /**
      * Returns a document structure.

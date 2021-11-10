@@ -276,7 +276,7 @@
                                 <root>src/test</root>
                             </roots>
                             <excludes>
-                                <exclude>*.json</exclude>
+                                <exclude>**/*.json</exclude>
                               </excludes>                            
                         </configuration>
                     </execution>

@@ -23,8 +23,8 @@ package net.videki.templateutils.api.document.api.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.api.document.service.TemplateApiService;
+import net.videki.templateutils.api.document.api.mapper.GetTemplatesResponseApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
-import net.videki.templateutils.api.document.api.mapper.TemplateDocumentToApiModelMapper;
 import net.videki.templateutils.api.document.api.model.GenerationResult;
 import net.videki.templateutils.api.document.api.model.GetTemplatesResponse;
 import net.videki.templateutils.api.document.api.model.Pageable;
@@ -65,7 +65,7 @@ public class TemplateApiController implements TemplateApi {
                 log.info("Querying full template list.");
             }
 
-            GetTemplatesResponse result = TemplateDocumentToApiModelMapper.INSTANCE
+            GetTemplatesResponse result = GetTemplatesResponseApiModelMapper.INSTANCE
                     .pageToApiModel(templateApiService.getTemplates(templateId, PageableMapper.INSTANCE.map(pageable)));
 
             if (log.isDebugEnabled()) {

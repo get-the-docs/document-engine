@@ -21,28 +21,48 @@ package net.videki.templateutils.template.core.provider.documentstructure;
  */
 
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.provider.persistence.Page;
+import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 
 import java.util.Properties;
 
 /**
  * Base document structure repository interface.
+ * 
  * @author Levente Ban
  */
 public interface DocumentStructureRepository {
 
     /**
      * Entry point for repository initialization.
-     * @param props configuration properties (see template-utils.properties) 
-     * @throws TemplateServiceConfigurationException thrown in case of initialization errors based on configuration errors. 
+     * 
+     * @param props configuration properties (see template-utils.properties)
+     * @throws TemplateServiceConfigurationException thrown in case of
+     *                                               initialization errors based on
+     *                                               configuration errors.
      */
     void init(Properties props) throws TemplateServiceConfigurationException;
 
     /**
-     * Returns a document structure identified by its id in the configured document structure repository.
+     * Returns the actual document structure list, if the repository provides this
+     * feature.
+     * 
+     * @param page the requested page to return
+     * @throws TemplateServiceException thrown in case of query error
+     * @return the document structure list
+     */
+    Page<DocumentStructure> getDocumentStructures(Pageable page) throws TemplateServiceException;
+
+    /**
+     * Returns a document structure identified by its id in the configured document
+     * structure repository.
+     * 
      * @param ds the document structure id.
      * @return the document structure descriptor.
-     * @throws TemplateServiceConfigurationException thrown in case of repository configuration error.
+     * @throws TemplateServiceConfigurationException thrown in case of repository
+     *                                               configuration error.
      */
     DocumentStructure getDocumentStructure(String ds) throws TemplateServiceConfigurationException;
 

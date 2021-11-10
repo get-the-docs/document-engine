@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONValue;
 import net.videki.templateutils.api.document.model.ValueSetItem;
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
+import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.context.JsonTemplateContext;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
@@ -38,59 +39,129 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Document structure API.
+ * 
+ * @author Levente Ban
+ */
 @Slf4j
 @Service
 public class DefaultDocumentStructureApiService implements DocumentStructureApiService {
 
-  @Override
-  public Page<DocumentStructure> getDocumentStructures(final Pageable page) {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public Optional<DocumentStructure> getDocumentStructureById(final String id) {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Async
-  public void postDocumentStructureGenerationJob(final String transactionId, final String id, final Object body, final String notificationUrl) {
-    try {
-      final var valueSet = getValueSet(body);
-
-      TemplateServiceRegistry.getInstance().fillAndSaveDocumentStructureByName(transactionId, id, valueSet);
-
-    } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
-      log.warn("Error processing request: {}", id);
-    }
-  }
-
-  private net.videki.templateutils.template.core.documentstructure.ValueSet getValueSet(final Object data) {
-    if (data instanceof Map) {
-      final net.videki.templateutils.template.core.documentstructure.ValueSet result = new ValueSet();
-
-      final var param = (net.videki.templateutils.api.document.model.ValueSet) data;
-
-      result.setDocumentStructureId(param.getDocumentStructureId());
-      result.setLocale(new Locale(param.getLocale()));
-      for (final ValueSetItem actData : param.getValues()) {
-
-        final StringWriter sw = new StringWriter();
+    /**
+     * Returns a page of document structures from the configured document structure
+     * repository service.
+     * 
+     * @param id   the document structure's id in the repository.
+     * @param page the page to retrieve (effective only if the document structure
+     *             repository implementation has paging capability).
+     * @return the requested page, if exists.
+     */
+    @Override
+    public Page<DocumentStructure> getDocumentStructures(String id, Pageable page) {
         try {
-          JSONValue.writeJSONString(actData.getValue(), sw);
-        } catch (final IOException e) {
-          throw new TemplateServiceRuntimeException("Error parsing data.");
+            if (log.isDebugEnabled()) {
+                log.debug("getDocumentStructures - {}", page);
+            }
+
+            Page<DocumentStructure> result = null;
+            if (id != null) {
+                result = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository().getDocumentStructures(page);
+
+            } else {
+                final Optional<DocumentStructure> doc = getDocumentStructureById(id);
+
+                result = new Page<>();
+                final List<DocumentStructure> data = new LinkedList<>();
+                if (doc.isPresent()) {
+                    data.add(doc.get());
+                }
+                result.setData(data);
+                result.setNumber(0);
+                result.setSize(data.size() > 0 ? 1 : 0);
+                result.setTotalElements((long) data.size());
+                result.setTotalPages(data.size() > 0 ? 1 : 0);
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("getDocumentStructures end - {}, item count: {}", page, result.getData().size());
+            }
+            return result;
+        } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
+            log.warn("Error processing request: {}", page);
+
+            return null;
         }
-        result.addContext(actData.getTemplateElementId(), new JsonTemplateContext(sw.toString()));
-      }
-      return result;
-    } else {
-      throw new TemplateServiceRuntimeException("Error parsing data.");
     }
 
-  }
+    @Override
+    public Optional<DocumentStructure> getDocumentStructureById(final String id) {
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("getDocumentStructureById - {}/{}, binary: {}", id);
+            }
+
+            final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
+                    .getDocumentStructure(id);
+
+            if (log.isDebugEnabled()) {
+                log.debug("getDocumentStructureById end - {}", id);
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("getDocumentStructureById end - {}, data: [{}]", id, ds);
+            }
+
+            return Optional.ofNullable(ds);
+
+        } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
+            log.warn("Error processing request: {}", id);
+
+            return null;
+        }
+    }
+
+    @Async
+    public void postDocumentStructureGenerationJob(final String transactionId, final String id, final Object body,
+            final String notificationUrl) {
+        try {
+            final var valueSet = getValueSet(body);
+
+            TemplateServiceRegistry.getInstance().fillAndSaveDocumentStructureByName(transactionId, id, valueSet);
+
+        } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
+            log.warn("Error processing request: {}", id);
+        }
+    }
+
+    private net.videki.templateutils.template.core.documentstructure.ValueSet getValueSet(final Object data) {
+        if (data instanceof Map) {
+            final net.videki.templateutils.template.core.documentstructure.ValueSet result = new ValueSet();
+
+            final var param = (net.videki.templateutils.api.document.model.ValueSet) data;
+
+            result.setDocumentStructureId(param.getDocumentStructureId());
+            result.setLocale(new Locale(param.getLocale()));
+            for (final ValueSetItem actData : param.getValues()) {
+
+                final StringWriter sw = new StringWriter();
+                try {
+                    JSONValue.writeJSONString(actData.getValue(), sw);
+                } catch (final IOException e) {
+                    throw new TemplateServiceRuntimeException("Error parsing data.");
+                }
+                result.addContext(actData.getTemplateElementId(), new JsonTemplateContext(sw.toString()));
+            }
+            return result;
+        } else {
+            throw new TemplateServiceRuntimeException("Error parsing data.");
+        }
+
+    }
 
 }

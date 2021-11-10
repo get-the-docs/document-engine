@@ -21,6 +21,8 @@ package net.videki.templateutils.api.document.api.controller;
  */
 
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
+import net.videki.templateutils.api.document.api.mapper.GetDocumentStructuresApiModelMapper;
+import net.videki.templateutils.api.document.api.mapper.PageableMapper;
 import net.videki.templateutils.api.document.api.model.DocStructureJobApiResponse;
 import net.videki.templateutils.api.document.api.model.GenerationResult;
 import net.videki.templateutils.api.document.api.model.GetDocumentStructuresResponse;
@@ -37,10 +39,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-21T15:16:34.406301500+01:00[Europe/Prague]")
 
 @Controller
@@ -63,8 +61,11 @@ public class DocumentstructureApiController implements DocumentstructureApi {
     }
 
     @Override
-    public ResponseEntity<GetDocumentStructuresResponse> getDocumentStructures(final String id, final Pageable pageable) {
-        return DocumentstructureApi.super.getDocumentStructures(id, pageable);
+    public ResponseEntity<GetDocumentStructuresResponse> getDocumentStructures(final String documentStructureId, final Pageable pageable) {
+
+        final var result = this.documentStructureApiService.getDocumentStructures(documentStructureId, PageableMapper.INSTANCE.map(pageable));
+
+        return ResponseEntity.ok(GetDocumentStructuresApiModelMapper.INSTANCE.pageToApiModel(result));
     }
 
     @Override

@@ -760,6 +760,21 @@ components:
           maxLength: 4000
           pattern: "^[a-zA-Z0-9_/\\]*$"
 
+    TemplateNameItem:
+      type: object
+      additionalProperties: false
+      properties:
+        locale:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+        templateName:
+          type: string
+          minLength: 0
+          maxLength: 4000
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+
     TemplateElement:
       type: object
       additionalProperties: false
@@ -768,10 +783,7 @@ components:
           $ref: "#/components/schemas/TemplateElementId"
         templateNames:
           items:
-            type: string
-            minLength: 0
-            maxLength: 4000
-            pattern: "^[a-zA-Z0-9_/\\]*$"
+            $ref: "#/components/schemas/TemplateNameItem"
           type: array
           maxItems: 32767
         inputFormat:
@@ -814,6 +826,11 @@ components:
           maxLength: 50
           pattern: "^[a-zA-Z0-9_/\\]*$"
           enum: [SEPARATE_DOCUMENTS, SINGLE_OUTPUT]
+        outputFormat:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
         copies:
           type: integer
           minimum: 0
@@ -1057,17 +1074,16 @@ components:
 
     GetDocumentStructuresResponse:
       description: "Response type for returning the available templates"
-      additionalProperties: true
-      allOf:
-        - $ref: "#/components/schemas/Page"
-        - type: object
-          properties:
-            contents:
-              type: array
-              description: "List of template elements."
-              items:
-                $ref: "#/components/schemas/DocumentStructure"
-              maxItems: 32768
+      additionalProperties: false
+      properties:
+        page:
+          $ref: "#/components/schemas/Page"
+        contents:
+          type: array
+          description: "List of template elements."
+          items:
+            $ref: "#/components/schemas/DocumentStructure"
+          maxItems: 32768
 
     DocStructureJobApiResponse:
       type: object
