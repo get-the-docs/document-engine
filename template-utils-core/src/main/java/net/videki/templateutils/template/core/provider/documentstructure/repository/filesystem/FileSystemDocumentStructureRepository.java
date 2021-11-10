@@ -96,10 +96,13 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
     }
 
     /**
-     * Entry point for repository initialization.
-     * @param props configuration properties (see template-utils.properties) 
-     * @throws TemplateServiceConfigurationException thrown in case of initialization errors based on configuration errors. 
-     */    
+     * Returns the actual document structure list, if the repository provides this
+     * feature.
+     * 
+     * @param page the requested page to return
+     * @throws TemplateServiceException thrown in case of query error
+     * @return the document structure list
+     */
     @Override
     public Page<DocumentStructure> getDocumentStructures(Pageable page) throws TemplateServiceException {
 
@@ -107,15 +110,13 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
             final Page<DocumentStructure> result = new Page<>();
 
             final Path basePath = Paths.get(this.basedir).toAbsolutePath();
-            final List<DocumentStructure> items = Files.walk(basePath)
-              .filter(file -> !Files.isDirectory(file))
-              .map(basePath::relativize)
-              .map(Path::toString)
-              .map(t -> new DocumentStructure(t))
-              .collect(Collectors.toList());
+            final List<DocumentStructure> items = Files.walk(basePath).filter(file -> !Files.isDirectory(file))
+                    .map(basePath::relativize).map(Path::toString).map(t -> new DocumentStructure(t))
+                    .collect(Collectors.toList());
 
             if (page != null && page.isPaged()) {
-                result.setData(items.subList(page.getOffset(), Math.min(page.getOffset() + page.getSize(), Math.max(items.size()-1, 0))));
+                result.setData(items.subList(page.getOffset(),
+                        Math.min(page.getOffset() + page.getSize(), Math.max(items.size() - 1, 0))));
             } else {
                 result.setData(items);
             }
@@ -127,7 +128,8 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
             return result;
 
         } catch (final IOException e) {
-            final  String msg = String.format("Error retrieving the document structure list - baseDir: [{}]", this.basedir);
+            final String msg = String.format("Error retrieving the document structure list - baseDir: [{}]",
+                    this.basedir);
             LOGGER.error(msg, e);
 
             throw new TemplateServiceException("71117d2a-9f36-49f5-af25-ddfbca07cea3", msg);

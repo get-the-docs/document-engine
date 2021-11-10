@@ -90,7 +90,7 @@ public class FileSystemResultStore implements ResultStore {
     /**
      * Entry point to save a single result document in the repository.
      * 
-     * @param result the result document descriptor.
+     * @param resultDocument the result document descriptor.
      * @return the descriptor with the storage results (related transaction, file
      *         location, etc.).
      */
@@ -138,7 +138,7 @@ public class FileSystemResultStore implements ResultStore {
 
         final var result = new StoredResultDocument(resultDocument.getTransactionId(), resultFileName, actSuccessFlag);
         result.setStatus(StoredResultDocumentStatus.AVAILABLE);
-        
+
         return result;
     }
 
@@ -181,7 +181,7 @@ public class FileSystemResultStore implements ResultStore {
      * structures query the generation result for the transaction id, then request
      * its result documents.
      * 
-     * @param transactionId  the requested transaction, if found.
+     * @param transactionId the requested transaction, if found.
      * @throws TemplateServiceException thrown in case of query error.
      * @return the template document.
      */
@@ -191,12 +191,9 @@ public class FileSystemResultStore implements ResultStore {
         try {
 
             final Path basePath = Paths.get(this.baseDir + File.separator + transactionId).toAbsolutePath();
-            final List<StoredResultDocument> items = Files.list(basePath)
-                .filter(file -> !Files.isDirectory(file))
-                .map(Path::getFileName)
-                .map(Path::toString)
-                .map(t -> new StoredResultDocument(t, true))
-                .collect(Collectors.toList());
+            final List<StoredResultDocument> items = Files.list(basePath).filter(file -> !Files.isDirectory(file))
+                    .map(Path::getFileName).map(Path::toString).map(t -> new StoredResultDocument(t, true))
+                    .collect(Collectors.toList());
 
             final StoredGenerationResult result = new StoredGenerationResult(items);
             result.setTransactionId(transactionId);
@@ -208,7 +205,7 @@ public class FileSystemResultStore implements ResultStore {
             }
 
         } catch (final IOException e) {
-            final  String msg = String.format("Error retrieving the template list - baseDir: [{}]", this.baseDir);
+            final String msg = String.format("Error retrieving the template list - baseDir: [{}]", this.baseDir);
             LOGGER.error(msg, e);
 
             throw new TemplateServiceException("68b79868-c05c-4d14-8d94-1d8815625c8f", msg);
@@ -224,8 +221,8 @@ public class FileSystemResultStore implements ResultStore {
      * @return the template document.
      */
     @Override
-    public Optional<StoredResultDocument> getResultDocumentByTransactionId(final String transactionId, final String resultDocument,
-            final boolean withBinary) throws TemplateServiceException {
+    public Optional<StoredResultDocument> getResultDocumentByTransactionId(final String transactionId,
+            final String resultDocument, final boolean withBinary) throws TemplateServiceException {
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("getResultDocumentByTransactionId - {}/{}. binary: {}", transactionId, resultDocument,

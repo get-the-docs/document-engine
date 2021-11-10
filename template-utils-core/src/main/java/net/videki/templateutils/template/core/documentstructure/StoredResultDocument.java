@@ -119,6 +119,10 @@ public class StoredResultDocument extends AbstractResultDocument {
         this.status = status;
     }
 
+    /**
+     * Returns the binary, if requested.
+     * @return the binary.
+     */
     @Transient
     public byte[] getBinary() {
         return this.binary;
