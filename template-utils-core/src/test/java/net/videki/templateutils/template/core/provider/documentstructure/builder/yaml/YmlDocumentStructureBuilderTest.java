@@ -1,5 +1,25 @@
 package net.videki.templateutils.template.core.provider.documentstructure.builder.yaml;
 
+/*-
+ * #%L
+ * template-utils-core
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -57,7 +77,7 @@ public class YmlDocumentStructureBuilderTest {
             final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             mapper.writeValue(
                     new File(FileSystemHelper.getFileNameWithPath(projectOutDir, "result.yml")), templateStructure);
-        } catch (TemplateNotFoundException | TemplateServiceException | IOException e) {
+        } catch (final TemplateNotFoundException | TemplateServiceException | IOException e) {
             LOGGER.error("Error saving doc structure.", e);
 
             fail();
@@ -83,7 +103,7 @@ public class YmlDocumentStructureBuilderTest {
                             ReflectionToStringBuilder.toString(result, ToStringStyle.MULTI_LINE_STYLE));
 
                 LOGGER.debug("Template element read successfully: {}", msg);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOGGER.error("Error saving doc structure.", e);
 
                 fail();
@@ -99,11 +119,11 @@ public class YmlDocumentStructureBuilderTest {
             final InputStream dsFileAsStream = FileSystemDocumentStructureRepository
                     .class.getClassLoader().getResourceAsStream("contracts/vintage/contract-vintage_v02.yml");
 
-            final DocumentStructure ignore = dsBuilder.build(dsFileAsStream);
+            dsBuilder.build(dsFileAsStream);
 
-        } catch (TemplateProcessException e) {
+        } catch (final TemplateProcessException e) {
             assertEquals("cfb09b69-cb69-4cb9-b7b0-b060c0717cf3", e.getCode());
-        } catch (TemplateServiceException e) {
+        } catch (final TemplateServiceException e) {
             LOGGER.error("Error reading doc structure.", e);
 
             fail();

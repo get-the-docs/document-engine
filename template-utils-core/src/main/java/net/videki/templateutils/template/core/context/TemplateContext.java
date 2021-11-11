@@ -1,5 +1,25 @@
 package net.videki.templateutils.template.core.context;
 
+/*-
+ * #%L
+ * template-utils-core
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import net.videki.templateutils.template.core.dto.ITemplate;
 import net.videki.templateutils.template.core.dto.JsonModel;
 
@@ -19,33 +39,78 @@ import java.util.Map;
  * @author Levente Ban
  */
 public class TemplateContext implements ITemplate, JsonModel {
+   
+    /**
+     * Context root object key.
+     */
     public static final String CONTEXT_ROOT_KEY = "ctx";
+
+    /**
+     * Context root object key for single model contexts.
+     */
     public static final String CONTEXT_ROOT_KEY_MODEL = "model";
 
+    /**
+     * The model context. 
+     * It is a key-value store to hold objects.
+     */
     private Map<String, Object> ctx = new HashMap<>();
+
+    /**
+     * Returns the template context for the root context.
+     * @return the template context for the root context.
+     */
     private TemplateContext getRoot() {
         return this;
     }
+
+    /**
+     * Returns the model object for the root context.
+     * Use this method in the placeholder for single model templates.
+     * @return the root context's model object.
+     */
     public Object getModel() {
         return this.ctx.get(CONTEXT_ROOT_KEY_MODEL);
     }
 
+    /**
+     * Returns the context objects as a map for multi-object models provided for template processors to fill-in values.
+     * @return the list of model objects.
+     */
     public Map<String, Object> getCtx() {
         return this.ctx;
     }
 
+    /**
+     * Adds an object to the model list to be used as the root model. 
+     * The method is aimed for reflection-based (see lib-based direct) usage.  
+     * @param <T> the model context holding the provided data.
+     * @param value the provided data.
+     * @return the template context object created from the data object.
+     */
     public <T> TemplateContext addValueObject(final T value) {
         this.ctx.put(CONTEXT_ROOT_KEY_MODEL, value);
 
         return this;
     }
 
+    /**
+     * Adds an object to the model list with the provided context key. 
+     * The method is aimed for reflection-based (see lib-based direct) usage.  
+     * @param <T> the model context holding the provided data.
+     * @param contextKey the context key to the data for.
+     * @param value the provided data.
+     * @return the template context object created from the data object.
+     */
     public <T> TemplateContext addValueObject(final String contextKey, final T value) {
         this.ctx.put(contextKey, value);
 
         return this;
     }
 
+    /**
+     * Trace logging convencience method.
+     */
     @Override
     public String toString() {
         return "TemplateContext{" +

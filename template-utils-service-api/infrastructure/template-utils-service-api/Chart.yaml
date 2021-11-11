@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 1.0.1
+description: "Docx and xlsx generator and pdf converter (requires two storage classes: docs-templates-sc, docs-results-sc)"
+name: template-utils-service-api
+type: application
+version: 1.0.1

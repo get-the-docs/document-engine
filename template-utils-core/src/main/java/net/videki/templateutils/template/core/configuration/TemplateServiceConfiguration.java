@@ -1,8 +1,28 @@
 package net.videki.templateutils.template.core.configuration;
 
-import java.io.IOException;
-import java.io.InputStream;
+/*-
+ * #%L
+ * template-utils-core
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,6 +34,7 @@ import net.videki.templateutils.template.core.provider.templaterepository.filesy
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +127,7 @@ public class TemplateServiceConfiguration {
     private static final String CONFIG_FILE_NAME = "template-utils.properties";
     private static final String LOG_APPENDER = "common.log.value-logcategory";
 
+    private static final String CONFIG_ENV_FILENAME = "configFile";
     private static final String TEMPLATE_REPOSITORY_PROVIDER = "repository.template.provider";
     private static final String DOCUMENT_STRUCTURE_PROVIDER = "repository.documentstructure.provider";
     private static final String RESULT_REPOSITORY_PROVIDER = "repository.result.provider";
@@ -127,22 +149,40 @@ public class TemplateServiceConfiguration {
 
     private String fontDir;
 
+    /**
+     * Initializes the template service configuration.
+     * The config is read from the first file on the classpath named template-utils.properties.
+     */
     protected TemplateServiceConfiguration() {
         init();
     }
 
+    /**
+     * Initializes the template service.
+     */
     protected void init() {
 
         properties = new Properties();
         Set<Object> keys = Collections.emptySet();
         try {
-            properties.load(TemplateServiceConfiguration.getResource(CONFIG_FILE_NAME));
-            keys = properties.keySet();
-            if (!keys.isEmpty()) {
-                LOGGER.info("template-utils.properties configuration file found.");
+            final var configPath = System.getenv(CONFIG_ENV_FILENAME);
+            URL path = getClass().getClassLoader().getResource(CONFIG_FILE_NAME);
+            if (StringUtils.isNotEmpty(configPath)) {
+                path = new File(configPath).toURI().toURL();
             }
+
+            if (path != null) {
+                final InputStream propFile = path.openStream();
+                properties.load(propFile);
+
+                LOGGER.info("template-utils.properties configuration file found at location: {}", path.getPath());
+            } else {
+                LOGGER.error("No template-utils.properties configuration file found");
+            }
+
+            keys = properties.keySet();
         } catch (final Exception e) {
-            LOGGER.warn("template-utils.properties configuration file not found, using default configuration.");
+            LOGGER.error("template-utils.properties configuration file not found, using default configuration.");
         }
         initFontLibrary(keys);
         initDocumentStructureRepository();
@@ -151,6 +191,10 @@ public class TemplateServiceConfiguration {
         initProcessors();
     }
 
+    /**
+     * Initialzes the custom fonts for pdf conversion.
+     * @param keys System properties (see config file - template-utils.properties).
+     */
     private void initFontLibrary(Set<Object> keys) {
         if (keys != null && !keys.isEmpty()) {
             this.fontDir = (String) properties.get(FONT_DIR);
@@ -181,6 +225,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the document structure repository for the implementation class configured in the configuration parameters.
+     */
     private void initDocumentStructureRepository() {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
@@ -217,6 +264,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the template repository for the implementation class configured in the configuration parameters.
+     */
     private void initTemplateRepository() {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
@@ -251,6 +301,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the result store repository for the implementation class configured in the configuration parameters.
+     */
     private void initResultStore() {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
@@ -285,6 +338,9 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Initializes the document processor the implementation classes configured in the configuration parameters.
+     */
     private void initProcessors() {
         try {
             if (properties != null) {
@@ -320,6 +376,7 @@ public class TemplateServiceConfiguration {
         }
     }
 
+/*
     private static InputStream getResource(String filename) throws java.io.IOException {
         java.net.URL url = TemplateServiceConfiguration.class.getClassLoader().getResource(filename);
 
@@ -335,7 +392,15 @@ public class TemplateServiceConfiguration {
         }
         return is;
     }
+*/
 
+    /**
+     * Returns whether there is a font configuration in the custom font library configured in the system properties. 
+     * The font config is used by the pdf converter engine (if configured).
+     * @param familyName the font family to be added.
+     * @param style the font style.
+     * @return the font configuration DTO, if found.
+     */
     public FontConfig getFontConfig(final String familyName, final FontStyle style) {
         Set<String> families = styles.keySet();
         for (final String actKey : families) {
@@ -349,6 +414,10 @@ public class TemplateServiceConfiguration {
         return null;
     }
 
+    /**
+     * Returns the custom fonts installed to the font lib dir and configured in the system properties.
+     * @return the list of the configured additional fonts.
+     */
     public List<FontConfig> getFontConfig() {
         final List<FontConfig> result = new LinkedList<>();
 
@@ -361,22 +430,47 @@ public class TemplateServiceConfiguration {
         return result;
     }
 
+    /**
+     * Returns the log category of the document structure handling implementations. 
+     * Is used by the doc structure implementations to ensure consistent logging.
+     * @return the documentstructure log category.
+     */
     public String getDocStructureLogCategory() {
         return properties.getProperty(LOG_APPENDER);
     }
 
+    /**
+     * Returns the configured document structure repository implementation.
+     * For configuration options see the system configuration (template-utils.properties)
+     * @return the document structure implementation.
+     */
     public DocumentStructureRepository getDocumentStructureRepository() {
         return documentStructureRepository;
     }
 
+    /**
+     * Returns the template repository implementation.
+     * For configuration options see the system configuration (template-utils.properties)
+     * @return the template repository implementation.
+     */
     public TemplateRepository getTemplateRepository() {
         return this.templateRepository;
     }
 
+    /**
+     * Returns the result store repository implementation.
+     * For configuration options see the system configuration (template-utils.properties)
+     * @return the result store repository implementation.
+     */
     public ResultStore getResultStore() {
         return this.resultStore;
     }
 
+    /**
+     * Returns the actual template service configuration.
+     * This is the entrypoint of the configuration.
+     * @return the actual template servic configuration.
+     */
     public static TemplateServiceConfiguration getInstance() {
         TemplateServiceConfiguration result = INSTANCE;
         if (result == null) {

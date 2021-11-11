@@ -1,5 +1,25 @@
 package net.videki.templateutils.template.core.processor.input.xlsx;
 
+/*-
+ * #%L
+ * template-utils-core
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,15 +35,33 @@ import org.slf4j.LoggerFactory;
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 
+/**
+ * Xlsx template processor implementation based on the jXls library.
+ * see http://jxls.sourceforge.net/ 
+ * @author Levente Ban
+ */
 public class JxlsInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
 
+  /**
+   * Logger.
+   */
   private static final Logger LOGGER = LoggerFactory.getLogger(JxlsInputTemplateProcessor.class);
 
+  /**
+   * Returns the input format the processor supports.
+   * @return the input format (xlsx).
+   */
   @Override
   public InputFormat getInputFormat() {
     return InputFormat.XLSX;
   }
 
+  /**
+     * Entry point to process the template. (all sheets in the spreadsheet)
+     * @param templateFileName the template name in the template repository.
+     * @param dto the model object. 
+     * @return the result document stream.
+   */
   @Override
   public <T> OutputStream fill(final String templateFileName, T dto) {
     OutputStream result;

@@ -1,5 +1,25 @@
 package net.videki.templateutils.template.core.processor.converter.pdf.docx4j;
 
+/*-
+ * #%L
+ * template-utils-core
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.processor.converter.ConversionException;
 import net.videki.templateutils.template.core.processor.converter.Converter;
@@ -10,17 +30,26 @@ import org.docx4j.Docx4J;
 import org.docx4j.fonts.IdentityPlusMapper;
 import org.docx4j.fonts.Mapper;
 import org.docx4j.fonts.PhysicalFonts;
-import org.docx4j.model.structure.SectionWrapper;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.List;
 
+/**
+ * Docx to pdf converter implementation using docx4j. 
+ * @author Levente Ban
+ */
 public class DocxToPdfConverter implements Converter {
 
+  /**
+   * Logger.
+   */
   private static final Logger LOGGER = LoggerFactory.getLogger(DocxToPdfConverter.class);
+
+  /**
+   * Docx4j font mapper.
+   */
   private static final Mapper FONTMAPPER_INSTANCE = new IdentityPlusMapper();
 
   static {
@@ -36,16 +65,29 @@ public class DocxToPdfConverter implements Converter {
 
   }
 
+  /**
+   * Returns the input format.
+   * @return the input format.
+   */
   @Override
   public InputFormat getInputFormat() {
     return InputFormat.DOCX;
   }
 
+  /**
+   * Returns the output format.
+   * @return the output format.
+   */
   @Override
   public OutputFormat getOutputFormat() {
     return OutputFormat.PDF;
   }
 
+  /**
+   * Entry point for the document conversion.
+   * @param source the input document.
+   * @return the converted document if the conversion was successful.
+   */
   @Override
   public OutputStream convert(final InputStream source) {
     OutputStream result;

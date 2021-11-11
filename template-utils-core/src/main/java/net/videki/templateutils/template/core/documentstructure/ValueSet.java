@@ -1,5 +1,25 @@
 package net.videki.templateutils.template.core.documentstructure;
 
+/*-
+ * #%L
+ * template-utils-core
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.dto.JsonModel;
@@ -80,22 +100,42 @@ public class ValueSet implements JsonModel {
         return values;
     }
 
+    /**
+     * Returns the document structure id.
+     * @return the document structure id.
+     */
     public String getDocumentStructureId() {
         return documentStructureId;
     }
 
+    /**
+     * Sets the document structure id.
+     * @param documentStructureId the document structure id.
+     */
     public void setDocumentStructureId(String documentStructureId) {
         this.documentStructureId = documentStructureId;
     }
 
+    /**
+     * Returns the locale used for document generation.
+     * @return the locale.
+     */
     public Locale getLocale() {
         return locale;
     }
 
+    /**
+     * Sets the locale to be used for document generation.
+     * @param locale the locale.
+     */
     public void setLocale(final Locale locale) {
         this.locale = locale;
     }
 
+    /**
+     * Returns the transaction id for which the document generation is targeted (where these values will be used).
+     * @return the transaction id.
+     */
     public String getTransactionId() {
         return transactionId;
     }
@@ -173,12 +213,20 @@ public class ValueSet implements JsonModel {
         return this;
     }
 
+    /**
+     * Builder method for defining the locale to be used during generation. 
+     * @param locale the locale.
+     * @return the container.
+     */
     public ValueSet withLocale(final Locale locale) {
         this.locale = locale;
 
         return this;
     }
 
+    /**
+     * Convenience method for logging.
+     */
     @Override
     public String toString() {
         return "ValueSet{" +

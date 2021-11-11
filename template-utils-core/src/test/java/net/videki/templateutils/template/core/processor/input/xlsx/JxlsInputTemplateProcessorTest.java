@@ -1,6 +1,25 @@
 package net.videki.templateutils.template.core.processor.input.xlsx;
 
-import net.videki.templateutils.template.core.util.FileSystemHelper;
+/*-
+ * #%L
+ * template-utils-core
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 import net.videki.templateutils.template.core.service.InputFormat;
@@ -14,6 +33,7 @@ import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -31,7 +51,7 @@ public class JxlsInputTemplateProcessorTest {
         final String inputDir = "unittests/xlsx";
 
         final String fileName = "xlsTemplate_v11.xlsx";
-        this.processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+        this.processor.fill(inputDir + File.separator + fileName,
                 getContractTestData());
     }
 
@@ -42,7 +62,7 @@ public class JxlsInputTemplateProcessorTest {
 
         final String fileName = "this_template_file_does_not_exist.xlsx";
 
-        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+        try (final OutputStream ignore = processor.fill(inputDir + File.separator + fileName,
                 getContractTestData())) {
 
             Assert.assertFalse(false);
@@ -60,7 +80,7 @@ public class JxlsInputTemplateProcessorTest {
 
         final String fileName = "xlsTemplate_v11-expression_error.xlsx";
 
-        try (final OutputStream ignore = processor.fill(FileSystemHelper.getFileNameWithPath(inputDir, fileName),
+        try (final OutputStream ignore = processor.fill(inputDir + File.separator + fileName,
                 getContractTestData())) {
 
             Assert.assertTrue(true);

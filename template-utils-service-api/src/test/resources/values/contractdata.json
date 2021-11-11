@@ -1,0 +1,133 @@
+{
+  "ctx": {
+    "org": {
+      "orgCode": "PB",
+      "name": "Vintage Services - Palm beach",
+      "address": {
+        "zip": "Y-1234567",
+        "city": "Simply City",
+        "address": "Main blvd 432"
+      }
+    },
+    "officer": {
+      "name": "Chuck Norris",
+      "orgCode": "PB-001",
+      "login": "PB\\cnorris"
+    },
+    "contract": {
+      "contractor": {
+        "name": "John Doe",
+        "birthDate": {
+          "year": 1970,
+          "month": 7,
+          "day": 20
+        }
+      },
+      "contractType": {
+        "contractTypeName": "Vintage Gold",
+        "fee": 1500,
+        "paymentFrequency": "MONTHLY"
+      },
+      "beneficiaries": [
+        {
+          "beneficiaries": [
+            {
+              "phoneNumber": "+1 800 2234 567",
+              "name": "Jim Doe",
+              "birthDate": {
+                "year": 1975,
+                "month": 8,
+                "day": 11
+              }
+            },
+            {
+              "phoneNumber": "+1 800 2234 568",
+              "name": "Tim Doe",
+              "birthDate": {
+                "year": 1976,
+                "month": 8,
+                "day": 12
+              }
+            },
+            {
+              "phoneNumber": "+1 800 2234 569",
+              "name": "Pim Doe",
+              "birthDate": {
+                "year": 1977,
+                "month": 8,
+                "day": 13
+              }
+            },
+            {
+              "phoneNumber": "+1 800 3234 567",
+              "name": "Jack Ryan",
+              "birthDate": {
+                "year": 1962,
+                "month": 8,
+                "day": 11
+              }
+            },
+            {
+              "phoneNumber": "+1 800 3234 568",
+              "name": "John Goodall",
+              "birthDate": {
+                "year": 1946,
+                "month": 8,
+                "day": 11
+              }
+            },
+            {
+              "phoneNumber": "+1 800 3234 569",
+              "name": "Mortimer Young",
+              "birthDate": {
+                "year": 1991,
+                "month": 8,
+                "day": 11
+              }
+            },
+            {
+              "phoneNumber": "+1 800 3234 560",
+              "name": "Zack Black",
+              "birthDate": {
+                "year": 1987,
+                "month": 8,
+                "day": 11
+              }
+            }
+          ],
+          "phoneNumber": "+1 800 1234 567",
+          "name": "Jane Doe",
+          "birthDate": {
+            "year": 1971,
+            "month": 4,
+            "day": 2
+          }
+        },
+        {
+          "beneficiaries": [],
+          "phoneNumber": "+1 800 1234 568",
+          "name": "Jenny Mack",
+          "birthDate": {
+            "year": 1951,
+            "month": 8,
+            "day": 11
+          }
+        }
+      ],
+      "signDate": {
+        "year": 2021,
+        "month": 2,
+        "day": 16
+      }
+    },
+    "doc": {
+      "dmsUrl": "http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68",
+      "login": "PB\\cnorris",
+      "generationDate": {
+        "year": 1970,
+        "month": 7,
+        "day": 20
+      }
+    }
+  }
+}

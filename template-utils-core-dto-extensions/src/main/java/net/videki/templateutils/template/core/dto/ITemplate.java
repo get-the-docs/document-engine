@@ -1,5 +1,27 @@
 package net.videki.templateutils.template.core.dto;
 
+/*-
+ * #%L
+ * template-utils-core-dto-extensions
+ * %%
+ * Copyright (C) 2021 Levente Ban
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -22,6 +44,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public interface ITemplate {
   Locale LC_HU = new Locale("hu", "HU");
@@ -101,6 +124,31 @@ public interface ITemplate {
     String result;
     if (value != null) {
       result = value.format(DATE_FORMAT_DATE);
+    } else {
+      result = PLACEHOLDER_EMPTY;
+    }
+    return result;
+  }
+
+  default String fmtDate(final Map<?, ?> value) {
+    String result;
+    if (value != null) {
+      final ObjectMapper mapper = new ObjectMapper();
+      mapper.registerModule(new JavaTimeModule());
+      //LocalDate.of((Integer) value.get("year"), (Integer) value.get("month"), (Integer) value.get("day"))
+      LocalDate d = mapper.convertValue(value.values().toArray(), LocalDate.class);
+      result = d.format(DATE_FORMAT_DATE);
+    } else {
+      result = PLACEHOLDER_EMPTY;
+    }
+    return result;
+  }
+
+  @SuppressWarnings("unchecked") 
+  default String fmtDate(final Object value) {
+    String result;
+    if (value != null && value instanceof Map) {
+      return fmtDate((Map<Object, Object>) value);
     } else {
       result = PLACEHOLDER_EMPTY;
     }
@@ -188,6 +236,13 @@ public interface ITemplate {
     }
 
     return docImage;
+  }
+
+  default String concat(final Map<String, Object> args) {
+    return args.values()
+            .stream()
+            .map(Object::toString)
+            .collect(Collectors.joining(" "));
   }
 
 }
