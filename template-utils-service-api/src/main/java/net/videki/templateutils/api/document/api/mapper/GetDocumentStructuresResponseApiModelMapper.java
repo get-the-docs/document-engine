@@ -29,11 +29,21 @@ import net.videki.templateutils.api.document.api.model.Page;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * API response mapper: GetDocumentStructuresResponse.
+ * 
+ * @author Levente Ban
+ */
 @Mapper
-public interface GetDocumentStructuresApiModelMapper {
+public interface GetDocumentStructuresResponseApiModelMapper {
 
-	GetDocumentStructuresApiModelMapper INSTANCE = Mappers.getMapper(GetDocumentStructuresApiModelMapper.class);
+	GetDocumentStructuresResponseApiModelMapper INSTANCE = Mappers.getMapper(GetDocumentStructuresResponseApiModelMapper.class);
 
+	/**
+	 * Maps a document structure page.
+	 * @param source the input page.
+	 * @return the api model.
+	 */
 	default GetDocumentStructuresResponse pageToApiModel(
 			net.videki.templateutils.template.core.provider.persistence.Page<net.videki.templateutils.template.core.documentstructure.DocumentStructure> source) {
 

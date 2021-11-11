@@ -26,16 +26,27 @@ import org.mapstruct.factory.Mappers;
 
 import net.videki.templateutils.api.document.api.model.Pageable;
 
+/**
+ * Api model mapper for Pageable objects.
+ * 
+ * @author Levente Ban
+ */
 @Mapper
 public interface PageableMapper {
 
 	PageableMapper INSTANCE = Mappers.getMapper(PageableMapper.class);
 
+	/**
+	 * Maps an api model to a service model.
+	 * 
+	 * @param source the api model.
+	 * @return the service model.
+	 */
 	@Mapping(source = "page", target = "page")
 	@Mapping(source = "size", target = "size")
-	@Mapping(expression = "java((source.getPage() * source.getSize()) -1 >= 0 ? (source.getPage() * source.getSize()) -1 : 0 )", target="offset")
+	@Mapping(expression = "java((source.getPage() * source.getSize()) -1 >= 0 ? (source.getPage() * source.getSize()) -1 : 0 )", target = "offset")
 	@Mapping(source = "paged", target = "paged")
 	@Mapping(source = "sort", target = "sort")
-  net.videki.templateutils.template.core.provider.persistence.Pageable map(Pageable source);
+	net.videki.templateutils.template.core.provider.persistence.Pageable map(Pageable source);
 
 }

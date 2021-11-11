@@ -32,6 +32,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * Template Document service model to api model mapper.
+ * 
+ * @author Levente Ban
+ */
 @Mapper
 public interface TemplateDocumentToApiModelMapper {
 
@@ -39,6 +44,11 @@ public interface TemplateDocumentToApiModelMapper {
 
 	public static final String DELIMITER = "|";
 
+	/**
+	 * TemplateDocument service model to API model mapper.
+	 * @param source the service model object.
+	 * @return the api model object.
+	 */
 	@Mapping(source = "templateName", target = "templateName")
 	@Mapping(source = "format", target = "format")
 	@Mapping(source = "locale", target = "locale")
@@ -46,8 +56,18 @@ public interface TemplateDocumentToApiModelMapper {
 	@Mapping(source = "internalKey", target = "internalKey")
 	net.videki.templateutils.api.document.api.model.TemplateDocument entityToApiModel(net.videki.templateutils.template.core.template.descriptors.TemplateDocument source);
 
+	/**
+	 * Mapper for TemplateDocument lists to convert from service models to api models.
+	 * @param source the list of service models.
+	 * @return the api model list.
+	 */
 	List<net.videki.templateutils.api.document.api.model.TemplateDocument> entityListToApiModelList(List<net.videki.templateutils.template.core.template.descriptors.TemplateDocument> source);
 
+	/**
+	 * Maps a service model page to an api model page.
+	 * @param source the service model.
+	 * @return the api model.
+	 */
 	default GetTemplatesResponse pageToApiModel(net.videki.templateutils.template.core.provider.persistence.Page<net.videki.templateutils.template.core.template.descriptors.TemplateDocument> source) {
 
 		final GetTemplatesResponse result = new GetTemplatesResponse();
@@ -64,6 +84,11 @@ public interface TemplateDocumentToApiModelMapper {
 		return result;
 	}
 
+	/**
+	 * Internal locale-string conversion.
+	 * @param value the input locale.
+	 * @return the value as string.
+	 */
 	default String map(Locale value) {
 		return value.toString();
 	}

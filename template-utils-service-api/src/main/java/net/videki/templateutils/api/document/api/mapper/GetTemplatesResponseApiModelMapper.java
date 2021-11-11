@@ -29,11 +29,21 @@ import net.videki.templateutils.api.document.api.model.Page;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * Api response mapper: GetTemplatesResponse.
+ * 
+ * @author Levente Ban
+ */
 @Mapper
 public interface GetTemplatesResponseApiModelMapper {
 
 	GetTemplatesResponseApiModelMapper INSTANCE = Mappers.getMapper(GetTemplatesResponseApiModelMapper.class);
 
+	/**
+	 * Maps a service page model to an api page.
+	 * @param source the input page.
+	 * @return the result page.
+	 */
 	default GetTemplatesResponse pageToApiModel(net.videki.templateutils.template.core.provider.persistence.Page<net.videki.templateutils.template.core.template.descriptors.TemplateDocument> source) {
 
 		final GetTemplatesResponse result = new GetTemplatesResponse();

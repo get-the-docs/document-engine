@@ -21,7 +21,7 @@ package net.videki.templateutils.api.document.api.controller;
  */
 
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
-import net.videki.templateutils.api.document.api.mapper.GetDocumentStructuresApiModelMapper;
+import net.videki.templateutils.api.document.api.mapper.GetDocumentStructuresResponseApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
 import net.videki.templateutils.api.document.api.model.DocStructureJobApiResponse;
 import net.videki.templateutils.api.document.api.model.GenerationResult;
@@ -41,6 +41,11 @@ import java.util.UUID;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-21T15:16:34.406301500+01:00[Europe/Prague]")
 
+/**
+ * Document structure API.
+ * 
+ * @author Levente Ban
+ */
 @Controller
 @RequestMapping("${app.api.base-path:/api/v1}")
 public class DocumentstructureApiController implements DocumentstructureApi {
@@ -55,19 +60,36 @@ public class DocumentstructureApiController implements DocumentstructureApi {
         this.request = request;
     }
 
+    /**
+     * Returns the native web request.
+     */
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return Optional.ofNullable(request);
     }
 
+    /**
+     * Returns the available document structures.
+     * 
+     * @param documentStructureId optional document structure id.
+     * @param pageable the requested result page.
+     * @return the page of document structures.
+     */
     @Override
     public ResponseEntity<GetDocumentStructuresResponse> getDocumentStructures(final String documentStructureId, final Pageable pageable) {
 
         final var result = this.documentStructureApiService.getDocumentStructures(documentStructureId, PageableMapper.INSTANCE.map(pageable));
 
-        return ResponseEntity.ok(GetDocumentStructuresApiModelMapper.INSTANCE.pageToApiModel(result));
+        return ResponseEntity.ok(GetDocumentStructuresResponseApiModelMapper.INSTANCE.pageToApiModel(result));
     }
 
+    /**
+     * Initializes a document generation job for the given document structure and value set.
+     * 
+     * @param id the document structure id.
+     * @param valueSet the model objects.
+     * @param notificationUrl optional notification hook (webhook, etc.) to indicate job completion. 
+     */
     @Override
     public ResponseEntity<DocStructureJobApiResponse> postDocumentStructureGenerationJob(
             final String id,
@@ -84,11 +106,24 @@ public class DocumentstructureApiController implements DocumentstructureApi {
         return ResponseEntity.accepted().body(result);
     }
 
+    /**
+     * Returns the generation result (containing the result documents) for a document generation job. 
+     * 
+     * @param transactionId the transaction id.
+     * @return the generation result.
+     */
     @Override
     public ResponseEntity<GenerationResult> getGenerationResultByTransactionId(final String transactionId) {
         return DocumentstructureApi.super.getGenerationResultByTransactionId(transactionId);
     }
 
+    /**
+     * Returns a result document for the given transaction.
+     * 
+     * @param transactionId the transaction id.
+     * @param resultDocumentId the result document to return.
+     * @return the result document descriptor and binary if found.
+     */
     @Override
     public ResponseEntity<Resource> getResultDocumentForDocStructureByTransactionIdAndResultDocumentId(final String transactionId,
       final String resultDocumentId) {

@@ -29,6 +29,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+/**
+ * Json date format config.
+ * 
+ * @author Levente Ban
+ */
 public class RFC3339DateFormat extends DateFormat {
   private static final long serialVersionUID = 1L;
   private static final TimeZone TIMEZONE_Z = TimeZone.getTimeZone("UTC");
@@ -37,20 +42,41 @@ public class RFC3339DateFormat extends DateFormat {
           .withTimeZone(TIMEZONE_Z)
           .withColonInTimeZone(true);
 
+  /**
+   * Default constructor.
+   */
   public RFC3339DateFormat() {
     this.calendar = new GregorianCalendar();
   }
 
+  /**
+   * Date parses the input string and converts to date.
+   * 
+   * @param source source string.
+   * @param pos parse position.
+   */
   @Override
   public Date parse(String source, ParsePosition pos) {
     return fmt.parse(source, pos);
   }
 
+  /**
+   * Date format.
+   * 
+   * @param date the input date.
+   * @param toAppendTo StringBuffer to append to. 
+   * @param fieldPosition field position.
+   * @return the converted string in a StringBuffer.
+   */
   @Override
   public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
     return fmt.format(date, toAppendTo, fieldPosition);
   }
 
+  /**
+   * Clone.
+   * @return the cloned object.
+   */
   @Override
   public Object clone() {
     return this;

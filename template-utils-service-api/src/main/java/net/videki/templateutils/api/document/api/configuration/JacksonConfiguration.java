@@ -38,9 +38,19 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Jackson configuration.
+ * 
+ * @author Levente Ban
+ */
 @Configuration
 public class JacksonConfiguration {
 
+    /**
+     * Json mapper bean injection.
+     * 
+     * @return json mapper.
+     */
     @Primary
     @Bean
     public ObjectMapper jsonMapper() {
@@ -51,16 +61,15 @@ public class JacksonConfiguration {
         jsonMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         jsonMapper.configOverride(List.class).setSetterInfo(JsonSetter.Value.forContentNulls(Nulls.AS_EMPTY));
         jsonMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        
+
         final JavaTimeModule javaTimeModule = new JavaTimeModule();
         final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         final OffsetDateTimeSerializer offsetDateTimeSerializer = OffsetDateTimeSerializer.INSTANCE;
         javaTimeModule.addSerializer(OffsetDateTime.class, offsetDateTimeSerializer);
         javaTimeModule.addDeserializer(OffsetDateTime.class, InstantDeserializer.OFFSET_DATE_TIME);
-        
-        final LocalDateTimeDeserializer localDateTimeDeserializer =
-            new LocalDateTimeDeserializer(dateTimeFormatter);
-    
+
+        final LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(dateTimeFormatter);
+
         javaTimeModule.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
         jsonMapper.registerModule(javaTimeModule);
         jsonMapper.findAndRegisterModules();

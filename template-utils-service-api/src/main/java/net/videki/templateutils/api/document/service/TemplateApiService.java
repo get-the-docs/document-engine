@@ -47,7 +47,7 @@ public interface TemplateApiService {
      *                   repository implementation has paging capability).
      * @return the requested page, if exists.
      */
-    Page<TemplateDocument> getTemplates(String templateId, Pageable page);
+    Optional<Page<TemplateDocument>> getTemplates(String templateId, Pageable page);
 
     /**
      * Returns a template descriptor by id.

@@ -72,41 +72,53 @@ public class DefaultTemplateApiService implements TemplateApiService {
      * @return the requested page, if exists.
      */
     @Override
-    public Page<TemplateDocument> getTemplates(String templateId, final Pageable page) {
+    public Optional<Page<TemplateDocument>> getTemplates(String templateId, final Pageable page) {
+        Optional<Page<TemplateDocument>> result = Optional.empty();
+ 
         try {
             if (log.isDebugEnabled()) {
-                log.debug("getTemplates - {}", page);
+                log.debug("getTemplates - {}, page:{}", templateId, page);
             }
 
-            Page<TemplateDocument> result = null;
-            if (templateId != null) {
-                result = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplates(page);
+            Page<TemplateDocument> resultObj = null;
+            if (templateId == null) {
+                Pageable actPage;
+                if (page == null) {
+                    actPage = new Pageable();
+                } else {
+                    actPage = page;
+                }
+                resultObj = TemplateServiceConfiguration.getInstance().getTemplateRepository().getTemplates(actPage);
 
+                result = Optional.of(resultObj); 
             } else {
                 final Optional<TemplateDocument> doc = getTemplateById(templateId, null, false);
 
-                result = new Page<>();
+                resultObj = new Page<>();
                 final List<TemplateDocument> data = new LinkedList<>();
                 if (doc.isPresent()) {
                     data.add(doc.get());
+
+                    resultObj.setData(data);
+                    resultObj.setNumber(0);
+                    resultObj.setSize(data.size() > 0 ? 1 : 0);
+                    resultObj.setTotalElements((long) data.size());
+                    resultObj.setTotalPages(data.size() > 0 ? 1 : 0);
+
+                    result = Optional.of(resultObj); 
                 }
-                result.setData(data);
-                result.setNumber(0);
-                result.setSize(data.size() > 0 ? 1 : 0);
-                result.setTotalElements((long) data.size());
-                result.setTotalPages(data.size() > 0 ? 1 : 0);
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("getTemplates end - {}, item count: {}", page, result.getData().size());
+                log.debug("getTemplates end - {}, item count: {}", page, resultObj.getData().size());
             }
-            return result;
 
         } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
             log.warn("Error processing request: {}", page);
 
-            return null;
         }
+
+        return result;
     }
 
     /**

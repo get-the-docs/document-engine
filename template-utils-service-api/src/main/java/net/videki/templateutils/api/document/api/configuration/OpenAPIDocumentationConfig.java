@@ -51,13 +51,21 @@ import javax.servlet.ServletContext;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-16T18:11:50.335294800+01:00[Europe/Prague]")
 
+
 @Configuration
 @EnableSwagger2
-@PropertySources({
-        @PropertySource("classpath:application.yml")
-})
-
+@PropertySources({@PropertySource("classpath:application.yml")})
+/**
+ * OpenApi Springfox config.
+ * 
+ * @author Levente Ban
+ */
 public class OpenAPIDocumentationConfig {
+
+    /**
+     * Api info.
+     * @return Api info.
+     */
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
             .title("Document generation API")
@@ -70,6 +78,12 @@ public class OpenAPIDocumentationConfig {
             .build();
     }
 
+    /**
+     * Controller dockects.
+     * @param servletContext the servlet context.
+     * @param basePath api base path.
+     * @return the controller dockets.
+     */
     @Bean
     public Docket customImplementation(ServletContext servletContext, @Value("${app.api.base-path:/api/v1}") String basePath) {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -82,6 +96,10 @@ public class OpenAPIDocumentationConfig {
                 .apiInfo(apiInfo());
     }
 
+    /**
+     * Web MVC security config. We allow everything to be flexible and config at (cloud) service level.
+     * @return the MVC config.
+     */
     @Bean
     public WebMvcConfigurer webConfigurer() {
         return new WebMvcConfigurer() {
@@ -95,6 +113,9 @@ public class OpenAPIDocumentationConfig {
         };
     }
 
+    /**
+     * Basepath provider for springfox.
+     */
     class BasePathAwareRelativePathProvider extends RelativePathProvider {
         private String basePath;
 
@@ -116,25 +137,29 @@ public class OpenAPIDocumentationConfig {
         }
     }
 
+    /**
+     * API key auth scheme for springfox.
+     * @return auth scheme.
+     */
     private SecurityScheme apiKeyAuthScheme() {
         return new ApiKey("ApiKeyAuth", "X-API-KEY", "header");
     }
 
+    /**
+     * Auth ref to api key.
+     * @return the sec reference.
+     */
     private SecurityReference apiKeyAuthReference() {
         return new SecurityReference("ApiKeyAuth", new AuthorizationScope[0]);
     }
 
-    private SecurityScheme jwtAuthScheme() {
-        return new ApiKey("JWT", "Authorization", "header");
-    }
-
-    private SecurityReference jwtAuthReference() {
-        return new SecurityReference("JWT", new AuthorizationScope[0]);
-    }
-
+    /**
+     * Security context for the service paths'.
+     * @return the security context.
+     */
     private SecurityContext securityContext() {
         return SecurityContext.builder()
-                .securityReferences(Arrays.asList(apiKeyAuthReference(), jwtAuthReference()))
+                .securityReferences(Arrays.asList(apiKeyAuthReference()))
                 .forPaths(PathSelectors.ant("/api/**"))
                 .build();
     }

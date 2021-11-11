@@ -23,11 +23,15 @@ package net.videki.templateutils.api.document.api.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import net.videki.templateutils.template.core.service.OutputFormat;
 
+/**
+ * Document structure service model to API model mapper.
+ * 
+ * @author Levente Ban
+ */
 @Mapper
 public interface DocumentStructureEntityToApiModelMapper {
 
@@ -35,6 +39,11 @@ public interface DocumentStructureEntityToApiModelMapper {
 
 	public static final String DELIMITER = "|";
 
+	/**
+	 * Mapper for DocumentStructure service model to the OAS api model. 
+	 * @param source the service model object.
+	 * @return the api model object.
+	 */
 	default net.videki.templateutils.api.document.api.model.DocumentStructure entityToApiModel(
 			net.videki.templateutils.template.core.documentstructure.DocumentStructure source) {
 
@@ -55,11 +64,19 @@ public interface DocumentStructureEntityToApiModelMapper {
 			}
 	}
 
+	/**
+	 * Mapper for document structure lists.
+	 * @param source the input list.
+	 * @return the api model.
+	 */
 	List<net.videki.templateutils.api.document.api.model.DocumentStructure> entityListToApiModelList(
 			List<net.videki.templateutils.template.core.documentstructure.DocumentStructure> source);
 
-	
-	
+	/**
+	 * Internal mapper for locale-string conversion.
+	 * @param value the input locale.
+	 * @return the string value.
+	 */	
 	default String map(OutputFormat value) {
 		return value.toString();
 	}			

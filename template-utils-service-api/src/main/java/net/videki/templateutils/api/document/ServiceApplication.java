@@ -29,15 +29,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+/**
+ * Document generation REST API. 
+ * 
+ * @author Levente Ban
+ */
 @EnableAsync
 @SpringBootApplication
 @ComponentScan(basePackages = {"net.videki.templateutils.api.document"})
 public class ServiceApplication {
 
+    /**
+     * Application entry point.
+     * @param args system args.
+     * @throws Exception any unhandled exception.
+     */
     public static void main(String[] args) throws Exception {
         new SpringApplication(ServiceApplication.class).run(args);
     }
 
+    /**
+     * Exit code holder.
+     */
     static class ExitException extends RuntimeException implements ExitCodeGenerator {
         private static final long serialVersionUID = 1L;
 
@@ -48,6 +61,10 @@ public class ServiceApplication {
 
     }
 
+    /**
+     * Json module inject. 
+     * @return json nullable module.
+     */
     @Bean
     public Module jsonNullableModule() {
         return new JsonNullableModule();
