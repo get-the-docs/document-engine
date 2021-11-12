@@ -14,6 +14,41 @@
         <relativePath />
     </parent>
 
+    <url>https://github.com/videki/template-utils</url>
+    <scm>
+        <connection>scm:git:git@github.com:videki/template-utils.git</connection>
+        <developerConnection>scm:git:git@github.com:videki/template-utils.git</developerConnection>
+        <url>https://github.com/videki/template-utils</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>banlevente</id>
+            <name>Levente Ban</name>
+            <email>oss.levente.ban@gmail.com</email>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/videki/template-utils/issues</url>
+    </issueManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
@@ -30,6 +65,11 @@
         <json.version>20190722</json.version>
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <jacoco.version>0.8.7</jacoco.version>
+        <code.coverage.project.folder>${basedir}/../</code.coverage.project.folder>
+        <code.coverage.overall.data.folder>${basedir}/../target/</code.coverage.overall.data.folder>
+        <maven.jxr.version>3.1.1</maven.jxr.version>
+        <argLine></argLine>
     </properties>
 
     <dependencies>
@@ -37,6 +77,16 @@
         <dependency>
             <groupId>net.videki.template-utils</groupId>
             <artifactId>template-utils-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.videki.template-utils</groupId>
+            <artifactId>template-utils-core-dto-extensions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.videki.template-utils</groupId>
+            <artifactId>template-utils-documentstructure-builder</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -360,7 +410,12 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <jacoco-agent.destfile>**/jacoco.exec</jacoco-agent.destfile>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -371,6 +426,9 @@
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
+                        <configuration>
+                            <argLine>${argLine}</argLine>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -419,24 +477,10 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
+                <version>3.8.2</version>
             </plugin>
 
             <plugin>
@@ -499,19 +543,80 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.5</version>
+                        <version>${jacoco.version}</version>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
+                                <configuration>
+                                    <propertyName>argLine</propertyName>
+                                    <destFile>${project.build.directory}/jacoco.exec</destFile>
+                                </configuration>
                             </execution>
                             <execution>
-                                <id>report</id>
+                                <id>merge-results</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
-                                    <goal>report</goal>
+                                    <goal>merge</goal>
                                 </goals>
+                                <configuration>
+                                    <propertyName>argLine</propertyName>
+                                    <fileSets>
+                                        <fileSet>
+                                            <directory>${project.basedir}/..</directory>
+                                            <includes>
+                                                <include>**/jacoco.exec</include>
+                                                <include>**/aggregate.exec</include>
+                                            </includes>
+                                        </fileSet>
+                                    </fileSets>
+                                    <destFile>${project.build.directory}/aggregate.exec</destFile>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <fileSet>
+                                        <directory>${project.build.directory}/target/classes</directory>
+                                    </fileSet>
+                                    <rules>
+                                        <rule>
+                                            <element>BUNDLE</element>
+                                            <limits>
+                                                <limit>
+                                                    <counter>INSTRUCTION</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>0%</minimum>
+                                                </limit>
+                                            </limits>
+                                        </rule>
+                                    </rules>
+                                    <dataFile>${project.build.directory}/aggregate.exec</dataFile>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>report-aggregate</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <propertyName>argLine</propertyName>
+                                    <fileSets>
+                                        <fileSet>
+                                            <includes>
+                                                <include>**/aggregate.exec</include>
+                                            </includes>
+                                        </fileSet>
+                                    </fileSets>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -523,20 +628,6 @@
     <reporting>
         <outputDirectory>target/site</outputDirectory>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.0.0</version>
-                <reportSets>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                            <report>test-aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
