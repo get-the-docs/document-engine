@@ -63,8 +63,7 @@
         <json.version>20190722</json.version>
         <slf4j.version>1.7.30</slf4j.version>
         <junit.version>4.13.1</junit.version>
-        <jacoco.version>0.8.7</jacoco.version>
-        <argLine></argLine>
+        <clover.version>4.4.1</clover.version>
     </properties>
 
     <dependencies>
@@ -199,11 +198,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M4</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <jacoco-agent.destfile>**/jacoco.exec</jacoco-agent.destfile>
-                    </systemPropertyVariables>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -214,9 +208,6 @@
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
-                        <configuration>
-                            <argLine>${argLine}</argLine>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -284,37 +275,40 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${jacoco.version}</version>
+                        <groupId>org.openclover</groupId>
+                        <artifactId>clover-maven-plugin</artifactId>
+                        <version>${clover.version}</version>
+                        <configuration>
+                            <targetPercentage>0%</targetPercentage>
+                            <!--snapshot>${user.home}/.clover/${groupId}-${artifactId}/clover.snapshot</snapshot-->
+                            <snapshot>${user.home}/.clover/atlassian-plugins-clover.snapshot</snapshot>
+                            <singleCloverDatabase>true</singleCloverDatabase>
+                            <generatePdf>false</generatePdf>
+                            <generateXml>true</generateXml>
+                            <generateHtml>true</generateHtml>
+                            <generateJson>false</generateJson>
+                            <excludes>
+                                <exclude>**/api/configuration/*.java</exclude>
+                                <exclude>**/ServiceApplication.java</exclude>
+                                <exclude>**/api/model/*.java</exclude>
+                            </excludes>
+                        </configuration>
                         <executions>
                             <execution>
+                                <id>clover</id>
+                                <phase>process-sources</phase>
                                 <goals>
-                                    <goal>prepare-agent</goal>
+                                    <goal>setup</goal>
                                 </goals>
-                                <configuration>
-                                    <propertyName>argLine</propertyName>
-                                    <destFile>${project.build.directory}/jacoco.exec</destFile>
-                                </configuration>
                             </execution>
                             <execution>
-                                <id>merge-results</id>
-                                <phase>post-integration-test</phase>
+                                <phase>verify</phase>
                                 <goals>
-                                    <goal>merge</goal>
+                                    <goal>aggregate</goal>
+                                    <goal>clover</goal>
+                                    <goal>log</goal>
+                                    <goal>check</goal>
                                 </goals>
-                                <configuration>
-                                    <fileSets>
-                                        <fileSet>
-                                            <directory>${project.basedir}</directory>
-                                            <includes>
-                                                <include>**/jacoco.exec</include>
-                                                <include>**/aggregate.exec</include>
-                                            </includes>
-                                        </fileSet>
-                                    </fileSets>
-                                    <destFile>${project.build.directory}/aggregate.exec</destFile>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -322,9 +316,12 @@
             </build>
 
             <reporting>
-                <outputDirectory>target/site</outputDirectory>
                 <plugins>
-
+                    <plugin>
+                        <groupId>org.openclover</groupId>
+                        <artifactId>clover-maven-plugin</artifactId>
+                        <version>${clover.version}</version>
+                    </plugin>
                 </plugins>
             </reporting>
         </profile>
