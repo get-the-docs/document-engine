@@ -151,7 +151,7 @@ public interface TemplateService {
          * Fills the given single file template specified by its name and converts if
          * needed to the given output format.
          * 
-         * @param transactionId The tranasction id, if defined
+         * @param transactionId The transaction id, if defined
          * @param templateName  The template file name
          * @param dto           the value object to fill the template
          * @param format        the output format - @see OutputFormat
@@ -186,7 +186,8 @@ public interface TemplateService {
         /**
          * Process a multipart template (consisting of one or more template files) and
          * return one or more result documents.
-         * 
+         *
+         * @param transactionId     the transaction id, if defined
          * @param documentStructure the document structure to be filled with the
          *                          specified values.
          * @param values            the value objects for the document parts. The values

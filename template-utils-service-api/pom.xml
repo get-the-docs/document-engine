@@ -14,6 +14,41 @@
         <relativePath />
     </parent>
 
+    <url>https://github.com/videki/template-utils</url>
+    <scm>
+        <connection>scm:git:git@github.com:videki/template-utils.git</connection>
+        <developerConnection>scm:git:git@github.com:videki/template-utils.git</developerConnection>
+        <url>https://github.com/videki/template-utils</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>banlevente</id>
+            <name>Levente Ban</name>
+            <email>oss.levente.ban@gmail.com</email>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/videki/template-utils/issues</url>
+    </issueManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
@@ -30,6 +65,7 @@
         <json.version>20190722</json.version>
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <clover.version>4.4.1</clover.version>
     </properties>
 
     <dependencies>
@@ -39,6 +75,16 @@
             <artifactId>template-utils-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--dependency>
+            <groupId>net.videki.template-utils</groupId>
+            <artifactId>template-utils-core-dto-extensions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.videki.template-utils</groupId>
+            <artifactId>template-utils-documentstructure-builder</artifactId>
+            <version>${project.version}</version>
+        </dependency-->
 
         <!-- Spring boot -->
         <dependency>
@@ -220,6 +266,13 @@
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openclover</groupId>
+            <artifactId>clover-maven-plugin</artifactId>
+            <version>${clover.version}</version>
+            <type>maven-plugin</type>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -360,7 +413,7 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0-M4</version>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -419,24 +472,10 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
+                <version>3.8.2</version>
             </plugin>
 
             <plugin>
@@ -486,57 +525,60 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <groupId>org.openclover</groupId>
+                        <artifactId>clover-maven-plugin</artifactId>
+                        <version>${clover.version}</version>
+                        <configuration>
+                            <targetPercentage>0%</targetPercentage>
+                            <snapshot>${user.home}/.clover/atlassian-plugins-clover.snapshot</snapshot>
+                            <singleCloverDatabase>true</singleCloverDatabase>
+                            <generatePdf>false</generatePdf>
+                            <generateXml>true</generateXml>
+                            <generateHtml>true</generateHtml>
+                            <generateJson>false</generateJson>
+                            <excludes>
+                                <exclude>**/api/configuration/*.java</exclude>
+                                <exclude>**/ServiceApplication.java</exclude>
+                                <exclude>**/api/model/*.java</exclude>
+                            </excludes>
+                        </configuration>
                         <executions>
                             <execution>
+                                <id>clover</id>
+                                <phase>process-sources</phase>
                                 <goals>
-                                    <goal>repackage</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.5</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
+                                    <goal>setup</goal>
                                 </goals>
                             </execution>
                             <execution>
-                                <id>report</id>
-                                <phase>post-integration-test</phase>
+                                <phase>verify</phase>
                                 <goals>
-                                    <goal>report</goal>
+                                    <goal>aggregate</goal>
+                                    <goal>clover</goal>
+                                    <goal>log</goal>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
+
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openclover</groupId>
+                        <artifactId>clover-maven-plugin</artifactId>
+                        <version>${clover.version}</version>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
     </profiles>
 
     <reporting>
         <outputDirectory>target/site</outputDirectory>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.0.0</version>
-                <reportSets>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                            <report>test-aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>

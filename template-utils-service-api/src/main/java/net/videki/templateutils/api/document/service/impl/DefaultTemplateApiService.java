@@ -162,7 +162,6 @@ public class DefaultTemplateApiService implements TemplateApiService {
      * @param id              the template id.
      * @param body            the value object.
      * @param notificationUrl notification url, optional.
-     * @return the transaction id for the document generation.
      */
     @Async
     @Override
