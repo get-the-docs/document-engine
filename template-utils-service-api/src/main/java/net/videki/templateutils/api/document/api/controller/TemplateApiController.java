@@ -161,6 +161,10 @@ public class TemplateApiController implements TemplateApi {
      */
     @Override
     public ResponseEntity<GenerationResult> getResultDocumentByTransactionId(final String transactionId) {
+        if (log.isDebugEnabled()) {
+            log.debug("getResultDocumentByTransactionId - transactionId: [{}]", transactionId);
+        }
+
         if (transactionId == null || transactionId.isBlank()) {
             return ResponseEntity.badRequest().build();
         }
@@ -168,6 +172,21 @@ public class TemplateApiController implements TemplateApi {
         try {
             final Optional<StoredGenerationResult> generationResult =
                     this.templateApiService.getResultDocumentByTransactionId(transactionId);
+
+            if (log.isDebugEnabled()) {
+                if (generationResult.isPresent()) {
+                    log.debug("getResultDocumentByTransactionId - transactionId: [{}]",
+                            transactionId);
+                } else {
+                    log.warn("getResultDocumentByTransactionId - transactionId: [{}], no generation result caught.",
+                            transactionId);
+                }
+            }
+            if (log.isTraceEnabled()) {
+                generationResult.ifPresent(storedGenerationResult -> log.debug(
+                        "getResultDocumentByTransactionId - transactionId: [{}], generation result: {}",
+                        transactionId, storedGenerationResult));
+            }
 
             return generationResult.map(storedGenerationResult -> ResponseEntity.ok(GenerationResultApiModelMapper.INSTANCE.map(storedGenerationResult))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (final TemplateServiceException e) {

@@ -384,36 +384,47 @@ public class DocumentApiTemplatesIT {
                                 "templateId={templateId}", data, GenerationResult.class,
                         urlVariables);
 
-        // Step 2 - wait the docs to be generated.
-        try {
-            Thread.sleep(4000);
-        } catch (final InterruptedException e) {
-            log.error("Error waiting for generation result. Thread interrupted.", e);
-        }
-
-        // Step 3 - query result
+        // Step 4 - query result
         if (responseEntity.getBody() != null &&
                 responseEntity.getBody().getTransactionId() != null) {
             final String transactionId = responseEntity.getBody().getTransactionId();
 
-            log.debug("Transaction id from post: {}", transactionId);
+            log.debug("Transaction id from /template/fill: {}", transactionId);
 
             final TestRestTemplate resultRestTemplate = new TestRestTemplate();
-            final ResponseEntity<GenerationResult> resultResponseEntity =
-                    resultRestTemplate.getForEntity(this.testEndpoint + "/template/fill/{transactionId}",
-                            GenerationResult.class, transactionId);
 
-            log.debug("Transaction id from get results: {}", resultResponseEntity.getBody());
+            List<ResultDocument> resultDocumentList = null;
+            for (int tryCount = 0; tryCount < 4; tryCount++) {
+                final ResponseEntity<GenerationResult> resultResponseEntity =
+                        resultRestTemplate.getForEntity(this.testEndpoint + "/template/fill/{transactionId}",
+                                GenerationResult.class, transactionId);
 
-            final List<ResultDocument> resultDocumentList = resultResponseEntity.getBody().getElements();
+                assertEquals(HttpStatus.OK, resultResponseEntity.getStatusCode());
 
-            assertEquals(HttpStatus.OK, resultResponseEntity.getStatusCode());
+                log.debug("Transaction id from get /template/fill/{transactionId}: {}", resultResponseEntity.getBody());
+
+                if (resultResponseEntity.getBody() != null) {
+                    resultDocumentList = resultResponseEntity.getBody().getElements();
+
+                    if (resultDocumentList != null && !resultDocumentList.isEmpty()) {
+                        break;
+                    }
+                } else {
+                    // Keep waiting for the docs to be generated.
+                    try {
+                        Thread.sleep(4000);
+                    } catch (final InterruptedException e) {
+                        log.error("Error waiting for generation result. Thread interrupted.", e);
+                    }
+                }
+            }
+
             Assertions.assertTrue(!resultDocumentList.isEmpty());
 
-            // Step 4 - download first result (simply into the memory since this is not a load test)
+            // Step 3 - download first result (simply into the memory since this is not a load test)
             final String firstResultDocFileName = resultDocumentList.get(0).getDocumentName();
 
-            log.debug("Transaction id from post: {}", transactionId);
+            log.debug("Result document list: {}", resultDocumentList);
 
             final TestRestTemplate resultDocRestTemplate = new TestRestTemplate();
 
@@ -425,7 +436,8 @@ public class DocumentApiTemplatesIT {
                 log.error("Error write result file.", e);
             }
 
-            log.debug("Result docs from transaction query: {}", resultResponseEntity.getBody());
+            log.debug("Result docs downloaded for transaction id: {}, result document name: {}, binary size: {}",
+                    transactionId, firstResultDocFileName, resultDocBinary.length);
 
             Assertions.assertTrue(resultDocBinary.length > 0);
 
