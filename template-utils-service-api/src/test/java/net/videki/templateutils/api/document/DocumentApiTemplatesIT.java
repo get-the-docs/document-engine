@@ -23,11 +23,8 @@ package net.videki.templateutils.api.document;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.videki.templateutils.api.document.api.model.GenerationResult;
-import net.videki.templateutils.api.document.api.model.GetTemplatesResponse;
-import net.videki.templateutils.api.document.api.model.Pageable;
+import net.videki.templateutils.api.document.api.model.*;
 
-import net.videki.templateutils.api.document.api.model.TemplateJobApiResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Assertions;
@@ -39,11 +36,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -52,9 +52,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -330,21 +331,23 @@ public class DocumentApiTemplatesIT {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 
         // Step 1 - post job
-        final ResponseEntity<TemplateJobApiResponse> responseEntity =
+        final ResponseEntity<GenerationResult> responseEntity =
                 restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
-                                "templateId={templateId}", data, TemplateJobApiResponse.class,
+                                "templateId={templateId}", data, GenerationResult.class,
                         urlVariables);
 
         // Step 2 - query result (may be empty due internal async processing)
         if (responseEntity != null &&
                 responseEntity.hasBody() &&
                 responseEntity.getBody().getTransactionId() != null) {
-            log.debug("Transaction id from post: {}", responseEntity.getBody());
+            final String transactionId = responseEntity.getBody().getTransactionId();
+
+            log.debug("Transaction id from post: {}", transactionId);
 
             final TestRestTemplate resultRestTemplate = new TestRestTemplate();
             final ResponseEntity<GenerationResult> resultResponseEntity =
                     resultRestTemplate.getForEntity(this.testEndpoint + "/template/fill/{transactionId}",
-                            GenerationResult.class, responseEntity.getBody().getTransactionId(), 10);
+                            GenerationResult.class, transactionId);
 
             log.debug("Transaction id from get results: {}", resultResponseEntity.getBody());
 
@@ -356,4 +359,80 @@ public class DocumentApiTemplatesIT {
         log.info("getTemplateGenerationJobValidShouldReturnGenerationResult - end.");
     }
 
+
+    @Test
+    void getResultDocumentForValidTransactionShouldReturnBinary() {
+        log.info("getResultDocumentForValidTransactionShouldReturnBinary...");
+
+        final Map<String, String> urlVariables = new HashMap<>();
+        final var data = this.getDataForTestCase("contractdata.json");
+        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu.docx");
+
+        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
+        converter.setObjectMapper(this.jsonMapper);
+
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final RestTemplate restTemplate =
+                new RestTemplate(Collections.singletonList(converter));
+
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
+
+        // Step 1 - post job
+        final ResponseEntity<GenerationResult> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
+                                "templateId={templateId}", data, GenerationResult.class,
+                        urlVariables);
+
+        // Step 2 - wait the docs to be generated.
+        try {
+            Thread.sleep(4000);
+        } catch (final InterruptedException e) {
+            log.error("Error waiting for generation result. Thread interrupted.", e);
+        }
+
+        // Step 3 - query result
+        if (responseEntity.getBody() != null &&
+                responseEntity.getBody().getTransactionId() != null) {
+            final String transactionId = responseEntity.getBody().getTransactionId();
+
+            log.debug("Transaction id from post: {}", transactionId);
+
+            final TestRestTemplate resultRestTemplate = new TestRestTemplate();
+            final ResponseEntity<GenerationResult> resultResponseEntity =
+                    resultRestTemplate.getForEntity(this.testEndpoint + "/template/fill/{transactionId}",
+                            GenerationResult.class, transactionId);
+
+            log.debug("Transaction id from get results: {}", resultResponseEntity.getBody());
+
+            final List<ResultDocument> resultDocumentList = resultResponseEntity.getBody().getElements();
+
+            assertEquals(HttpStatus.OK, resultResponseEntity.getStatusCode());
+            Assertions.assertTrue(!resultDocumentList.isEmpty());
+
+            // Step 4 - download first result (simply into the memory since this is not a load test)
+            final String firstResultDocFileName = resultDocumentList.get(0).getDocumentName();
+
+            log.debug("Transaction id from post: {}", transactionId);
+
+            final TestRestTemplate resultDocRestTemplate = new TestRestTemplate();
+
+            byte[] resultDocBinary = resultDocRestTemplate.getForObject(this.testEndpoint + "/template/fill/{transactionId}/doc?" +
+                    "resultDocumentId={resultDocumentId}", byte[].class, transactionId, firstResultDocFileName);
+            try {
+                Files.write(Paths.get(firstResultDocFileName), resultDocBinary);
+            } catch (final IOException e) {
+                log.error("Error write result file.", e);
+            }
+
+            log.debug("Result docs from transaction query: {}", resultResponseEntity.getBody());
+
+            Assertions.assertTrue(resultDocBinary.length > 0);
+
+        } else {
+            fail();
+        }
+
+        log.info("getResultDocumentForValidTransactionShouldReturnBinary - end.");
+    }
 }

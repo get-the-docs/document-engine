@@ -31,15 +31,22 @@ import net.videki.templateutils.api.document.api.model.Pageable;
 import net.videki.templateutils.api.document.api.model.TemplateJobApiResponse;
 import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.provider.persistence.Page;
+import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import java.io.ByteArrayInputStream;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -122,6 +129,10 @@ public class TemplateApiController implements TemplateApi {
             log.debug("postTemplateGenerationJob - id: [{}], data: [{}]", id, body);
         }
 
+        if (id == null || id.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         final TemplateJobApiResponse result = new TemplateJobApiResponse();
         final String transactionId = UUID.randomUUID().toString();
 
@@ -150,6 +161,10 @@ public class TemplateApiController implements TemplateApi {
      */
     @Override
     public ResponseEntity<GenerationResult> getResultDocumentByTransactionId(final String transactionId) {
+        if (transactionId == null || transactionId.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
             final Optional<StoredGenerationResult> generationResult =
                     this.templateApiService.getResultDocumentByTransactionId(transactionId);
@@ -170,6 +185,35 @@ public class TemplateApiController implements TemplateApi {
     @Override
     public ResponseEntity<Resource> getResultDocumentForTemplateByTransactionIdAndResultDocumentId(
             final String transactionId, final String resultDocumentId) {
+
+        if ((transactionId == null || transactionId.isBlank()) &&
+                (resultDocumentId == null || resultDocumentId.isBlank())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            final Optional<StoredResultDocument> storedResultDocument =
+                    this.templateApiService.getResultDocumentByTransactionIdAndDocumentId(transactionId,
+                            resultDocumentId, true);
+
+            if (storedResultDocument.isPresent() && storedResultDocument.get().getBinary() != null) {
+                // TODO: return and determine output format
+                final HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDisposition(
+                        ContentDisposition.attachment().filename(storedResultDocument.get().getFileName()).build());
+
+                final byte[] binaryData = storedResultDocument.get().getBinary();
+                final InputStreamResource ds = new InputStreamResource(new ByteArrayInputStream(binaryData));
+
+                return ResponseEntity.ok().headers(headers)
+                        .contentLength(binaryData.length)
+                        .body(ds);
+            }
+        } catch (final TemplateServiceException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
         return TemplateApi.super.getResultDocumentForTemplateByTransactionIdAndResultDocumentId(transactionId,
                 resultDocumentId);
     }
