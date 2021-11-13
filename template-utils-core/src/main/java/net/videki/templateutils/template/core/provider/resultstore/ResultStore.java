@@ -48,6 +48,13 @@ public interface ResultStore {
     void init(Properties props) throws TemplateServiceConfigurationException;
 
     /**
+     * Registers a transaction in the result store to let it appear in the queries.
+     * @param transactionId the transaction id
+     * @return success flag.
+     */
+    boolean registerTransaction(String transactionId);
+
+    /**
      * Saves a single template based result document.
      * @param result the generated document.
      * @return DocumentResult the save results (the result filename and its success flag).

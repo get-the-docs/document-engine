@@ -9,9 +9,9 @@ package net.videki.templateutils.api.document.api.controller;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,27 +22,30 @@ package net.videki.templateutils.api.document.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.videki.templateutils.api.document.service.TemplateApiService;
-import net.videki.templateutils.template.core.provider.persistence.Page;
-import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
+import net.videki.templateutils.api.document.api.mapper.GenerationResultApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.GetTemplatesResponseApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
 import net.videki.templateutils.api.document.api.model.GenerationResult;
 import net.videki.templateutils.api.document.api.model.GetTemplatesResponse;
 import net.videki.templateutils.api.document.api.model.Pageable;
 import net.videki.templateutils.api.document.api.model.TemplateJobApiResponse;
-
+import net.videki.templateutils.api.document.service.TemplateApiService;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.provider.persistence.Page;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
+import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Template API.
- * 
+ *
  * @author Levente Ban
  */
 @RequiredArgsConstructor
@@ -65,14 +68,14 @@ public class TemplateApiController implements TemplateApi {
 
     /**
      * Returns the actual template list.
-     * 
+     *
      * @param templateId optional template id to query a single template.
-     * @param pageable the requested result page.
+     * @param pageable   the requested result page.
      * @return the available templates.
      */
     @Override
     public ResponseEntity<GetTemplatesResponse> getTemplates(final String templateId,
-            final Pageable pageable) {
+                                                             final Pageable pageable) {
 
         try {
             if (pageable != null) {
@@ -103,14 +106,14 @@ public class TemplateApiController implements TemplateApi {
 
     /**
      * Starts a single template based document generation with the given model object.
-     * 
-     * @param id the template id as stored in the template repository.
+     *
+     * @param id   the template id as stored in the template repository.
      * @param body the model object.
      * @return the transaction id to refer on status check and download.
      */
     @Override
     public ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(final String id, final Object body,
-            final String notificationUrl) {
+                                                                            final String notificationUrl) {
 
         if (log.isDebugEnabled()) {
             log.debug("postTemplateGenerationJob - id: [{}]", id);
@@ -141,19 +144,26 @@ public class TemplateApiController implements TemplateApi {
 
     /**
      * Returns the available result documents for the given transaction id.
-     * 
+     *
      * @param transactionId the transaction id.
-     * @return the generatin result containing the list of the result documents (refer to these to download via getResultDocumentForTemplateByTransactionIdAndResultDocumentId).
+     * @return the generation result containing the list of the result documents (refer to these to download via getResultDocumentForTemplateByTransactionIdAndResultDocumentId).
      */
     @Override
     public ResponseEntity<GenerationResult> getResultDocumentByTransactionId(final String transactionId) {
-        return TemplateApi.super.getResultDocumentByTransactionId(transactionId);
+        try {
+            final Optional<StoredGenerationResult> generationResult =
+                    this.templateApiService.getResultDocumentByTransactionId(transactionId);
+
+            return generationResult.map(storedGenerationResult -> ResponseEntity.ok(GenerationResultApiModelMapper.INSTANCE.map(storedGenerationResult))).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (final TemplateServiceException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     /**
      * Returns a given result document for a transaction id and result document id.
-     * 
-     * @param transactionId the transaction id.
+     *
+     * @param transactionId    the transaction id.
      * @param resultDocumentId the result document to download.
      * @return the result document descriptor and binary.
      */

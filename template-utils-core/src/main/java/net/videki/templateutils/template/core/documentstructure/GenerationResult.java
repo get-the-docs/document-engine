@@ -88,7 +88,7 @@ public class GenerationResult extends AbstractGenerationResult {
         return "GenerationResult{" +
                 "results=" + results +
                 ", transactionId='" + this.getTransactionId() + '\'' +
-                ", valueSetTransactionId='" + this.getTransactionId() + '\'' +
+                ", valueSetTransactionId='" + this.getValueSetTransactionId() + '\'' +
                 ", generationStartTime=" + this.getGenerationStartTime() +
                 ", generationEndTime=" + this.getGenerationEndTime() +
                 '}';

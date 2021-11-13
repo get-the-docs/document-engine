@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -76,6 +77,31 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         }
 
         this.baseDir = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BASEDIR);
+
+        initTemplateRepositoryDir();
+    }
+
+    private void initTemplateRepositoryDir() throws TemplateServiceConfigurationException {
+        try {
+            LOGGER.info("Checking template repository access...");
+            Files.list(Paths.get(this.baseDir).toAbsolutePath());
+
+            LOGGER.info("Template repository available.");
+        } catch (final NoSuchFileException e) {
+            try {
+                Files.createDirectories(Paths.get(this.baseDir).toAbsolutePath());
+
+                LOGGER.info("Template repository did not exist, created.");
+            } catch (final IOException ex) {
+                final String msg = "Cannot create template repository path";
+                LOGGER.error("Could not initialize template repository. " + msg, ex);
+                throw new TemplateServiceConfigurationException("833e27f3-6813-43f5-aafd-cd511aca3ae0", msg);
+            }
+        } catch (final IOException e) {
+            final String msg = "Invalid template path";
+            LOGGER.error("Could not initialize template repository. " + msg, e);
+            throw new TemplateServiceConfigurationException("9bd97feb-1387-40f3-bc82-01961e26bf5f", msg);
+        }
     }
 
     /**

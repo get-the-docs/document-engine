@@ -23,9 +23,11 @@ package net.videki.templateutils.api.document;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.videki.templateutils.api.document.api.model.GenerationResult;
 import net.videki.templateutils.api.document.api.model.GetTemplatesResponse;
 import net.videki.templateutils.api.document.api.model.Pageable;
 
+import net.videki.templateutils.api.document.api.model.TemplateJobApiResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Assertions;
@@ -41,6 +43,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -49,7 +52,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -58,15 +66,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(classes = {ServiceApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DocumentApiTemplatesIT {
 
-    final String JSON_DIR = "/data/integrationTests";
+    final String JSON_DIR = "/values/integrationtests";
     private String testEndpoint;
 
     @LocalServerPort
     private int port;
 
     final ObjectMapper jsonMapper = new ObjectMapper();
-
-
 
     @PostConstruct
     public void setUp() {
@@ -212,4 +218,142 @@ public class DocumentApiTemplatesIT {
 
         log.info("getTemplatesNoParamsShouldReturnUnpaged - end.");
     }
+
+    @Test
+    void postTemplateGenerationJobValidShouldReturnTransactionId() {
+        log.info("postTemplateGenerationJobValidShouldReturnTransactionId...");
+
+        final Map<String, String> urlVariables = new HashMap<>();
+        final var data = this.getDataForTestCase("contractdata.json");
+        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu.docx");
+
+        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
+        converter.setObjectMapper(this.jsonMapper);
+
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final RestTemplate restTemplate =
+                new RestTemplate(Collections.singletonList(converter));
+
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
+
+        final ResponseEntity<TemplateJobApiResponse> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
+                        "templateId={templateId}", data, TemplateJobApiResponse.class,
+                        urlVariables);
+
+        log.debug("postTemplateGenerationJobValidShouldReturnTransactionId - transaction id: " + responseEntity.getBody());
+
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertTrue(responseEntity.getBody().getTransactionId() != null &&
+                !responseEntity.getBody().getTransactionId().isBlank());
+
+        log.info("postTemplateGenerationJobValidShouldReturnTransactionId - end.");
+    }
+
+    @Test
+    void postTemplateGenerationJobNonexistingTemplateShouldReturnTransactionId() {
+        log.info("postTemplateGenerationJobNonexistingTemplateShouldReturnBadRequest...");
+
+        final Map<String, String> urlVariables = new HashMap<>();
+        final var data = this.getDataForTestCase("contractdata.json");
+        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu-i_dont_exist.docx");
+
+        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
+        converter.setObjectMapper(this.jsonMapper);
+
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final RestTemplate restTemplate =
+                new RestTemplate(Collections.singletonList(converter));
+
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
+
+        final ResponseEntity<TemplateJobApiResponse> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
+                                "templateId={templateId}", data, TemplateJobApiResponse.class,
+                        urlVariables);
+
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertTrue(responseEntity.getBody().getTransactionId() != null &&
+                !responseEntity.getBody().getTransactionId().isBlank());
+
+        log.info("postTemplateGenerationJobNonexistingTemplateShouldReturnTransactionId - end.");
+    }
+
+    @Test
+    void postTemplateGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType() {
+        log.info("postTemplateGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType...");
+
+        final Map<String, String> urlVariables = new HashMap<>();
+
+        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
+        converter.setObjectMapper(this.jsonMapper);
+
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final RestTemplate restTemplate =
+                new RestTemplate(Collections.singletonList(converter));
+
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
+
+        try {
+            final ResponseEntity<TemplateJobApiResponse> responseEntity =
+                    restTemplate.postForEntity(this.testEndpoint + "/template/fill",
+                            null, TemplateJobApiResponse.class,
+                            urlVariables);
+        } catch (final HttpClientErrorException e) {
+            assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getStatusCode());
+        } catch (final Exception e) {
+            fail();
+        }
+
+        log.info("postTemplateGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType - end.");
+    }
+
+    @Test
+    void getTemplateGenerationJobValidShouldReturnGenerationResult() {
+        log.info("getTemplateGenerationJobValidShouldReturnGenerationResult...");
+
+        final Map<String, String> urlVariables = new HashMap<>();
+        final var data = this.getDataForTestCase("contractdata.json");
+        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu.docx");
+
+        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
+        converter.setObjectMapper(this.jsonMapper);
+
+        final CloseableHttpClient httpClient = HttpClients.createDefault();
+        final RestTemplate restTemplate =
+                new RestTemplate(Collections.singletonList(converter));
+
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
+
+        // Step 1 - post job
+        final ResponseEntity<TemplateJobApiResponse> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
+                                "templateId={templateId}", data, TemplateJobApiResponse.class,
+                        urlVariables);
+
+        // Step 2 - query result (may be empty due internal async processing)
+        if (responseEntity != null &&
+                responseEntity.hasBody() &&
+                responseEntity.getBody().getTransactionId() != null) {
+            log.debug("Transaction id from post: {}", responseEntity.getBody());
+
+            final TestRestTemplate resultRestTemplate = new TestRestTemplate();
+            final ResponseEntity<GenerationResult> resultResponseEntity =
+                    resultRestTemplate.getForEntity(this.testEndpoint + "/template/fill/{transactionId}",
+                            GenerationResult.class, responseEntity.getBody().getTransactionId(), 10);
+
+            log.debug("Transaction id from get results: {}", resultResponseEntity.getBody());
+
+            assertEquals(HttpStatus.OK, resultResponseEntity.getStatusCode());
+        } else {
+            fail();
+        }
+
+        log.info("getTemplateGenerationJobValidShouldReturnGenerationResult - end.");
+    }
+
 }

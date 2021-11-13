@@ -20,9 +20,11 @@ package net.videki.templateutils.template.core.context;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONValue;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
@@ -79,7 +81,7 @@ public class JsonTemplateContext extends TemplateContext {
 
             this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(data);
 
-            Map<String, Object> contextObjects = dc.read("$." + TemplateContext.CONTEXT_ROOT_KEY);
+            Map<String, Object> contextObjects = dc.read(JSONPATH_PREFIX + TemplateContext.CONTEXT_ROOT_KEY);
 
             contextObjects.keySet()
                     .forEach(t -> {
