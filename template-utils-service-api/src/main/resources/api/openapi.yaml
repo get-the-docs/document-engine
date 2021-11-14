@@ -136,8 +136,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
-        "404":
-          description: Template not found
+        "415":
+          description: "Unsupported media type or no body"
           content:
             application/json:
               schema:
@@ -868,11 +868,19 @@ components:
       type: object
       additionalProperties: false
       properties:
+        transactionId:
+          $ref: "#/components/schemas/TransactionId"
         documentName:
           type: string
           minLength: 0
           maxLength: 4000
           pattern: "^[a-zA-Z0-9_/\\]*$"
+        status:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+          enum: [PENDING, AVAILABLE, NOT_FOUND]
         format:
           type: string
           minLength: 0
@@ -890,6 +898,8 @@ components:
       additionalProperties: false
       properties:
         transactionId:
+          $ref: "#/components/schemas/TransactionId"
+        valuesetTransactionId:
           $ref: "#/components/schemas/TransactionId"
         documentStructureId:
           $ref: "#/components/schemas/DocumentStructureId"

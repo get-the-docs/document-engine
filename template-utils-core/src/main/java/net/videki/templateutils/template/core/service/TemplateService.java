@@ -54,6 +54,29 @@ public interface TemplateService {
         <T> ResultDocument fill(String templateName, T dto) throws TemplateServiceException;
 
         /**
+         * <p>
+         * Fills the given single file template specified by its name and return the
+         * filled document in the templates format.
+         * </p>
+         * <p>
+         * The template file format has to be in the configured template provider - @see
+         * TemplateServiceConfiguration
+         * </p>
+         *
+         * @param transactionId the transaction id, if defined.
+         * @param templateName the template file name
+         * @param dto          the value object to fill the template
+         * @param <T>          the value object type
+         * @throws TemplateServiceException if invalid parameters caught
+         * @throws TemplateProcessException thrown if the configuration/call params are
+         *                                  invalid
+         * @return ResultDocument a copy of the input template filled with the dto's
+         *         data on success
+         *
+         */
+        <T> ResultDocument fill(String transactionId, String templateName, T dto) throws TemplateServiceException;
+
+        /**
          * Fills the given single file template specified by its name and converts if
          * needed to the given output format.
          * 
@@ -146,6 +169,28 @@ public interface TemplateService {
          */
         <T> StoredResultDocument fillAndSave(String templateName, T dto, OutputFormat format)
                         throws TemplateServiceException;
+
+        /**
+         * <p>
+         * Fills the given single file template specified by its name and return the
+         * filled document in the templates format.
+         * </p>
+         * <p>
+         * The template file format has to be in the configured template provider - @see
+         * TemplateServiceConfiguration
+         * </p>
+         *
+         * @param transactionId the transaction id, if defined
+         * @param templateName  the template file name
+         * @param dto           the value object to fill the template
+         * @param <T>           the value object type
+         * @throws TemplateServiceException if invalid parameters caught
+         * @throws TemplateProcessException thrown if the configuration/call params are
+         *                                  invalid
+         * @return StoredResultDocument the result filename and its save success flag
+         *
+         */
+        <T> StoredResultDocument fillAndSave(String transactionId, String templateName, T dto) throws TemplateServiceException;
 
         /**
          * Fills the given single file template specified by its name and converts if

@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
+import net.videki.templateutils.template.core.context.JsonTemplateContext;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.processor.ConverterRegistry;
@@ -108,6 +109,9 @@ public class TemplateServiceImpl implements TemplateService {
             for (final Object actKey : ((Map) dto).keySet()) {
                 context.getCtx().put((String) actKey, ((Map) dto).get(actKey));
             }
+        } else if (dto instanceof JsonTemplateContext) {
+            LOGGER.debug("JsonTemplateContext context caught.");
+            context = (JsonTemplateContext) dto;
         } else if (dto instanceof TemplateContext) {
             LOGGER.debug("TemplateContext context caught.");
             context = (TemplateContext) dto;
@@ -125,16 +129,36 @@ public class TemplateServiceImpl implements TemplateService {
 
     /**
      * Entry point to fill a single template with a given model.
-     * 
-     * @param templateName the template name (id) in the template repository.
-     * @param <T>          the model class.
-     * @param dto          the model object.
+     *
+     * @param templateName  the template name (id) in the template repository.
+     * @param <T>           the model class.
+     * @param dto           the model object.
      * @throws TemplateServiceException thrown on processing related errors during
      *                                  template retrieval or fill.
      * @return the filled document if the fill was successful.
      */
     @Override
-    public <T> ResultDocument fill(final String templateName, final T dto) throws TemplateServiceException {
+    public <T> ResultDocument fill(final String templateName, final T dto)
+            throws TemplateServiceException {
+
+        return this.fill(null, templateName, dto);
+
+    }
+
+    /**
+     * Entry point to fill a single template with a given model.
+     *
+     * @param transactionId the transaction id.
+     * @param templateName  the template name (id) in the template repository.
+     * @param <T>           the model class.
+     * @param dto           the model object.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     * @return the filled document if the fill was successful.
+     */
+    @Override
+    public <T> ResultDocument fill(final String transactionId, final String templateName, final T dto)
+            throws TemplateServiceException {
 
         if (Strings.isNullOrEmpty(templateName) || dto == null) {
             throw new TemplateServiceConfigurationException("070f463e-743f-4cb2-a651-bd11e844728d",
@@ -157,12 +181,19 @@ public class TemplateServiceImpl implements TemplateService {
         }
 
         try {
-            return new ResultDocument(templateName, processor.fill(templateName, context));
+            final ResultDocument result = new ResultDocument(templateName, processor.fill(templateName, context));
+            result.setTransactionId(transactionId);
+
+            return result;
         } catch (final PlaceholderEvalException e) {
-            return new ResultDocument(templateName, null);
+            final ResultDocument result = new ResultDocument(templateName, null);
+            result.setTransactionId(transactionId);
+
+            return result;
         }
 
     }
+
 
     /**
      * Entry point to fill a single template with a given model and convert it to
@@ -352,7 +383,14 @@ public class TemplateServiceImpl implements TemplateService {
             throws TemplateServiceException {
         final ResultDocument result = this.fill(templateName, dto);
 
-        return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+        if (result.getContent() != null) {
+            return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+        } else {
+            final StoredResultDocument resultDocument = new StoredResultDocument(result.getFileName(), false);
+            resultDocument.setTransactionId(result.getTransactionId());
+
+            return resultDocument;
+        }
     }
 
     /**
@@ -371,6 +409,26 @@ public class TemplateServiceImpl implements TemplateService {
     public <T> StoredResultDocument fillAndSave(final String templateName, final T dto, final OutputFormat format)
             throws TemplateServiceException {
         final ResultDocument result = this.fill(null, templateName, dto, format);
+
+        return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+    }
+
+    /**
+     * Processes a single template document by filling it with the given model
+     * object, converts it to the desired output format and saves it in the
+     * configured result store.
+     *
+     * @param transactionId The tranasction id, if defined
+     * @param templateName  the template document name in the template repository.
+     * @param <T>           the model class.
+     * @param dto           the model object.
+     * @throws TemplateServiceException thrown on processing related errors during
+     *                                  template retrieval or fill.
+     */
+    @Override
+    public <T> StoredResultDocument fillAndSave(final String transactionId, final String templateName, final T dto)
+            throws TemplateServiceException {
+        final ResultDocument result = this.fill(transactionId, templateName, dto);
 
         return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
     }

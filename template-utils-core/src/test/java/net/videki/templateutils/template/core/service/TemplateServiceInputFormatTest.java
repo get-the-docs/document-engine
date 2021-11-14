@@ -20,6 +20,7 @@ package net.videki.templateutils.template.core.service;
  * #L%
  */
 
+import net.videki.templateutils.template.core.context.JsonTemplateContext;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
@@ -29,12 +30,126 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.fail;
 
 public class TemplateServiceInputFormatTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateServiceInputFormatTest.class);
     private final TemplateService ts = TemplateServiceRegistry.getInstance();
+
+    private final String jsonDataMultiContext = "{\n" +
+            "  \"ctx\": {\n" +
+            "    \"org\": {\n" +
+            "      \"orgCode\": \"PB\",\n" +
+            "      \"name\": \"Vintage Services - Palm beach\",\n" +
+            "      \"address\": {\n" +
+            "        \"zip\": \"Y-1234567\",\n" +
+            "        \"city\": \"Simply City\",\n" +
+            "        \"address\": \"Main blvd 432\"\n" +
+            "      }\n" +
+            "    },\n" +
+            "    \"officer\": {\n" +
+            "      \"name\": \"Chuck Norris\",\n" +
+            "      \"orgCode\": \"PB-001\",\n" +
+            "      \"login\": \"PB\\\\cnorris\"\n" +
+            "    },\n" +
+            "    \"contract\": {\n" +
+            "      \"contractor\": {\n" +
+            "        \"name\": \"John Doe\",\n" +
+            "        \"birthDate\": {\n" +
+            "          \"year\": 1970,\n" +
+            "          \"month\": 7,\n" +
+            "          \"day\": 20\n" +
+            "        }\n" +
+            "      },\n" +
+            "      \"contractType\": {\n" +
+            "        \"contractTypeName\": \"Vintage Gold\",\n" +
+            "        \"fee\": 1500,\n" +
+            "        \"paymentFrequency\": \"MONTHLY\"\n" +
+            "      },\n" +
+            "      \"beneficiaries\": [\n" +
+            "        {\n" +
+            "          \"phoneNumber\": \"+1 800 2234 567\",\n" +
+            "          \"name\": \"Jim Doe\",\n" +
+            "          \"birthDate\": {\n" +
+            "            \"year\": 1975,\n" +
+            "            \"month\": 8,\n" +
+            "            \"day\": 11\n" +
+            "          }\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"phoneNumber\": \"+1 800 2234 568\",\n" +
+            "          \"name\": \"Tim Doe\",\n" +
+            "          \"birthDate\": {\n" +
+            "            \"year\": 1976,\n" +
+            "            \"month\": 8,\n" +
+            "            \"day\": 12\n" +
+            "          }\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"phoneNumber\": \"+1 800 2234 569\",\n" +
+            "          \"name\": \"Pim Doe\",\n" +
+            "          \"birthDate\": {\n" +
+            "            \"year\": 1977,\n" +
+            "            \"month\": 8,\n" +
+            "            \"day\": 13\n" +
+            "          }\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"phoneNumber\": \"+1 800 3234 567\",\n" +
+            "          \"name\": \"Jack Ryan\",\n" +
+            "          \"birthDate\": {\n" +
+            "            \"year\": 1962,\n" +
+            "            \"month\": 8,\n" +
+            "            \"day\": 11\n" +
+            "          }\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"phoneNumber\": \"+1 800 3234 568\",\n" +
+            "          \"name\": \"John Goodall\",\n" +
+            "          \"birthDate\": {\n" +
+            "            \"year\": 1946,\n" +
+            "            \"month\": 8,\n" +
+            "            \"day\": 11\n" +
+            "          }\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"phoneNumber\": \"+1 800 3234 569\",\n" +
+            "          \"name\": \"Mortimer Young\",\n" +
+            "          \"birthDate\": {\n" +
+            "            \"year\": 1991,\n" +
+            "            \"month\": 8,\n" +
+            "            \"day\": 11\n" +
+            "          }\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"phoneNumber\": \"+1 800 3234 560\",\n" +
+            "          \"name\": \"Zack Black\",\n" +
+            "          \"birthDate\": {\n" +
+            "            \"year\": 1987,\n" +
+            "            \"month\": 8,\n" +
+            "            \"day\": 11\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ],\n" +
+            "      \"signDate\": {\n" +
+            "        \"year\": 2021,\n" +
+            "        \"month\": 2,\n" +
+            "        \"day\": 16\n" +
+            "      }\n" +
+            "    },\n" +
+            "    \"doc\": {\n" +
+            "      \"dmsUrl\": \"http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68\",\n" +
+            "      \"login\": \"PB\\\\cnorris\",\n" +
+            "      \"generationDate\": {\n" +
+            "        \"year\": 1970,\n" +
+            "        \"month\": 7,\n" +
+            "        \"day\": 20\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
 
     @Test
     public void processorDocxOKTest() {
@@ -53,6 +168,41 @@ public class TemplateServiceInputFormatTest {
 
     }
 
+    @Test
+    public void processorDocxJsonpathOkTest() {
+
+        try {
+            final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-jsonpath.docx",
+                    new JsonTemplateContext(jsonDataMultiContext));
+
+            Assert.assertTrue(result.isGenerated());
+        } catch (TemplateServiceException e) {
+            e.printStackTrace();
+
+            fail();
+            return;
+        }
+
+    }
+
+    @Test
+    public void processorDocxJsonpathPlaceholderErrorTest() throws TemplateProcessException, TemplateServiceException {
+
+        final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-jsonpath-placeholder_error.docx",
+                new JsonTemplateContext(jsonDataMultiContext));
+
+        Assert.assertFalse(result.isGenerated());
+
+    }
+
+    @Test
+    public void processorDocxJsonpathPlaceholderPojoDTOErrorTest() throws TemplateProcessException, TemplateServiceException {
+
+        final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-jsonpath.docx",
+                ContractDataFactory.createContract());
+
+        Assert.assertFalse(result.isGenerated());
+    }
 
     @Test
     public void processorDocxToPdfOKTest() {

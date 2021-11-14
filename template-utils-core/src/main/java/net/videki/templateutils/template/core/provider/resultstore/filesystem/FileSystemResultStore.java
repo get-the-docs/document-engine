@@ -39,9 +39,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -85,6 +83,56 @@ public class FileSystemResultStore implements ResultStore {
         }
 
         this.baseDir = (String) props.get(RESULT_REPOSITORY_PROVIDER_BASEDIR);
+
+        initResultStoreDir();
+
+    }
+
+    private void initResultStoreDir() throws TemplateServiceConfigurationException {
+        try {
+            LOGGER.info("Checking result store repository access...");
+            Files.list(Paths.get(this.baseDir).toAbsolutePath());
+
+            LOGGER.info("Result store repository available.");
+        } catch (final NoSuchFileException e) {
+            try {
+                Files.createDirectories(Paths.get(this.baseDir).toAbsolutePath());
+
+                LOGGER.info("Result store repository did not exist, created.");
+            } catch (final IOException ex) {
+                final String msg = "Cannot create result store path";
+                LOGGER.error("Could not initialize result store. " + msg, ex);
+                throw new TemplateServiceConfigurationException("b27ff1a0-2554-4d7c-b1f2-b8663fe00f92", msg);
+            }
+        } catch (final IOException e) {
+            final String msg = "Invalid result store path";
+            LOGGER.error("Could not initialize result store. " + msg, e);
+            throw new TemplateServiceConfigurationException("748c6766-3211-45d2-b9a2-8fc745ca613e", msg);
+        }
+    }
+
+    /**
+     * Registers a transaction in the result store to let it appear in the queries.
+     * @param transactionId the transaction id
+     * @return success flag.
+     */
+    @Override
+    public boolean registerTransaction(final String transactionId) {
+        String transactionDir = transactionId;
+        if (transactionDir == null) {
+            transactionDir = ".";
+        }
+        final String resultDir = this.baseDir + File.separator + transactionDir;
+
+        try {
+            Files.createDirectories(Paths.get(resultDir).toAbsolutePath());
+        } catch (final FileAlreadyExistsException e) {
+            LOGGER.debug("The transaction dir was already present:" + resultDir);
+        } catch (final IOException e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -106,13 +154,12 @@ public class FileSystemResultStore implements ResultStore {
         }
         final String resultDir = this.baseDir + File.separator + transactionDir;
 
-        synchronized (this) {
-            final File subdir = new File(resultDir);
-            if (!subdir.exists()) {
-                if (!subdir.mkdirs()) {
-                    throw new IllegalArgumentException("Cannot create directory: " + resultDir);
-                }
-            }
+        try {
+            Files.createDirectories(Paths.get(resultDir).toAbsolutePath());
+        } catch (final FileAlreadyExistsException e) {
+            LOGGER.debug("The transaction dir was already present:" + resultDir);
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Cannot create directory: " + resultDir);
         }
 
         final String resultFileName = resultDir + File.separator + resultDocument.getFileName();
@@ -198,17 +245,15 @@ public class FileSystemResultStore implements ResultStore {
             final StoredGenerationResult result = new StoredGenerationResult(items);
             result.setTransactionId(transactionId);
 
-            if (!items.isEmpty()) {
-                return Optional.of(result);
-            } else {
-                return Optional.empty();
-            }
+            return Optional.of(result);
 
+        } catch (final NoSuchFileException e) {
+            return Optional.empty();
         } catch (final IOException e) {
-            final String msg = String.format("Error retrieving the template list - baseDir: [{}]", this.baseDir);
+            final String msg = String.format("Error retrieving the result documents - baseDir: [{}]", this.baseDir);
             LOGGER.error(msg, e);
 
-            throw new TemplateServiceException("68b79868-c05c-4d14-8d94-1d8815625c8f", msg);
+            throw new TemplateServiceException("402713ce-9c2e-48b0-a910-ab92d0cc87fa", msg);
         }
     }
 

@@ -1,0 +1,1 @@
+java -Dconfig="./config"  -Dloader.path="config" -cp "./*.jar;./target/*.jar;./config" org.springframework.boot.loader.PropertiesLauncher

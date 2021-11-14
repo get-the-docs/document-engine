@@ -15,4 +15,4 @@ ARG DEPENDENCY=/workspace/app/target/dependency
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-Dspring.profiles.active=${SPRING_PROFILE:prod}","-cp","app:app/lib/*","net.videki.templateutils.api.document.ServiceApplication"]
+ENTRYPOINT ["java","-Dspring.profiles.active=${SPRING_PROFILE:prod}", "-Dconfig=\"./config\"", "-Dloader.path=\"config\"", "-cp","app:app/lib/*:./config","org.springframework.boot.loader.PropertiesLauncher"]
