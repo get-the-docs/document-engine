@@ -22,6 +22,7 @@ package net.videki.templateutils.api.document;
 
 import com.fasterxml.jackson.databind.Module;
 import org.openapitools.jackson.nullable.JsonNullableModule;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +38,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @SpringBootApplication
 @ComponentScan(basePackages = {"net.videki.templateutils.api.document"})
-public class ServiceApplication {
+public class ServiceApplication implements CommandLineRunner {
 
     /**
      * Application entry point.
@@ -61,6 +62,17 @@ public class ServiceApplication {
 
     }
 
+    /**
+     * Container startup entry point to be able to add the config.
+     * @param arg0 system args.
+     * @throws Exception any unhandled exception.
+     */
+    @Override
+    public void run(String... arg0) throws Exception {
+        if (arg0.length > 0 && arg0[0].equals("exitcode")) {
+            throw new ExitException();
+        }
+    }
     /**
      * Json module inject. 
      * @return json nullable module.

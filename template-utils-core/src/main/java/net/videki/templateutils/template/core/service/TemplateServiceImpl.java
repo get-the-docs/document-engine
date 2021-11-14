@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
+import net.videki.templateutils.template.core.context.JsonTemplateContext;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.processor.ConverterRegistry;
@@ -108,6 +109,9 @@ public class TemplateServiceImpl implements TemplateService {
             for (final Object actKey : ((Map) dto).keySet()) {
                 context.getCtx().put((String) actKey, ((Map) dto).get(actKey));
             }
+        } else if (dto instanceof JsonTemplateContext) {
+            LOGGER.debug("JsonTemplateContext context caught.");
+            context = (JsonTemplateContext) dto;
         } else if (dto instanceof TemplateContext) {
             LOGGER.debug("TemplateContext context caught.");
             context = (TemplateContext) dto;
@@ -379,7 +383,14 @@ public class TemplateServiceImpl implements TemplateService {
             throws TemplateServiceException {
         final ResultDocument result = this.fill(templateName, dto);
 
-        return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+        if (result.getContent() != null) {
+            return TemplateServiceConfiguration.getInstance().getResultStore().save(result);
+        } else {
+            final StoredResultDocument resultDocument = new StoredResultDocument(result.getFileName(), false);
+            resultDocument.setTransactionId(result.getTransactionId());
+
+            return resultDocument;
+        }
     }
 
     /**

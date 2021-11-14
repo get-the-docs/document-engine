@@ -20,18 +20,19 @@ package net.videki.templateutils.template.core.context;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONValue;
+import net.videki.templateutils.template.core.context.dto.IJsonTemplate;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ import java.util.Map;
  * @author Levente Ban
  */
 @Slf4j
-public class JsonTemplateContext extends TemplateContext {
+public class JsonTemplateContext extends TemplateContext implements IJsonTemplate {
 
     /**
      * JSON path query prefix.
@@ -116,7 +117,44 @@ public class JsonTemplateContext extends TemplateContext {
         if (log.isTraceEnabled()) {
             log.trace("Getting data for path {}...", path);
         }
-        return this.dc.read(JSONPATH_PREFIX + path);
+        try {
+            final Object value = this.dc.read(JSONPATH_PREFIX + path);
+
+            if (value instanceof String) {
+                return value;
+            } else if (value instanceof Map) {
+                final StringWriter sw = new StringWriter();
+                try {
+                    JSONValue.writeJSONString(value, sw);
+                } catch (final IOException e) {
+                    throw new TemplateServiceRuntimeException("Error parsing data.");
+                }
+                return new JsonTemplateContext("{\"" + TemplateContext.CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}");
+            } else if (value instanceof JSONArray) {
+                final List<JsonTemplateContext> results = new ArrayList<>(((JSONArray) value).size());
+                for(final Object actItem : ((JSONArray) value)) {
+                    final StringWriter sw = new StringWriter();
+                    try {
+                        JSONValue.writeJSONString(actItem, sw);
+                    } catch (final IOException e) {
+                        throw new TemplateServiceRuntimeException("Error parsing data.");
+                    }
+                    results.add(new JsonTemplateContext("{\"" + TemplateContext.CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}"));
+                }
+                return results;
+            }
+
+            return value;
+        } catch (final Exception e) {
+            final var msg = "Error reading JSON data. Path: " + path;
+
+            log.error(msg);
+            if (log.isTraceEnabled()) {
+                log.debug("Value object to parse: {}", this.jsonData);
+            }
+
+            throw new TemplateServiceRuntimeException(msg);
+        }
     }
 
     /**

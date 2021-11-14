@@ -144,17 +144,6 @@ public interface ITemplate {
     return result;
   }
 
-  @SuppressWarnings("unchecked") 
-  default String fmtDate(final Object value) {
-    String result;
-    if (value != null && value instanceof Map) {
-      return fmtDate((Map<Object, Object>) value);
-    } else {
-      result = PLACEHOLDER_EMPTY;
-    }
-    return result;
-  }
-
   default String fmtDateTime(final LocalDateTime value) {
     String result;
     if (value != null) {

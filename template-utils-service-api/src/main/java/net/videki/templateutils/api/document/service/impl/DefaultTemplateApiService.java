@@ -22,10 +22,12 @@ package net.videki.templateutils.api.document.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONValue;
 import net.videki.templateutils.api.document.service.NotificationService;
 import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.context.JsonTemplateContext;
+import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.provider.persistence.Page;
@@ -38,6 +40,8 @@ import net.videki.templateutils.template.core.template.descriptors.TemplateDocum
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
@@ -157,10 +161,10 @@ public class DefaultTemplateApiService implements TemplateApiService {
             final String notificationUrl) {
         try {
             if (log.isDebugEnabled()) {
-                log.debug("postTemplateGenerationJob - id:[{}], notification url: [{}]", id, notificationUrl);
+                log.debug("postTemplateGenerationJob - transaction id: [{}], template id:[{}], notification url: [{}]", transactionId, id, notificationUrl);
             }
             if (log.isTraceEnabled()) {
-                log.trace("postTemplateGenerationJob - {}, data: [{}]", id, body);
+                log.trace("postTemplateGenerationJob - transaction id: [{}], template id:[{}], data: [{}]", transactionId, id, body);
             }
 
             final boolean tranDirCreated =
@@ -173,11 +177,11 @@ public class DefaultTemplateApiService implements TemplateApiService {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("postTemplateGenerationJob end - id:[{}], notification url: [{}]", id, notificationUrl);
+                log.debug("postTemplateGenerationJob end - transaction id: [{}], template id:[{}], notification url: [{}]", transactionId, id, notificationUrl);
             }
 
         } catch (final TemplateServiceRuntimeException e) {
-            log.warn("Error processing request: id:[{}], notification url: [{}]", id, notificationUrl);
+            log.warn("Error processing request: transaction id: [{}], template id:[{}], notification url: [{}]", transactionId, id, notificationUrl);
         }
 
     }
@@ -190,31 +194,32 @@ public class DefaultTemplateApiService implements TemplateApiService {
      * @param id              the template id.
      * @param body            the value object.
      * @param notificationUrl notification url, optional.
-     */    @Async
+     */
+    @Async
     protected void postTemplateGenerationJobAsync(final String transactionId, final String id, final Object body,
                                           final String notificationUrl) {
         try {
             if (log.isDebugEnabled()) {
-                log.debug("postTemplateGenerationJobAsync - id:[{}], notification url: [{}]", id, notificationUrl);
+                log.debug("postTemplateGenerationJobAsync - transaction id: [{}], template id:[{}], notification url: [{}]", transactionId, id, notificationUrl);
             }
             if (log.isTraceEnabled()) {
-                log.trace("postTemplateGenerationJobAsync - {}, data: [{}]", id, body);
+                log.trace("postTemplateGenerationJobAsync - transaction id: [{}] template id: [{}], data: [{}]", transactionId, id, body);
             }
 
             final var genResult = TemplateServiceRegistry.getInstance().fillAndSave(transactionId, id,
-                    new JsonTemplateContext((String) body));
+                    getContext(body));
 
             this.notificationService.notifyRequestor(notificationUrl, genResult.getTransactionId(),
                     genResult.getFileName(), genResult.isGenerated());
 
             if (log.isDebugEnabled()) {
-                log.debug("postTemplateGenerationJobAsync end - id:[{}], notification url: [{}]", id, notificationUrl);
+                log.debug("postTemplateGenerationJobAsync end - transaction id: [{}], template id:[{}], notification url: [{}]", transactionId, id, notificationUrl);
             }
             if (log.isTraceEnabled()) {
-                log.trace("postTemplateGenerationJobAsync end - {}, data: [{}]", id, genResult);
+                log.trace("postTemplateGenerationJobAsync end - transaction id: [{}], template id: [{}], data: [{}]", transactionId, id, genResult);
             }
         } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
-            log.warn("Error processing request: id:[{}], notification url: [{}]", id, notificationUrl);
+            log.warn("Error processing request: transaction id: [{}], template id:[{}], notification url: [{}]", transactionId, id, notificationUrl);
         }
 
     }
@@ -285,6 +290,33 @@ public class DefaultTemplateApiService implements TemplateApiService {
             }
         }
         return result;
+    }
+
+    private JsonTemplateContext getContext(final Object data) {
+        if (data instanceof Map) {
+            log.debug("getContext - map...");
+            final StringWriter sw = new StringWriter();
+            try {
+                JSONValue.writeJSONString(data, sw);
+            } catch (final IOException e) {
+                throw new TemplateServiceRuntimeException("Error parsing data.");
+            }
+            final JsonTemplateContext result = new JsonTemplateContext((String) sw.toString());
+            log.debug("getContext - map, parse ok.");
+
+            return result;
+        } else if (data instanceof String){
+            log.debug("getContext - plain string...");
+            final JsonTemplateContext result = new JsonTemplateContext((String) data);
+            log.debug("getContext - plain string, parse ok.");
+
+            return result;
+        } else {
+            log.warn("getContext - object caught at rest api level, should be string or map.");
+
+            throw new TemplateServiceRuntimeException("Error parsing data.");
+        }
+
     }
 
 }

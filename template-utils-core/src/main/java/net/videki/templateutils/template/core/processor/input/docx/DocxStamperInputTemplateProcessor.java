@@ -29,11 +29,11 @@ import net.videki.templateutils.template.core.processor.input.PlaceholderEvalExc
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wickedsource.docxstamper.DocxStamper;
 import org.wickedsource.docxstamper.DocxStamperConfiguration;
 
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
+import org.wickedsource.docxstamper.JsonDocxStamper;
 import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
 
 /**
@@ -73,7 +73,7 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
     OutputStream result = null;
 
     final DocxStamperConfiguration config = new DocxStamperConfiguration();
-    final DocxStamper<T> stamper = new DocxStamper<>(config);
+    final JsonDocxStamper<T> stamper = new JsonDocxStamper<T>(config);
 
     try (final InputStream templateFile = getTemplate(templateFileName)) {
 

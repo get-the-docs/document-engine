@@ -127,7 +127,7 @@ public class DocumentApiTemplatesIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(13,responseEntity.getBody().getContents().size());
+        assertEquals(14,responseEntity.getBody().getContents().size());
 
         log.info("getTemplatesAllShouldReturnTestResources - end.");
     }

@@ -30,85 +30,64 @@
       },
       "beneficiaries": [
         {
-          "beneficiaries": [
-            {
-              "phoneNumber": "+1 800 2234 567",
-              "name": "Jim Doe",
-              "birthDate": {
-                "year": 1975,
-                "month": 8,
-                "day": 11
-              }
-            },
-            {
-              "phoneNumber": "+1 800 2234 568",
-              "name": "Tim Doe",
-              "birthDate": {
-                "year": 1976,
-                "month": 8,
-                "day": 12
-              }
-            },
-            {
-              "phoneNumber": "+1 800 2234 569",
-              "name": "Pim Doe",
-              "birthDate": {
-                "year": 1977,
-                "month": 8,
-                "day": 13
-              }
-            },
-            {
-              "phoneNumber": "+1 800 3234 567",
-              "name": "Jack Ryan",
-              "birthDate": {
-                "year": 1962,
-                "month": 8,
-                "day": 11
-              }
-            },
-            {
-              "phoneNumber": "+1 800 3234 568",
-              "name": "John Goodall",
-              "birthDate": {
-                "year": 1946,
-                "month": 8,
-                "day": 11
-              }
-            },
-            {
-              "phoneNumber": "+1 800 3234 569",
-              "name": "Mortimer Young",
-              "birthDate": {
-                "year": 1991,
-                "month": 8,
-                "day": 11
-              }
-            },
-            {
-              "phoneNumber": "+1 800 3234 560",
-              "name": "Zack Black",
-              "birthDate": {
-                "year": 1987,
-                "month": 8,
-                "day": 11
-              }
-            }
-          ],
-          "phoneNumber": "+1 800 1234 567",
-          "name": "Jane Doe",
+          "phoneNumber": "+1 800 2234 567",
+          "name": "Jim Doe",
           "birthDate": {
-            "year": 1971,
-            "month": 4,
-            "day": 2
+            "year": 1975,
+            "month": 8,
+            "day": 11
           }
         },
         {
-          "beneficiaries": [],
-          "phoneNumber": "+1 800 1234 568",
-          "name": "Jenny Mack",
+          "phoneNumber": "+1 800 2234 568",
+          "name": "Tim Doe",
           "birthDate": {
-            "year": 1951,
+            "year": 1976,
+            "month": 8,
+            "day": 12
+          }
+        },
+        {
+          "phoneNumber": "+1 800 2234 569",
+          "name": "Pim Doe",
+          "birthDate": {
+            "year": 1977,
+            "month": 8,
+            "day": 13
+          }
+        },
+        {
+          "phoneNumber": "+1 800 3234 567",
+          "name": "Jack Ryan",
+          "birthDate": {
+            "year": 1962,
+            "month": 8,
+            "day": 11
+          }
+        },
+        {
+          "phoneNumber": "+1 800 3234 568",
+          "name": "John Goodall",
+          "birthDate": {
+            "year": 1946,
+            "month": 8,
+            "day": 11
+          }
+        },
+        {
+          "phoneNumber": "+1 800 3234 569",
+          "name": "Mortimer Young",
+          "birthDate": {
+            "year": 1991,
+            "month": 8,
+            "day": 11
+          }
+        },
+        {
+          "phoneNumber": "+1 800 3234 560",
+          "name": "Zack Black",
+          "birthDate": {
+            "year": 1987,
             "month": 8,
             "day": 11
           }
