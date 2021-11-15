@@ -21,8 +21,8 @@ package net.videki.templateutils.template.core.documentstructure;
  */
 
 import net.videki.templateutils.template.core.context.TemplateContext;
+import net.videki.templateutils.template.core.context.dto.JsonModel;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
-import net.videki.templateutils.template.core.dto.JsonModel;
 
 import java.util.*;
 

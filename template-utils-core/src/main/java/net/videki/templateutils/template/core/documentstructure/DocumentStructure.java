@@ -1,5 +1,7 @@
 package net.videki.templateutils.template.core.documentstructure;
 
+import net.videki.templateutils.template.core.context.dto.JsonModel;
+
 /*-
  * #%L
  * template-utils-core
@@ -23,7 +25,6 @@ package net.videki.templateutils.template.core.documentstructure;
 import net.videki.templateutils.template.core.documentstructure.descriptors.GenerationResultMode;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
-import net.videki.templateutils.template.core.dto.JsonModel;
 import net.videki.templateutils.template.core.service.OutputFormat;
 
 import java.util.*;

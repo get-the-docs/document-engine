@@ -203,16 +203,4 @@ public class JsonTemplateContextTest {
 
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void concatValuesTest() {
-        final var result = new JsonTemplateContext(this.jsonDataMultiContext);
-
-        log.debug("Data: {}", result.toJson());
-
-        Assert.assertEquals("Y-1234567 Simply City Main blvd 432",
-                result.concat((Map<String, Object>)((JsonValueObject)result.getCtx().get("org"))
-                        .jp("address['zip', 'city', 'address']")));
-    }
-
 }

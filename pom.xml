@@ -64,6 +64,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <junit.version>4.13.1</junit.version>
         <clover.version>4.4.1</clover.version>
+        <clover.check.ratio.min>60%</clover.check.ratio.min>
     </properties>
 
     <dependencies>
@@ -236,27 +237,6 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <source>${java.version}</source>
-                        <release>${java.version}</release>
-                    <encoding>UTF-8</encoding>
-                    <maxmemory>1g</maxmemory>
-                    <failOnWarnings>false</failOnWarnings>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.8.2</version>
             </plugin>
@@ -271,59 +251,43 @@
 
     <profiles>
         <profile>
-            <id>coverage</id>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.openclover</groupId>
-                        <artifactId>clover-maven-plugin</artifactId>
-                        <version>${clover.version}</version>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.2.0</version>
                         <configuration>
-                            <targetPercentage>0%</targetPercentage>
-                            <!--snapshot>${user.home}/.clover/${groupId}-${artifactId}/clover.snapshot</snapshot-->
-                            <snapshot>${user.home}/.clover/atlassian-plugins-clover.snapshot</snapshot>
-                            <singleCloverDatabase>true</singleCloverDatabase>
-                            <generatePdf>false</generatePdf>
-                            <generateXml>true</generateXml>
-                            <generateHtml>true</generateHtml>
-                            <generateJson>false</generateJson>
-                            <excludes>
-                                <exclude>**/api/configuration/*.java</exclude>
-                                <exclude>**/ServiceApplication.java</exclude>
-                                <exclude>**/api/model/*.java</exclude>
-                            </excludes>
+                            <source>${java.version}</source>
+                                <release>${java.version}</release>
+                            <encoding>UTF-8</encoding>
+                            <maxmemory>1g</maxmemory>
+                            <failOnWarnings>false</failOnWarnings>
                         </configuration>
                         <executions>
                             <execution>
-                                <id>clover</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>setup</goal>
-                                </goals>
-                            </execution>
-                            <execution>
+                                <id>attach-javadocs</id>
                                 <phase>verify</phase>
                                 <goals>
-                                    <goal>aggregate</goal>
-                                    <goal>clover</goal>
-                                    <goal>log</goal>
-                                    <goal>check</goal>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
+
+                <resources>
+                    <resource>
+                      <directory>src/resources</directory>
+                      <includes>
+                        <include>**/template-utils.properties</include>
+                        <include>**/logback*.xml</include>
+                      </includes>
+                    </resource>
+                  </resources>
             </build>
 
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.openclover</groupId>
-                        <artifactId>clover-maven-plugin</artifactId>
-                        <version>${clover.version}</version>
-                    </plugin>
-                </plugins>
-            </reporting>
         </profile>
     </profiles>
 

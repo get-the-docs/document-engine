@@ -1,4 +1,4 @@
-package net.videki.templateutils.template.core.dto;
+package net.videki.templateutils.template.core.context.dto;
 
 /*-
  * #%L
