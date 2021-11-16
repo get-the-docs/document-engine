@@ -33,7 +33,6 @@ import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.provider.persistence.Page;
-import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
 import org.springframework.core.io.InputStreamResource;
@@ -205,10 +204,16 @@ public class TemplateApiController implements TemplateApi {
     public ResponseEntity<Resource> getResultDocumentForTemplateByTransactionIdAndResultDocumentId(
             final String transactionId, final String resultDocumentId) {
 
+        if (log.isDebugEnabled()) {
+            log.debug("getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}]", transactionId, resultDocumentId);
+        }
+
         if ((transactionId == null || transactionId.isBlank()) &&
                 (resultDocumentId == null || resultDocumentId.isBlank())) {
             return ResponseEntity.badRequest().build();
         }
+
+        ResponseEntity<Resource> result;
 
         try {
             final Optional<StoredResultDocument> storedResultDocument =
@@ -225,15 +230,31 @@ public class TemplateApiController implements TemplateApi {
                 final byte[] binaryData = storedResultDocument.get().getBinary();
                 final InputStreamResource ds = new InputStreamResource(new ByteArrayInputStream(binaryData));
 
-                return ResponseEntity.ok().headers(headers)
+                if (log.isDebugEnabled()) {
+                    if (binaryData != null && binaryData.length > 0) {
+                        log.debug("getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}]",
+                                transactionId, resultDocumentId);
+                    } else {
+                        log.warn("getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}] - no generation result caught.",
+                                transactionId, resultDocumentId);
+                    }
+                }        
+                result = ResponseEntity.ok().headers(headers)
                         .contentLength(binaryData.length)
                         .body(ds);
+            } else {
+                log.warn("getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}] - no generation result caught.",
+                transactionId, resultDocumentId);
+
+                result = ResponseEntity.notFound().build();
             }
         } catch (final TemplateServiceException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+            log.error("getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}] - error caught on download.",
+            transactionId, resultDocumentId, e);
+            
+            result = ResponseEntity.internalServerError().build();
+        } 
 
-        return TemplateApi.super.getResultDocumentForTemplateByTransactionIdAndResultDocumentId(transactionId,
-                resultDocumentId);
+        return result;
     }
 }

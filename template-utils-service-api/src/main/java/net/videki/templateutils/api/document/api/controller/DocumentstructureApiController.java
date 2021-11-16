@@ -21,9 +21,14 @@ package net.videki.templateutils.api.document.api.controller;
  */
 
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
+import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.provider.persistence.Page;
+import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
+import net.videki.templateutils.api.document.api.mapper.GenerationResultApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.GetDocumentStructuresResponseApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
 import net.videki.templateutils.api.document.api.mapper.ValueSetItemApiModelToEntityMapper;
@@ -33,7 +38,11 @@ import net.videki.templateutils.api.document.api.model.GetDocumentStructuresResp
 import net.videki.templateutils.api.document.api.model.Pageable;
 import net.videki.templateutils.api.document.api.model.ValueSetItem;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +51,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -61,6 +71,7 @@ import java.util.UUID;
 public class DocumentstructureApiController implements DocumentstructureApi {
 
     private final NativeWebRequest request;
+    private final TemplateApiService templateApiService;
     private final DocumentStructureApiService documentStructureApiService;
 
     /**
@@ -130,8 +141,9 @@ public class DocumentstructureApiController implements DocumentstructureApi {
         final ValueSet valueSet = new ValueSet(valuesetTransactionId);
         valueSet.setDocumentStructureId(documentStructureId);
         valueSet.setLocale(new Locale(locale));
-        for (final net.videki.templateutils.api.document.model.ValueSetItem actItem : ValueSetItemApiModelToEntityMapper.INSTANCE.apiModelListToEntityList(valueSetItems)) {
-            valueSet.addContext(actItem.getTemplateElementId(), actItem.getValue() );
+        for (final net.videki.templateutils.api.document.model.ValueSetItem actItem : ValueSetItemApiModelToEntityMapper.INSTANCE
+                .apiModelListToEntityList(valueSetItems)) {
+            valueSet.addContext(actItem.getTemplateElementId(), actItem.getValue());
         }
 
         if (log.isDebugEnabled()) {
@@ -160,7 +172,39 @@ public class DocumentstructureApiController implements DocumentstructureApi {
      */
     @Override
     public ResponseEntity<GenerationResult> getGenerationResultByTransactionId(final String transactionId) {
-        return DocumentstructureApi.super.getGenerationResultByTransactionId(transactionId);
+        if (log.isDebugEnabled()) {
+            log.debug("getResultDocumentByTransactionId - transactionId: [{}]", transactionId);
+        }
+
+        if (transactionId == null || transactionId.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            final Optional<StoredGenerationResult> generationResult = this.templateApiService
+                    .getResultDocumentByTransactionId(transactionId);
+
+            if (log.isDebugEnabled()) {
+                if (generationResult.isPresent()) {
+                    log.debug("getResultDocumentByTransactionId - transactionId: [{}]", transactionId);
+                } else {
+                    log.warn("getResultDocumentByTransactionId - transactionId: [{}], no generation result caught.",
+                            transactionId);
+                }
+            }
+            if (log.isTraceEnabled()) {
+                generationResult.ifPresent(storedGenerationResult -> log.debug(
+                        "getResultDocumentByTransactionId - transactionId: [{}], generation result: {}", transactionId,
+                        storedGenerationResult));
+            }
+
+            return generationResult
+                    .map(storedGenerationResult -> ResponseEntity
+                            .ok(GenerationResultApiModelMapper.INSTANCE.map(storedGenerationResult)))
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (final TemplateServiceException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     /**
@@ -173,7 +217,62 @@ public class DocumentstructureApiController implements DocumentstructureApi {
     @Override
     public ResponseEntity<Resource> getResultDocumentForDocStructureByTransactionIdAndResultDocumentId(
             final String transactionId, final String resultDocumentId) {
-        return DocumentstructureApi.super.getResultDocumentForDocStructureByTransactionIdAndResultDocumentId(
-                transactionId, resultDocumentId);
+
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    "getResultDocumentForDocStructureByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}]",
+                    transactionId, resultDocumentId);
+        }
+
+        if ((transactionId == null || transactionId.isBlank())
+                && (resultDocumentId == null || resultDocumentId.isBlank())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ResponseEntity<Resource> result;
+
+        try {
+            final Optional<StoredResultDocument> storedResultDocument = this.templateApiService
+                    .getResultDocumentByTransactionIdAndDocumentId(transactionId, resultDocumentId, true);
+
+            if (storedResultDocument.isPresent() && storedResultDocument.get().getBinary() != null) {
+                // TODO: return and determine output format
+                final HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDisposition(
+                        ContentDisposition.attachment().filename(storedResultDocument.get().getFileName()).build());
+
+                final byte[] binaryData = storedResultDocument.get().getBinary();
+                final InputStreamResource ds = new InputStreamResource(new ByteArrayInputStream(binaryData));
+
+                if (log.isDebugEnabled()) {
+                    if (binaryData != null && binaryData.length > 0) {
+                        log.debug(
+                                "getResultDocumentForDocStructureByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}]",
+                                transactionId, resultDocumentId);
+                    } else {
+                        log.warn(
+                                "getResultDocumentForDocStructureByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}] - no generation result caught.",
+                                transactionId, resultDocumentId);
+                    }
+                }
+                result = ResponseEntity.ok().headers(headers).contentLength(binaryData.length).body(ds);
+            } else {
+                log.warn(
+                        "getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}] - no generation result caught.",
+                        transactionId, resultDocumentId);
+
+                result = ResponseEntity.notFound().build();
+            }
+        } catch (final TemplateServiceException e) {
+            log.error(
+                    "getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}] - error caught on download.",
+                    transactionId, resultDocumentId, e);
+
+            result = ResponseEntity.internalServerError().build();
+        }
+
+        return result;
+
     }
 }

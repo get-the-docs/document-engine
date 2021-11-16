@@ -184,11 +184,18 @@ public class TemplateServiceImpl implements TemplateService {
             final ResultDocument result = new ResultDocument(templateName, processor.fill(templateName, context));
             result.setTransactionId(transactionId);
 
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Result document generated: template name: [{}], transaction id: [{}]", templateName, transactionId);
+            }
             return result;
         } catch (final PlaceholderEvalException e) {
             final ResultDocument result = new ResultDocument(templateName, null);
             result.setTransactionId(transactionId);
 
+            LOGGER.warn("Result document NOT generated: template name: [{}], transaction id: [{}]. The error was: {}", templateName, transactionId, e.getMessage());
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Result document generated: template name: [{}], transaction id: [{}]", templateName, transactionId, e);
+            }
             return result;
         }
 
@@ -273,7 +280,7 @@ public class TemplateServiceImpl implements TemplateService {
         LOGGER.debug("Start processing document structure: element size: {}", documentStructure.getElements().size());
 
         if (LOGGER_VALUE.isDebugEnabled()) {
-            LOGGER_VALUE.debug(String.format("Transaction id: [%s] - %s %s", values.getTransactionId(),
+            LOGGER_VALUE.debug(String.format("Transaction id: [%s] - %s %s", transactionId,
                     documentStructure, values));
         }
 
@@ -292,7 +299,7 @@ public class TemplateServiceImpl implements TemplateService {
             final String templateFileName = actTemplate.getTemplateName(values.getLocale());
             if (actContext.isPresent() || globalContext.isPresent()) {
                 actFilledDocument = new ResultDocument(templateFileName,
-                        this.fill(templateFileName, getLocalTemplateContext(globalContext, actContext)).getContent());
+                        this.fill(transactionId, templateFileName, getLocalTemplateContext(globalContext, actContext)).getContent());
             } else {
                 actFilledDocument = new ResultDocument(templateFileName,
                         TemplateProcessorRegistry.getNoopProcessor().fill(templateFileName, null));
@@ -301,7 +308,7 @@ public class TemplateServiceImpl implements TemplateService {
             final ResultDocument actContent = convertToOutputFormat(documentStructure, actTemplate, actFilledDocument);
 
             if (actContent.getContent() != null) {
-                actContent.setTransactionId(values.getTransactionId());
+                actContent.setTransactionId(transactionId);
 
                 results.addAll(
                         Stream.generate(() -> actContent).limit(actTemplate.getCount()).collect(Collectors.toList()));
@@ -310,13 +317,13 @@ public class TemplateServiceImpl implements TemplateService {
 
             result.setGenerationEndTime(Instant.now());
 
-            LOGGER.debug("Processing template - end: friendly name: {} template name: {}, id: {}.",
-                    actTemplate.getTemplateElementId(), actTemplate.getTemplateName(),
+            LOGGER.debug("Processing template - end: transactionId: {}, friendly name: {} template name: {}, id: {}.",
+                    transactionId, actTemplate.getTemplateElementId(), actTemplate.getTemplateName(),
                     actTemplate.getTemplateElementId());
         }
 
         LOGGER.debug(
-                String.format("End processing document structure. " + "Result document list size: %s", results.size()));
+                String.format("End processing document structure for transactionId: %s." + "Result document list size: %s", transactionId, results.size()));
 
         return result;
     }
@@ -614,7 +621,10 @@ public class TemplateServiceImpl implements TemplateService {
             actResultFileName = actFilledDocument.getFileName();
         }
 
-        return new ResultDocument(actResultFileName, actResult);
+        final ResultDocument result = new ResultDocument(actResultFileName, actResult);
+        result.setTransactionId(actFilledDocument.getTransactionId());
+
+        return result;
     }
 
     /**

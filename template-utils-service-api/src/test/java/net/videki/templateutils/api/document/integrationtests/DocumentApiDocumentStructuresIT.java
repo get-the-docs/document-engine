@@ -1,5 +1,8 @@
 package net.videki.templateutils.api.document.integrationtests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /*-
  * #%L
  * template-utils-service-api
@@ -213,13 +216,21 @@ public class DocumentApiDocumentStructuresIT {
 
         log.info("getDocumentStructuresNoParamsShouldReturnDefaultPage - end.");
     }
-/*
+
     @Test
     void postDocumentStructuresGenerationJobValidShouldReturnTransactionId() {
         log.info("postDocumentStructuresGenerationJobValidShouldReturnTransactionId...");
 
         final Map<String, String> urlVariables = new HashMap<>();
         final var data = this.getDataForTestCase("valueset.json");
+
+        List<ValueSetItem> context = null;
+        try {
+            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+        } catch (final JsonProcessingException e) {
+            log.error("Error reading test data", e);
+            fail();
+        }
         urlVariables.put("documentStructureId", "contract/vintage/contract-vintage_v02-separate.yml");
         urlVariables.put("locale", "hu_HU");
 
@@ -236,7 +247,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("ValueSet data: [{}]", data);
         final ResponseEntity<DocStructureJobApiResponse> responseEntity =
                 restTemplate.postForEntity(this.testEndpoint + "/documentstructure/fill?" +
-                        "documentStructureId={documentStructureId}&locale={locale}", data, DocStructureJobApiResponse.class,
+                        "documentStructureId={documentStructureId}&locale={locale}", context, DocStructureJobApiResponse.class,
                         urlVariables);
 
         log.debug("postDocumentStructuresGenerationJobValidShouldReturnTransactionId - transaction id: " + responseEntity.getBody());
@@ -247,17 +258,23 @@ public class DocumentApiDocumentStructuresIT {
 
         log.info("postDocumentStructuresGenerationJobValidShouldReturnTransactionId - end.");
     }
-*/
 
-
-/*
     @Test
-    void postTemplateGenerationJobNonexistingTemplateShouldReturnTransactionId() {
-        log.info("postTemplateGenerationJobNonexistingTemplateShouldReturnBadRequest...");
+    void postDocumentStructuresGenerationJobNonexistingTemplateShouldReturnTransactionId() {
+        log.info("postDocumentStructuresGenerationJobNonexistingTemplateShouldReturnTransactionId...");
 
         final Map<String, String> urlVariables = new HashMap<>();
-        final var data = this.getDataForTestCase("contractdata.json");
-        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu-i_dont_exist.docx");
+        final var data = this.getDataForTestCase("valueset.json");
+
+        List<ValueSetItem> context = null;
+        try {
+            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+        } catch (final JsonProcessingException e) {
+            log.error("Error reading test data", e);
+            fail();
+        }
+        urlVariables.put("documentStructureId", "contract/vintage/contract-vintage_v02-separate-i_dont_exist.yml");
+        urlVariables.put("locale", "hu_HU");
 
         final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
@@ -269,21 +286,21 @@ public class DocumentApiDocumentStructuresIT {
 
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 
-        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
-                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
-                                "templateId={templateId}", data, GetDocumentStructuresResponse.class,
+        final ResponseEntity<DocStructureJobApiResponse> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/documentstructure/fill?" +
+                        "documentStructureId={documentStructureId}&locale={locale}", context, DocStructureJobApiResponse.class,
                         urlVariables);
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
         assertTrue(responseEntity.getBody().getTransactionId() != null &&
                 !responseEntity.getBody().getTransactionId().isBlank());
 
-        log.info("postTemplateGenerationJobNonexistingTemplateShouldReturnTransactionId - end.");
+        log.info("postDocumentStructuresGenerationJobNonexistingTemplateShouldReturnTransactionId - end.");
     }
 
     @Test
-    void postTemplateGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType() {
-        log.info("postTemplateGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType...");
+    void postDocumentStructuresGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType() {
+        log.info("postDocumentStructuresGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType...");
 
         final Map<String, String> urlVariables = new HashMap<>();
 
@@ -298,26 +315,34 @@ public class DocumentApiDocumentStructuresIT {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 
         try {
-            final ResponseEntity<TemplateJobApiResponse> responseEntity =
-                    restTemplate.postForEntity(this.testEndpoint + "/template/fill",
-                            null, TemplateJobApiResponse.class,
-                            urlVariables);
+            restTemplate.postForEntity(this.testEndpoint + "/documentstructure/fill", null, DocStructureJobApiResponse.class,
+                    urlVariables);
+
         } catch (final HttpClientErrorException e) {
             assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getStatusCode());
         } catch (final Exception e) {
             fail();
         }
 
-        log.info("postTemplateGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType - end.");
+        log.info("postDocumentStructuresGenerationJobNoParamsTemplateShouldReturnUnsupportedMediaType - end.");
     }
 
     @Test
-    void getTemplateGenerationJobValidShouldReturnGenerationResult() {
-        log.info("getTemplateGenerationJobValidShouldReturnGenerationResult...");
+    void getDocumentStructuresGenerationJobValidShouldReturnGenerationResult() {
+        log.info("getDocumentStructuresGenerationJobValidShouldReturnGenerationResult...");
 
         final Map<String, String> urlVariables = new HashMap<>();
-        final var data = this.getDataForTestCase("contractdata.json");
-        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu.docx");
+        final var data = this.getDataForTestCase("valueset.json");
+
+        List<ValueSetItem> context = null;
+        try {
+            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+        } catch (final JsonProcessingException e) {
+            log.error("Error reading test data", e);
+            fail();
+        }
+        urlVariables.put("documentStructureId", "contract/vintage/contract-vintage_v02-separate.yml");
+        urlVariables.put("locale", "hu_HU");
 
         final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
@@ -330,9 +355,9 @@ public class DocumentApiDocumentStructuresIT {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 
         // Step 1 - post job
-        final ResponseEntity<GenerationResult> responseEntity =
-                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
-                                "templateId={templateId}", data, GenerationResult.class,
+        final ResponseEntity<DocStructureJobApiResponse> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/documentstructure/fill?" +
+                        "documentStructureId={documentStructureId}&locale={locale}", context, DocStructureJobApiResponse.class,
                         urlVariables);
 
         // Step 2 - query result (may be empty due internal async processing)
@@ -345,7 +370,7 @@ public class DocumentApiDocumentStructuresIT {
 
             final TestRestTemplate resultRestTemplate = new TestRestTemplate();
             final ResponseEntity<GenerationResult> resultResponseEntity =
-                    resultRestTemplate.getForEntity(this.testEndpoint + "/template/fill/{transactionId}",
+                    resultRestTemplate.getForEntity(this.testEndpoint + "/documentstructure/fill/{transactionId}",
                             GenerationResult.class, transactionId);
 
             log.debug("Transaction id from get results: {}", resultResponseEntity.getBody());
@@ -355,17 +380,26 @@ public class DocumentApiDocumentStructuresIT {
             fail();
         }
 
-        log.info("getTemplateGenerationJobValidShouldReturnGenerationResult - end.");
+        log.info("getDocumentStructuresGenerationJobValidShouldReturnGenerationResult - end.");
     }
 
 
     @Test
-    void getResultDocumentForValidTransactionShouldReturnBinary() {
-        log.info("getResultDocumentForValidTransactionShouldReturnBinary...");
+    void getResultDocumentsForValidTransactionShouldReturnBinary() {
+        log.info("getResultDocumentsForValidTransactionShouldReturnBinary...");
 
         final Map<String, String> urlVariables = new HashMap<>();
-        final var data = this.getDataForTestCase("contractdata.json");
-        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu.docx");
+        final var data = this.getDataForTestCase("valueset.json");
+
+        List<ValueSetItem> context = null;
+        try {
+            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+        } catch (final JsonProcessingException e) {
+            log.error("Error reading test data", e);
+            fail();
+        }
+        urlVariables.put("documentStructureId", "contract/vintage/contract-vintage_v02-separate.yml");
+        urlVariables.put("locale", "hu_HU");
 
         final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
@@ -378,9 +412,9 @@ public class DocumentApiDocumentStructuresIT {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 
         // Step 1 - post job
-        final ResponseEntity<GenerationResult> responseEntity =
-                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
-                                "templateId={templateId}", data, GenerationResult.class,
+        final ResponseEntity<DocStructureJobApiResponse> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/documentstructure/fill?" +
+                        "documentStructureId={documentStructureId}&locale={locale}", context, DocStructureJobApiResponse.class,
                         urlVariables);
 
         // Step 4 - query result
@@ -388,19 +422,19 @@ public class DocumentApiDocumentStructuresIT {
                 responseEntity.getBody().getTransactionId() != null) {
             final String transactionId = responseEntity.getBody().getTransactionId();
 
-            log.debug("Transaction id from /template/fill: {}", transactionId);
+            log.debug("Transaction id from /documentstructure/fill: {}", transactionId);
 
             final TestRestTemplate resultRestTemplate = new TestRestTemplate();
 
             List<ResultDocument> resultDocumentList = null;
             for (int tryCount = 0; tryCount < 4; tryCount++) {
                 final ResponseEntity<GenerationResult> resultResponseEntity =
-                        resultRestTemplate.getForEntity(this.testEndpoint + "/template/fill/{transactionId}",
+                        resultRestTemplate.getForEntity(this.testEndpoint + "/documentstructure/fill/{transactionId}",
                                 GenerationResult.class, transactionId);
 
                 assertEquals(HttpStatus.OK, resultResponseEntity.getStatusCode());
 
-                log.debug("Transaction id from get /template/fill/{transactionId}: {}", resultResponseEntity.getBody());
+                log.debug("Transaction id from get /documentstructure/fill/{transactionId}: {}", resultResponseEntity.getBody());
 
                 if (resultResponseEntity.getBody() != null) {
                     resultDocumentList = resultResponseEntity.getBody().getElements();
@@ -421,30 +455,33 @@ public class DocumentApiDocumentStructuresIT {
             Assertions.assertTrue(!resultDocumentList.isEmpty());
 
             // Step 3 - download first result (simply into the memory since this is not a load test)
-            final String firstResultDocFileName = resultDocumentList.get(0).getDocumentName();
+            for (final ResultDocument actDoc : resultDocumentList) {
+                final String actResultDocFileName = actDoc.getDocumentName();
 
-            log.debug("Result document list: {}", resultDocumentList);
+                log.debug("Result document list: {}", resultDocumentList);
 
-            final TestRestTemplate resultDocRestTemplate = new TestRestTemplate();
+                final TestRestTemplate resultDocRestTemplate = new TestRestTemplate();
 
-            byte[] resultDocBinary = resultDocRestTemplate.getForObject(this.testEndpoint + "/template/fill/{transactionId}/doc?" +
-                    "resultDocumentId={resultDocumentId}", byte[].class, transactionId, firstResultDocFileName);
-            try {
-                Files.write(Paths.get(firstResultDocFileName), resultDocBinary);
-            } catch (final IOException e) {
-                log.error("Error write result file.", e);
+                byte[] resultDocBinary = resultDocRestTemplate.getForObject(this.testEndpoint + "/documentstructure/fill/{transactionId}/doc?" +
+                        "resultDocumentId={resultDocumentId}", byte[].class, transactionId, actResultDocFileName);
+                try {
+                    Files.write(Paths.get(actResultDocFileName), resultDocBinary);
+                } catch (final IOException e) {
+                    log.error("Error write result file.", e);
+                }
+
+                log.debug("Result doc downloaded for transaction id: {}, result document name: {}, binary size: {}",
+                        transactionId, actResultDocFileName, resultDocBinary.length);
+
+                Assertions.assertTrue(resultDocBinary.length > 0);
             }
-
-            log.debug("Result docs downloaded for transaction id: {}, result document name: {}, binary size: {}",
-                    transactionId, firstResultDocFileName, resultDocBinary.length);
-
-            Assertions.assertTrue(resultDocBinary.length > 0);
-
+        
+            log.debug("Result docs downloaded for transaction id: {} - count: {}.", transactionId, resultDocumentList.size());
         } else {
             fail();
         }
 
-        log.info("getResultDocumentForValidTransactionShouldReturnBinary - end.");
+        log.info("getResultDocumentsForValidTransactionShouldReturnBinary - end.");
     }
-*/    
+   
 }
