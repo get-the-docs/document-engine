@@ -346,12 +346,27 @@ paths:
       operationId: postDocumentStructureGenerationJob
       description: Posts data for a document structure to be generated.
       parameters:
-        - name: id
+        - name: documentStructureId
           description: document structure id in the document structure repository
           in: query
           required: true
           schema:
             $ref: "#/components/schemas/DocumentStructureId"
+        - name: locale
+          description: the target locale
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 0
+            maxLength: 10
+            example: en_US
+        - name: valuesetTransactionId
+          description: the transaction id belonging to the provided data
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/TransactionId"
         - name: notificationUrl
           description: "Notification webhook."
           in: query
@@ -367,7 +382,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ValueSet"
+              type: array
+              items:
+                $ref: "#/components/schemas/ValueSetItem"
+              maxItems: 32767
       responses:
         "202":
           description: Default
@@ -835,25 +853,6 @@ components:
           type: integer
           minimum: 0
           maximum: 32768
-
-    ValueSet:
-      type: object
-      additionalProperties: false
-      properties:
-        documentStructureId:
-          $ref: "#/components/schemas/DocumentStructureId"
-        transactionId:
-          $ref: "#/components/schemas/TransactionId"
-        locale:
-          type: string
-          minLength: 0
-          maxLength: 10
-          example: en_US
-        values:
-          items:
-            $ref: "#/components/schemas/ValueSetItem"
-          type: array
-          maxItems: 32767
 
     ValueSetItem:
       type: object

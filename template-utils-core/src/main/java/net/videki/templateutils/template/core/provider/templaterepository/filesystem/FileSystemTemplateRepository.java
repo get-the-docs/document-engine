@@ -125,12 +125,11 @@ public class FileSystemTemplateRepository implements TemplateRepository {
               .collect(Collectors.toList());
 
             if (page != null && page.isPaged()) {
-                
-                final int endIndex = Math.min(page.getOffset() + page.getSize(), Math.max(items.size()-1, 0));
+                if (page.getOffset() < items.size()) {
+                    final int endIndex = Math.min(page.getOffset() + page.getSize(), items.size());
 
-                if (page.getOffset() < items.size() && endIndex < items.size()) {
                     result.setData(items.subList(page.getOffset(), endIndex));
-                }
+                }     
             } else {
                 result.setData(items);
             }

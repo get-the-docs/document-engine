@@ -43,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -64,40 +65,50 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
      * @return the requested page, if exists.
      */
     @Override
-    public Page<DocumentStructure> getDocumentStructures(String id, Pageable page) {
+    public Optional<Page<DocumentStructure>> getDocumentStructures(String id, Pageable page) {
+        Optional<Page<DocumentStructure>> result = Optional.empty();
+
         try {
             if (log.isDebugEnabled()) {
-                log.debug("getDocumentStructures - {}", page);
+                log.debug("getDocumentStructures - {}, page:{}", id, page);
             }
 
-            Page<DocumentStructure> result = null;
-            if (id != null) {
-                result = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository().getDocumentStructures(page);
+            Page<DocumentStructure> resultObj;
+            if (id == null) {
+                Pageable actPage;
+                actPage = Objects.requireNonNullElseGet(page, Pageable::new);
+                resultObj = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
+                        .getDocumentStructures(actPage);
 
+                result = Optional.of(resultObj);
             } else {
                 final Optional<DocumentStructure> doc = getDocumentStructureById(id);
 
-                result = new Page<>();
+                resultObj = new Page<>();
                 final List<DocumentStructure> data = new LinkedList<>();
                 if (doc.isPresent()) {
                     data.add(doc.get());
+
+                    resultObj.setData(data);
+                    resultObj.setNumber(0);
+                    resultObj.setSize(data.size() > 0 ? 1 : 0);
+                    resultObj.setTotalElements((long) data.size());
+                    resultObj.setTotalPages(data.size() > 0 ? 1 : 0);
+
+                    result = Optional.of(resultObj);
                 }
-                result.setData(data);
-                result.setNumber(0);
-                result.setSize(data.size() > 0 ? 1 : 0);
-                result.setTotalElements((long) data.size());
-                result.setTotalPages(data.size() > 0 ? 1 : 0);
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("getDocumentStructures end - {}, item count: {}", page, result.getData().size());
+                log.debug("getDocumentStructures end - {}, item count: {}", page, resultObj.getData().size());
             }
-            return result;
+
         } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
             log.warn("Error processing request: {}", page);
 
-            return null;
         }
+
+        return result;
     }
 
     @Override
@@ -122,15 +133,48 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
         } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
             log.warn("Error processing request: {}", id);
 
-            return null;
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void postDocumentStructureGenerationJob(String transactionId, String id, ValueSet values,
+            String notificationUrl) {
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "postDocumentStructureGenerationJob - transaction id: [{}], document structure id:[{}], notification url: [{}]",
+                        transactionId, id, notificationUrl);
+            }
+            if (log.isTraceEnabled()) {
+                log.trace(
+                        "postDocumentStructureGenerationJob - transaction id: [{}], document structure id:[{}], data: [{}]",
+                        transactionId, id, values);
+            }
+
+            final boolean tranDirCreated = TemplateServiceConfiguration.getInstance().getResultStore()
+                    .registerTransaction(transactionId);
+
+            if (tranDirCreated) {
+                postDocumentStructureGenerationJobAsync(transactionId, id, values, notificationUrl);
+            } else {
+                log.error("Error creating transaction in the result store [{}]", transactionId);
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "postDocumentStructureGenerationJob end - transaction id: [{}], document structure id:[{}], notification url: [{}]",
+                        transactionId, id, notificationUrl);
+            }
+        } catch (final TemplateServiceRuntimeException e) {
+            log.warn("Error processing request: {}", id);
         }
     }
 
     @Async
-    public void postDocumentStructureGenerationJob(final String transactionId, final String id, final Object body,
-            final String notificationUrl) {
+    protected void postDocumentStructureGenerationJobAsync(final String transactionId, final String id,
+            final ValueSet valueSet, final String notificationUrl) {
         try {
-            final var valueSet = getValueSet(body);
 
             TemplateServiceRegistry.getInstance().fillAndSaveDocumentStructureByName(transactionId, id, valueSet);
 
@@ -138,30 +182,4 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
             log.warn("Error processing request: {}", id);
         }
     }
-
-    private net.videki.templateutils.template.core.documentstructure.ValueSet getValueSet(final Object data) {
-        if (data instanceof Map) {
-            final net.videki.templateutils.template.core.documentstructure.ValueSet result = new ValueSet();
-
-            final var param = (net.videki.templateutils.api.document.model.ValueSet) data;
-
-            result.setDocumentStructureId(param.getDocumentStructureId());
-            result.setLocale(new Locale(param.getLocale()));
-            for (final ValueSetItem actData : param.getValues()) {
-
-                final StringWriter sw = new StringWriter();
-                try {
-                    JSONValue.writeJSONString(actData.getValue(), sw);
-                } catch (final IOException e) {
-                    throw new TemplateServiceRuntimeException("Error parsing data.");
-                }
-                result.addContext(actData.getTemplateElementId(), new JsonTemplateContext(sw.toString()));
-            }
-            return result;
-        } else {
-            throw new TemplateServiceRuntimeException("Error parsing data.");
-        }
-
-    }
-
 }

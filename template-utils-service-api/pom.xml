@@ -563,10 +563,10 @@
                 <resources>
                     <resource>
                       <directory>src/resources</directory>
-                      <includes>
-                        <include>**/template-utils.properties</include>
-                        <include>**/logback*.xml</include>
-                      </includes>
+                      <excludes>
+                        <exclude>**/template-utils.properties</exclude>
+                        <exclude>**/logback*.xml</exclude>
+                      </excludes>
                     </resource>
                   </resources>
     

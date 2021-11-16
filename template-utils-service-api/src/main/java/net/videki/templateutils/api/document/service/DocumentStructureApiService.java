@@ -22,8 +22,8 @@ package net.videki.templateutils.api.document.service;
 
 import java.util.Optional;
 
-import net.videki.templateutils.api.document.model.ValueSet;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
 
@@ -43,7 +43,7 @@ public interface DocumentStructureApiService {
      *             repository implementation has paging capability).
      * @return the requested page, if exists.
      */
-    Page<DocumentStructure> getDocumentStructures(String id, Pageable page);
+    Optional<Page<DocumentStructure>> getDocumentStructures(String id, Pageable page);
 
     /**
      * Returns a document structure.
@@ -61,5 +61,5 @@ public interface DocumentStructureApiService {
      * @param values          the value set.
      * @param notificationUrl notification url, optional.
      */
-    void postDocumentStructureGenerationJob(String transactionId, String id, Object values, String notificationUrl);
+    void postDocumentStructureGenerationJob(String transactionId, String id, ValueSet values, String notificationUrl);
 }

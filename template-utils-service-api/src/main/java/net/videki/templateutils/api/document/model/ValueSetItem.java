@@ -21,6 +21,7 @@ package net.videki.templateutils.api.document.model;
  */
 
 import lombok.Data;
+import net.videki.templateutils.template.core.context.JsonTemplateContext;
 
 /**
  * ValueSetItem.
@@ -28,6 +29,6 @@ import lombok.Data;
 @Data
 public class ValueSetItem   {
   private String templateElementId;
-  private Object value;
+  private JsonTemplateContext value;
 }
 

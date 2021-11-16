@@ -1,4 +1,4 @@
-package net.videki.templateutils.api.document;
+package net.videki.templateutils.api.document.integrationtests;
 
 /*-
  * #%L
@@ -20,9 +20,9 @@ package net.videki.templateutils.api.document;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.videki.templateutils.api.document.ServiceApplication;
 import net.videki.templateutils.api.document.api.model.*;
 
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -30,20 +30,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -53,7 +49,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -65,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @SpringBootTest(classes = {ServiceApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DocumentApiTemplatesIT {
+public class DocumentApiDocumentStructuresIT {
 
     final String JSON_DIR = "/values/integrationtests";
     private String testEndpoint;
@@ -115,84 +110,83 @@ public class DocumentApiTemplatesIT {
     }
 
     @Test
-    void getTemplatesAllShouldReturnTestResources() {
-        log.info("getTemplatesAllShouldReturnTestResources...");
-//        restTemplate.getForEntity(this.testEndpoint + "/template?{filed}={value}&page={page}&offset={offset}&size={szie}&sort=[{property:\"{propertyValue}\",\"direction\":\"{direction}\"}]", GetTemplatesResponse.class);
+    void getDocumentStructuresAllShouldReturnTestResources() {
+        log.info("getDocumentStructuresAllShouldReturnTestResources...");
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
-        final ResponseEntity<GetTemplatesResponse> responseEntity =
-                restTemplate.getForEntity(this.testEndpoint + "/template?" + 
-                    "paged=false", GetTemplatesResponse.class);
+        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
+                restTemplate.getForEntity(this.testEndpoint + "/documentstructure?" + 
+                    "paged=false", GetDocumentStructuresResponse.class);
 
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(14,responseEntity.getBody().getContents().size());
+        assertEquals(3,responseEntity.getBody().getContents().size());
 
-        log.info("getTemplatesAllShouldReturnTestResources - end.");
+        log.info("getDocumentStructuresAllShouldReturnTestResources - end.");
     }
 
     @Test
-    void getTemplatesFirstPageShouldReturnTestResources() {
-        log.info("getTemplatesFirstPageShouldReturnTestResources...");
+    void getDocumentStructuresFirstPageShouldReturnTestResources() {
+        log.info("getDocumentStructuresFirstPageShouldReturnTestResources...");
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
-        final ResponseEntity<GetTemplatesResponse> responseEntity =
-                restTemplate.getForEntity(this.testEndpoint + "/template?" + 
-                    "page={page}&size={limit}", GetTemplatesResponse.class,
+        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
+                restTemplate.getForEntity(this.testEndpoint + "/documentstructure?" + 
+                    "page={page}&size={limit}", GetDocumentStructuresResponse.class,
                     0, 10);
 
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(10,responseEntity.getBody().getContents().size());
+        assertEquals(3,responseEntity.getBody().getContents().size());
 
-        log.info("getTemplatesFirstPageShouldReturnTestResources - end.");
+        log.info("getDocumentStructuresFirstPageShouldReturnTestResources - end.");
     }
 
     @Test
-    void getTemplatesIdGivenShouldReturnTestResource() {
-        log.info("getTemplatesIdGivenShouldReturnTestResource...");
+    void getDocumentStructuresIdGivenShouldReturnTestResource() {
+        log.info("getDocumentStructuresIdGivenShouldReturnTestResource...");
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
-        final ResponseEntity<GetTemplatesResponse> responseEntity =
-                restTemplate.getForEntity(this.testEndpoint + "/template?" + 
-                    "templateId={templateId}", GetTemplatesResponse.class,
-                    "integrationtests/contracts/contract_v09_hu.docx");
+        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
+                restTemplate.getForEntity(this.testEndpoint + "/documentstructure?" + 
+                    "id={documentStructureId}", GetDocumentStructuresResponse.class,
+                    "contract/vintage/contract-vintage_v02-separate.yml");
 
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(1,responseEntity.getBody().getContents().size());
 
-        log.info("getTemplatesIdGivenShouldReturnTestResource - end.");
+        log.info("getDocumentStructuresIdGivenShouldReturnTestResource - end.");
     }
 
     @Test
-    void getTemplatesIdGivenNonExistingShouldReturn404() {
-        log.info("getTemplatesIdGivenNonExistingShouldReturn404...");
+    void getDocumentStructuresIdGivenNonExistingShouldReturn404() {
+        log.info("getDocumentStructuresIdGivenNonExistingShouldReturn404...");
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
-        final ResponseEntity<GetTemplatesResponse> responseEntity =
-                restTemplate.getForEntity(this.testEndpoint + "/template?" + 
-                    "templateId={templateId}", GetTemplatesResponse.class,
-                    "integrationtests/contracts/contract_v09_hu-this_file_does_not_exist.docx");
+        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
+                restTemplate.getForEntity(this.testEndpoint + "/documentstructure?" + 
+                    "id={id}", GetDocumentStructuresResponse.class,
+                    "contract/vintage/contract-vintage_v02-separate-this_file_does_not_exist.yml");
 
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 
-        log.info("getTemplatesIdGivenNonExistingShouldReturn404 - end.");
+        log.info("getDocumentStructuresIdGivenNonExistingShouldReturn404 - end.");
     }
 
     @Test
-    void getTemplatesPageOutOfRangeShouldReturn200WithEmptyPage() {
-        log.info("getTemplatesPageOutOfRangeShouldReturn200WithEmptyPage...");
+    void getDocumentStructuresPageOutOfRangeShouldReturn200WithEmptyPage() {
+        log.info("getDocumentStructuresPageOutOfRangeShouldReturn200WithEmptyPage...");
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
-        final ResponseEntity<GetTemplatesResponse> responseEntity =
-                restTemplate.getForEntity(this.testEndpoint + "/template?" + 
-                    "page={page}&size={limit}", GetTemplatesResponse.class,
+        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
+                restTemplate.getForEntity(this.testEndpoint + "/documentstructure?" + 
+                    "page={page}&size={limit}", GetDocumentStructuresResponse.class,
                     3000, 10);
 
         log.debug("get result: " + responseEntity.getBody());
@@ -200,33 +194,34 @@ public class DocumentApiTemplatesIT {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(0,responseEntity.getBody().getContents().size());
 
-        log.info("getTemplatesPageOutOfRangeShouldReturn200WithEmptyPage - end.");
+        log.info("getDocumentStructuresPageOutOfRangeShouldReturn200WithEmptyPage - end.");
     }
 
     @Test
-    void getTemplatesNoParamsShouldReturnDefaultPage() {
-        log.info("getTemplatesNoParamsShouldReturnUnpaged...");
+    void getDocumentStructuresNoParamsShouldReturnDefaultPage() {
+        log.info("getDocumentStructuresNoParamsShouldReturnDefaultPage...");
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
-        final ResponseEntity<GetTemplatesResponse> responseEntity =
-                restTemplate.getForEntity(this.testEndpoint + "/template", GetTemplatesResponse.class);
+        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
+                restTemplate.getForEntity(this.testEndpoint + "/documentstructure", GetDocumentStructuresResponse.class);
 
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         final var defaultPage = new Pageable();
-        assertEquals(defaultPage.getSize(),responseEntity.getBody().getContents().size());
+        assertEquals(Math.min(defaultPage.getSize(), 3),responseEntity.getBody().getContents().size());
 
-        log.info("getTemplatesNoParamsShouldReturnUnpaged - end.");
+        log.info("getDocumentStructuresNoParamsShouldReturnDefaultPage - end.");
     }
-
+/*
     @Test
-    void postTemplateGenerationJobValidShouldReturnTransactionId() {
-        log.info("postTemplateGenerationJobValidShouldReturnTransactionId...");
+    void postDocumentStructuresGenerationJobValidShouldReturnTransactionId() {
+        log.info("postDocumentStructuresGenerationJobValidShouldReturnTransactionId...");
 
         final Map<String, String> urlVariables = new HashMap<>();
-        final var data = this.getDataForTestCase("contractdata.json");
-        urlVariables.put("templateId", "integrationtests/contracts/contract_v09_hu.docx");
+        final var data = this.getDataForTestCase("valueset.json");
+        urlVariables.put("documentStructureId", "contract/vintage/contract-vintage_v02-separate.yml");
+        urlVariables.put("locale", "hu_HU");
 
         final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/json"));
@@ -238,20 +233,24 @@ public class DocumentApiTemplatesIT {
 
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 
-        final ResponseEntity<TemplateJobApiResponse> responseEntity =
-                restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
-                        "templateId={templateId}", data, TemplateJobApiResponse.class,
+        log.debug("ValueSet data: [{}]", data);
+        final ResponseEntity<DocStructureJobApiResponse> responseEntity =
+                restTemplate.postForEntity(this.testEndpoint + "/documentstructure/fill?" +
+                        "documentStructureId={documentStructureId}&locale={locale}", data, DocStructureJobApiResponse.class,
                         urlVariables);
 
-        log.debug("postTemplateGenerationJobValidShouldReturnTransactionId - transaction id: " + responseEntity.getBody());
+        log.debug("postDocumentStructuresGenerationJobValidShouldReturnTransactionId - transaction id: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
         assertTrue(responseEntity.getBody().getTransactionId() != null &&
                 !responseEntity.getBody().getTransactionId().isBlank());
 
-        log.info("postTemplateGenerationJobValidShouldReturnTransactionId - end.");
+        log.info("postDocumentStructuresGenerationJobValidShouldReturnTransactionId - end.");
     }
+*/
 
+
+/*
     @Test
     void postTemplateGenerationJobNonexistingTemplateShouldReturnTransactionId() {
         log.info("postTemplateGenerationJobNonexistingTemplateShouldReturnBadRequest...");
@@ -270,9 +269,9 @@ public class DocumentApiTemplatesIT {
 
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
 
-        final ResponseEntity<TemplateJobApiResponse> responseEntity =
+        final ResponseEntity<GetDocumentStructuresResponse> responseEntity =
                 restTemplate.postForEntity(this.testEndpoint + "/template/fill?" +
-                                "templateId={templateId}", data, TemplateJobApiResponse.class,
+                                "templateId={templateId}", data, GetDocumentStructuresResponse.class,
                         urlVariables);
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
@@ -447,4 +446,5 @@ public class DocumentApiTemplatesIT {
 
         log.info("getResultDocumentForValidTransactionShouldReturnBinary - end.");
     }
+*/    
 }

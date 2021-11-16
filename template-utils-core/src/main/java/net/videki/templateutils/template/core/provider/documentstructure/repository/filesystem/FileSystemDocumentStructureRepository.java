@@ -115,8 +115,11 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
                     .collect(Collectors.toList());
 
             if (page != null && page.isPaged()) {
-                result.setData(items.subList(page.getOffset(),
-                        Math.min(page.getOffset() + page.getSize(), Math.max(items.size() - 1, 0))));
+                if (page.getOffset() < items.size()) {
+                    final int endIndex = Math.min(page.getOffset() + page.getSize(), items.size());
+
+                    result.setData(items.subList(page.getOffset(), endIndex));
+                }
             } else {
                 result.setData(items);
             }
@@ -124,7 +127,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
             result.setSize(page.getSize());
             result.setTotalElements(Long.valueOf(items.size()));
             result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
-
+        
             return result;
 
         } catch (final IOException e) {
