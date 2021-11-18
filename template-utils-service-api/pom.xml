@@ -279,6 +279,7 @@
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -562,7 +563,7 @@
 
                 <resources>
                     <resource>
-                      <directory>src/resources</directory>
+                      <directory>src/main/resources</directory>
                       <excludes>
                         <exclude>**/template-utils.properties</exclude>
                         <exclude>**/logback*.xml</exclude>
