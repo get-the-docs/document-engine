@@ -91,6 +91,20 @@ public class JsonValueObject extends ContextObject {
         return this.dc.read(JSONPATH_PREFIX + path);
     }
 
+
+    /**
+     * Returns a single value based on the JSON path caught.
+     * @param path the JSONpath to be evaluated.
+     * @param type the target value type
+     * @return the model object if found by the given JSON path.
+     */
+    public Object getValue(final String path, Class<?> type) {
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Getting data for path {}...", path);
+        }
+        return this.dc.read(JSONPATH_PREFIX + path, type);
+    }
+
     /**
      * Returns a list of values based on the JSON path caught.
      * @param path the JSONpath to be evaluated.
@@ -111,6 +125,17 @@ public class JsonValueObject extends ContextObject {
      */
     public Object jsonpath(final String path) {
         return getValue(path);
+    }
+
+
+    /**
+     * Template placeholder convenience mehod to return a single model object based on the caught path.
+     * @param path the JSON path on the actual model.
+     * @param type the target type
+     * @return the result model object if found.
+     */
+    public Object jsonpath(final String path, final Class<?> type) {
+        return getValue(path, type);
     }
 
     /**
