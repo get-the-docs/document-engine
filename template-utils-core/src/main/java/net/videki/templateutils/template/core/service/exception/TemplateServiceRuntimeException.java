@@ -35,4 +35,14 @@ public class TemplateServiceRuntimeException extends RuntimeException {
     public TemplateServiceRuntimeException(String message) {
         super(message);
     }
+
+    /**
+     * Constructor with given error message.
+     * 
+     * @param message the error message.
+     * @param cause the cause.
+     */
+    public TemplateServiceRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -20,7 +20,7 @@ package net.videki.templateutils.template.core.service;
  * #L%
  */
 
-import net.videki.templateutils.template.core.context.JsonTemplateContext;
+import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.fail;
 
 public class TemplateServiceInputFormatTest {

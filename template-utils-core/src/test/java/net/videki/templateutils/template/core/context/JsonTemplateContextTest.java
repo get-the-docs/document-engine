@@ -21,6 +21,7 @@ package net.videki.templateutils.template.core.context;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 import org.junit.Assert;

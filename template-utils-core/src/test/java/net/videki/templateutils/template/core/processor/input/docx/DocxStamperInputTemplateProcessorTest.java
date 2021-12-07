@@ -20,7 +20,7 @@ package net.videki.templateutils.template.core.processor.input.docx;
  * #L%
  */
 
-import net.videki.templateutils.template.core.context.TemplateContext;
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
 import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 import net.videki.templateutils.template.core.service.InputFormat;

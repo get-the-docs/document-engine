@@ -21,11 +21,8 @@ package net.videki.templateutils.api.document.service.impl;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONValue;
-import net.videki.templateutils.api.document.model.ValueSetItem;
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.context.JsonTemplateContext;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.provider.persistence.Page;
@@ -37,12 +34,8 @@ import net.videki.templateutils.template.core.service.exception.TemplateServiceR
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 

@@ -30,6 +30,7 @@ import org.docx4j.Docx4J;
 import org.docx4j.fonts.IdentityPlusMapper;
 import org.docx4j.fonts.Mapper;
 import org.docx4j.fonts.PhysicalFonts;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,8 +107,13 @@ public class DocxToPdfConverter implements Converter {
       Docx4J.toPDF(wordMLPackage, result);
 
       source.close();
-    } catch (final Throwable e) {
+    } catch (final Docx4JException e) {
       final String msg = "Error on pdf creation.";
+      LOGGER.warn(msg, e);
+
+      throw new ConversionException("7bac5185-4364-4118-92f9-9e55589feaf2", msg, e);
+    } catch (final Throwable e) {
+      final String msg = "Unexpected error on pdf creation.";
       LOGGER.error(msg, e);
 
       throw new ConversionException("c0a3ab2e-297d-4634-85cc-d171fd0772f1", msg, e);

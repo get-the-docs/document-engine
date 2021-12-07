@@ -36,8 +36,7 @@ package net.videki.templateutils.template.core.context.dto;
  * #L%
  */
 
-import net.videki.templateutils.template.core.context.JsonTemplateContext;
-import net.videki.templateutils.template.core.dto.ITemplate;
+import net.videki.templateutils.template.core.dto.extensions.ITemplate;
 import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 
 import java.time.LocalDate;

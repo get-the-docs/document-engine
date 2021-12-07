@@ -162,12 +162,12 @@ public class FileSystemResultStore implements ResultStore {
             throw new IllegalArgumentException("Cannot create directory: " + resultDir);
         }
 
-        final String resultFileName = resultDir + File.separator + resultDocument.getFileName();
+        final Path resultFileName = Paths.get(resultDir + File.separator + resultDocument.getFileName()).toAbsolutePath();
         boolean actSuccessFlag = false;
 
         LOGGER.info("Result file: {}.", resultFileName);
 
-        try (FileOutputStream o = new FileOutputStream(resultFileName, false)) {
+        try (FileOutputStream o = new FileOutputStream(resultFileName.toString(), false)) {
 
             o.write(((ByteArrayOutputStream) resultDocument.getContent()).toByteArray());
             o.flush();
@@ -183,7 +183,7 @@ public class FileSystemResultStore implements ResultStore {
             }
         }
 
-        final var result = new StoredResultDocument(resultDocument.getTransactionId(), resultFileName, actSuccessFlag);
+        final var result = new StoredResultDocument(resultDocument.getTransactionId(), resultFileName.toString(), actSuccessFlag);
         result.setStatus(StoredResultDocumentStatus.AVAILABLE);
 
         return result;

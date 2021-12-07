@@ -1,5 +1,7 @@
 package net.videki.templateutils.template.core.service.docx;
 
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
+
 /*-
  * #%L
  * template-utils-core
@@ -23,7 +25,6 @@ package net.videki.templateutils.template.core.service.docx;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;
-import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;

@@ -160,7 +160,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     public Optional<TemplateDocument> getTemplateDocumentById(final String id, final String version, final boolean withBinary) throws TemplateServiceException {
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("getTemplateDocumentById - {} (version handling not supported, omiting). binary: {}", id, withBinary);
+            LOGGER.debug("getTemplateDocumentById - {} (version handling not supported, omitting). binary: {}", id, withBinary);
         }
 
         final TemplateDocument result = new TemplateDocument(id, version);
@@ -198,16 +198,17 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     public InputStream getTemplate(final String templateFile) {
         InputStream result;
 
-        final String pathToFile = this.baseDir + File.separator + templateFile;
+        final Path pathToFile = Paths.get(this.baseDir + File.separator + templateFile).toAbsolutePath();
+
         try {
-            result = Paths.get(pathToFile).toUri().toURL().openStream();
+            result = pathToFile.toUri().toURL().openStream();
         } catch (final IOException e) {
             result = null;
         }
 //                result = FileSystemTemplateRepository.class.getClassLoader().getResourceAsStream(pathToFile);
 
         if (result == null) {
-            LOGGER.error("Template not found. File: {}. ", pathToFile);
+            LOGGER.warn("Template not found. File: {}. ", pathToFile);
         } else {
             LOGGER.debug("Template found. File: {}. ", pathToFile);
         }

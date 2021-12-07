@@ -70,7 +70,7 @@ public class JxlsInputTemplateProcessor extends AbstractTemplateProcessor implem
 
       if (is == null) {
         final String msg = String.format("Template not found: %s", templateFileName);
-        LOGGER.error(msg);
+        LOGGER.warn(msg);
 
         throw new TemplateNotFoundException("3985eb36-6274-4870-af3a-c73a5c499873", msg);
 
@@ -93,14 +93,14 @@ public class JxlsInputTemplateProcessor extends AbstractTemplateProcessor implem
         result = out;
       } catch (IOException e) {
         final String msg = String.format("Error creating the output for the template: %s", templateFileName);
-        LOGGER.error(msg);
+        LOGGER.warn(msg);
 
         throw new TemplateProcessException("4b7c901e-7f99-4dfe-991e-663ac15ee644", msg);
 
       }
     } catch (IOException e) {
       final String msg = String.format("Error opening the input template: %s", templateFileName);
-      LOGGER.error(msg);
+      LOGGER.warn(msg);
 
       throw new TemplateProcessException("a2d17a80-fec7-4431-8d03-2bc3a94e23dd", msg);
     }

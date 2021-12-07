@@ -21,8 +21,8 @@ package net.videki.templateutils.template.core.service;
  */
 
 import net.videki.templateutils.template.core.TestHelper;
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.*;
-import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
@@ -105,17 +105,15 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplatePojoTest() {
 
         final String inputDir = "unittests/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
-        final String resultFileName = "fillSimpleTemplatePojoTest-" + fileName;
 
         final Contract dto = ContractDataFactory.createContract();
 
         try {
             final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName, dto, OutputFormat.DOCX);
 
-            LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done. - Result file: {}.", result.getFileName());
 
             assertNotNull(result);
         } catch (Exception e) {
@@ -129,7 +127,6 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplateMapTest() {
 
         final String inputDir = "unittests/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillSimpleTemplateMapTest-" + fileName;
@@ -139,7 +136,7 @@ public class TemplateServiceParamTest {
                     getContractTestData().getCtx(),
                     OutputFormat.DOCX);
 
-            LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done. - Result file: {}.", resultFileName);
 
             assertTrue(result.isGenerated());
         } catch (Exception e) {
@@ -153,7 +150,6 @@ public class TemplateServiceParamTest {
     public void fillSimpleTemplateTemplateContextTest() {
 
         final String inputDir = "unittests/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillSimpleTemplateTemplateContextTest-" + fileName;
@@ -162,7 +158,7 @@ public class TemplateServiceParamTest {
             final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
                     getContractTestData(), OutputFormat.DOCX);
 
-            LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done. - Result file: {}.", resultFileName);
 
             assertNotNull(result);
         } catch (Exception e) {
@@ -202,10 +198,10 @@ public class TemplateServiceParamTest {
             structure.getElements().add(docElement);
 
             final ValueSet values = new ValueSet("fillSimpleTemplateViaDocumentStructureTest-" +
-                    UUID.randomUUID().toString());
-            values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
+                    UUID.randomUUID());
+            values.addContext(getContractTestData());
 
-            result = ts.fill(null, structure, values);
+            result = ts.fill(UUID.randomUUID().toString(), structure, values);
 
             LOGGER.info("Done.");
             assertNotNull(result);
@@ -277,7 +273,6 @@ public class TemplateServiceParamTest {
     public void fillAndSaveSimpleTemplatePojoTest() {
 
         final String inputDir = "unittests/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21-pojo.docx";
         final String resultFileName = "fillAndSaveSimpleTemplatePojoTest-" + fileName;
@@ -287,7 +282,7 @@ public class TemplateServiceParamTest {
         try {
             final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName, dto, OutputFormat.DOCX);
 
-            LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done. - Result file: {}.", resultFileName);
 
             assertNotNull(result);
         } catch (Exception e) {
@@ -301,7 +296,6 @@ public class TemplateServiceParamTest {
     public void fillAndSaveSimpleTemplateMapTest() {
 
         final String inputDir = "unittests/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillAndSaveSimpleTemplateMapTest-" + fileName;
@@ -311,7 +305,7 @@ public class TemplateServiceParamTest {
                     getContractTestData().getCtx(),
                     OutputFormat.DOCX);
 
-            LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done. - Result file: {}.", resultFileName);
 
             assertNotNull(result);
         } catch (Exception e) {
@@ -325,7 +319,6 @@ public class TemplateServiceParamTest {
     public void fillAndSaveSimpleTemplateTemplateContextTest() {
 
         final String inputDir = "unittests/docx";
-        final String projectOutDir = System.getProperty("user.dir") + "/target/test-classes";
 
         final String fileName = "SimpleContract_v1_21.docx";
         final String resultFileName = "fillAndSaveSimpleTemplateTemplateContextTest-" + fileName;
@@ -334,7 +327,7 @@ public class TemplateServiceParamTest {
             final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
                     getContractTestData(), OutputFormat.DOCX);
 
-            LOGGER.info("Done. - Result file: {}/{}.", projectOutDir, resultFileName);
+            LOGGER.info("Done. - Result file: {}.", resultFileName);
 
             assertNotNull(result);
         } catch (Exception e) {
@@ -375,7 +368,7 @@ public class TemplateServiceParamTest {
 
             final ValueSet values = new ValueSet("fillAndSaveSimpleTemplateTemplateContextTest-" +
                     UUID.randomUUID().toString(), LC_HU);
-            values.getValues().put(docElement.getTemplateElementId(), getContractTestData());
+            values.addContext(getContractTestData());
 
             result = ts.fill(null, structure, values);
 

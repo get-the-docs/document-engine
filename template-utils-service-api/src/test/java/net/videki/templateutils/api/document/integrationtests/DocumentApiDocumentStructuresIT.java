@@ -224,9 +224,9 @@ public class DocumentApiDocumentStructuresIT {
         final Map<String, String> urlVariables = new HashMap<>();
         final var data = this.getDataForTestCase("valueset.json");
 
-        List<ValueSetItem> context = null;
+        List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();
@@ -266,9 +266,9 @@ public class DocumentApiDocumentStructuresIT {
         final Map<String, String> urlVariables = new HashMap<>();
         final var data = this.getDataForTestCase("valueset.json");
 
-        List<ValueSetItem> context = null;
+        List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();
@@ -332,11 +332,11 @@ public class DocumentApiDocumentStructuresIT {
         log.info("getDocumentStructuresGenerationJobValidShouldReturnGenerationResult...");
 
         final Map<String, String> urlVariables = new HashMap<>();
-        final var data = this.getDataForTestCase("valueset.json");
+        final String data = this.getDataForTestCase("valueset.json");
 
-        List<ValueSetItem> context = null;
+        List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();
@@ -391,9 +391,9 @@ public class DocumentApiDocumentStructuresIT {
         final Map<String, String> urlVariables = new HashMap<>();
         final var data = this.getDataForTestCase("valueset.json");
 
-        List<ValueSetItem> context = null;
+        List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<ValueSetItem>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();

@@ -21,9 +21,9 @@ package net.videki.templateutils.template.core.documentstructure;
  */
 
 import net.videki.templateutils.template.core.TestHelper;
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
-import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -156,10 +157,9 @@ public class DocumentStructureTest {
             structure.getElements().add(docElement);
 
             final ValueSet values = new ValueSet();
-            values.getValues().put(docElement.getTemplateElementId(), getContractTestData("not_recorded"));
+            values.addContext(getContractTestData("not_recorded"));
 
-            result = null;
-            result = ts.fill(null, structure, values);
+            result = ts.fill(UUID.randomUUID().toString(), structure, values);
 
             testResult = (result != null && result.getResults() != null && result.getResults().size() == 2);
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
@@ -218,7 +218,7 @@ public class DocumentStructureTest {
             final var tranId = UUID.randomUUID().toString();
 
             final ValueSet values = new ValueSet(structure.getDocumentStructureId(), tranId);
-            values.getValues().put(TemplateElementId.getGlobalTemplateElementId(), getContractTestData(tranId));
+            values.addContext(getContractTestData(tranId));
 
             result = ts.fillAndSave(structure, values);
 

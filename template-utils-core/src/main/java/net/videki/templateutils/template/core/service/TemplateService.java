@@ -32,6 +32,13 @@ import net.videki.templateutils.template.core.service.exception.TemplateServiceE
 public interface TemplateService {
 
         /**
+         * Returns whether the given template (based on its format) has to be filled by a template processor.
+         * @param templateName the template.
+         * @return true if the template format has to be processed.
+         */
+        boolean isProcessableFormat(String templateName);
+
+        /**
          * <p>
          * Fills the given single file template specified by its name and return the
          * filled document in the templates format.

@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
-import net.videki.templateutils.template.core.provider.documentstructure.DocumentStructureRepository;
+import net.videki.templateutils.template.core.provider.documentstructure.repository.DocumentStructureRepository;
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.provider.templaterepository.TemplateRepository;
 import net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository;

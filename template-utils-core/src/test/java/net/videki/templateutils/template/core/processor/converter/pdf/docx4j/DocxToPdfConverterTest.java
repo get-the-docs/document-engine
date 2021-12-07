@@ -32,8 +32,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class DocxToPdfConverterTest {
 
@@ -64,7 +67,7 @@ public class DocxToPdfConverterTest {
     public void convertValidTemplateOk() {
         OutputStream result;
 
-        final String inputDir = "templates/unittests/docx";
+        final String inputDir = "unittests/docx";
         final String fileName = "SimpleContract_v1_21.docx";
 
         final Converter x = new DocxToPdfConverter();
@@ -98,7 +101,7 @@ public class DocxToPdfConverterTest {
 
     @Test
     public void convertInValidTemplateFormat() {
-        final String inputDir = "templates/unittests/docx";
+        final String inputDir = "unittests/docx";
         final String fileName = "invalidFile.docx";
 
         try {
@@ -108,7 +111,7 @@ public class DocxToPdfConverterTest {
 
             Assert.assertFalse(false);
         } catch (final ConversionException e) {
-            Assert.assertEquals("c0a3ab2e-297d-4634-85cc-d171fd0772f1", e.getCode());
+            Assert.assertEquals("7bac5185-4364-4118-92f9-9e55589feaf2", e.getCode());
         } catch (final Exception e) {
             Assert.assertFalse(false);
         }
@@ -157,7 +160,14 @@ public class DocxToPdfConverterTest {
     private static InputStream getTemplate(final String templateFile) {
         InputStream result;
 
-        result = DocxToPdfConverter.class.getClassLoader().getResourceAsStream(templateFile);
+//                DocxToPdfConverter.class.getClassLoader().getResourceAsStream(templateFile);
+        try {
+            final Path path =
+                    Paths.get("./sample-data/repositories/source/templates" + File.separator + templateFile);
+            result = path.toUri().toURL().openStream();
+        } catch (final IOException e) {
+            result = null;
+        }
 
         return result;
 

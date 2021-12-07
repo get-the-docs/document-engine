@@ -206,7 +206,7 @@ public class ContextObjectBuilderTest {
     @Test
     public void noParamShouldReturnNull() {
         try {
-            var generatedObject = ContextObjectProxyBuilder.build(null);
+            var generatedObject = ContextObjectProxyBuilder.build((String)null);
 
             assertNull(generatedObject);
 

@@ -20,7 +20,6 @@ package net.videki.templateutils.template.core.context.dto;
  * #L%
  */
 
-import net.videki.templateutils.template.core.context.ContextObject;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -74,7 +73,7 @@ public class JsonValueObject extends ContextObject {
                 LOGGER.debug("Value object to parse: {}", dc);
             }
 
-            throw new TemplateServiceRuntimeException(msg);
+            throw new TemplateServiceRuntimeException(msg, e);
         }
     }
 

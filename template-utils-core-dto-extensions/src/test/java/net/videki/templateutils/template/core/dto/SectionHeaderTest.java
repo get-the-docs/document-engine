@@ -24,6 +24,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import net.videki.templateutils.template.core.dto.extensions.SectionHeader;
+
 public class SectionHeaderTest {
    
     @Test

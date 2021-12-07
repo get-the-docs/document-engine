@@ -28,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.util.proxy.ProxyFactory;
 import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.template.core.context.dto.JsonModel;
+import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
+
 import org.apache.commons.lang3.StringUtils;
 
 import javassist.CannotCompileException;
@@ -37,7 +39,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import net.videki.templateutils.template.core.context.dto.PropertyClassHolder;
-import net.videki.templateutils.template.core.dto.ITemplate;
+import net.videki.templateutils.template.core.dto.extensions.ITemplate;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 
 /**
@@ -54,6 +56,30 @@ public class ContextObjectProxyBuilder {
 
     /** Json mapper */
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    /**
+     * Entry point to generate and instanciate the holder object for a given DTO.
+     * 
+     * @param data the value object as json string
+     * @return the generated object.
+     */
+    public static Object build(final Map<?, ?> data) {
+
+        if (data == null) {
+            log.trace("Null input caught to create a proxy object.");
+            return null;
+        }
+
+        try {
+            return build(mapper.writeValueAsString(data));
+        } catch (JsonProcessingException e) {
+            final String msg = "Error reading the DTO caught.";
+            log.error(msg, e);
+
+            throw new TemplateServiceRuntimeException(msg, e);
+        }
+
+    }
 
     /**
      * Entry point to generate and instanciate the holder object for a given DTO.
@@ -82,13 +108,14 @@ public class ContextObjectProxyBuilder {
 
             log.trace("Proxy build successful, deserializing data.");
 
-            return mapper.readValue(data, dtoClass.getHolderClassBuilder().toClass());
+            return mapper.readValue(data, dtoClass.getHolderClassBuilder().toClass(
+                JsonTemplateContext.class.getClassLoader(), JsonTemplateContext.class.getProtectionDomain()));
 
         } catch (final JsonProcessingException | CannotCompileException e) {
             final String msg = "Error reading the DTO caught.";
             log.error(msg, e);
 
-            throw new TemplateServiceRuntimeException(msg);
+            throw new TemplateServiceRuntimeException(msg, e);
         }
 
     }
@@ -167,7 +194,7 @@ public class ContextObjectProxyBuilder {
             final var msg = String.format("Error reading building the context object. The last seen entry is: %s",
                     propertyName);
 
-            throw new TemplateServiceRuntimeException(msg);
+            throw new TemplateServiceRuntimeException(msg, e);
         }
     }
 
@@ -221,7 +248,9 @@ public class ContextObjectProxyBuilder {
                 cc.getField(actPropertyName);
                 log.trace("Field: {} exists.", actPropertyName);
             } catch (final NotFoundException e) {
-                final Class<?> holderClass = entry.getHolderClass() == null ? entry.getHolderClassBuilder().toClass()
+                final Class<?> holderClass = entry.getHolderClass() == null
+                        ? entry.getHolderClassBuilder().toClass(JsonTemplateContext.class.getClassLoader(),
+                                JsonTemplateContext.class.getProtectionDomain())
                         : entry.getHolderClass();
                 log.trace("Property: {} - class: {}", entry.getPropertyName(), holderClass);
 

@@ -30,21 +30,20 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.context.JsonTemplateContext;
+import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.processor.ConverterRegistry;
 import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
-import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
 import net.videki.templateutils.template.core.processor.TemplateProcessorRegistry;
 import net.videki.templateutils.template.core.processor.converter.pdf.docx4j.DocxToPdfConverter;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
-import org.docx4j.com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +127,22 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     /**
+     * Returns whether the given template (based on its format) has to be filled by a template processor.
+     * @param templateName the template.
+     * @return true if the template format has to be processed.
+     */
+    @Override
+    public boolean isProcessableFormat(String templateName) {
+        try {
+            InputFormat.getInputFormatForFileName(templateName);
+
+            return true;
+        } catch (final IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    /**
      * Entry point to fill a single template with a given model.
      *
      * @param templateName  the template name (id) in the template repository.
@@ -160,7 +175,7 @@ public class TemplateServiceImpl implements TemplateService {
     public <T> ResultDocument fill(final String transactionId, final String templateName, final T dto)
             throws TemplateServiceException {
 
-        if (Strings.isNullOrEmpty(templateName) || dto == null) {
+        if (StringUtils.isBlank(templateName) || dto == null) {
             throw new TemplateServiceConfigurationException("070f463e-743f-4cb2-a651-bd11e844728d",
                     String.format("%s - templateFileName: %s, dto: %s", MSG_INVALID_PARAMETERS, templateName, dto));
         }
@@ -169,15 +184,9 @@ public class TemplateServiceImpl implements TemplateService {
 
         final InputFormat format = InputFormat.getInputFormatForFileName(templateName);
         InputTemplateProcessor processor = TemplateProcessorRegistry.getInputTemplateProcessor(format);
-        if (processor == null) {
-            final String msg = "Could not determine the input processor";
-            LOGGER.error(msg);
-            throw new TemplateServiceConfigurationException("9476f20c-0d78-4c8a-87a5-277101256924", msg);
-        } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("Found template processor for: templateFileName: %s, processor: %s",
-                        templateName, processor.getClass()));
-            }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("Found template processor for: templateFileName: %s, processor: %s",
+                    templateName, processor.getClass()));
         }
 
         try {
@@ -219,7 +228,7 @@ public class TemplateServiceImpl implements TemplateService {
     public <T> ResultDocument fill(final String transactionId, final String templateName, final T dto,
             final OutputFormat outputFormat) throws TemplateServiceException {
 
-        if (Strings.isNullOrEmpty(templateName) || dto == null || outputFormat == null) {
+        if (StringUtils.isBlank(templateName) || dto == null || outputFormat == null) {
             throw new TemplateServiceConfigurationException("c936e550-8b0e-4577-bffa-7f36b211d981",
                     String.format("%s - templateFileName: %s, dto: %s, outputFormat: %s", MSG_INVALID_PARAMETERS,
                             templateName, dto, outputFormat));
@@ -275,8 +284,6 @@ public class TemplateServiceImpl implements TemplateService {
         result.setTransactionId(transactionId);
         result.setValueSetTransactionId(values.getTransactionId());
 
-        final Optional<TemplateContext> globalContext = values.getGlobalContext();
-
         LOGGER.debug("Start processing document structure: element size: {}", documentStructure.getElements().size());
 
         if (LOGGER_VALUE.isDebugEnabled()) {
@@ -288,8 +295,7 @@ public class TemplateServiceImpl implements TemplateService {
             LOGGER.debug("Processing template: friendly name: {}, id: {}.", actTemplate.getTemplateName(),
                     actTemplate.getTemplateElementId());
 
-            final TemplateElementId actTemplateElementId = actTemplate.getTemplateElementId();
-            final Optional<TemplateContext> actContext = values.getContext(actTemplateElementId);
+            final TemplateContext actContext = values.getValues();
 
             LOGGER.debug("Getting context for template: friendly name: {}, context: {}.",
                     actTemplate.getTemplateElementId(), actContext);
@@ -297,9 +303,9 @@ public class TemplateServiceImpl implements TemplateService {
             final ResultDocument actFilledDocument;
 
             final String templateFileName = actTemplate.getTemplateName(values.getLocale());
-            if (actContext.isPresent() || globalContext.isPresent()) {
+            if (this.isProcessableFormat(templateFileName)) {
                 actFilledDocument = new ResultDocument(templateFileName,
-                        this.fill(transactionId, templateFileName, getLocalTemplateContext(globalContext, actContext)).getContent());
+                        this.fill(transactionId, templateFileName, actContext).getContent());
             } else {
                 actFilledDocument = new ResultDocument(templateFileName,
                         TemplateProcessorRegistry.getNoopProcessor().fill(templateFileName, null));
@@ -506,10 +512,8 @@ public class TemplateServiceImpl implements TemplateService {
                 .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
                 .collect(Collectors.toList());
 
-        final StoredGenerationResult result = new StoredGenerationResult(generationResult.getTransactionId(),
+        return new StoredGenerationResult(generationResult.getTransactionId(),
                 ResultDocuments);
-
-        return result;
     }
 
     /**

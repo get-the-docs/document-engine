@@ -23,7 +23,7 @@ package net.videki.templateutils.template.test.dto.contract;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.videki.templateutils.template.core.dto.ITemplate;
+import net.videki.templateutils.template.core.dto.extensions.ITemplate;
 
 import java.time.LocalDate;
 

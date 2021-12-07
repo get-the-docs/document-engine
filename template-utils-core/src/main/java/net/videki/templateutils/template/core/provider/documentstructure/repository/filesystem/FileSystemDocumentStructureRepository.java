@@ -21,9 +21,9 @@ package net.videki.templateutils.template.core.provider.documentstructure.reposi
  */
 
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.provider.documentstructure.DocumentStructureRepository;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
+import net.videki.templateutils.template.core.provider.documentstructure.repository.DocumentStructureRepository;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
@@ -104,7 +104,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
      * @return the document structure list
      */
     @Override
-    public Page<DocumentStructure> getDocumentStructures(Pageable page) throws TemplateServiceException {
+    public Page<DocumentStructure> getDocumentStructures(final Pageable page) throws TemplateServiceException {
 
         try {
             final Page<DocumentStructure> result = new Page<>();
@@ -131,7 +131,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
             return result;
 
         } catch (final IOException e) {
-            final String msg = String.format("Error retrieving the document structure list - baseDir: [{}]",
+            final String msg = String.format("Error retrieving the document structure list - baseDir: [%s]",
                     this.basedir);
             LOGGER.error(msg, e);
 
@@ -152,22 +152,22 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
     @Override
     public DocumentStructure getDocumentStructure(final String documentStructureFile)
             throws TemplateServiceConfigurationException {
-        final String pathToFile = this.basedir + File.separator + documentStructureFile;
+        final Path pathToFile = Paths.get(this.basedir + File.separator + documentStructureFile).toAbsolutePath();
 
         InputStream dsAsStream;
         try {
-            dsAsStream = Paths.get(pathToFile).toUri().toURL().openStream();
+            dsAsStream = pathToFile.toUri().toURL().openStream();
         } catch (final IOException e) {
             dsAsStream = null;
         }
 
         if (dsAsStream == null) {
-            final String msg = String.format("DocumentStructure not found. File: %s. ", documentStructureFile);
-            LOGGER.error(msg);
+            final String msg = String.format("DocumentStructure not found. File: %s. ", pathToFile);
+            LOGGER.warn(msg);
 
             throw new TemplateProcessException("0578f1ec-a33b-4a73-af71-a14f0e55c0b9", msg);
         } else {
-            LOGGER.debug("DocumentStructure found. File: {}. ", documentStructureFile);
+            LOGGER.debug("DocumentStructure found. File: {}. ", pathToFile);
 
             return this.documentStructureBuilder.build(dsAsStream);
         }

@@ -1,0 +1,33 @@
+# docker-compose up -d
+version: "3.9"
+services:
+  getthedocs:
+    image: template-utils-service-api:latest
+    volumes:
+      - type: bind
+        source: config
+        target: /app/config
+      - type: bind
+        source: ./data/repositories/source/templates
+        target: /data/repositories/source/templates
+      - type: bind 
+        source: ./data/repositories/source/documentstructures
+        target: /data/repositories/source/documentstructures
+      - type: bind
+        source: ./data/repositories/target/generated-documents
+        target: /data/repositories/target/generated-documents
+    environment:
+      API_KEY: 049d2c48-2a59-4e16-85e2-6fec38b7c80a
+    ports:
+      - 8081:8081
+    restart: always
+
+volumes:
+  config:
+      driver: local
+  templates:
+      driver: local      
+  documentstructures:
+      driver: local
+  results:             
+      driver: local

@@ -22,6 +22,8 @@ package net.videki.templateutils.template.core.context;
 
 import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
+
 import org.junit.Test;
 
 @Slf4j

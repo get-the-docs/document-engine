@@ -33,8 +33,9 @@ import org.wickedsource.docxstamper.DocxStamperConfiguration;
 
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
-import org.wickedsource.docxstamper.JsonDocxStamper;
+import org.wickedsource.docxstamperext.JsonDocxStamper;
 import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
+import org.wickedsource.docxstamperext.JsonDocxStamperConfiguration;
 
 /**
  * Docx input template processor based on the docx stamper library. See
@@ -72,7 +73,7 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
 
     OutputStream result = null;
 
-    final DocxStamperConfiguration config = new DocxStamperConfiguration();
+    final JsonDocxStamperConfiguration config = new JsonDocxStamperConfiguration();
     final JsonDocxStamper<T> stamper = new JsonDocxStamper<T>(config);
 
     try (final InputStream templateFile = getTemplate(templateFileName)) {
