@@ -26,10 +26,9 @@ import net.minidev.json.JSONValue;
 import net.videki.templateutils.api.document.service.NotificationService;
 import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
-import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
@@ -292,7 +291,7 @@ public class DefaultTemplateApiService implements TemplateApiService {
         return result;
     }
 
-    private JsonTemplateContext getContext(final Object data) {
+    private TemplateContext getContext(final Object data) {
         if (data instanceof Map) {
             log.debug("getContext - map...");
             final StringWriter sw = new StringWriter();
@@ -301,13 +300,13 @@ public class DefaultTemplateApiService implements TemplateApiService {
             } catch (final IOException e) {
                 throw new TemplateServiceRuntimeException("Error parsing data.");
             }
-            final JsonTemplateContext result = new JsonTemplateContext((String) sw.toString());
+            final TemplateContext result = new TemplateContext((String) sw.toString());
             log.debug("getContext - map, parse ok.");
 
             return result;
         } else if (data instanceof String){
             log.debug("getContext - plain string...");
-            final JsonTemplateContext result = new JsonTemplateContext((String) data);
+            final TemplateContext result = new TemplateContext((String) data);
             log.debug("getContext - plain string, parse ok.");
 
             return result;

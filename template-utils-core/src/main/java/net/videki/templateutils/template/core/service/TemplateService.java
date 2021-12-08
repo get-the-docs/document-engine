@@ -20,7 +20,8 @@ package net.videki.templateutils.template.core.service;
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.*;
+import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.v1.*;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 

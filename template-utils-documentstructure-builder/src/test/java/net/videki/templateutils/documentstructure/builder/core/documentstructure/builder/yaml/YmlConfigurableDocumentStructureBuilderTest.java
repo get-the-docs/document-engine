@@ -39,7 +39,7 @@ public class YmlConfigurableDocumentStructureBuilderTest {
             final DocumentStructureOptionsBuilder dsBuilder = new YmlConfigurableDocStructureBuilder();
 
             final InputStream dsOptionsFileAsStream = FileSystemDocumentStructureRepository
-                    .class.getClassLoader().getResourceAsStream("documentstructures/contracts/contract_v02-options.yml");
+                    .class.getClassLoader().getResourceAsStream("documentstructures/contract/vintage/contract-vintage_v02-options.yml");
             dsBuilder.buildOptions(dsOptionsFileAsStream);
 
         } catch (final TemplateNotFoundException | TemplateServiceException e) {

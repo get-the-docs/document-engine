@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.util.proxy.ProxyFactory;
 import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.template.core.context.dto.JsonModel;
-import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -103,13 +103,13 @@ public class ContextObjectProxyBuilder {
 
             log.trace("DTO parse ok, creating proxy...");
 
-            final PropertyClassHolder dtoClass = getObjectForContext(JsonTemplateContext.class.getName(), "Dto",
+            final PropertyClassHolder dtoClass = getObjectForContext(TemplateContext.class, "Dto",
                     objContext, null, null);
 
             log.trace("Proxy build successful, deserializing data.");
 
             return mapper.readValue(data, dtoClass.getHolderClassBuilder().toClass(
-                JsonTemplateContext.class.getClassLoader(), JsonTemplateContext.class.getProtectionDomain()));
+                TemplateContext.class.getClassLoader(), TemplateContext.class.getProtectionDomain()));
 
         } catch (final JsonProcessingException | CannotCompileException e) {
             final String msg = "Error reading the DTO caught.";
@@ -139,7 +139,7 @@ public class ContextObjectProxyBuilder {
      *         of generated types its holder factory for further property
      *         aggregation (see null values in list items).
      */
-    protected static PropertyClassHolder getObjectForContext(final String baseClass, final String propertyName,
+    protected static PropertyClassHolder getObjectForContext(final Class<?> baseClass, final String propertyName,
             final Map<?, ?> context, final CtClass ctClass,
             final List<PropertyClassHolder> reversedAggregatorProperties) {
         try {
@@ -213,7 +213,7 @@ public class ContextObjectProxyBuilder {
      *                                when generating the holder type (indicates a
      *                                mapping error in the proxy builder logic).
      */
-    public static PropertyClassHolder generateClass(final String baseClass, final String className,
+    public static PropertyClassHolder generateClass(final Class<?> baseClass, final String className,
             final List<PropertyClassHolder> properties, final CtClass aggregatorType)
             throws NotFoundException, CannotCompileException {
 
@@ -223,14 +223,16 @@ public class ContextObjectProxyBuilder {
             log.debug("Generating class {}{}", baseClass, actClassName);
         }
         if (log.isTraceEnabled()) {
-            log.trace("Generating class with field set: {}.{} - properties: [{}]", baseClass, className, properties);
+            log.trace("Generating class with field set: {}.{} - properties: [{}]", baseClass.getName(), className, properties);
         }
 
         CtClass cc;
         if (aggregatorType == null) {
             ClassPool pool = ClassPool.getDefault();
-            final String effectiveClassName = ProxyFactory.nameGenerator.get(baseClass + "$" + actClassName);
+            final String effectiveClassName = ProxyFactory.nameGenerator.get(baseClass.getName() + "$" + actClassName);
             cc = pool.makeClass(effectiveClassName);
+
+            cc.setSuperclass(pool.get(baseClass.getName()));
 
             cc.addInterface(resolveCtClass(ITemplate.class));
             cc.addInterface(resolveCtClass(JsonModel.class));
@@ -249,8 +251,8 @@ public class ContextObjectProxyBuilder {
                 log.trace("Field: {} exists.", actPropertyName);
             } catch (final NotFoundException e) {
                 final Class<?> holderClass = entry.getHolderClass() == null
-                        ? entry.getHolderClassBuilder().toClass(JsonTemplateContext.class.getClassLoader(),
-                                JsonTemplateContext.class.getProtectionDomain())
+                        ? entry.getHolderClassBuilder().toClass(TemplateContext.class.getClassLoader(),
+                                TemplateContext.class.getProtectionDomain())
                         : entry.getHolderClass();
                 log.trace("Property: {} - class: {}", entry.getPropertyName(), holderClass);
 

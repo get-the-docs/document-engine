@@ -48,8 +48,8 @@ public class DocxStamperInputTemplateProcessorTest {
 
         final String inputDir = "unittests/docx";
 
-        final String fileName = "SimpleContract_v1_21-pojo.docx";
-        this.processor.fill(inputDir + File.separator + fileName, getContractTestData());
+        final String fileName = "SimpleContract_v1_21-single_object-direct_inject.docx";
+        this.processor.fill(inputDir + File.separator + fileName, ContractDataFactory.createContract());
     }
 
     @Test
@@ -90,15 +90,11 @@ public class DocxStamperInputTemplateProcessorTest {
 
     private TemplateContext getContractTestData() {
         final Contract dto = ContractDataFactory.createContract();
-//        final OrganizationUnit orgUnit = OrgUnitDataFactory.createOrgUnit();
-//        final Officer officer = OfficerDataFactory.createOfficer();
 
         final TemplateContext context = new TemplateContext();
-        context.addValueObject(dto);
-//        context.addValueObject(orgUnit);
-//        context.addValueObject(officer);
+        context.withContext(dto)
+                .build();
 
-        System.out.println(context.toJson());
         return context;
     }
 }

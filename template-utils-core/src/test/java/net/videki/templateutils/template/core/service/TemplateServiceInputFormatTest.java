@@ -20,8 +20,8 @@ package net.videki.templateutils.template.core.service;
  * #L%
  */
 
-import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
-import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
+import net.videki.templateutils.template.core.context.dto.TemplateContext;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
@@ -154,15 +154,14 @@ public class TemplateServiceInputFormatTest {
     public void processorDocxOKTest() {
 
         try {
-            final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-pojo.docx",
+            final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-single_object-model.docx",
                     ContractDataFactory.createContract());
 
             Assert.assertTrue(result.isGenerated());
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
+        } catch (final TemplateServiceException e) {
+            LOGGER.error("Error processing the docx pojo template.", e);
 
             Assert.assertFalse(false);
-            return;
         }
 
     }
@@ -172,14 +171,13 @@ public class TemplateServiceInputFormatTest {
 
         try {
             final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-jsonpath.docx",
-                    new JsonTemplateContext(jsonDataMultiContext));
+                    new TemplateContext(jsonDataMultiContext));
 
             Assert.assertTrue(result.isGenerated());
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
+        } catch (final TemplateServiceException e) {
+            LOGGER.error("Error processing the docx jsonpath-based template.", e);
 
             fail();
-            return;
         }
 
     }
@@ -188,7 +186,7 @@ public class TemplateServiceInputFormatTest {
     public void processorDocxJsonpathPlaceholderErrorTest() throws TemplateProcessException, TemplateServiceException {
 
         final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-jsonpath-placeholder_error.docx",
-                new JsonTemplateContext(jsonDataMultiContext));
+                new TemplateContext(jsonDataMultiContext));
 
         Assert.assertFalse(result.isGenerated());
 
@@ -207,7 +205,7 @@ public class TemplateServiceInputFormatTest {
     public void processorDocxToPdfOKTest() {
 
         try {
-            final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-pojo.docx",
+            final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-single_object-model.docx",
                     ContractDataFactory.createContract(), OutputFormat.PDF);
 
             Assert.assertTrue(result.isGenerated());
@@ -215,7 +213,6 @@ public class TemplateServiceInputFormatTest {
             LOGGER.error("Error generating the template. ", e);
 
             fail();
-            return;
         }
     }
 

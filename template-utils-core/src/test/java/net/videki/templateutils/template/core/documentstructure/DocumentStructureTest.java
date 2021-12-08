@@ -22,9 +22,8 @@ package net.videki.templateutils.template.core.documentstructure;
 
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
+import net.videki.templateutils.template.core.documentstructure.v1.*;
 import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
@@ -44,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -77,7 +75,7 @@ public class DocumentStructureTest {
     private static final String TL_CONDITIONS_FILE = "conditions_v11.xlsx";
 
     private DocumentStructure getContractDocStructure() throws TemplateServiceConfigurationException {
-        final DocumentStructure result = new DocumentStructure();
+        final DocumentStructure result = new DocumentStructureV1();
 
         result.getElements().add(
                 new TemplateElement(TL_COVER_KEY, inputDirDocStructureCovers + File.separator + TL_COVER_FILE)
@@ -119,7 +117,7 @@ public class DocumentStructureTest {
 
     @Test
     public void createSingleDocStructureTest() {
-        final DocumentStructure structure = new DocumentStructure();
+        final DocumentStructure structure = new DocumentStructureV1();
 
         final TemplateElement docElement;
         try {
@@ -145,7 +143,7 @@ public class DocumentStructureTest {
 
         final String fileName = "SimpleContract_v1_21.docx";
 
-        final DocumentStructure structure = new DocumentStructure();
+        final DocumentStructure structure = new DocumentStructureV1();
 
         final TemplateElement docElement;
         GenerationResult result = null;
@@ -157,7 +155,7 @@ public class DocumentStructureTest {
             structure.getElements().add(docElement);
 
             final ValueSet values = new ValueSet();
-            values.addContext(getContractTestData("not_recorded"));
+            values.withContext(getContractTestData("not_recorded"));
 
             result = ts.fill(UUID.randomUUID().toString(), structure, values);
 
@@ -176,7 +174,7 @@ public class DocumentStructureTest {
     public void docCountForTemplateElementStructureEmptyTest() {
         boolean testResult;
 
-        final DocumentStructure structure = new DocumentStructure();
+        final DocumentStructure structure = new DocumentStructureV1();
 
         final ValueSet values = new ValueSet();
 
@@ -218,7 +216,7 @@ public class DocumentStructureTest {
             final var tranId = UUID.randomUUID().toString();
 
             final ValueSet values = new ValueSet(structure.getDocumentStructureId(), tranId);
-            values.addContext(getContractTestData(tranId));
+            values.withContext(getContractTestData(tranId));
 
             result = ts.fillAndSave(structure, values);
 

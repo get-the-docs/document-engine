@@ -22,8 +22,8 @@ package net.videki.templateutils.template.core.service;
 
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.*;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
+import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.v1.*;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;
 import net.videki.templateutils.template.test.dto.OfficerDataFactory;
@@ -106,7 +106,7 @@ public class TemplateServiceParamTest {
 
         final String inputDir = "unittests/docx";
 
-        final String fileName = "SimpleContract_v1_21-pojo.docx";
+        final String fileName = "SimpleContract_v1_21-single_object-model.docx";
 
         final Contract dto = ContractDataFactory.createContract();
 
@@ -133,8 +133,7 @@ public class TemplateServiceParamTest {
 
         try {
             final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
-                    getContractTestData().getCtx(),
-                    OutputFormat.DOCX);
+                    getContractTestData().getCtx(), OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}.", resultFileName);
 
@@ -187,7 +186,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "SimpleContract_v1_21.docx";
 
-        final DocumentStructure structure = new DocumentStructure();
+        final DocumentStructure structure = new DocumentStructureV1();
         final TemplateElement docElement;
         GenerationResult result = null;
         try {
@@ -199,7 +198,7 @@ public class TemplateServiceParamTest {
 
             final ValueSet values = new ValueSet("fillSimpleTemplateViaDocumentStructureTest-" +
                     UUID.randomUUID());
-            values.addContext(getContractTestData());
+            values.withContext(getContractTestData());
 
             result = ts.fill(UUID.randomUUID().toString(), structure, values);
 
@@ -274,7 +273,7 @@ public class TemplateServiceParamTest {
 
         final String inputDir = "unittests/docx";
 
-        final String fileName = "SimpleContract_v1_21-pojo.docx";
+        final String fileName = "SimpleContract_v1_21-single_object-model.docx";
         final String resultFileName = "fillAndSaveSimpleTemplatePojoTest-" + fileName;
 
         final Contract dto = ContractDataFactory.createContract();
@@ -302,8 +301,7 @@ public class TemplateServiceParamTest {
 
         try {
             final StoredResultDocument result = ts.fillAndSave(inputDir + File.separator + fileName,
-                    getContractTestData().getCtx(),
-                    OutputFormat.DOCX);
+                    getContractTestData().getCtx(), OutputFormat.DOCX);
 
             LOGGER.info("Done. - Result file: {}.", resultFileName);
 
@@ -356,7 +354,7 @@ public class TemplateServiceParamTest {
 
         final String fileName = "SimpleContract_v1_21.docx";
 
-        final DocumentStructure structure = new DocumentStructure();
+        final DocumentStructure structure = new DocumentStructureV1();
         final TemplateElement docElement;
         GenerationResult result = null;
         try {
@@ -368,7 +366,7 @@ public class TemplateServiceParamTest {
 
             final ValueSet values = new ValueSet("fillAndSaveSimpleTemplateTemplateContextTest-" +
                     UUID.randomUUID().toString(), LC_HU);
-            values.addContext(getContractTestData());
+            values.withContext(getContractTestData());
 
             result = ts.fill(null, structure, values);
 
@@ -383,8 +381,6 @@ public class TemplateServiceParamTest {
         }
 
     }
-
-
 
     private TemplateContext getContractTestData() {
         final Contract dto = ContractDataFactory.createContract();

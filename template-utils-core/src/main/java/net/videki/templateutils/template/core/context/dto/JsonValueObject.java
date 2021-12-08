@@ -30,7 +30,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * JSON value object to represent JSON data as a model object.
+ * JSON value object to represent JSON data as a model object
+ * for json only representation.
+ * Use this wrapper class if you use the service as library and
+ * do not want to create dynamic classes for your DTOs with
+ * the ContextObjectProxyBuilder class.
  * 
  * @author Levente Ban
  */

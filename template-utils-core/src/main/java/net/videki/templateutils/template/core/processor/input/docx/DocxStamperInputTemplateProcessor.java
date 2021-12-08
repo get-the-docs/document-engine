@@ -98,7 +98,7 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
       throw e;
 
     } catch (final UnresolvedExpressionException e) {
-      final String msg = String.format("Placeholder error in file: %s", templateFileName);
+      final String msg = String.format("Placeholder error in file: %s - %s", templateFileName, e.getCause().getMessage());
       LOGGER.warn(msg);
 
       if (LOGGER.isDebugEnabled()) {

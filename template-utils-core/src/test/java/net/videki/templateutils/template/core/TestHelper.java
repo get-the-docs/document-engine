@@ -20,16 +20,15 @@ package net.videki.templateutils.template.core;
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.ResultDocument;
-import net.videki.templateutils.template.core.documentstructure.GenerationResult;
-import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.ResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
 import net.videki.templateutils.template.core.service.TemplateServiceParamTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class TestHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateServiceParamTest.class);

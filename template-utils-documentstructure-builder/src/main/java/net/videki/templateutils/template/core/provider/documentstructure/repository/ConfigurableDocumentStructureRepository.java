@@ -20,7 +20,7 @@ package net.videki.templateutils.template.core.provider.documentstructure.reposi
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.descriptors.DocumentStructureOptions;
+import net.videki.templateutils.template.core.documentstructure.DocumentStructureOptions;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
 public interface ConfigurableDocumentStructureRepository extends DocumentStructureRepository {

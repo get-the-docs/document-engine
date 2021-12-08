@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.videki.templateutils.template.core.documentstructure.v1.TemplateElement;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -45,7 +46,7 @@ public interface TemplateElementEntityToApiModelMapper {
 	 * @return the api model.
 	 */
 	default net.videki.templateutils.api.document.api.model.TemplateElement entityToApiModel(
-			net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement source) {
+			TemplateElement source) {
 
 		if (source != null) {
 			final net.videki.templateutils.api.document.api.model.TemplateElement target = new net.videki.templateutils.api.document.api.model.TemplateElement();
@@ -75,7 +76,7 @@ public interface TemplateElementEntityToApiModelMapper {
 	 * @return the API model object.
 	 */
 	List<net.videki.templateutils.api.document.api.model.TemplateElement> entityListToApiModelList(
-			List<net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement> source);
+			List<TemplateElement> source);
 
 	/**
 	 * Mapper for (Locale,template name) pairs.

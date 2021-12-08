@@ -123,7 +123,7 @@ public class DocumentApiTemplatesIT {
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         if (responseEntity.getBody() != null) {
-            assertEquals(16, responseEntity.getBody().getContents().size());
+            assertEquals(21, responseEntity.getBody().getContents().size());
         } else {
             Assertions.fail();
         }

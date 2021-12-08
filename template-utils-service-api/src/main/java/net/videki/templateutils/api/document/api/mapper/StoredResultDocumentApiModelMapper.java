@@ -21,7 +21,8 @@ package net.videki.templateutils.api.document.api.mapper;
  */
 
 import net.videki.templateutils.api.document.api.model.ResultDocument;
-import net.videki.templateutils.template.core.documentstructure.descriptors.StoredResultDocumentStatus;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocumentStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -45,7 +46,7 @@ public interface StoredResultDocumentApiModelMapper {
 	@Mapping(source = "fileName", target = "documentName")
 	@Mapping(source = "status", target = "status")
 	ResultDocument map(
-			net.videki.templateutils.template.core.documentstructure.StoredResultDocument source);
+			StoredResultDocument source);
 
 	default String map(final StoredResultDocumentStatus source) {
 		if (source != null) {

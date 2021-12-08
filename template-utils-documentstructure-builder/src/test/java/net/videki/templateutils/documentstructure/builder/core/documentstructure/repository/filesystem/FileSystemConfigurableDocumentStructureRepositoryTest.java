@@ -40,7 +40,7 @@ public class FileSystemConfigurableDocumentStructureRepositoryTest {
                     .getInstance()
                     .getDocumentStructureRepository();
             final var dso =
-                    optionsRepo.getDocumentStructureOptions("contracts/contract_v02-options.yml");
+                    optionsRepo.getDocumentStructureOptions("contract/vintage/contract-vintage_v02-options.yml");
 
             Assert.assertNotNull(dso);
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
@@ -61,7 +61,7 @@ public class FileSystemConfigurableDocumentStructureRepositoryTest {
                     optionsRepo.getDocumentStructureOptions("contracts/contract_v02-options-there_is_no_such_file.yml");
 
         } catch (final TemplateProcessException e) {
-            Assert.assertEquals("0578f1ec-a33b-4a73-af71-a14f0e55c0b9", e.getCode());
+            Assert.assertEquals("06629ccd-b748-4dcb-ac26-8c7cd17ca121", e.getCode());
 
         } catch (final TemplateServiceException e) {
             e.printStackTrace();

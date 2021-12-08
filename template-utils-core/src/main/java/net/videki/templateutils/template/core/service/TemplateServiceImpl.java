@@ -30,14 +30,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
-import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
-import net.videki.templateutils.template.core.context.dto.JsonValueObject;
+import net.videki.templateutils.template.core.context.ContextObjectProxyBuilder;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.*;
+import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.v1.*;
 import net.videki.templateutils.template.core.processor.ConverterRegistry;
 import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
 import net.videki.templateutils.template.core.processor.TemplateProcessorRegistry;
 import net.videki.templateutils.template.core.processor.converter.pdf.docx4j.DocxToPdfConverter;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
@@ -101,23 +100,20 @@ public class TemplateServiceImpl implements TemplateService {
         if (dto instanceof String) {
             LOGGER.debug("JSON context caught.");
             context = new TemplateContext();
-            context.addValueObject(new JsonValueObject((String) dto));
+            context.withContext(ContextObjectProxyBuilder.build((String) dto));
         } else if (dto instanceof Map) {
             LOGGER.debug("Map context caught.");
             context = new TemplateContext();
             for (final Object actKey : ((Map) dto).keySet()) {
                 context.getCtx().put((String) actKey, ((Map) dto).get(actKey));
             }
-        } else if (dto instanceof JsonTemplateContext) {
-            LOGGER.debug("JsonTemplateContext context caught.");
-            context = (JsonTemplateContext) dto;
         } else if (dto instanceof TemplateContext) {
-            LOGGER.debug("TemplateContext context caught.");
+            LOGGER.debug("JsonTemplateContext context caught.");
             context = (TemplateContext) dto;
         } else {
             LOGGER.debug("POJO context caught.");
             context = new TemplateContext();
-            context.addValueObject(dto);
+            context.withContext(dto);
         }
 
         if (LOGGER.isDebugEnabled()) {
@@ -642,7 +638,7 @@ public class TemplateServiceImpl implements TemplateService {
      *         context).
      */
     private TemplateContext getLocalTemplateContext(final Optional<TemplateContext> globalContext,
-            final Optional<TemplateContext> localContext) {
+                                                    final Optional<TemplateContext> localContext) {
         final TemplateContext result = new TemplateContext();
         globalContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));
         localContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));

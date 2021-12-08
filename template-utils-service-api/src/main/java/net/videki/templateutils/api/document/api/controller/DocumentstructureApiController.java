@@ -20,24 +20,21 @@ package net.videki.templateutils.api.document.api.controller;
  * #L%
  */
 
+import net.videki.templateutils.api.document.api.model.*;
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
 import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.context.ContextObjectProxyBuilder;
-import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
-import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
-import net.videki.templateutils.template.core.documentstructure.ValueSet;
+import net.videki.templateutils.template.core.documentstructure.v1.DocumentStructureV1;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.ValueSet;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.api.document.api.mapper.GenerationResultApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.GetDocumentStructuresResponseApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
-import net.videki.templateutils.api.document.api.model.DocStructureJobApiResponse;
-import net.videki.templateutils.api.document.api.model.GenerationResult;
-import net.videki.templateutils.api.document.api.model.GetDocumentStructuresResponse;
-import net.videki.templateutils.api.document.api.model.Pageable;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -146,17 +143,17 @@ public class DocumentstructureApiController implements DocumentstructureApi {
         result.setTransactionId(transactionId);
 
         final ValueSet valueSet = new ValueSet(valuesetTransactionId);
-        valueSet.setDocumentStructureId(documentStructureId);
+        valueSet.withDocumentStructureId(documentStructureId);
         valueSet.setLocale(new Locale(locale));
         for (final Object actItem : requestBody) {
             final Map<?, ?> valueMap = (Map<?, ?>)actItem;
             final Optional<?> c = valueMap.keySet().stream().findFirst();
             final String contextKey = c.isPresent() ? (String)c.get() : TemplateContext.CONTEXT_ROOT_KEY;
             
-            final JsonTemplateContext ctx = new JsonTemplateContext();
-            ctx.addValueObject(contextKey, ContextObjectProxyBuilder.build(valueMap));
+            final TemplateContext ctx = new TemplateContext();
+            ctx.withContext(contextKey, ContextObjectProxyBuilder.build(valueMap));
 
-            valueSet.addContext(ctx);
+            valueSet.withContext(ctx);
         }
         valueSet.build();
 

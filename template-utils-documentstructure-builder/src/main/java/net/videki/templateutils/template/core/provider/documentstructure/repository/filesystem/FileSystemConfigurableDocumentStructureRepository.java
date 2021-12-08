@@ -20,7 +20,7 @@ package net.videki.templateutils.template.core.provider.documentstructure.reposi
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.descriptors.DocumentStructureOptions;
+import net.videki.templateutils.template.core.documentstructure.DocumentStructureOptions;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureOptionsBuilder;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlConfigurableDocStructureBuilder;
 import net.videki.templateutils.template.core.provider.documentstructure.repository.ConfigurableDocumentStructureRepository;
@@ -30,8 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class FileSystemConfigurableDocumentStructureRepository extends FileSystemDocumentStructureRepository
@@ -61,19 +64,22 @@ public class FileSystemConfigurableDocumentStructureRepository extends FileSyste
     @Override
     public DocumentStructureOptions getDocumentStructureOptions(final String documentStructureFile)
             throws TemplateServiceConfigurationException {
-        final String pathToFile = this.basedir + File.separator + documentStructureFile;
+        final Path pathToFile = Paths.get(this.basedir + File.separator + documentStructureFile).toAbsolutePath();
 
-        final InputStream dsAsStream = FileSystemConfigurableDocumentStructureRepository.class
-                .getClassLoader()
-                .getResourceAsStream(pathToFile);
+        InputStream dsAsStream;
+        try {
+            dsAsStream = pathToFile.toUri().toURL().openStream();
+        } catch (final IOException e) {
+            dsAsStream = null;
+        }
 
         if (dsAsStream == null) {
-            final String msg = String.format("DocumentStructure not found. File: %s. ", documentStructureFile);
-            LOGGER.error(msg);
+            final String msg = String.format("DocumentStructure not found. File: %s. ", pathToFile);
+            LOGGER.warn(msg);
 
-            throw new TemplateProcessException("0578f1ec-a33b-4a73-af71-a14f0e55c0b9", msg);
+            throw new TemplateProcessException("06629ccd-b748-4dcb-ac26-8c7cd17ca121", msg);
         } else {
-            LOGGER.debug("DocumentStructure found. File: {}. ", documentStructureFile);
+            LOGGER.debug("DocumentStructure found. File: {}. ", pathToFile);
 
             return this.documentStructureBuilder.buildOptions(dsAsStream);
         }

@@ -20,11 +20,11 @@ package net.videki.templateutils.template.core.provider.resultstore.filesystem;
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.ResultDocument;
-import net.videki.templateutils.template.core.documentstructure.GenerationResult;
-import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
-import net.videki.templateutils.template.core.documentstructure.descriptors.StoredResultDocumentStatus;
-import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.v1.ResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocumentStatus;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.service.exception.ResultNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;

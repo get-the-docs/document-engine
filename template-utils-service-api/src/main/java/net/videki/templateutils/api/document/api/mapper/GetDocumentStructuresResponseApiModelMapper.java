@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import net.videki.templateutils.api.document.api.model.GetDocumentStructuresResponse;
 import net.videki.templateutils.api.document.api.model.Page;
 
+import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -45,7 +46,7 @@ public interface GetDocumentStructuresResponseApiModelMapper {
 	 * @return the api model.
 	 */
 	default GetDocumentStructuresResponse pageToApiModel(
-			net.videki.templateutils.template.core.provider.persistence.Page<net.videki.templateutils.template.core.documentstructure.DocumentStructure> source) {
+			net.videki.templateutils.template.core.provider.persistence.Page<DocumentStructure> source) {
 
 		final GetDocumentStructuresResponse result = new GetDocumentStructuresResponse();
 		final Page page = new Page();

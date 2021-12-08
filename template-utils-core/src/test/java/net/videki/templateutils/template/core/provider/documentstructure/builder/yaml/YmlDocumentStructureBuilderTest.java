@@ -24,8 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.v1.DocumentStructureV1;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElement;
+import net.videki.templateutils.template.core.documentstructure.v1.TemplateElement;
 import net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
@@ -42,8 +43,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
@@ -134,7 +133,7 @@ public class YmlDocumentStructureBuilderTest {
     }
 
     private DocumentStructure getContractDocStructure() throws TemplateServiceConfigurationException {
-        final DocumentStructure result = new DocumentStructure();
+        final DocumentStructure result = new DocumentStructureV1();
 
         result.getElements().add(
                 new TemplateElement(TL_COVER_KEY, FileSystemHelper.getFileNameWithPath(inputDir, TL_COVER_FILE))

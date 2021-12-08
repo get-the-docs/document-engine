@@ -24,9 +24,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import net.videki.templateutils.template.core.documentstructure.descriptors.OptionalTemplateElement;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementOption;
-import net.videki.templateutils.template.core.documentstructure.descriptors.TemplateElementId;
+import net.videki.templateutils.template.core.documentstructure.v1.OptionalTemplateElement;
+import net.videki.templateutils.template.core.documentstructure.v1.TemplateElementOption;
+import net.videki.templateutils.template.core.documentstructure.v1.TemplateElementId;
 
 import java.io.IOException;
 import java.util.Iterator;

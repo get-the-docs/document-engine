@@ -1,6 +1,7 @@
 # contract-vintage_v02-separate.yml
 ---
-documentStructureId: "109a562d-8290-407d-98e1-e5e31c9808b7"
+apiVersion: v1
+documentStructureId: "contract-vintage_v02-separate.yml"
 elements:
   - templateElementId:
       id: "cover"

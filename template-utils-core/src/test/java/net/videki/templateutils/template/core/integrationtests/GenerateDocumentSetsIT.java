@@ -22,7 +22,10 @@ package net.videki.templateutils.template.core.integrationtests;
 
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.*;
+import net.videki.templateutils.template.core.documentstructure.v1.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.v1.ValueSet;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
@@ -39,7 +42,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -190,9 +192,9 @@ public class GenerateDocumentSetsIT {
     private ValueSet getTestData(final String transactionId) {
 
         final ValueSet result = new ValueSet(transactionId);
-        result.addContext(getCoverData(transactionId))
-                .addContext(getContractTestData())
-                .addContext(getContractTestData())
+        result.withContext(getCoverData(transactionId))
+                .withContext(getContractTestData())
+                .withContext(getContractTestData())
                 .withLocale(LC_HU)
                 .build()
                 ;

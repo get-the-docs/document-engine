@@ -46,13 +46,13 @@ import java.time.LocalDate;
  */
 public interface IJsonTemplate extends ITemplate {
 
-    default String fmtDate(final JsonTemplateContext value) {
+    default String fmtDate(final TemplateContext value) {
         try {
             String result;
             if (value != null) {
-                final Integer year = (Integer) value.getValue(JsonTemplateContext.CONTEXT_ROOT_KEY + "." + "year");
-                final Integer month = (Integer) value.getValue(JsonTemplateContext.CONTEXT_ROOT_KEY + "." + "month");
-                final Integer day = (Integer) value.getValue(JsonTemplateContext.CONTEXT_ROOT_KEY + "." + "day");
+                final Integer year = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "year");
+                final Integer month = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "month");
+                final Integer day = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "day");
                 result = LocalDate.of(year, month, day).format(ITemplate.DATE_FORMAT_DATE);;
             } else {
                 result = ITemplate.PLACEHOLDER_EMPTY;

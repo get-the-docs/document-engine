@@ -41,8 +41,6 @@ import org.wickedsource.docxstamper.el.ExpressionResolver;
 import org.wickedsource.docxstamper.el.ExpressionUtil;
 import org.wickedsource.docxstamper.el.NoOpEvaluationContextConfigurer;
 
-import net.videki.templateutils.template.core.context.dto.JsonTemplateContext;
-
 /**
  * Expression resolver extension for json model contexts.
  *

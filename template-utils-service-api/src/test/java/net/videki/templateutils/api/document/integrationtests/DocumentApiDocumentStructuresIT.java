@@ -124,7 +124,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(3,responseEntity.getBody().getContents().size());
+        assertEquals(7,responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresAllShouldReturnTestResources - end.");
     }
@@ -142,7 +142,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(3,responseEntity.getBody().getContents().size());
+        assertEquals(7,responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresFirstPageShouldReturnTestResources - end.");
     }
@@ -212,7 +212,7 @@ public class DocumentApiDocumentStructuresIT {
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         final var defaultPage = new Pageable();
-        assertEquals(Math.min(defaultPage.getSize(), 3),responseEntity.getBody().getContents().size());
+        assertEquals(Math.min(defaultPage.getSize(), 7),responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresNoParamsShouldReturnDefaultPage - end.");
     }

@@ -21,6 +21,7 @@ package net.videki.templateutils.template.core.provider.documentstructure.reposi
  */
 
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.v1.DocumentStructureV1;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
 import net.videki.templateutils.template.core.provider.documentstructure.repository.DocumentStructureRepository;
@@ -111,7 +112,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
 
             final Path basePath = Paths.get(this.basedir).toAbsolutePath();
             final List<DocumentStructure> items = Files.walk(basePath).filter(file -> !Files.isDirectory(file))
-                    .map(basePath::relativize).map(Path::toString).map(t -> new DocumentStructure(t))
+                    .map(basePath::relativize).map(Path::toString).map(DocumentStructureV1::new)
                     .collect(Collectors.toList());
 
             if (page != null && page.isPaged()) {
@@ -123,10 +124,10 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
             } else {
                 result.setData(items);
             }
-            result.setNumber(page.getPage());
-            result.setSize(page.getSize());
-            result.setTotalElements(Long.valueOf(items.size()));
-            result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
+            result.setNumber(page != null ? page.getPage() : 0);
+            result.setSize(page != null ? page.getSize() : 10);
+            result.setTotalElements((long) items.size());
+            result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / (page != null ? page.getSize() : 10)));
         
             return result;
 

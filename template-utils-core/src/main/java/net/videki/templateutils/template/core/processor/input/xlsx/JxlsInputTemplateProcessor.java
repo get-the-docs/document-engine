@@ -77,7 +77,7 @@ public class JxlsInputTemplateProcessor extends AbstractTemplateProcessor implem
       }
 
       Context context = new Context();
-      context.putVar("model", dto);
+      context.putVar("ctx", dto);
       
 //      Transformer transformer = TransformerFactory.createTransformer(is, out); // this throws error and returns null object
 //      ExpressionEvaluator evaluator = new 

@@ -22,6 +22,7 @@ package net.videki.templateutils.api.document.api.mapper;
 
 import java.util.List;
 
+import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -45,7 +46,7 @@ public interface DocumentStructureEntityToApiModelMapper {
 	 * @return the api model object.
 	 */
 	default net.videki.templateutils.api.document.api.model.DocumentStructure entityToApiModel(
-			net.videki.templateutils.template.core.documentstructure.DocumentStructure source) {
+			DocumentStructure source) {
 
 			if (source != null) {
 				final net.videki.templateutils.api.document.api.model.DocumentStructure target = new net.videki.templateutils.api.document.api.model.DocumentStructure();
@@ -70,7 +71,7 @@ public interface DocumentStructureEntityToApiModelMapper {
 	 * @return the api model.
 	 */
 	List<net.videki.templateutils.api.document.api.model.DocumentStructure> entityListToApiModelList(
-			List<net.videki.templateutils.template.core.documentstructure.DocumentStructure> source);
+			List<DocumentStructure> source);
 
 	/**
 	 * Internal mapper for locale-string conversion.
