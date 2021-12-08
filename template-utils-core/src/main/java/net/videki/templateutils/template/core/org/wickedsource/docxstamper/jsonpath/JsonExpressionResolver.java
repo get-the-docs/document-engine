@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wickedsource.docxstamperext.jsonpath;
+package net.videki.templateutils.template.core.org.wickedsource.docxstamper.jsonpath;
 
 /*-
  * #%L

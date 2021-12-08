@@ -29,13 +29,12 @@ import net.videki.templateutils.template.core.processor.input.PlaceholderEvalExc
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wickedsource.docxstamper.DocxStamperConfiguration;
 
 import net.videki.templateutils.template.core.service.InputFormat;
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
-import org.wickedsource.docxstamperext.JsonDocxStamper;
+import net.videki.templateutils.template.core.org.wickedsource.docxstamper.JsonDocxStamper;
 import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
-import org.wickedsource.docxstamperext.JsonDocxStamperConfiguration;
+import net.videki.templateutils.template.core.org.wickedsource.docxstamper.JsonDocxStamperConfiguration;
 
 /**
  * Docx input template processor based on the docx stamper library. See

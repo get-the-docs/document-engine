@@ -1,4 +1,4 @@
-package org.wickedsource.docxstamperext;
+package net.videki.templateutils.template.core.org.wickedsource.docxstamper;
 
 /*-
  * #%L

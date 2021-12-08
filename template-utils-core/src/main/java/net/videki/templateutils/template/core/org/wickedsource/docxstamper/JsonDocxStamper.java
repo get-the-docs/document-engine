@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wickedsource.docxstamperext;
+package net.videki.templateutils.template.core.org.wickedsource.docxstamper;
 
 /*-
  * #%L
@@ -36,14 +36,13 @@ package org.wickedsource.docxstamperext;
  * #L%
  */
 
-import org.wickedsource.docxstamper.DocxStamperConfiguration;
-import org.wickedsource.docxstamperext.jsonpath.JsonExpressionResolver;
+import net.videki.templateutils.template.core.org.wickedsource.docxstamper.jsonpath.JsonExpressionResolver;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.wickedsource.docxstamper.api.DocxStamperException;
 import org.wickedsource.docxstamper.api.commentprocessor.ICommentProcessor;
 import org.wickedsource.docxstamper.api.typeresolver.ITypeResolver;
 import org.wickedsource.docxstamper.api.typeresolver.TypeResolverRegistry;
-import org.wickedsource.docxstamperext.processor.JsonCommentProcessorRegistry;
+import net.videki.templateutils.template.core.org.wickedsource.docxstamper.processor.JsonCommentProcessorRegistry;
 import org.wickedsource.docxstamper.processor.displayif.DisplayIfProcessor;
 import org.wickedsource.docxstamper.processor.displayif.IDisplayIfProcessor;
 import org.wickedsource.docxstamper.processor.repeat.*;

@@ -1,4 +1,4 @@
-package org.wickedsource.docxstamperext.processor;
+package net.videki.templateutils.template.core.org.wickedsource.docxstamper.processor;
 
 /*-
  * #%L
@@ -20,6 +20,7 @@ package org.wickedsource.docxstamperext.processor;
  * #L%
  */
 
+import net.videki.templateutils.template.core.org.wickedsource.docxstamper.jsonpath.JsonExpressionResolver;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.Comments;
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ import org.wickedsource.docxstamper.api.commentprocessor.ICommentProcessor;
 import org.wickedsource.docxstamper.api.coordinates.ParagraphCoordinates;
 import org.wickedsource.docxstamper.api.coordinates.RunCoordinates;
 import org.wickedsource.docxstamper.el.ExpressionUtil;
-import org.wickedsource.docxstamperext.jsonpath.JsonExpressionResolver;
 import org.wickedsource.docxstamper.processor.CommentProcessorRegistry;
 import org.wickedsource.docxstamper.proxy.ProxyBuilder;
 import org.wickedsource.docxstamper.proxy.ProxyException;
