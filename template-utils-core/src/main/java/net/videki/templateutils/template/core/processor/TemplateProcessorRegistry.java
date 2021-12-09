@@ -31,6 +31,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +47,10 @@ public class TemplateProcessorRegistry {
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
+
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private static final Lock readLock = lock.readLock();
+    private static final Lock writeLock = lock.writeLock();
 
     /**
      * The registered input processors.
@@ -73,8 +80,12 @@ public class TemplateProcessorRegistry {
      * Reinitializes the template processors.
      */
     public static void resetProcessors() {
-        synchronized (TemplateProcessorRegistry.processors) {
+        try {
+            writeLock.lock();
+
             init();
+        } finally {
+            writeLock.unlock();
         }
     }
 
@@ -82,9 +93,15 @@ public class TemplateProcessorRegistry {
      * Internal initializer.
      */
     protected static void init() {
-        processors.clear();
+        try {
+            writeLock.lock();
 
-        processors.putAll(TemplateServiceConfiguration.getInstance().getInputProcessors());
+            processors.clear();
+
+            processors.putAll(TemplateServiceConfiguration.getInstance().getInputProcessors());
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     /**
@@ -96,17 +113,24 @@ public class TemplateProcessorRegistry {
     public static InputTemplateProcessor getInputTemplateProcessor(final InputFormat format) {
         InputTemplateProcessor result;
 
-        result = processors.get(format);
+        try {
+            readLock.lock();
 
-        if (result == null) {
-            final String supportedFormats = processors.keySet().stream().map(s -> s.getStrValue())
-                    .collect(Collectors.joining(", "));
-            final String msg = String.format(
-                    "Unhandled input format %s. Has been a new one defined? Supporetd formats are: %s", format,
-                    supportedFormats);
-            LOGGER.error(msg);
-            throw new TemplateProcessException("d320e547-b4c6-45b2-bdd9-19ac0b699c97", msg);
+            result = processors.get(format);
+
+            if (result == null) {
+                final String supportedFormats = processors.keySet().stream().map(InputFormat::getStrValue)
+                        .collect(Collectors.joining(", "));
+                final String msg = String.format(
+                        "Unhandled input format %s. Has been a new one defined? Supporetd formats are: %s", format,
+                        supportedFormats);
+                LOGGER.error(msg);
+                throw new TemplateProcessException("d320e547-b4c6-45b2-bdd9-19ac0b699c97", msg);
+            }
+        } finally {
+            readLock.unlock();
         }
+
         return result;
     }
 

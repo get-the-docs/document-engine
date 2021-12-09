@@ -19,7 +19,7 @@ services:
     environment:
       API_KEY: 049d2c48-2a59-4e16-85e2-6fec38b7c80a
     ports:
-      - 8081:8081
+      - "8081:8081"
     restart: always
 
 volumes:

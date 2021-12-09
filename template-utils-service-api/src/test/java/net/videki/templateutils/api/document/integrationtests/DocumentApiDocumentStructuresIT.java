@@ -464,7 +464,7 @@ public class DocumentApiDocumentStructuresIT {
             }
 
             assertNotNull(resultDocumentList);
-            assertFalse(!resultDocumentList.isEmpty());
+            assertFalse(resultDocumentList.isEmpty());
 
             // Step 3 - download first result (simply into the memory since this is not a load test)
             for (final ResultDocument actDoc : resultDocumentList) {

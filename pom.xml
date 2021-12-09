@@ -61,7 +61,7 @@
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <json.version>20190722</json.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <clover.version>4.4.1</clover.version>
         <clover.check.ratio.min>60%</clover.check.ratio.min>
@@ -136,7 +136,7 @@
                                 <root>src/test</root>
                             </roots>
                             <excludes>
-                                <exclude>*.json</exclude>
+                                <exclude>**/*.json</exclude>
                               </excludes>                            
                         </configuration>
                     </execution>
