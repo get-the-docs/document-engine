@@ -21,7 +21,7 @@ package net.videki.templateutils.template.core.service;
  */
 
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;

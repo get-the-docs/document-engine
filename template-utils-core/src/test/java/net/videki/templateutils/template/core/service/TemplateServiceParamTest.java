@@ -22,7 +22,7 @@ package net.videki.templateutils.template.core.service;
 
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
+import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.documentstructure.v1.*;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.test.dto.ContractDataFactory;

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.videki.templateutils.template.core.documentstructure.v1.TemplateElement;
+import net.videki.templateutils.template.core.documentstructure.TemplateElement;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

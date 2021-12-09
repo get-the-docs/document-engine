@@ -20,10 +20,10 @@ package net.videki.templateutils.template.core.provider.resultstore;
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.v1.ResultDocument;
-import net.videki.templateutils.template.core.documentstructure.v1.GenerationResult;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.ResultDocument;
+import net.videki.templateutils.template.core.documentstructure.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 

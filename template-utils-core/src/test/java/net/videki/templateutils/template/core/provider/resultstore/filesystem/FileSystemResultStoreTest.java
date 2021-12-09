@@ -20,8 +20,8 @@ package net.videki.templateutils.template.core.provider.resultstore.filesystem;
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.v1.ResultDocument;
-import net.videki.templateutils.template.core.documentstructure.v1.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.ResultDocument;
+import net.videki.templateutils.template.core.documentstructure.GenerationResult;
 import net.videki.templateutils.template.core.provider.resultstore.ResultStore;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import org.junit.Test;

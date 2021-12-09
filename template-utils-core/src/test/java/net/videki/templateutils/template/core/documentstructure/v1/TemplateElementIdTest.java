@@ -20,6 +20,7 @@ package net.videki.templateutils.template.core.documentstructure.v1;
  * #L%
  */
 
+import net.videki.templateutils.template.core.documentstructure.TemplateElementId;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -20,9 +20,6 @@ package net.videki.templateutils.template.core.documentstructure;
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.v1.GenerationResultMode;
-import net.videki.templateutils.template.core.documentstructure.v1.TemplateElement;
-import net.videki.templateutils.template.core.documentstructure.v1.TemplateElementId;
 import net.videki.templateutils.template.core.service.OutputFormat;
 
 import java.util.LinkedList;

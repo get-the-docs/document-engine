@@ -26,7 +26,7 @@ import net.videki.templateutils.template.core.documentstructure.v1.OptionalTempl
 import net.videki.templateutils.template.core.documentstructure.v1.TemplateElementOption;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.*;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.documentstructure.v1.TemplateElement;
+import net.videki.templateutils.template.core.documentstructure.TemplateElement;
 import net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;

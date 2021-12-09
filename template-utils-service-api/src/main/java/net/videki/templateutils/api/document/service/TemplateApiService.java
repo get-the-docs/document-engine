@@ -22,8 +22,8 @@ package net.videki.templateutils.api.document.service;
 
 import java.util.Optional;
 
-import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;

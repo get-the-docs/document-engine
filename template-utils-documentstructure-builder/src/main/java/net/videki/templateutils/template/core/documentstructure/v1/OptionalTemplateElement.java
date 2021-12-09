@@ -20,6 +20,8 @@ package net.videki.templateutils.template.core.documentstructure.v1;
  * #L%
  */
 
+import net.videki.templateutils.template.core.documentstructure.TemplateElement;
+import net.videki.templateutils.template.core.documentstructure.TemplateElementId;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
 import java.util.Locale;

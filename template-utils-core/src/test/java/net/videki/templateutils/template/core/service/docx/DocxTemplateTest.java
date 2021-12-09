@@ -21,7 +21,7 @@ package net.videki.templateutils.template.core.service.docx;
  */
 
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;

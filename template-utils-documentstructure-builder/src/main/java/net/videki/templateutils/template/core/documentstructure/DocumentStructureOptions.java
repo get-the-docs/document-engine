@@ -21,8 +21,6 @@ package net.videki.templateutils.template.core.documentstructure;
  */
 
 import net.videki.templateutils.template.core.documentstructure.v1.OptionalTemplateElement;
-import net.videki.templateutils.template.core.documentstructure.v1.TemplateElement;
-import net.videki.templateutils.template.core.documentstructure.v1.TemplateElementId;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -21,8 +21,8 @@ package net.videki.templateutils.api.document.api.mapper;
  */
 
 import net.videki.templateutils.api.document.api.model.ResultDocument;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocumentStatus;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocumentStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

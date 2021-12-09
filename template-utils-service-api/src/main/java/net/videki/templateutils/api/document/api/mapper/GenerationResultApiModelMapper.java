@@ -21,7 +21,7 @@ package net.videki.templateutils.api.document.api.mapper;
  */
 
 import net.videki.templateutils.api.document.api.model.GenerationResult;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

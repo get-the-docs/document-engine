@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
 import net.videki.templateutils.template.core.provider.documentstructure.builder.DocumentStructureBuilder;
-import net.videki.templateutils.template.core.documentstructure.v1.TemplateElement;
+import net.videki.templateutils.template.core.documentstructure.TemplateElement;
 import net.videki.templateutils.template.core.service.exception.DocumentStructureException;
 import net.videki.templateutils.template.core.service.exception.TemplateProcessException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;

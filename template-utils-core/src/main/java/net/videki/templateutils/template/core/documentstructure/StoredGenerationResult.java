@@ -1,4 +1,4 @@
-package net.videki.templateutils.template.core.documentstructure.v1;
+package net.videki.templateutils.template.core.documentstructure;
 
 /*-
  * #%L
@@ -26,17 +26,18 @@ import java.util.Objects;
 
 /**
  * Document template generation result for a document structure.
- * It contains the generated document streams. The whole generation is linked through the transaction id,
+ * It contains the generated document file names and their success flag.
+ * The whole generation is linked through the transaction id,
  * which identifies the transaction id referring the valueset.
  *
  * @author Levente Ban
  */
-public class GenerationResult extends AbstractGenerationResult {
+public class StoredGenerationResult extends AbstractGenerationResult {
 
     /**
-     * The list of the result documents.
+     * The list of result documents.
      */
-    private final List<ResultDocument> results;
+    private final List<StoredResultDocument> results;
 
     /**
      * The value set transaction id.
@@ -44,20 +45,31 @@ public class GenerationResult extends AbstractGenerationResult {
     private String valueSetTransactionId;
 
     /**
-     * Initializes the container with a list of result documents.
-     * @param results the list of result documents.
+     * Initializes the container with a list of result documents with a random transaction id.
+     * @param results the list of the result documents.
      */
-    public GenerationResult(final List<ResultDocument> results) {
+    public StoredGenerationResult(final List<StoredResultDocument> results) {
         super();
 
         this.results = Objects.requireNonNullElseGet(results, LinkedList::new);
     }
 
     /**
-     * Returns the list of reesult documents.
-     * @return the result documents.
+     * Initializes the container with a predefined transaction id and result document set.
+     * @param transactionId the document structure generation transaction id.
+     * @param results the result document list (list of their streams).
      */
-    public List<ResultDocument> getResults() {
+    public StoredGenerationResult(final String transactionId, final List<StoredResultDocument> results) {
+        this(results);
+
+        setTransactionId(transactionId);
+    }
+
+    /**
+     * Returns the result documents' descriptors (file names, etc.).
+     * @return the list of the result document descriptors.
+     */
+    public List<StoredResultDocument> getResults() {
         return results;
     }
 
@@ -74,16 +86,16 @@ public class GenerationResult extends AbstractGenerationResult {
      * @return the value set transaction id.
      */
     public String getValueSetTransactionId() {
-        return this.valueSetTransactionId; 
+        return this.valueSetTransactionId;
     }
-    
+
     /**
-     * Convencience method for logging.
+     * Convenience method for logging.
      */
     @Override
     public String toString() {
         return "GenerationResult{" +
-                "results=" + results +
+                "results=" + this.results +
                 ", transactionId='" + this.getTransactionId() + '\'' +
                 ", valueSetTransactionId='" + this.getValueSetTransactionId() + '\'' +
                 ", generationStartTime=" + this.getGenerationStartTime() +

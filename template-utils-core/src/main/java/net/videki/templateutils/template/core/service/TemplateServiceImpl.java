@@ -30,8 +30,7 @@ import java.util.stream.Stream;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.context.ContextObjectProxyBuilder;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.documentstructure.v1.*;
+import net.videki.templateutils.template.core.documentstructure.*;
 import net.videki.templateutils.template.core.processor.ConverterRegistry;
 import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 import net.videki.templateutils.template.core.util.FileSystemHelper;
@@ -215,7 +214,7 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public <T> ResultDocument fill(final String transactionId, final String templateName, final T dto,
-            final OutputFormat outputFormat) throws TemplateServiceException {
+                                   final OutputFormat outputFormat) throws TemplateServiceException {
 
         if (StringUtils.isBlank(templateName) || dto == null || outputFormat == null) {
             throw new TemplateServiceConfigurationException("c936e550-8b0e-4577-bffa-7f36b211d981",
@@ -261,7 +260,7 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public GenerationResult fill(final String transactionId, final DocumentStructure documentStructure,
-            final ValueSet values) throws TemplateServiceException {
+                                 final ValueSet values) throws TemplateServiceException {
         if (documentStructure == null || values == null) {
             throw new TemplateServiceConfigurationException("bdaa9376-28b4-4718-9859-2ef5d88ab3b0", String.format(
                     "%s - documentStructure: %s, values: %s", MSG_INVALID_PARAMETERS, documentStructure, values));

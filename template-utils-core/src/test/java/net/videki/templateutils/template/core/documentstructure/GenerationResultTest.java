@@ -20,7 +20,6 @@ package net.videki.templateutils.template.core.documentstructure;
  * #L%
  */
 
-import net.videki.templateutils.template.core.documentstructure.v1.GenerationResult;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

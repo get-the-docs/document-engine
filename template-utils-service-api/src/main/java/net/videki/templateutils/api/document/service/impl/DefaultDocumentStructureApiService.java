@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.documentstructure.v1.ValueSet;
+import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;

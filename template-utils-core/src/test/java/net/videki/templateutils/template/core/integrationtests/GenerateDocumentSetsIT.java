@@ -22,10 +22,10 @@ package net.videki.templateutils.template.core.integrationtests;
 
 import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
-import net.videki.templateutils.template.core.documentstructure.v1.GenerationResult;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
-import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
-import net.videki.templateutils.template.core.documentstructure.v1.ValueSet;
+import net.videki.templateutils.template.core.documentstructure.GenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
+import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
+import net.videki.templateutils.template.core.documentstructure.ValueSet;
 import net.videki.templateutils.template.core.service.TemplateService;
 import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
