@@ -53,6 +53,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -260,6 +261,7 @@ public class DocumentApiTemplatesIT {
         log.debug("postTemplateGenerationJobValidShouldReturnTransactionId - transaction id: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
         assertTrue(responseEntity.getBody().getTransactionId() != null &&
                 !responseEntity.getBody().getTransactionId().isBlank());
 

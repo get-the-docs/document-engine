@@ -20,11 +20,11 @@ package net.videki.templateutils.template.core.context;
  * #L%
  */
 
-import lombok.extern.slf4j.Slf4j;
-import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -32,8 +32,12 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Slf4j
 public class TemplateContextTest {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContextObjectProxyBuilder.class);
 
     private final String jsonDataMultiContext = "{\n" +
             "  \"ctx\": {\n" +
@@ -176,14 +180,14 @@ public class TemplateContextTest {
 //        tc.withContext(new JsonValueObject(this.jsonData));
         tc.withContext(ContextObjectProxyBuilder.build(this.jsonData));
 
-        log.debug("Data: {}", tc.toJson());
+        LOGGER.debug("Data: {}", tc.toJson());
     }
 
     @Test
     public void serializationMultiContextTest() {
         final var result = new TemplateContext(this.jsonDataMultiContext);
 
-        log.debug("Data: {}", result.toJson());
+        LOGGER.debug("Data: {}", result.toJson());
 
     }
     

@@ -58,7 +58,7 @@ public interface GetDocumentStructuresResponseApiModelMapper {
 		result.setPage(page);
 
 		result.setContents(
-				new ArrayList<net.videki.templateutils.api.document.api.model.DocumentStructure>(source.getData().stream()
+				new ArrayList<>(source.getData().stream()
 						.map(DocumentStructureEntityToApiModelMapper.INSTANCE::entityToApiModel).collect(Collectors.toList())));
 
 		return result;

@@ -23,9 +23,6 @@ import net.videki.templateutils.template.core.context.dto.JsonModel;
  */
 
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.service.OutputFormat;
-
-import java.util.*;
 
 /**
  * <p>

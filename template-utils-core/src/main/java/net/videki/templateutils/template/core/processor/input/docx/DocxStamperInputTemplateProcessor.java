@@ -73,7 +73,7 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
     OutputStream result = null;
 
     final JsonDocxStamperConfiguration config = new JsonDocxStamperConfiguration();
-    final JsonDocxStamper<T> stamper = new JsonDocxStamper<T>(config);
+    final JsonDocxStamper<T> stamper = new JsonDocxStamper<>(config);
 
     try (final InputStream templateFile = getTemplate(templateFileName)) {
 

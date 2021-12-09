@@ -231,7 +231,7 @@ public class TemplateApiController implements TemplateApi {
                 final InputStreamResource ds = new InputStreamResource(new ByteArrayInputStream(binaryData));
 
                 if (log.isDebugEnabled()) {
-                    if (binaryData != null && binaryData.length > 0) {
+                    if (binaryData.length > 0) {
                         log.debug("getResultDocumentForTemplateByTransactionIdAndResultDocumentId - transactionId: [{}], result document id: [{}]",
                                 transactionId, resultDocumentId);
                     } else {

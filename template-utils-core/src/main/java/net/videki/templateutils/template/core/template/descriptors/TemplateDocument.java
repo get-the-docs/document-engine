@@ -96,11 +96,8 @@ public class TemplateDocument {
      *
      * @param templateName the template document name in the template repository.
      * @param locale       the locale to be used with.
-     * @throws TemplateServiceConfigurationException thrown if the format cannot be
-     *                                               determined or repo access
-     *                                               errors.
      */
-    public TemplateDocument(final String templateName, final Locale locale) throws TemplateServiceConfigurationException {
+    public TemplateDocument(final String templateName, final Locale locale) {
         this(templateName, Locale.getDefault(), null, null);
     }
 

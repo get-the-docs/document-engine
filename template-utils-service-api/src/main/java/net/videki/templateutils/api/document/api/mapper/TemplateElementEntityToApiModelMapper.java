@@ -90,14 +90,12 @@ public interface TemplateElementEntityToApiModelMapper {
 		final List<net.videki.templateutils.api.document.api.model.TemplateNameItem> results = new ArrayList<>(
 				value.keySet().size());
 
-		if (value != null) {
-			for (final Locale actValue : value.keySet()) {
-				final net.videki.templateutils.api.document.api.model.TemplateNameItem actItem = new net.videki.templateutils.api.document.api.model.TemplateNameItem();
-				actItem.setLocale(map(actValue));
-				actItem.setTemplateName(value.get(actValue));
+		for (final Locale actValue : value.keySet()) {
+			final net.videki.templateutils.api.document.api.model.TemplateNameItem actItem = new net.videki.templateutils.api.document.api.model.TemplateNameItem();
+			actItem.setLocale(map(actValue));
+			actItem.setTemplateName(value.get(actValue));
 
-				results.add(actItem);
-			}
+			results.add(actItem);
 		}
 
 		return results;

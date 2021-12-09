@@ -20,8 +20,6 @@ package net.videki.templateutils.template.core.service;
  * #L%
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
@@ -68,17 +66,12 @@ public class TemplateServiceImpl implements TemplateService {
     private static Logger LOGGER_VALUE;
 
     /**
-     * The actual service configuration.
-     */
-    private final TemplateServiceConfiguration configuration;
-
-    /**
-     * Deafult constructor.
+     * Default constructor.
      */
     TemplateServiceImpl() {
-        this.configuration = TemplateServiceConfiguration.getInstance();
+        final TemplateServiceConfiguration configuration = TemplateServiceConfiguration.getInstance();
 
-        String valueLogCategory = this.configuration.getDocStructureLogCategory();
+        String valueLogCategory = configuration.getDocStructureLogCategory();
         if (valueLogCategory == null) {
             LOGGER_VALUE = LoggerFactory.getLogger(TemplateService.class);
         } else {
@@ -199,7 +192,7 @@ public class TemplateServiceImpl implements TemplateService {
 
             LOGGER.warn("Result document NOT generated: template name: [{}], transaction id: [{}]. The error was: {}", templateName, transactionId, e.getMessage());
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Result document generated: template name: [{}], transaction id: [{}]", templateName, transactionId, e);
+                LOGGER.trace("Result document NOT generated: template name: [{}], transaction id: [{}]", templateName, transactionId, e);
             }
             return result;
         }
@@ -217,7 +210,7 @@ public class TemplateServiceImpl implements TemplateService {
      * @param dto           the model object.
      * @param outputFormat  the desired output format.
      * @throws TemplateServiceException thrown on processing related errors during
-     *                                  template retriev or fill.
+     *                                  template retrieve or fill.
      * @return the filled document if the fill was successful.
      */
     @Override
@@ -338,7 +331,7 @@ public class TemplateServiceImpl implements TemplateService {
      * @return the result filename.
      */
     private String getOutputFileName(final String templateFileName, final OutputFormat format) {
-        String result = null;
+        String result;
 
         try {
             int fileExtPos = templateFileName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
@@ -427,7 +420,7 @@ public class TemplateServiceImpl implements TemplateService {
      * object, converts it to the desired output format and saves it in the
      * configured result store.
      *
-     * @param transactionId The tranasction id, if defined
+     * @param transactionId The transaction id, if defined
      * @param templateName  the template document name in the template repository.
      * @param <T>           the model class.
      * @param dto           the model object.
@@ -447,7 +440,7 @@ public class TemplateServiceImpl implements TemplateService {
      * object, converts it to the desired output format and saves it in the
      * configured result store.
      * 
-     * @param transactionId The tranasction id, if defined
+     * @param transactionId The transaction id, if defined
      * @param templateName  the template document name in the template repository.
      * @param <T>           the model class.
      * @param dto           the model object.
@@ -482,10 +475,8 @@ public class TemplateServiceImpl implements TemplateService {
                 .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
                 .collect(Collectors.toList());
 
-        final StoredGenerationResult result = new StoredGenerationResult(generationResult.getTransactionId(),
+        return new StoredGenerationResult(generationResult.getTransactionId(),
                 ResultDocuments);
-
-        return result;
     }
 
     /**
@@ -568,7 +559,7 @@ public class TemplateServiceImpl implements TemplateService {
             final TemplateElement actTemplate, final ResultDocument actFilledDocument) throws TemplateProcessException {
 
         OutputStream actResult;
-        String actResultFileName = null;
+        String actResultFileName;
         if (actFilledDocument.getContent() != null
                 && !documentStructure.getOutputFormat().isSameFormat(actTemplate.getFormat())) {
             switch (documentStructure.getOutputFormat()) {
@@ -625,30 +616,6 @@ public class TemplateServiceImpl implements TemplateService {
         result.setTransactionId(actFilledDocument.getTransactionId());
 
         return result;
-    }
-
-    /**
-     * Returns local template context.
-     * 
-     * @param globalContext the actual global context.
-     * @param localContext  the current context for evaluating the actual
-     *                      placeholder.
-     * @return the template context with the context accessible at the current
-     *         location (object in the local context plus contents of the global
-     *         context).
-     */
-    private TemplateContext getLocalTemplateContext(final Optional<TemplateContext> globalContext,
-                                                    final Optional<TemplateContext> localContext) {
-        final TemplateContext result = new TemplateContext();
-        globalContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));
-        localContext.ifPresent(templateContext -> result.getCtx().putAll(templateContext.getCtx()));
-
-        return result;
-    }
-
-    protected static InputStream getInputStream(final OutputStream out) {
-        return new ByteArrayInputStream(((ByteArrayOutputStream) out).toByteArray());
-
     }
 
 }

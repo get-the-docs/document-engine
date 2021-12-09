@@ -21,7 +21,6 @@ package net.videki.templateutils.template.core.provider.documentstructure.builde
  */
 
 import net.videki.templateutils.template.core.documentstructure.DocumentStructureOptions;
-import net.videki.templateutils.template.core.documentstructure.v1.DocumentStructureOptionsV1;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceConfigurationException;
 
 import java.io.InputStream;

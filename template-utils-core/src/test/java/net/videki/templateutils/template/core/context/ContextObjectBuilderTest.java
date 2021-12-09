@@ -26,14 +26,11 @@ import net.videki.templateutils.template.core.context.dto.JsonModel;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import org.junit.Test;
 
-import net.videki.templateutils.template.core.context.ContextObjectProxyBuilder;
-
 import static org.junit.Assert.*;
 
 public class ContextObjectBuilderTest {
 
     private final String jsonDataMultiContext = "{\n" +
-            "  \"ctx\": {\n" +
             "    \"org\": {\n" +
             "      \"orgCode\": \"PB\",\n" +
             "      \"name\": \"Vintage Services - Palm beach\",\n" +
@@ -133,19 +130,6 @@ public class ContextObjectBuilderTest {
             "        \"day\": 16\n" +
             "      }\n" +
             "    },\n" +
-            "    \"doc\": {\n" +
-            "      \"dmsUrl\": \"http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68\",\n" +
-            "      \"login\": \"PB\\\\cnorris\",\n" +
-            "      \"generationDate\": {\n" +
-            "        \"year\": 1970,\n" +
-            "        \"month\": 7,\n" +
-            "        \"day\": 20\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "}";
-
-    private final String jsonSmall = "{\n" +
             "    \"doc\": {\n" +
             "      \"dmsUrl\": \"http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68\",\n" +
             "      \"login\": \"PB\\\\cnorris\",\n" +
@@ -277,6 +261,28 @@ public class ContextObjectBuilderTest {
             assertNotNull(generatedObject2);
 
             var reSerializedValue = ((JsonModel) generatedObject).toJson();
+            var reSerializedValue2 = ((JsonModel) generatedObject2).toJson();
+
+            assertEquals(reSerializedValue, reSerializedValue2);
+
+        } catch (final Exception e) {
+            fail();
+        }
+
+    }
+
+    @Test
+    public void reSerializationShouldBeParsedIdentically() {
+        try {
+            var generatedObject = ContextObjectProxyBuilder.build(jsonDataMultiContext);
+
+            assertNotNull(generatedObject);
+
+            var reSerializedValue = ((JsonModel) generatedObject).toJson();
+
+            var generatedObject2 = ContextObjectProxyBuilder.build(reSerializedValue);
+
+            assertNotNull(generatedObject2);
             var reSerializedValue2 = ((JsonModel) generatedObject2).toJson();
 
             assertEquals(reSerializedValue, reSerializedValue2);

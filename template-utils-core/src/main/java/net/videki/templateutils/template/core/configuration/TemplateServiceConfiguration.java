@@ -24,6 +24,9 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 import net.videki.templateutils.template.core.processor.input.InputTemplateProcessor;
@@ -120,6 +123,10 @@ public class TemplateServiceConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
 
     private static TemplateServiceConfiguration INSTANCE = new  TemplateServiceConfiguration();
+
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private static final Lock readLock = lock.readLock();
+    private static final Lock writeLock = lock.writeLock();
 
     // template-utils.properties keys
     private static final String FONT_FAMILY = "converter.pdf.font-library.font";
@@ -474,8 +481,12 @@ public class TemplateServiceConfiguration {
     public static TemplateServiceConfiguration getInstance() {
         TemplateServiceConfiguration result = INSTANCE;
         if (result == null) {
-            synchronized (INSTANCE) {
+            try {
+                readLock.lock();
+
                 result = INSTANCE = new TemplateServiceConfiguration();
+            } finally {
+                readLock.unlock();
             }
         }
 
@@ -501,8 +512,12 @@ public class TemplateServiceConfiguration {
      * Can be used to release caches, re-login to the repository providers, etc.
      */
     public static void reload() {
-        synchronized (INSTANCE) {
+        try {
+            writeLock.lock();
+
             INSTANCE = new TemplateServiceConfiguration();
+        } finally {
+            writeLock.unlock();
         }
     }
 
@@ -515,8 +530,12 @@ public class TemplateServiceConfiguration {
     public static void load(final TemplateServiceConfiguration newConfiguration)
             throws TemplateServiceConfigurationException {
         if (newConfiguration != null) {
-            synchronized (INSTANCE) {
+            try {
+                writeLock.lock();
+
                 INSTANCE = newConfiguration;
+            } finally {
+                writeLock.unlock();
             }
         } else {
             throw new TemplateServiceConfigurationException("876075ed-6e23-4d84-95ba-05f45ba9193a",

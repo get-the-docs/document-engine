@@ -7,9 +7,9 @@ title: Features
 ## Fill-in a single template with a value object 
 
 ```java
-/** <p>Fills the given single file template specified by its name and return the filled document
-* in the templates format.</p>
-* <p>The template file format has to be in the configured template provider - @see TemplateServiceConfiguration</p>
+/** Fills the given single file template specified by its name and return the filled document
+* in the templates format.
+* The template file format has to be in the configured template provider - @see TemplateServiceConfiguration
 * @param templateName the template file name
 * @param dto the value object to fill the template
 * @param <T> the value object type

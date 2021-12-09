@@ -26,7 +26,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javassist.util.proxy.ProxyFactory;
-import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.template.core.context.dto.JsonModel;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
 
@@ -41,6 +40,8 @@ import javassist.NotFoundException;
 import net.videki.templateutils.template.core.context.dto.PropertyClassHolder;
 import net.videki.templateutils.template.core.dto.extensions.ITemplate;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Proxy class builder for JSON DTOs to inject into as typed elements into the
@@ -51,14 +52,18 @@ import net.videki.templateutils.template.core.service.exception.TemplateServiceR
  *
  * @author Levente Ban
  */
-@Slf4j
 public class ContextObjectProxyBuilder {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContextObjectProxyBuilder.class);
 
     /** Json mapper */
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Entry point to generate and instanciate the holder object for a given DTO.
+     * Entry point to generate and instantiate the holder object for a given DTO.
      * 
      * @param data the value object as json string
      * @return the generated object.
@@ -66,7 +71,7 @@ public class ContextObjectProxyBuilder {
     public static Object build(final Map<?, ?> data) {
 
         if (data == null) {
-            log.trace("Null input caught to create a proxy object.");
+            LOGGER.trace("Null input caught to create a proxy object.");
             return null;
         }
 
@@ -74,7 +79,7 @@ public class ContextObjectProxyBuilder {
             return build(mapper.writeValueAsString(data));
         } catch (JsonProcessingException e) {
             final String msg = "Error reading the DTO caught.";
-            log.error(msg, e);
+            LOGGER.error(msg, e);
 
             throw new TemplateServiceRuntimeException(msg, e);
         }
@@ -90,30 +95,32 @@ public class ContextObjectProxyBuilder {
     public static Object build(final String data) {
         try {
             if (StringUtils.isBlank(data)) {
-                log.trace("Null input caught to create a proxy object.");
+                LOGGER.trace("Null input caught to create a proxy object.");
                 return null;
             }
 
-            log.debug("Building a proxy object for the DTO.");
-            if (log.isTraceEnabled()) {
-                log.trace("DTO raw data: {}", data);
+            LOGGER.debug("Building a proxy object for the DTO.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("DTO raw data: {}", data);
             }
 
             final Map<?, ?> objContext = mapper.readValue(data, Map.class);
 
-            log.trace("DTO parse ok, creating proxy...");
+            LOGGER.trace("DTO parse ok, creating proxy...");
 
+//            final PropertyClassHolder dtoClass = getObjectForContext(TemplateContext.class, "Dto",
+//                    objContext, null, null);
             final PropertyClassHolder dtoClass = getObjectForContext(TemplateContext.class, "Dto",
                     objContext, null, null);
 
-            log.trace("Proxy build successful, deserializing data.");
+            LOGGER.trace("Proxy build successful, deserializing data.");
 
             return mapper.readValue(data, dtoClass.getHolderClassBuilder().toClass(
                 TemplateContext.class.getClassLoader(), TemplateContext.class.getProtectionDomain()));
 
         } catch (final JsonProcessingException | CannotCompileException e) {
             final String msg = "Error reading the DTO caught.";
-            log.error(msg, e);
+            LOGGER.error(msg, e);
 
             throw new TemplateServiceRuntimeException(msg, e);
         }
@@ -156,13 +163,13 @@ public class ContextObjectProxyBuilder {
                 final Object actValue = context.get(actProperty);
 
                 if (actValue instanceof Map) {
-                    log.trace("Found property: " + actPropertyName);
+                    LOGGER.trace("Found property: " + actPropertyName);
 
                     final PropertyClassHolder propHolder = getObjectForContext(baseClass, actPropertyName,
                             (Map<?, ?>) actValue, null, null);
                     reversedProperties.add(propHolder);
                 } else if (actValue instanceof List) {
-                    log.trace("Found property: List: " + actPropertyName);
+                    LOGGER.trace("Found property: List: " + actPropertyName);
 
                     List<PropertyClassHolder> tmpAggregatedProperties = null;
                     for (final Object actItem : (List<?>) actValue) {
@@ -183,7 +190,7 @@ public class ContextObjectProxyBuilder {
                 } else if (actValue instanceof Boolean) {
                     reversedProperties.add(new PropertyClassHolder(actPropertyName, Boolean.class));
                 } else {
-                    log.error("Unhandled data type caught: {}", actValue.getClass());
+                    LOGGER.error("Unhandled data type caught: {}", actValue.getClass());
                 }
 
             }
@@ -219,11 +226,11 @@ public class ContextObjectProxyBuilder {
 
         final String actClassName = StringUtils.capitalize(className);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Generating class {}{}", baseClass, actClassName);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Generating class {}{}", baseClass, actClassName);
         }
-        if (log.isTraceEnabled()) {
-            log.trace("Generating class with field set: {}.{} - properties: [{}]", baseClass.getName(), className, properties);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Generating class with field set: {}.{} - properties: [{}]", baseClass.getName(), className, properties);
         }
 
         CtClass cc;
@@ -237,30 +244,30 @@ public class ContextObjectProxyBuilder {
             cc.addInterface(resolveCtClass(ITemplate.class));
             cc.addInterface(resolveCtClass(JsonModel.class));
 
-            log.trace("New type, the effective class name is: {}", effectiveClassName);
+            LOGGER.trace("New type, the effective class name is: {}", effectiveClassName);
         } else {
             cc = aggregatorType;
 
-            log.trace("Extending previously composed class: {}", cc.getName());
+            LOGGER.trace("Extending previously composed class: {}", cc.getName());
         }
 
         for (final PropertyClassHolder entry : properties) {
             final String actPropertyName = entry.getPropertyName();
             try {
                 cc.getField(actPropertyName);
-                log.trace("Field: {} exists.", actPropertyName);
+                LOGGER.trace("Field: {} exists.", actPropertyName);
             } catch (final NotFoundException e) {
                 final Class<?> holderClass = entry.getHolderClass() == null
                         ? entry.getHolderClassBuilder().toClass(TemplateContext.class.getClassLoader(),
                                 TemplateContext.class.getProtectionDomain())
                         : entry.getHolderClass();
-                log.trace("Property: {} - class: {}", entry.getPropertyName(), holderClass);
+                LOGGER.trace("Property: {} - class: {}", entry.getPropertyName(), holderClass);
 
                 cc.addField(new CtField(resolveCtClass(holderClass), entry.getPropertyName(), cc));
                 cc.addMethod(generateGetter(cc, entry.getPropertyName(), holderClass));
                 cc.addMethod(generateSetter(cc, entry.getPropertyName(), holderClass));
 
-                log.trace("Added field to type: {}.{}", className, actPropertyName);
+                LOGGER.trace("Added field to type: {}.{}", className, actPropertyName);
             }
         }
 

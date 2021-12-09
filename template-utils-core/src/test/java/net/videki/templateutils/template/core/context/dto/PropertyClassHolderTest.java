@@ -24,7 +24,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

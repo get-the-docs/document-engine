@@ -30,12 +30,7 @@ public class SectionHeaderTest {
    
     @Test
     public void dummyTestForCoverage() {
-        final SectionHeader ctx = new SectionHeader() {
-            @Override
-            public boolean isSectionHeader() {
-                return true;
-            }
-        };
+        final SectionHeader ctx = () -> true;
         
         assertTrue(ctx.isSectionHeader());
     }

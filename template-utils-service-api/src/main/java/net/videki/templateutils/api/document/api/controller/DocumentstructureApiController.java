@@ -26,7 +26,6 @@ import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.context.ContextObjectProxyBuilder;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.documentstructure.v1.DocumentStructureV1;
 import net.videki.templateutils.template.core.documentstructure.v1.StoredGenerationResult;
 import net.videki.templateutils.template.core.documentstructure.v1.StoredResultDocument;
 import net.videki.templateutils.template.core.documentstructure.v1.ValueSet;
@@ -152,8 +151,6 @@ public class DocumentstructureApiController implements DocumentstructureApi {
             
             final TemplateContext ctx = new TemplateContext();
             ctx.withContext(contextKey, ContextObjectProxyBuilder.build(valueMap));
-
-            valueSet.withContext(ctx);
         }
         valueSet.build();
 

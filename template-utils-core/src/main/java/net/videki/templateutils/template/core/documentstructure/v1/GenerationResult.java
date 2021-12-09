@@ -22,6 +22,7 @@ package net.videki.templateutils.template.core.documentstructure.v1;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Document template generation result for a document structure.
@@ -49,11 +50,7 @@ public class GenerationResult extends AbstractGenerationResult {
     public GenerationResult(final List<ResultDocument> results) {
         super();
 
-        if (results != null) {
-            this.results = results;
-        } else {
-            this.results  = new LinkedList<>();
-        }
+        this.results = Objects.requireNonNullElseGet(results, LinkedList::new);
     }
 
     /**

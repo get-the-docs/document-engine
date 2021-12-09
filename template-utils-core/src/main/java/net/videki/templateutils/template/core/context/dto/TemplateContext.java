@@ -26,11 +26,12 @@ import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONValue;
 import net.videki.templateutils.template.core.context.ContextObjectProxyBuilder;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -38,6 +39,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * JSON template model provider implementation to provide non-reflection based model data.
@@ -46,8 +50,15 @@ import java.util.Map;
  * 
  * @author Levente Ban
  */
-@Slf4j
 public class TemplateContext implements IJsonTemplate, JsonModel {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContextObjectProxyBuilder.class);
+
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private static final Lock writeLock = lock.writeLock();
 
     /**
      * Context root object key.
@@ -97,7 +108,7 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
         this.jsonData = data;
 
         try {
-            log.trace("Parsing context data...");
+            LOGGER.trace("Parsing context data...");
 
             this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(data);
 
@@ -113,13 +124,13 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
                 withContext(ContextObjectProxyBuilder.build(sw.toString()));
             }
 
-            log.trace("Context parse successful");
+            LOGGER.trace("Context parse successful");
         } catch (final Exception e) {
             final var msg = "Error reading JSON data";
 
-            log.error(msg);
-            if (log.isDebugEnabled()) {
-                log.debug("Value object to parse: {}", data);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Value object to parse: {}", data);
             }
 
             throw new TemplateServiceRuntimeException(msg, e);
@@ -163,8 +174,8 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
      * @return the context object if found by the given JSON path.
      */
     public Object getValue(final String path) {
-        if (log.isTraceEnabled()) {
-            log.trace("Getting data for path {}...", path);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Getting data for path {}...", path);
         }
         try {
             if (this.dc == null) {
@@ -204,9 +215,9 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
         } catch (final Exception e) {
             final var msg = String.format("Error reading JSON data. Path: %s", path);
 
-            log.error(msg);
-            if (log.isTraceEnabled()) {
-                log.debug("Value object to parse: {}", this.jsonData);
+            LOGGER.error(msg);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.debug("Value object to parse: {}", this.jsonData);
             }
 
             throw new TemplateServiceRuntimeException(msg, e);
@@ -219,8 +230,8 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
      * @return the list of context object if found by the given JSON path.
      */
     public List<Object> getItems(final String path) {
-        if (log.isTraceEnabled()) {
-            log.trace("Getting items for path {}...", path);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Getting items for path {}...", path);
         }
         return this.dc.read(JSONPATH_PREFIX + path);
     }
@@ -284,17 +295,25 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
      */
     @Override
     public String toJson() {
-        if (this.jsonData == null) {
-            synchronized (this) {
+        String result;
+
+        try {
+            writeLock.lock();
+
+            if (this.jsonData == null) {
                 if (this.jsonData == null) {
                     final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
                     return this.jsonData = gson.toJson(this);
                 }
             }
+
+            result = this.jsonData;
+        } finally {
+            writeLock.unlock();
         }
 
-        return this.jsonData;
+        return result;
 
     }
 }

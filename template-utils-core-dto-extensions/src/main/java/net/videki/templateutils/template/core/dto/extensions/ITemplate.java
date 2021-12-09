@@ -45,7 +45,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Convenience functions for placeholder evaluation result formatting.
@@ -558,7 +557,7 @@ public interface ITemplate {
         if (args != null && args.length > 0) {
             final StringBuilder sb = new StringBuilder();
             for (final Object actArg : args) {
-                sb.append(actArg + " ");
+                sb.append(actArg).append(" ");
             }
 
             return sb.toString().replaceAll("\\s$", "");

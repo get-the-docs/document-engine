@@ -170,12 +170,24 @@ public class ITemplateTest {
     public void fmtNLongValue() {
         final ITemplate ctx = new ITemplate() {};
 
-        final long value = Long.MAX_VALUE;
+        final Long value = Long.MAX_VALUE;
 
         final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
         final DecimalFormat fmt = new DecimalFormat("###,###,###,###,###,###,##0", dfs);
-        
+
         assertEquals(fmt.format(value), ctx.fmtN(value));
+    }
+
+    @Test
+    public void fmtNLongValueWithLocale() {
+        final ITemplate ctx = new ITemplate() {};
+
+        final Long value = Long.MAX_VALUE;
+
+        final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
+        final DecimalFormat fmt = new DecimalFormat("###,###,###,###,###,###,##0", dfs);
+
+        assertEquals(fmt.format(value), ctx.fmtN(value, Locale.CANADA.toString()));
     }
 
     @Test
@@ -194,7 +206,7 @@ public class ITemplateTest {
     public void fmtNDoubleValue() {
         final ITemplate ctx = new ITemplate() {};
 
-        final double value = Long.MAX_VALUE;
+        final Double value = Double.MAX_VALUE;
 
         final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
         final DecimalFormat fmt = new DecimalFormat("###,###,###,###,###,###,##0", dfs);
@@ -202,14 +214,23 @@ public class ITemplateTest {
         assertEquals(fmt.format(value), ctx.fmtN(value));
     }
 
+    @Test
+    public void fmtNDoubleValueWithLocale() {
+        final ITemplate ctx = new ITemplate() {};
+
+        final Double value = Double.MAX_VALUE;
+
+        final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.getDefault());
+        final DecimalFormat fmt = new DecimalFormat("###,###,###,###,###,###,##0", dfs);
+
+        assertEquals(fmt.format(value), ctx.fmtN(value, Locale.CANADA.toString()));
+    }
 
     @Test
     public void fmtNNullValueShouldReturnEvalErrorPlaceholder() {
         final ITemplate ctx = new ITemplate() {};
 
-        final Double value = null;
-        
-        assertEquals(ITemplate.PLACEHOLDER_EVALUATION_ERROR, ctx.fmtN(value));
+        assertEquals(ITemplate.PLACEHOLDER_EVALUATION_ERROR, ctx.fmtN((Double) null));
     }
     
     @Test

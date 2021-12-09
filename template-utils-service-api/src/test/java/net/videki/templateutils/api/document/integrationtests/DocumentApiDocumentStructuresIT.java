@@ -55,9 +55,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
@@ -124,6 +126,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
         assertEquals(7,responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresAllShouldReturnTestResources - end.");
@@ -142,6 +145,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
         assertEquals(7,responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresFirstPageShouldReturnTestResources - end.");
@@ -160,6 +164,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
         assertEquals(1,responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresIdGivenShouldReturnTestResource - end.");
@@ -195,6 +200,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
         assertEquals(0,responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresPageOutOfRangeShouldReturn200WithEmptyPage - end.");
@@ -212,6 +218,7 @@ public class DocumentApiDocumentStructuresIT {
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         final var defaultPage = new Pageable();
+        assertNotNull(responseEntity.getBody());
         assertEquals(Math.min(defaultPage.getSize(), 7),responseEntity.getBody().getContents().size());
 
         log.info("getDocumentStructuresNoParamsShouldReturnDefaultPage - end.");
@@ -226,7 +233,8 @@ public class DocumentApiDocumentStructuresIT {
 
         List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<>() {
+            });
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();
@@ -253,6 +261,7 @@ public class DocumentApiDocumentStructuresIT {
         log.debug("postDocumentStructuresGenerationJobValidShouldReturnTransactionId - transaction id: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
         assertTrue(responseEntity.getBody().getTransactionId() != null &&
                 !responseEntity.getBody().getTransactionId().isBlank());
 
@@ -268,7 +277,8 @@ public class DocumentApiDocumentStructuresIT {
 
         List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<>() {
+            });
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();
@@ -292,6 +302,7 @@ public class DocumentApiDocumentStructuresIT {
                         urlVariables);
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertNotNull(responseEntity.getBody());
         assertTrue(responseEntity.getBody().getTransactionId() != null &&
                 !responseEntity.getBody().getTransactionId().isBlank());
 
@@ -336,7 +347,8 @@ public class DocumentApiDocumentStructuresIT {
 
         List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<>() {
+            });
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();
@@ -361,9 +373,7 @@ public class DocumentApiDocumentStructuresIT {
                         urlVariables);
 
         // Step 2 - query result (may be empty due internal async processing)
-        if (responseEntity != null &&
-                responseEntity.hasBody() &&
-                responseEntity.getBody().getTransactionId() != null) {
+        if (responseEntity.getBody() != null && responseEntity.getBody().getTransactionId() != null) {
             final String transactionId = responseEntity.getBody().getTransactionId();
 
             log.debug("Transaction id from post: {}", transactionId);
@@ -393,7 +403,8 @@ public class DocumentApiDocumentStructuresIT {
 
         List<Object> context = null;
         try {
-            context = this.jsonMapper.readValue(data, new TypeReference<List<Object>>(){});
+            context = this.jsonMapper.readValue(data, new TypeReference<>() {
+            });
         } catch (final JsonProcessingException e) {
             log.error("Error reading test data", e);
             fail();
@@ -452,7 +463,8 @@ public class DocumentApiDocumentStructuresIT {
                 }
             }
 
-            Assertions.assertTrue(!resultDocumentList.isEmpty());
+            assertNotNull(resultDocumentList);
+            assertFalse(!resultDocumentList.isEmpty());
 
             // Step 3 - download first result (simply into the memory since this is not a load test)
             for (final ResultDocument actDoc : resultDocumentList) {

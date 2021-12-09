@@ -55,7 +55,7 @@ public interface GetTemplatesResponseApiModelMapper {
 		page.setNumberOfElements(source.getNumberOfElements());
 		result.setPage(page);
 
-		result.setContents(new ArrayList<net.videki.templateutils.api.document.api.model.TemplateDocument>(source.getData().stream().map(TemplateDocumentToApiModelMapper.INSTANCE::entityToApiModel).collect(Collectors.toList())));
+		result.setContents(new ArrayList<>(source.getData().stream().map(TemplateDocumentToApiModelMapper.INSTANCE::entityToApiModel).collect(Collectors.toList())));
 
 		return result;
 	}

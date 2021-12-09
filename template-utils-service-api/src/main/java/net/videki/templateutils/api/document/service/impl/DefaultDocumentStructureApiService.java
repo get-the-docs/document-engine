@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
 import net.videki.templateutils.template.core.configuration.TemplateServiceConfiguration;
 import net.videki.templateutils.template.core.documentstructure.DocumentStructure;
-import net.videki.templateutils.template.core.documentstructure.v1.DocumentStructureV1;
 import net.videki.templateutils.template.core.documentstructure.v1.ValueSet;
 import net.videki.templateutils.template.core.provider.persistence.Page;
 import net.videki.templateutils.template.core.provider.persistence.Pageable;
@@ -109,7 +108,7 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
     public Optional<DocumentStructure> getDocumentStructureById(final String id) {
         try {
             if (log.isDebugEnabled()) {
-                log.debug("getDocumentStructureById - {}/{}, binary: {}", id);
+                log.debug("getDocumentStructureById - {}", id);
             }
 
             final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()

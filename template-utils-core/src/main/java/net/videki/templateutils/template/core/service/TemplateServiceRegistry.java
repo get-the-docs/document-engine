@@ -20,6 +20,10 @@ package net.videki.templateutils.template.core.service;
  * #L%
  */
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * Top level container for the service. This is the entry point through the
  * getInstance() method for the outside world.
@@ -30,7 +34,9 @@ public class TemplateServiceRegistry {
     /**
      * Lock object for config changes.
      */
-    private final static Object lockObject = new Object();
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private static final Lock readLock = lock.readLock();
+    private static final Lock writeLock = lock.writeLock();
 
     /**
      * The actual service implementation.
@@ -43,8 +49,12 @@ public class TemplateServiceRegistry {
      * @param tsImpl the desired implementation.
      */
     void setTemplateService(final TemplateService tsImpl) {
-        synchronized (lockObject) {
+        try {
+            writeLock.lock();
+
             INSTANCE = tsImpl;
+        } finally {
+            writeLock.unlock();
         }
     }
 
@@ -54,12 +64,18 @@ public class TemplateServiceRegistry {
      * @return the actual template service.
      */
     public static TemplateService getInstance() {
-        TemplateService result = INSTANCE;
-        if (result == null) {
-            synchronized (lockObject) {
+        TemplateService result;
+        try {
+            readLock.lock();
+
+            result = INSTANCE;
+            if (result == null) {
                 result = INSTANCE = new TemplateServiceImpl();
             }
+        } finally {
+            readLock.unlock();
         }
+
         return result;
     }
 }

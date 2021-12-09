@@ -75,7 +75,7 @@ public class RFC3339DateFormat extends DateFormat {
 
   /**
    * Clone.
-   * @return the cloned object.
+   * @return the cloned object - in this case this instance.
    */
   @Override
   public Object clone() {
