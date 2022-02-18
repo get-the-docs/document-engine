@@ -21,8 +21,8 @@ package net.videki.templateutils.template.core.context.dto;
  */
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -57,24 +57,26 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextObjectProxyBuilder.class);
 
+    @JsonIgnore
+    private static final JsonMapper mapper = new JsonMapper();
+
+    @JsonIgnore
     private static final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    @JsonIgnore
     private static final Lock writeLock = lock.writeLock();
 
     /**
      * Context root object key.
      */
+    @JsonIgnore
     public static final String CONTEXT_ROOT_KEY = "ctx";
 
     /**
      * The model context.
      * It is a key-value store to hold objects.
      */
-    private Map<String, Object> ctx = new HashMap<>();
-
-    /**
-     * JSON path query prefix.
-     */
-    private static final String JSONPATH_PREFIX = "$.";
+    private final Map<String, Object> ctx = new HashMap<>();
 
     /**
      * Document context from the caught JSON.
@@ -85,6 +87,7 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
     /**
      * The actual json data as plain string.
      */
+    @JsonIgnore
     private String jsonData;
 
     /**
@@ -95,15 +98,6 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
         this.dc = null;
     }
 
-    /**
-     * Initializes the context with a JSON as string.
-     * @param data the JSON data as a string.
-     * @throws TemplateServiceRuntimeException on parse errors.
-     */
-    public TemplateContext(final String data) {
-        init(data);
-    }
-
     protected void init(final String data) {
         this.jsonData = data;
 
@@ -112,17 +106,21 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
 
             this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(data);
 
-            Map<String, Object> contextObjects = dc.read(JSONPATH_PREFIX + TemplateContext.CONTEXT_ROOT_KEY);
+            // 1. Process value objects as array and add them to the root context
+            if (dc.json() instanceof JSONArray) {
+                final JSONArray inputObjectArray = dc.json();
+                for (final var actRoot : inputObjectArray) {
+                    final Map<?, ?> propertiesArray = ((Map<?, ?>) actRoot);
+                    buildObjectsFromJsonMap(propertiesArray);
+                }
+            } else {
+                withContext(TemplateContext.CONTEXT_ROOT_KEY, ContextObjectProxyBuilder.build(padDocumentContext(data)));
+            }
 
-            final StringWriter sw = new StringWriter();
-            try {
-                JSONValue.writeJSONString(contextObjects, sw);
-            } catch (final IOException e) {
-                throw new TemplateServiceRuntimeException("Error parsing data", e);
-            }
-            if (this.ctx.keySet().isEmpty()) {
-                withContext(ContextObjectProxyBuilder.build(sw.toString()));
-            }
+            // 2. Align the input json with the root context to be in sync with the jsonpath
+//            this.toJson();
+//            this.jsonData = padDocumentContext(this.jsonData).replaceAll("^(\\{\"ctx\"\\s*:\\s*\\[)([.\\s\\S]*)(\\]\\s*\\})$", "{\"ctx\":  $2}");
+//            this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(this.jsonData);
 
             LOGGER.trace("Context parse successful");
         } catch (final Exception e) {
@@ -138,12 +136,29 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
 
     }
 
+    private void buildObjectsFromJsonMap(final Map<?, ?> propertiesArray) {
+        for (final var actContextKey : propertiesArray.keySet()) {
+            final var actObject = propertiesArray.get(actContextKey);
+            buildObject(actContextKey.toString(), actObject);
+        }
+    }
+
+    private void buildObject(final String contextKey, final Object actItem) {
+        final StringWriter sw = new StringWriter();
+        try {
+            JSONValue.writeJSONString(actItem, sw);
+        } catch (final IOException e) {
+            throw new TemplateServiceRuntimeException("Error parsing data", e);
+        }
+        withContext(contextKey, ContextObjectProxyBuilder.build(sw.toString()));
+    }
+
     /**
      * Returns the model object for the root context.
      * Use this method in the placeholder for single model templates.
      * @return the root context's model object.
      */
-
+    @JsonIgnore
     public Object getModel() {
         return this.ctx.get(CONTEXT_ROOT_KEY);
     }
@@ -157,7 +172,11 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
     }
 
     public <T> TemplateContext withContext(T value) {
-        this.ctx.put(CONTEXT_ROOT_KEY, value);
+        if (value instanceof String) {
+            init((String)value);
+        } else {
+            this.ctx.put(CONTEXT_ROOT_KEY, value);
+        }
 
         return this;
     }
@@ -181,7 +200,7 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
             if (this.dc == null) {
                 this.build();
             }
-            final Object value = this.dc.read(JSONPATH_PREFIX + path);
+            final Object value = this.dc.read(JsonValueObject.JSONPATH_PREFIX + path);
 
             if (value instanceof String) {
                 return value;
@@ -193,11 +212,10 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
                     throw new TemplateServiceRuntimeException("Error parsing data.", e);
                 }
 
-                return ContextObjectProxyBuilder.build("{\"" + TemplateContext.CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}");
+                return ContextObjectProxyBuilder.build(padDocumentContext(sw.toString()));
 
-//                return new TemplateContext("{\"" + TemplateContext.CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}");
             } else if (value instanceof JSONArray) {
-                final List<TemplateContext> results = new ArrayList<>(((JSONArray) value).size());
+                final List<Object> results = new ArrayList<>(((JSONArray) value).size());
                 for(final Object actItem : ((JSONArray) value)) {
                     final StringWriter sw = new StringWriter();
                     try {
@@ -205,8 +223,8 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
                     } catch (final IOException e) {
                         throw new TemplateServiceRuntimeException("Error parsing data.", e);
                     }
-                    results.add((TemplateContext) ContextObjectProxyBuilder.build("{\"" + TemplateContext.CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}"));
-//                    results.add(new TemplateContext("{\"" + TemplateContext.CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}"));
+                    results.add(ContextObjectProxyBuilder
+                            .build(padDocumentContext(sw.toString())));
                 }
                 return results;
             }
@@ -224,6 +242,25 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
         }
     }
 
+/*    private DocumentContext parseDocumentContext(final String data) {
+        DocumentContext localDocumentContext = JsonPath.using(Configuration.defaultConfiguration()).parse(data);
+
+        if (localDocumentContext.json() instanceof JSONArray) {
+            localDocumentContext =
+                    JsonPath.using(Configuration.defaultConfiguration()).parse(
+                            "{\"" + TemplateContext.CONTEXT_ROOT_KEY + "\": " + data.replace() + "}");
+        }
+        return localDocumentContext;
+    }
+*/
+    private String padDocumentContext(final String data) {
+        if (data != null) {
+            return data.replaceAll("^(\\[)([.\\s\\S]*)(\\])$", "{\"ctx\": [ $2 ]}");
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Returns a list of values based on the JSON path caught.
      * @param path the JSONpath to be evaluated.
@@ -233,7 +270,7 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Getting items for path {}...", path);
         }
-        return this.dc.read(JSONPATH_PREFIX + path);
+        return this.dc.read(JsonValueObject.JSONPATH_PREFIX + path);
     }
 
     /**
@@ -277,6 +314,7 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
      * Returns the original JSON string to build the context.
      * @return the JSON string.
      */
+    @JsonIgnore
     public String getData() {
         return this.jsonData;
     }
@@ -293,6 +331,7 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
      * Returns the original JSON string to build the context.
      * @return the JSON string.
      */
+    @JsonIgnore
     @Override
     public String toJson() {
         String result;
@@ -300,15 +339,13 @@ public class TemplateContext implements IJsonTemplate, JsonModel {
         try {
             writeLock.lock();
 
-            if (this.jsonData == null) {
-                if (this.jsonData == null) {
-                    final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-                    return this.jsonData = gson.toJson(this);
-                }
+            try {
+                result = this.jsonData = mapper.writer().writeValueAsString(this);
+                this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(result);
+            } catch (final JsonProcessingException e) {
+                result = this.jsonData = null;
+                LOGGER.warn("Error serializing the template context", e);
             }
-
-            result = this.jsonData;
         } finally {
             writeLock.unlock();
         }

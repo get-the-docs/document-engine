@@ -1,18 +1,30 @@
 # placeholder-pojo.yml
 ---
 apiVersion: v1
-documentStructureId: "placeholder-pojo.yml"
+documentStructureId: "placeholder-all_input_formats_and_placeholder_types.yml"
 elements:
   - templateElementId:
       id: "docx-pojo"
     templateNames:
-      hu: "unittests/docx/SimpleContract_v1_21-pojo.docx"
+      hu_HU: "unittests/docx/SimpleContract_v1_21-pojo.docx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "docx-jsonpath"
+    templateNames:
+      hu_HU: "unittests/docx/SimpleContract_v1_21-jsonpath.docx"
     defaultLocale: "hu_HU"
     count: 1
   - templateElementId:
       id: "xlsx-pojo"
     templateNames:
-      hu: "unittests/xlsx/xlsTemplate_v11-pojo.xlsx"
+      hu_HU: "unittests/xlsx/xlsTemplate_v11-pojo.xlsx"
+    defaultLocale: "hu_HU"
+    count: 1
+  - templateElementId:
+      id: "xlsx-jsonpath"
+    templateNames:
+      hu_HU: "unittests/xlsx/xlsTemplate_v11-jsonpath.xlsx"
     defaultLocale: "hu_HU"
     count: 1
 resultMode: "SEPARATE_DOCUMENTS"

@@ -53,7 +53,7 @@ public class PropertyClassHolderTest {
         try {
             cc = pool.get(this.getClass().getName());
 
-            final var holder = new PropertyClassHolder("name", null, cc, null);
+            final var holder = new PropertyClassHolder("name", null, cc, null, null);
 
             assertNotNull(holder);
         } catch (final NotFoundException e) {

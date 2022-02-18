@@ -50,9 +50,9 @@ public interface IJsonTemplate extends ITemplate {
         try {
             String result;
             if (value != null) {
-                final Integer year = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "year");
-                final Integer month = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "month");
-                final Integer day = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "day");
+                final Integer year = (Integer) value.getValue("year");
+                final Integer month = (Integer) value.getValue("month");
+                final Integer day = (Integer) value.getValue("day");
                 result = LocalDate.of(year, month, day).format(ITemplate.DATE_FORMAT_DATE);;
             } else {
                 result = ITemplate.PLACEHOLDER_EMPTY;

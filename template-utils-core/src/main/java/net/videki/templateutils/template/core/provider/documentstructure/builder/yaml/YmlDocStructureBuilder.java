@@ -53,6 +53,17 @@ public class YmlDocStructureBuilder implements DocumentStructureBuilder {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(YmlDocStructureBuilder.class);
 
+    private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    static {
+        final SimpleModule module = new SimpleModule();
+        module.addDeserializer(TemplateElement.class, new TemplateElementDeserializer());
+
+        mapper.registerModule(module);
+
+    }
+
     /**
      * Entry point to build a DocumentStructure descriptor from an input stream containing a yaml document.
      * @param dsConfig the document structure descriptor in yaml format. 
@@ -67,17 +78,11 @@ public class YmlDocStructureBuilder implements DocumentStructureBuilder {
         }
 
         DocumentStructure result;
-        final SimpleModule module = new SimpleModule();
-        module.addDeserializer(TemplateElement.class, new TemplateElementDeserializer());
-        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        mapper.registerModule(module);
         try {
 
             final String dsStr = new String(dsConfig.readAllBytes(), StandardCharsets.UTF_8);
 
-            result = mapper.readValue(dsStr, getDocumentStructureVersion(dsStr));
+            result = mapper.reader().readValue(dsStr, getDocumentStructureVersion(dsStr));
             if (LOGGER.isDebugEnabled()) {
                 final String msg = String.format("DocumentStructure loaded: configFile: %s", dsConfig);
 

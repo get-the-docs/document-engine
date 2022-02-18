@@ -24,6 +24,8 @@ import net.videki.templateutils.template.core.service.exception.TemplateServiceR
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+
 public class JsonValueObjectTest {
 
     private final String jsonData = "{\n" +
@@ -47,16 +49,18 @@ public class JsonValueObjectTest {
             "  ]\n" +
             "}";
 
-    @Test(expected = TemplateServiceRuntimeException.class)
-    public void nullDataShouldThrow() {
-        new JsonValueObject(null);
+    @Test
+    public void nullDataShouldInitializeAsEmptyObject() {
+        final JsonValueObject o = new JsonValueObject(null);
+
+        assertNotNull(o);
     }
 
     @Test
     public void validJsonShouldBeParsed() {
         final var jo = new JsonValueObject(jsonData);
 
-        Assert.assertNotNull(jo);
+        assertNotNull(jo);
     }
 
     @Test

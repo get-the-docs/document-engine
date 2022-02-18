@@ -171,7 +171,7 @@ public class TemplateServiceInputFormatTest {
 
         try {
             final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-jsonpath.docx",
-                    new TemplateContext(jsonDataMultiContext));
+                    new TemplateContext().withContext(this.jsonDataMultiContext));
 
             Assert.assertTrue(result.isGenerated());
         } catch (final TemplateServiceException e) {
@@ -186,7 +186,7 @@ public class TemplateServiceInputFormatTest {
     public void processorDocxJsonpathPlaceholderErrorTest() throws TemplateProcessException, TemplateServiceException {
 
         final StoredResultDocument result = ts.fillAndSave("unittests/docx/SimpleContract_v1_21-jsonpath-placeholder_error.docx",
-                new TemplateContext(jsonDataMultiContext));
+                new TemplateContext().withContext(this.jsonDataMultiContext));
 
         Assert.assertFalse(result.isGenerated());
 

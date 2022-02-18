@@ -20,6 +20,7 @@ package net.videki.templateutils.template.core.integrationtests;
  * #L%
  */
 
+import net.videki.templateutils.template.core.TestHelper;
 import net.videki.templateutils.template.core.context.dto.TemplateContext;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
@@ -41,8 +42,8 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class PojoTemplateContextIT {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PojoTemplateContextIT.class);
+public class JsonpathPlaceholderTemplateContextIT extends TestHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonpathPlaceholderTemplateContextIT.class);
 
     private static final Locale LC_HU = new Locale("hu", "HU");
 
@@ -54,27 +55,11 @@ public class PojoTemplateContextIT {
     private final TemplateService templateService = TemplateServiceRegistry.getInstance();
 
     @Test
-    public void singleTemplateWordWithPojoPlaceholdersShouldBeEvaluated() {
-        try {
-            final String transactionId = UUID.randomUUID().toString();
-            final String template = "unittests/docx/SimpleContract_v1_21-pojo.docx";
-            final TemplateContext testData = getTestDataPojo(transactionId);
-
-            final StoredResultDocument result = this.templateService.fillAndSave(transactionId, template, testData);
-
-            assertTrue(result.isGenerated());
-        } catch (final TemplateNotFoundException | TemplateServiceException e) {
-            LOGGER.error("Error creating the result documents.", e);
-            fail();
-        }
-    }
-
-    @Test
     public void singleTemplateWordWithJsonpathPlaceholdersShouldBeEvaluated() {
         try {
             final String transactionId = UUID.randomUUID().toString();
             final String template = "unittests/docx/SimpleContract_v1_21-jsonpath.docx";
-            final TemplateContext testData = getTestDataPojo(transactionId);
+            final TemplateContext testData = getTestDataFromJson(transactionId);
 
             final StoredResultDocument result = this.templateService.fillAndSave(transactionId, template, testData);
 
@@ -86,11 +71,11 @@ public class PojoTemplateContextIT {
     }
 
     @Test
-    public void singleTemplateXlsWithPojoPlaceholdersShouldBeEvaluated() {
+    public void singleTemplateXlsWithJsonpathPlaceholdersShouldBeEvaluated() {
         try {
             final String transactionId = UUID.randomUUID().toString();
-            final String template = "unittests/xlsx/xlsTemplate_v11-pojo.xlsx";
-            final TemplateContext testData = getTestDataPojo(transactionId);
+            final String template = "unittests/xlsx/xlsTemplate_v11-jsonpath.xlsx";
+            final TemplateContext testData = getTestDataFromJson(transactionId);
 
             final StoredResultDocument result = this.templateService.fillAndSave(transactionId, template, testData);
 
@@ -102,14 +87,14 @@ public class PojoTemplateContextIT {
     }
 
     @Test
-    public void documentStructureWithPojoDTOsShouldBeEvaluated() {
+    public void documentStructurePojoPlaceholdersWithJsonpathDTOsShouldBeEvaluated() {
         try {
             final String transactionId = UUID.randomUUID().toString();
-            final String documentStructure = "integrationtests/placeholder-pojo.yml";
-            final ValueSet testData = getTestDataPojoAsValueSet(transactionId);
+            final String documentStructureId = "integrationtests/placeholder-pojo.yml";
+            final ValueSet testData = getValueSetForTestCase("valueset.json");
 
             final StoredGenerationResult result =
-                    this.templateService.fillAndSaveDocumentStructureByName(transactionId, documentStructure, testData);
+                    this.templateService.fillAndSaveDocumentStructureByName(transactionId, documentStructureId, testData);
 
             assertArrayEquals(new Boolean[]{true, true, true, true}, result.getResults()
                     .stream()
@@ -121,7 +106,27 @@ public class PojoTemplateContextIT {
         }
     }
 
-    private TemplateContext getTestDataPojo(final String transactionId) {
+    @Test
+    public void documentStructureJsonPathPlaceholdersWithJsonpathDTOsShouldBeEvaluated() {
+        try {
+            final String transactionId = UUID.randomUUID().toString();
+            final String documentStructureId = "integrationtests/placeholder-jsonpath.yml";
+            final ValueSet testData = getValueSetForTestCase("valueset.json");
+
+            final StoredGenerationResult result =
+                    this.templateService.fillAndSaveDocumentStructureByName(transactionId, documentStructureId, testData);
+
+            assertArrayEquals(new Boolean[]{true, true, true, true}, result.getResults()
+                    .stream()
+                    .map(StoredResultDocument::isGenerated)
+                    .toArray(Boolean[]::new));
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
+            LOGGER.error("Error creating the result documents.", e);
+            fail();
+        }
+    }
+
+    private TemplateContext getTestDataFromJson(final String transactionId) {
 
         final TemplateContext result = new TemplateContext();
         result.withContext(TL_ORG_KEY, OrgUnitDataFactory.createOrgUnit())
@@ -133,7 +138,7 @@ public class PojoTemplateContextIT {
         return result;
     }
 
-    private ValueSet getTestDataPojoAsValueSet(final String transactionId) {
+    private ValueSet getTestDataJsonpathAsValueSet(final String transactionId) {
 
         final ValueSet result = new ValueSet();
         result.withContext(TL_ORG_KEY, OrgUnitDataFactory.createOrgUnit())

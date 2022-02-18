@@ -4,15 +4,15 @@ apiVersion: v1
 documentStructureId: "placeholder-pojo.yml"
 elements:
   - templateElementId:
-      id: "docx-jsonpath"
+      id: "docx"
     templateNames:
-      hu: "unittests/docx/SimpleContract_v1_21-jsonpath.docx"
+      hu_HU: "unittests/docx/SimpleContract_v1_21-jsonpath.docx"
     defaultLocale: "hu_HU"
     count: 1
   - templateElementId:
-      id: "xlsx-jsonpath"
+      id: "xlsx"
     templateNames:
-      hu: "unittests/xlsx/xlsTemplate_v11-jsonpath.xlsx"
+      hu_HU: "unittests/xlsx/xlsTemplate_v11-jsonpath.xlsx"
     defaultLocale: "hu_HU"
     count: 1
 resultMode: "SEPARATE_DOCUMENTS"

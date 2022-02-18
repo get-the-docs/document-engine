@@ -20,14 +20,37 @@ package net.videki.templateutils.template.core.context.dto;
  * #L%
  */
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.videki.templateutils.template.core.context.ContextObjectProxyBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface JsonModel {
 
-  default String toJson() {
+  /**
+   * Logger.
+   */
+  Logger LOGGER = LoggerFactory.getLogger(ContextObjectProxyBuilder.class);
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    return gson.toJson(this);
+  /**
+   * JSON mapper.
+   */
+  ObjectMapper jsonModelMapper = new ObjectMapper();
+
+  /**
+   * Serializes the implementing object to json.
+   *
+   * @return the json string.
+   */
+  default String toJson() {
+    try {
+      return jsonModelMapper.writer().writeValueAsString(this);
+    } catch (final JsonProcessingException e) {
+      LOGGER.warn("Error serializing the object.", e);
+
+      return null;
+    }
   }
 }

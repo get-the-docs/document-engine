@@ -20,6 +20,7 @@ package net.videki.templateutils.template.core.context.dto;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -41,14 +42,14 @@ import java.util.List;
 public class JsonValueObject extends ContextObject {
 
     /**
+     * JSON path prefix for expression evaluation.
+     */
+    public static final String JSONPATH_PREFIX = "$.";
+
+    /**
      * Class logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextObject.class);
-
-    /**
-     * JSON path prefix for expression evaluation. 
-     */
-    private static final String JSONPATH_PREFIX = "$.";
 
     /**
      * Document context from the caught JSON.
@@ -58,7 +59,16 @@ public class JsonValueObject extends ContextObject {
     /**
      * The actual json data as plain string.
      */
-    private final String data;
+    @JsonIgnore
+    private String data;
+
+    /**
+     * Initializes the context with a JSON as string.
+     * @throws TemplateServiceRuntimeException on parse errors.
+     */
+    public JsonValueObject() {
+        this(null);
+    }
 
     /**
      * Initializes the context with a JSON as string.
@@ -67,8 +77,15 @@ public class JsonValueObject extends ContextObject {
      */
     public JsonValueObject(final String dc) {
         try {
-            this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(dc);
-            this.data = dc;
+            if (dc != null) {
+                this.dc = JsonPath.using(Configuration.defaultConfiguration()).parse(dc);
+                this.data = dc;
+            } else {
+                LOGGER.debug("Initializing object without a json value");
+
+                this.dc = null;
+                this.data = null;
+            }
         } catch (final Exception e) {
             final var msg = "Error reading JSON data";
 
@@ -173,6 +190,10 @@ public class JsonValueObject extends ContextObject {
      */    
     @Override
     public String toJson() {
-        return data;
+        if (this.data != null) {
+            return data;
+        } else {
+            return this.data = super.toJson();
+        }
     }
 }

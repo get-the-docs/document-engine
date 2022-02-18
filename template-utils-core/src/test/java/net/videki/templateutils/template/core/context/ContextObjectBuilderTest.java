@@ -22,6 +22,12 @@ package net.videki.templateutils.template.core.context;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.bytecode.SignatureAttribute;
 import net.videki.templateutils.template.core.context.dto.JsonModel;
 import net.videki.templateutils.template.core.context.dto.JsonValueObject;
 import org.junit.Test;
@@ -156,7 +162,6 @@ public class ContextObjectBuilderTest {
             "}";
 
     private final String jsonDataArray = "{\n" +
-            "  \"ctx\": {\n" +
             "    \"contract\": {\n" +
             "      \"contractor\": {\n" +
             "        \"name\": \"John Doe\",\n" +
@@ -184,8 +189,7 @@ public class ContextObjectBuilderTest {
             "        }\n" +
             "      ]\n" +
             "    }\n" +
-            "  }\n" +
-            "}";
+            "  }";
 
     @Test
     public void noParamShouldReturnNull() {
@@ -304,12 +308,12 @@ public class ContextObjectBuilderTest {
 
             final var ctx = new JsonValueObject(reSerializedValue);
 
-            final List<Object> listValue = ctx.getItems("ctx['contract'].beneficiaries");
+            final List<Object> listValue = ctx.getItems("contract.beneficiaries");
 
             assertNotNull(listValue);
             assertEquals(3, listValue.size());
 
-            final String name = (String)ctx.jsonpath("ctx['contract'].beneficiaries[0].name", String.class);
+            final String name = (String)ctx.jsonpath("contract.beneficiaries[0].name", String.class);
             assertEquals("Jim Doe", name);
 
         } catch (final Exception e) {
@@ -317,4 +321,61 @@ public class ContextObjectBuilderTest {
         }
 
     }
+
+    @Test
+    public void introspectorSignature() {
+        try {
+            final String jsonValue = "" +
+                    "{" +
+                    "  \"myValue\": \"this is a test string\"," +
+                    "  \"items\": [" +
+                    "    {" +
+                    "       \"strProperty\": \" item value 1\"," +
+                    "       \"intValue\": 1" +
+                    "    }," +
+                    "    {" +
+                    "       \"strProperty\": \" item value 2\"," +
+                    "       \"intValue\": 2" +
+                    "    }," +
+                    "    {" +
+                    "       \"strProperty\": \" item value 3\"," +
+                    "       \"intValue\": 3" +
+                    "    }" +
+                    "  ]" +
+                    "}";
+
+            final ObjectMapper mapper = new ObjectMapper();
+
+            final MyDto dto = mapper.readValue(jsonValue, MyDto.class);
+
+            ClassPool pool = ClassPool.getDefault();
+            CtClass ctClass = pool.get("net.videki.templateutils.template.core.context.MyDto");
+            CtMethod getterMethod = ctClass.getDeclaredMethod("getItems");
+            CtMethod setterMethod = ctClass.getDeclaredMethod("setItems");
+
+            final String paramType = "net.videki.templateutils.template.core.context.MyItem";
+            final String fieldName = "items";
+
+            final String getterName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+
+            final String sb = "public " + paramType + " " + getterName + "(){" + "return this." + fieldName + ";"
+                    + "}";
+
+            final CtMethod method = CtMethod.make(sb, ctClass);
+
+            String signatureType = "";
+            final SignatureAttribute.ClassType listItemType = new SignatureAttribute.ClassType(List.class.getName(),
+                    new SignatureAttribute.TypeArgument[]{
+                            new SignatureAttribute.TypeArgument( new SignatureAttribute.ClassType(MyItem.class.getName()) )});
+            signatureType += listItemType.encode(); // : listItemType.jvmTypeName();
+//            signatureType += Descriptor.of(List.class.getName()) + "<" + Descriptor.of(Object.class.getName()) + ">;";
+            method.setGenericSignature(signatureType);
+            // ()Ljava/util/List<Lnet/videki/templateutils/template/core/context/MyItem;>;
+
+            assertNotNull(dto);
+        } catch (final Exception e) {
+            fail();
+        }
+    }
+
 }

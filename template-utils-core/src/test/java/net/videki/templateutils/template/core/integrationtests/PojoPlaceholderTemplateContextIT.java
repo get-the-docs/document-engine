@@ -41,8 +41,8 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class JsonTemplateContextIT {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonTemplateContextIT.class);
+public class PojoPlaceholderTemplateContextIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PojoPlaceholderTemplateContextIT.class);
 
     private static final Locale LC_HU = new Locale("hu", "HU");
 
@@ -54,11 +54,27 @@ public class JsonTemplateContextIT {
     private final TemplateService templateService = TemplateServiceRegistry.getInstance();
 
     @Test
+    public void singleTemplateWordWithPojoPlaceholdersShouldBeEvaluated() {
+        try {
+            final String transactionId = UUID.randomUUID().toString();
+            final String template = "unittests/docx/SimpleContract_v1_21-pojo.docx";
+            final TemplateContext testData = getTestDataPojo(transactionId);
+
+            final StoredResultDocument result = this.templateService.fillAndSave(transactionId, template, testData);
+
+            assertTrue(result.isGenerated());
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
+            LOGGER.error("Error creating the result documents.", e);
+            fail();
+        }
+    }
+
+    @Test
     public void singleTemplateWordWithJsonpathPlaceholdersShouldBeEvaluated() {
         try {
             final String transactionId = UUID.randomUUID().toString();
             final String template = "unittests/docx/SimpleContract_v1_21-jsonpath.docx";
-            final TemplateContext testData = getTestDataFromJson(transactionId);
+            final TemplateContext testData = getTestDataPojo(transactionId);
 
             final StoredResultDocument result = this.templateService.fillAndSave(transactionId, template, testData);
 
@@ -70,11 +86,11 @@ public class JsonTemplateContextIT {
     }
 
     @Test
-    public void singleTemplateXlsWithJsonpathPlaceholdersShouldBeEvaluated() {
+    public void singleTemplateXlsWithPojoPlaceholdersShouldBeEvaluated() {
         try {
             final String transactionId = UUID.randomUUID().toString();
-            final String template = "unittests/xlsx/xlsTemplate_v11-jsonpath.xlsx";
-            final TemplateContext testData = getTestDataFromJson(transactionId);
+            final String template = "unittests/xlsx/xlsTemplate_v11-pojo.xlsx";
+            final TemplateContext testData = getTestDataPojo(transactionId);
 
             final StoredResultDocument result = this.templateService.fillAndSave(transactionId, template, testData);
 
@@ -86,14 +102,14 @@ public class JsonTemplateContextIT {
     }
 
     @Test
-    public void documentStructureWithJsonpathDTOsShouldBeEvaluated() {
+    public void documentStructureWithPojoDTOsShouldBeEvaluated() {
         try {
             final String transactionId = UUID.randomUUID().toString();
-            final String documentStructureId = "integrationtests/placeholder-pojo.yml";
-            final ValueSet testData = getTestDataJsonpathAsValueSet(transactionId);
+            final String documentStructure = "integrationtests/placeholder-pojo.yml";
+            final ValueSet testData = getTestDataPojoAsValueSet(transactionId);
 
             final StoredGenerationResult result =
-                    this.templateService.fillAndSaveDocumentStructureByName(transactionId, documentStructureId, testData);
+                    this.templateService.fillAndSaveDocumentStructureByName(transactionId, documentStructure, testData);
 
             assertArrayEquals(new Boolean[]{true, true, true, true}, result.getResults()
                     .stream()
@@ -105,7 +121,7 @@ public class JsonTemplateContextIT {
         }
     }
 
-    private TemplateContext getTestDataFromJson(final String transactionId) {
+    private TemplateContext getTestDataPojo(final String transactionId) {
 
         final TemplateContext result = new TemplateContext();
         result.withContext(TL_ORG_KEY, OrgUnitDataFactory.createOrgUnit())
@@ -117,7 +133,7 @@ public class JsonTemplateContextIT {
         return result;
     }
 
-    private ValueSet getTestDataJsonpathAsValueSet(final String transactionId) {
+    private ValueSet getTestDataPojoAsValueSet(final String transactionId) {
 
         final ValueSet result = new ValueSet();
         result.withContext(TL_ORG_KEY, OrgUnitDataFactory.createOrgUnit())

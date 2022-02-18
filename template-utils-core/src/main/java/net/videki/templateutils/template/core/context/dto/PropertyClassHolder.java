@@ -20,6 +20,7 @@ package net.videki.templateutils.template.core.context.dto;
  * #L%
  */
 
+import javassist.CannotCompileException;
 import javassist.CtClass;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceRuntimeException;
 
@@ -38,16 +39,19 @@ import java.util.List;
 public class PropertyClassHolder {
 
     /** The property name */
-    private String propertyName;
+    private final String propertyName;
 
     /** Holder class list for array types */
-    private List<PropertyClassHolder> holderProperties;
+    private final List<PropertyClassHolder> holderProperties;
 
     /** The property value class for existing classes */
     private Class<?> holderClass;
 
     /** The property value for generated classes (editable) */
     private CtClass holderClassBuilder;
+
+    /** The item parameter type in case of parameterized types like lists */
+    private final Class<?> itemParameterType;
 
     /**
      * Constructor for existing class based properties.
@@ -56,7 +60,7 @@ public class PropertyClassHolder {
      * @param clazz the value class.
      */
     public PropertyClassHolder(final String name, final Class<?> clazz) {
-        this(name, clazz, null, null);
+        this(name, clazz, null, null, null);
     }
 
     /**
@@ -68,7 +72,7 @@ public class PropertyClassHolder {
      * @param holderProperties   holder properties for generated classes.
      */
     public PropertyClassHolder(final String name, final Class<?> clazz, final CtClass holderClassBuilder,
-            final List<PropertyClassHolder> holderProperties) {
+            final Class<?> itemParameterType, final List<PropertyClassHolder> holderProperties) {
 
         if (name == null || name.isBlank()) {
             throw new TemplateServiceRuntimeException("Empty property name caught for class generation.");
@@ -80,6 +84,7 @@ public class PropertyClassHolder {
         this.propertyName = name;
         this.holderClass = clazz;
         this.holderClassBuilder = holderClassBuilder;
+        this.itemParameterType = itemParameterType;
         this.holderProperties = holderProperties;
     }
 
@@ -97,7 +102,14 @@ public class PropertyClassHolder {
      * 
      * @return the holder class.
      */
-    public Class<?> getHolderClass() {
+    public Class<?> getHolderClass() throws CannotCompileException {
+
+        if (this.holderClassBuilder != null) {
+            this.holderClass = this.holderClassBuilder.toClass(JsonValueObject.class.getClassLoader(),
+                    JsonValueObject.class.getProtectionDomain());
+            this.holderClassBuilder = null;
+        }
+
         return this.holderClass;
     }
 
@@ -108,6 +120,16 @@ public class PropertyClassHolder {
      */
     public CtClass getHolderClassBuilder() {
         return this.holderClassBuilder;
+    }
+
+
+    /**
+     * Returns the item parameter type for the holderClass.
+     *
+     * @return the item parameter type.
+     */
+    public Class<?> getItemParameterType() {
+        return this.itemParameterType;
     }
 
     /**

@@ -188,6 +188,21 @@ public class ValueSet implements JsonModel {
     }
 
     /**
+     * Adds an existing context to the given template element, or replaces the existing occurrence of the context key
+     * in the valueset.
+     * @param contextStr the context to add
+     * @return The related valueset (created on first, extended otherwise)
+     */
+    public ValueSet withContext(final String contextStr) {
+        if (contextStr != null) {
+            final TemplateContext contextObject = new TemplateContext().withContext(contextStr);
+            withContext(contextObject);
+        }
+
+        return this;
+    }
+
+    /**
      * Builder method for defining the locale to be used during generation. 
      * @param locale the locale.
      * @return the container.

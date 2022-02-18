@@ -70,13 +70,21 @@ public class YmlDocumentStructureBuilderTest {
     private static final String inputDir = "full-example";
     private final String projectOutDir = System.getProperty("user.dir") + File.separator + "target";
 
+    private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+
+    static {
+        final SimpleModule module = new SimpleModule();
+        module.addDeserializer(TemplateElement.class, new TemplateElementDeserializer());
+
+        mapper.registerModule(module);
+    }
+
     @Test
     public void saveDocStructure() {
         try {
             final DocumentStructure templateStructure = getContractDocStructure();
 
-            final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-            mapper.writeValue(
+            mapper.writer().writeValue(
                     new File(FileSystemHelper.getFileNameWithPath(projectOutDir, "result.yml")), templateStructure);
         } catch (final TemplateNotFoundException | TemplateServiceException | IOException e) {
             LOGGER.error("Error saving doc structure.", e);
@@ -90,25 +98,21 @@ public class YmlDocumentStructureBuilderTest {
     public void readTemplateElement() {
         TemplateElement result;
 
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(TemplateElement.class, new TemplateElementDeserializer());
-            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
-            mapper.registerModule(module);
 
-            try {
-                result = mapper.readValue(YmlDocStructureBuilder.class.getClassLoader()
-                                .getResourceAsStream("documentstructures/template-element.yml"),
-                        TemplateElement.class);
-                    final String msg = String.format("TemplateElement loaded: %s",
-                            ReflectionToStringBuilder.toString(result, ToStringStyle.MULTI_LINE_STYLE));
+        try {
+            result = mapper.reader().readValue(YmlDocStructureBuilder.class.getClassLoader()
+                            .getResourceAsStream("documentstructures/template-element.yml"),
+                    TemplateElement.class);
+                final String msg = String.format("TemplateElement loaded: %s",
+                        ReflectionToStringBuilder.toString(result, ToStringStyle.MULTI_LINE_STYLE));
 
-                LOGGER.debug("Template element read successfully: {}", msg);
-            } catch (final Exception e) {
-                LOGGER.error("Error saving doc structure.", e);
+            LOGGER.debug("Template element read successfully: {}", msg);
+        } catch (final Exception e) {
+            LOGGER.error("Error saving doc structure.", e);
 
-                fail();
-            }
+            fail();
+        }
 
     }
 

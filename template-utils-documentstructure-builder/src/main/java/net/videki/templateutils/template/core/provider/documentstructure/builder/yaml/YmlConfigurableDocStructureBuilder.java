@@ -45,16 +45,20 @@ public class YmlConfigurableDocStructureBuilder extends YmlDocStructureBuilder i
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YmlConfigurableDocStructureBuilder.class);
 
-    @Override
-    public DocumentStructureOptions buildOptions(final InputStream dsConfig) throws TemplateServiceConfigurationException {
+    private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        DocumentStructureOptions result;
-        SimpleModule module = new SimpleModule();
+    static {
+        final SimpleModule module = new SimpleModule();
         module.addDeserializer(OptionalTemplateElement.class, new OptionalTemplateElementDeserializer());
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         mapper.registerModule(module);
+    }
+
+    @Override
+    public DocumentStructureOptions buildOptions(final InputStream dsConfig) throws TemplateServiceConfigurationException {
+        DocumentStructureOptions result;
+
         try {
             if (dsConfig == null) {
                 throw new FileNotFoundException();
@@ -62,7 +66,7 @@ public class YmlConfigurableDocStructureBuilder extends YmlDocStructureBuilder i
 
             final String dsStr = new String(dsConfig.readAllBytes(), StandardCharsets.UTF_8);
 
-            result = mapper.readValue(dsStr, getDocumentStructureOptionsVersion(dsStr));
+            result = mapper.reader().readValue(dsStr, getDocumentStructureOptionsVersion(dsStr));
             if (LOGGER.isDebugEnabled()) {
                 final String msg = String.format("DocumentStructureOptions loaded: configFile: %s", dsStr);
 
