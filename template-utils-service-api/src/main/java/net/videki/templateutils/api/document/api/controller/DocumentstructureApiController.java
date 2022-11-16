@@ -20,14 +20,10 @@ package net.videki.templateutils.api.document.api.controller;
  * #L%
  */
 
+import net.videki.templateutils.api.document.api.model.*;
 import net.videki.templateutils.api.document.service.DocumentStructureApiService;
 import net.videki.templateutils.api.document.api.mapper.GetDocumentStructuresResponseApiModelMapper;
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
-import net.videki.templateutils.api.document.api.model.DocStructureJobApiResponse;
-import net.videki.templateutils.api.document.api.model.GenerationResult;
-import net.videki.templateutils.api.document.api.model.GetDocumentStructuresResponse;
-import net.videki.templateutils.api.document.api.model.Pageable;
-import net.videki.templateutils.api.document.api.model.ValueSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -76,7 +72,7 @@ public class DocumentstructureApiController implements DocumentstructureApi {
      * @return the page of document structures.
      */
     @Override
-    public ResponseEntity<GetDocumentStructuresResponse> getDocumentStructures(final String documentStructureId, final Pageable pageable) {
+    public ResponseEntity<GetDocumentStructuresResponse> getDocumentStructures(final String documentStructureId, final PageableTemplate pageable) {
 
         final var result = this.documentStructureApiService.getDocumentStructures(documentStructureId, PageableMapper.INSTANCE.map(pageable));
 

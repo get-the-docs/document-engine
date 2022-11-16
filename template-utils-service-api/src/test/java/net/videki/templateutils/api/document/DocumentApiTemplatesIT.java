@@ -214,7 +214,7 @@ public class DocumentApiTemplatesIT {
         log.debug("get result: " + responseEntity.getBody());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        final var defaultPage = new Pageable();
+        final var defaultPage = new PageableTemplate();
         assertEquals(defaultPage.getSize(),responseEntity.getBody().getContents().size());
 
         log.info("getTemplatesNoParamsShouldReturnUnpaged - end.");
