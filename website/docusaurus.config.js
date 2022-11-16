@@ -1,4 +1,11 @@
-module.exports = {
+// @ts-check
+// Note: type annotations allow type checking and IDEs autocompletion
+
+const lightCodeTheme = require('prism-react-renderer/themes/github');
+const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+
+/** @type {import('@docusaurus/types').Config} */
+const config = {
   title: 'Template utils',
   tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application',
   url: 'https://wwww.getthedoccs.tech',
@@ -8,7 +15,9 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'videki.github.io',
   projectName: 'videki',
-  themeConfig: {
+
+  /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+  themeConfig: ({
     navbar: {
       title: 'Template utils',
       logo: {
@@ -86,11 +95,40 @@ module.exports = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} contributors of the Template Utils Project.`,
     },
+
+    prism: {
+      theme: lightCodeTheme,
+      darkTheme: darkCodeTheme,
+    },
+  }),
+
+  themes: [
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+      },
+    ],
+  ],
+
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en'],
+    localeConfigs: {
+      en: {
+        label: 'English',
+        direction: 'ltr',
+        htmlLang: 'en-US',
+        calendar: 'gregory',
+      },
+    },
   },
+
   presets: [
     [
-      '@docusaurus/preset-classic',
-      {
+      "classic",
+      /** @type {import('@docusaurus/preset-classic').Options} */
+      ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
@@ -100,7 +138,9 @@ module.exports = {
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-      },
+      }),
     ],
   ],
 };
+
+module.exports = config;
