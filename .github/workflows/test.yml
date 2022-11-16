@@ -1,8 +1,5 @@
 name: Tests
 
-env:
-  CODECOV_TOKEN: 39e3c96b-a8b8-4e07-b52c-13880a73db37
-
 on:
   push:
     paths:
@@ -17,10 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v1
       with:
-        java-version: 11
+        java-version: 17
 
     - name: Cache local Maven repository
       uses: actions/cache@v2
