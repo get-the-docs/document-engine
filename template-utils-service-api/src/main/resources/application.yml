@@ -1,15 +1,25 @@
 app:
   api:
+    project-name: "@project.name"
+    version: "@project.version"
     base-path: "/api/v1"
   http: 
     auth-token-name: "x-api-key"
     auth-token: "51af3e7e-f3dd-4751-8c0a-42a40450b694"
 
-springfox: 
-  documentation:
-    swagger:
-      v2:
-        path: "/api-docs"
+openapi:
+  TemplateApi:
+    base-path: "/v1"
+
+springdoc:
+  swagger-ui:
+    syntaxHighlight:
+      activated: false
+      theme: "monokai"
+    path: "/v1/template/swagger-ui"
+    disable-swagger-default-url: true
+  api-docs:
+    path: "/v1/template/swagger-ui/v3/api-docs"
 
 spring:
   jackson:
@@ -19,7 +29,7 @@ spring:
   security:
     basic:
       enabled: false
-    
+
 logging:
   level:
     io:

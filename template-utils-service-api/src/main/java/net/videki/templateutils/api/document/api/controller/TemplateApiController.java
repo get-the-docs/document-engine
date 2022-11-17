@@ -27,13 +27,12 @@ import net.videki.templateutils.api.document.api.mapper.GetTemplatesResponseApiM
 import net.videki.templateutils.api.document.api.mapper.PageableMapper;
 import net.videki.templateutils.api.document.api.model.GenerationResult;
 import net.videki.templateutils.api.document.api.model.GetTemplatesResponse;
-import net.videki.templateutils.api.document.api.model.Pageable;
+import net.videki.templateutils.api.document.api.model.PageableTemplate;
 import net.videki.templateutils.api.document.api.model.TemplateJobApiResponse;
 import net.videki.templateutils.api.document.service.TemplateApiService;
 import net.videki.templateutils.template.core.documentstructure.StoredGenerationResult;
 import net.videki.templateutils.template.core.documentstructure.StoredResultDocument;
 import net.videki.templateutils.template.core.provider.persistence.Page;
-import net.videki.templateutils.template.core.service.OutputFormat;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import net.videki.templateutils.template.core.template.descriptors.TemplateDocument;
 import org.springframework.core.io.InputStreamResource;
@@ -80,9 +79,10 @@ public class TemplateApiController implements TemplateApi {
      * @param pageable   the requested result page.
      * @return the available templates.
      */
+
     @Override
-    public ResponseEntity<GetTemplatesResponse> getTemplates(final String templateId,
-                                                             final Pageable pageable) {
+    public ResponseEntity<GetTemplatesResponse> getTemplates(String templateId,
+                                                             PageableTemplate pageable) {
 
         try {
             if (pageable != null) {

@@ -20,11 +20,10 @@ package net.videki.templateutils.api.document.api.mapper;
  * #L%
  */
 
+import net.videki.templateutils.api.document.api.model.PageableTemplate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-
-import net.videki.templateutils.api.document.api.model.Pageable;
 
 /**
  * Api model mapper for Pageable objects.
@@ -47,6 +46,14 @@ public interface PageableMapper {
 	@Mapping(expression = "java((source.getPage() * source.getSize()) -1 >= 0 ? (source.getPage() * source.getSize()) -1 : 0 )", target = "offset")
 	@Mapping(source = "paged", target = "paged")
 	@Mapping(source = "sort", target = "sort")
-	net.videki.templateutils.template.core.provider.persistence.Pageable map(Pageable source);
+	net.videki.templateutils.template.core.provider.persistence.Pageable map(PageableTemplate source);
+/*
+	default List<String> map(final org.springframework.data.domain.Sort source) {
+		if (source == null) {
+			return new LinkedList<>();
+		}
 
+		return source.stream().map(Sort.Order::toString).collect(Collectors.toList());
+	}
+*/
 }

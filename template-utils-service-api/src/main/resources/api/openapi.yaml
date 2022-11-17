@@ -614,7 +614,7 @@ components:
               maxItems: 32768
           type: object
 
-    Pageable:
+    PageableTemplate:
       type: object
       description: "Pageable query parameters"
       additionalProperties: false
@@ -1117,7 +1117,7 @@ components:
       name: pageable
       required: false
       schema:
-        $ref: "#/components/schemas/Pageable"
+        $ref: "#/components/schemas/PageableTemplate"
 
   securitySchemes:
     ApiKeyAuth:
