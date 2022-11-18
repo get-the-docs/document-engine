@@ -1,10 +1,10 @@
 # Template-utils
 
-![Build](https://github.com/videki/template-utils/workflows/Build/badge.svg)
-![Tests](https://github.com/videki/template-utils/workflows/Tests/badge.svg)
-[![Codecov branch](https://img.shields.io/codecov/c/github/videki/template-utils/master?label=Coverage)](https://codecov.io/gh/videki/template-utils)
+![Build](https://github.com/get_the_docs/template-utils/workflows/Build/badge.svg)
+![Tests](https://github.com/get_the_docs/template-utils/workflows/Tests/badge.svg)
+[![Codecov branch](https://img.shields.io/codecov/c/github/get_the_docs/template-utils/master?label=Coverage)](https://codecov.io/gh/get_the_docs/template-utils)
 
-Docx, xlsx template engine and pdf converter to provide enterprise document generation feautures.
+Docx, xlsx template engine and pdf converter to provide enterprise document generation features.
 
 The module is a Helm package with a REST API to generate documents from WYSIWYG templates, or template structures with JSON actual data via jsonpath and SpEL expression-like placeholders. The engine core is a java wrapper to other tools integrate their capabilities and can be used with typed DTO-s as a dependency also.
 
