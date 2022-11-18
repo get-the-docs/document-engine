@@ -137,6 +137,7 @@ public class TemplateServiceConfiguration {
 
     private static final String PROPERTY_DELIMITER = ".";
 
+    private Properties configurationProperties;
     private DocumentStructureRepository documentStructureRepository;
 
     private TemplateRepository templateRepository;
@@ -175,6 +176,15 @@ public class TemplateServiceConfiguration {
                     properties.load(propFile);
 
                     LOGGER.info("template-utils.properties configuration file found at location: {}", path.getPath());
+
+                    initFontLibrary(properties);
+                    initDocumentStructureRepository(properties);
+                    initTemplateRepository(properties);
+                    initResultStore(properties);
+                    initProcessors(properties);
+
+                    this.configurationProperties = properties;
+
                 }
             } else {
                 LOGGER.error("No template-utils.properties configuration file found");
@@ -182,11 +192,6 @@ public class TemplateServiceConfiguration {
         } catch (final Exception e) {
             LOGGER.error("template-utils.properties configuration file not found, using default configuration.");
         }
-        initFontLibrary(properties);
-        initDocumentStructureRepository(properties);
-        initTemplateRepository(properties);
-        initResultStore(properties);
-        initProcessors(properties);
     }
 
     /**
@@ -365,7 +370,7 @@ public class TemplateServiceConfiguration {
                 LOGGER.error(msg);
 
             }
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
+        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException |
                 NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading template processors. %s", e);
             LOGGER.error(msg, e);
@@ -433,8 +438,12 @@ public class TemplateServiceConfiguration {
      * Is used by the doc structure implementations to ensure consistent logging.
      * @return the documentstructure log category.
      */
-    public String getDocStructureLogCategory(final Properties properties) {
-        return properties.getProperty(LOG_APPENDER);
+    public String getDocStructureLogCategory() {
+        if (this.configurationProperties != null) {
+           return this.configurationProperties.getProperty(LOG_APPENDER);
+        } else {
+            return "";
+        }
     }
 
     /**
