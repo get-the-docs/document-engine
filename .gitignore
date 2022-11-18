@@ -11,3 +11,4 @@
 /**/.settings/
 /website/build/
 /**/.vscode/
+/**/package-lock.json

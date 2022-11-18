@@ -13,8 +13,8 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'videki.github.io',
-  projectName: 'videki',
+  organizationName: 'get-the-docs.github.io',
+  projectName: 'get-the-docs',
 
   /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
   themeConfig: ({
@@ -44,7 +44,7 @@ const config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/videki/template-utils',
+          href: 'https://github.com/get-the-docs/template-utils',
           label: 'GitHub',
           position: 'right',
         },
@@ -62,7 +62,7 @@ const config = {
             },
             {
               label: 'Samples',
-              href: 'https://github.com/videki/template-utils/tree/master/template-utils-samples',
+              href: 'https://github.com/get-the-docs/template-utils/tree/master/template-utils-samples',
             },
           ],
         },
@@ -80,7 +80,7 @@ const config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/videki/template-utils',
+              href: 'https://github.com/get-the-docs/template-utils',
             },
             {
               label: 'Mvn repository',
