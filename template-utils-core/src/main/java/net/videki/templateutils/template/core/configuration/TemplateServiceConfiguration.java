@@ -121,6 +121,8 @@ public class TemplateServiceConfiguration {
 
     private static TemplateServiceConfiguration INSTANCE = new  TemplateServiceConfiguration();
 
+    private static final String LOCKOBJECT = "";
+
     // template-utils.properties keys
     private static final String FONT_FAMILY = "converter.pdf.font-library.font";
     private static final String FONT_DIR = "converter.pdf.font-library.basedir";
@@ -135,13 +137,11 @@ public class TemplateServiceConfiguration {
 
     private static final String PROPERTY_DELIMITER = ".";
 
-    private static Properties properties;
-
     private DocumentStructureRepository documentStructureRepository;
 
     private TemplateRepository templateRepository;
 
-    private List<InputTemplateProcessor> inputProcessors = new LinkedList<>();
+    private final List<InputTemplateProcessor> inputProcessors = new LinkedList<>();
 
     private ResultStore resultStore;
 
@@ -162,8 +162,7 @@ public class TemplateServiceConfiguration {
      */
     protected void init() {
 
-        properties = new Properties();
-        Set<Object> keys = Collections.emptySet();
+        final Properties properties = new Properties();
         try {
             final var configPath = System.getenv(CONFIG_ENV_FILENAME);
             URL path = getClass().getClassLoader().getResource(CONFIG_FILE_NAME);
@@ -172,38 +171,37 @@ public class TemplateServiceConfiguration {
             }
 
             if (path != null) {
-                final InputStream propFile = path.openStream();
-                properties.load(propFile);
+                try (final InputStream propFile = path.openStream()) {
+                    properties.load(propFile);
 
-                LOGGER.info("template-utils.properties configuration file found at location: {}", path.getPath());
+                    LOGGER.info("template-utils.properties configuration file found at location: {}", path.getPath());
+                }
             } else {
                 LOGGER.error("No template-utils.properties configuration file found");
             }
-
-            keys = properties.keySet();
         } catch (final Exception e) {
             LOGGER.error("template-utils.properties configuration file not found, using default configuration.");
         }
-        initFontLibrary(keys);
-        initDocumentStructureRepository();
-        initTemplateRepository();
-        initResultStore();
-        initProcessors();
+        initFontLibrary(properties);
+        initDocumentStructureRepository(properties);
+        initTemplateRepository(properties);
+        initResultStore(properties);
+        initProcessors(properties);
     }
 
     /**
      * Initialzes the custom fonts for pdf conversion.
-     * @param keys System properties (see config file - template-utils.properties).
+     * @param properties System properties (see config file - template-utils.properties).
      */
-    private void initFontLibrary(Set<Object> keys) {
-        if (keys != null && !keys.isEmpty()) {
+    private void initFontLibrary(final Properties properties) {
+        if (properties != null && !properties.keySet().isEmpty()) {
             this.fontDir = (String) properties.get(FONT_DIR);
 
-            for (Object actKey : keys) {
+            for (Object actKey : properties.keySet()) {
                 final String s = (String) actKey;
                 if (s != null && s.startsWith(FONT_FAMILY)) {
 
-                    final String[] parts = s.split(".");
+                    final String[] parts = s.split("\\.");
 
                     if (parts.length == 5) {
                         final String actFamily = parts[4];
@@ -228,7 +226,7 @@ public class TemplateServiceConfiguration {
     /**
      * Initializes the document structure repository for the implementation class configured in the configuration parameters.
      */
-    private void initDocumentStructureRepository() {
+    private void initDocumentStructureRepository(final Properties properties) {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
             repositoryProvider = (String) properties.get(DOCUMENT_STRUCTURE_PROVIDER);
@@ -267,7 +265,7 @@ public class TemplateServiceConfiguration {
     /**
      * Initializes the template repository for the implementation class configured in the configuration parameters.
      */
-    private void initTemplateRepository() {
+    private void initTemplateRepository(final Properties properties) {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
             repositoryProvider = (String) properties.get(TEMPLATE_REPOSITORY_PROVIDER);
@@ -304,7 +302,7 @@ public class TemplateServiceConfiguration {
     /**
      * Initializes the result store repository for the implementation class configured in the configuration parameters.
      */
-    private void initResultStore() {
+    private void initResultStore(final Properties properties) {
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
             repositoryProvider = (String) properties.get(RESULT_REPOSITORY_PROVIDER);
@@ -341,7 +339,7 @@ public class TemplateServiceConfiguration {
     /**
      * Initializes the document processor the implementation classes configured in the configuration parameters.
      */
-    private void initProcessors() {
+    private void initProcessors(final Properties properties) {
         try {
             if (properties != null) {
                 final Set<Object> processors =
@@ -369,7 +367,7 @@ public class TemplateServiceConfiguration {
             }
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
                 NoSuchMethodException | InvocationTargetException e) {
-            final String msg = String.format("Error loading template processors.", e);
+            final String msg = String.format("Error loading template processors. %s", e);
             LOGGER.error(msg, e);
 
             throw new TemplateServiceRuntimeException(msg);
@@ -435,7 +433,7 @@ public class TemplateServiceConfiguration {
      * Is used by the doc structure implementations to ensure consistent logging.
      * @return the documentstructure log category.
      */
-    public String getDocStructureLogCategory() {
+    public String getDocStructureLogCategory(final Properties properties) {
         return properties.getProperty(LOG_APPENDER);
     }
 
@@ -474,7 +472,7 @@ public class TemplateServiceConfiguration {
     public static TemplateServiceConfiguration getInstance() {
         TemplateServiceConfiguration result = INSTANCE;
         if (result == null) {
-            synchronized (INSTANCE) {
+            synchronized (LOCKOBJECT) {
                 result = INSTANCE = new TemplateServiceConfiguration();
             }
         }
@@ -501,7 +499,7 @@ public class TemplateServiceConfiguration {
      * Can be used to release caches, re-login to the repository providers, etc.
      */
     public static void reload() {
-        synchronized (INSTANCE) {
+        synchronized (LOCKOBJECT) {
             INSTANCE = new TemplateServiceConfiguration();
         }
     }
@@ -515,21 +513,13 @@ public class TemplateServiceConfiguration {
     public static void load(final TemplateServiceConfiguration newConfiguration)
             throws TemplateServiceConfigurationException {
         if (newConfiguration != null) {
-            synchronized (INSTANCE) {
+            synchronized (LOCKOBJECT) {
                 INSTANCE = newConfiguration;
             }
         } else {
             throw new TemplateServiceConfigurationException("876075ed-6e23-4d84-95ba-05f45ba9193a",
                     String.format("%s - trying to set the template service config to null.", MSG_INVALID_PARAMETERS) );
         }
-    }
-
-    /**
-     * Returns the service configuration.
-     * @return properties
-     */
-    public Properties getConfigurationProperties() {
-        return properties;
     }
 
     /**
