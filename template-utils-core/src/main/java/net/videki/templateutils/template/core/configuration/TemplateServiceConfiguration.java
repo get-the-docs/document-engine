@@ -150,6 +150,12 @@ public class TemplateServiceConfiguration {
 
     private String fontDir;
 
+    private static final String MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED =
+            "<Not configured or could not read properties file>";
+    private static final String MSG_FALLBACK_RESULTSTORE = "using fallback built-in FilesystemResultStore.";
+    private static final String MSG_CONFIG_ERROR = "Configuration error.";
+
+
     /**
      * Initializes the template service configuration.
      * The config is read from the first file on the classpath named template-utils.properties.
@@ -202,28 +208,27 @@ public class TemplateServiceConfiguration {
         if (properties != null && !properties.keySet().isEmpty()) {
             this.fontDir = (String) properties.get(FONT_DIR);
 
-            for (Object actKey : properties.keySet()) {
-                final String s = (String) actKey;
-                if (s != null && s.startsWith(FONT_FAMILY)) {
+            for (final String s : properties.keySet().stream()
+                    .map(s -> (String) s)
+                    .filter(s -> s.startsWith(FONT_FAMILY) && s.split("\\.").length == 5)
+                    .toList()) {
 
-                    final String[] parts = s.split("\\.");
+                final String[] parts = s.split("\\.");
 
-                    if (parts.length == 5) {
-                        final String actFamily = parts[4];
+                final String actFamily = parts[4];
 
-                        for (final FontStyle fs : FontStyle.values()) {
-                            final String fileForStyle = (String) properties.get(s + PROPERTY_DELIMITER + fs);
-                            final FontConfig f = new FontConfig();
-                            f.setFontFamily(actFamily);
-                            f.setStyle(fs);
-                            f.setBasedir(this.fontDir);
-                            f.setFileName(fileForStyle);
+                for (final FontStyle fs : FontStyle.values()) {
+                    final String fileForStyle = (String) properties.get(s + PROPERTY_DELIMITER + fs);
+                    final FontConfig f = new FontConfig();
+                    f.setFontFamily(actFamily);
+                    f.setStyle(fs);
+                    f.setBasedir(this.fontDir);
+                    f.setFileName(fileForStyle);
 
-                            Map<FontStyle, FontConfig> fm = styles.computeIfAbsent(actFamily, k -> new TreeMap<>());
-                            fm.put(fs, f);
-                        }
-                    }
+                    Map<FontStyle, FontConfig> fm = styles.computeIfAbsent(actFamily, k -> new TreeMap<>());
+                    fm.put(fs, f);
                 }
+
             }
         }
     }
@@ -232,7 +237,7 @@ public class TemplateServiceConfiguration {
      * Initializes the document structure repository for the implementation class configured in the configuration parameters.
      */
     private void initDocumentStructureRepository(final Properties properties) {
-        String repositoryProvider = "<Not configured or could not read properties file>";
+        String repositoryProvider = MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED;
         try {
             repositoryProvider = (String) properties.get(DOCUMENT_STRUCTURE_PROVIDER);
 
@@ -246,19 +251,18 @@ public class TemplateServiceConfiguration {
 
                 this.documentStructureRepository = tmpRepo;
             } else {
-                final String msg = "Document structure repository not specified, " +
-                        "using fallback built-in FileSystemTemplateRepository.";
+                final String msg = "Document structure repository not specified, " + MSG_FALLBACK_RESULTSTORE;
                 LOGGER.info(msg);
             }
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException e) {
-            final String msg = String.format("Error loading document structure repository: %s, " +
-                    "using fallback built-in FileSystemTemplateRepository.", repositoryProvider);
+            final String msg = String.format("Error loading document structure repository: %s, "
+                    + MSG_FALLBACK_RESULTSTORE, repositoryProvider);
             LOGGER.error(msg, e);
 
             this.templateRepository = new FileSystemTemplateRepository();
             e.printStackTrace();
         } catch (final TemplateServiceConfigurationException e) {
-            final String msg = "Configuration error.";
+            final String msg = MSG_CONFIG_ERROR;
             LOGGER.error(msg, e);
 
             throw new TemplateServiceRuntimeException(msg);
@@ -271,7 +275,7 @@ public class TemplateServiceConfiguration {
      * Initializes the template repository for the implementation class configured in the configuration parameters.
      */
     private void initTemplateRepository(final Properties properties) {
-        String repositoryProvider = "<Not configured or could not read properties file>";
+        String repositoryProvider = MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED;
         try {
             repositoryProvider = (String) properties.get(TEMPLATE_REPOSITORY_PROVIDER);
 
@@ -286,18 +290,17 @@ public class TemplateServiceConfiguration {
 
                 this.templateRepository = tmpRepo;
             } else {
-                final String msg = "Template repository not specified, " +
-                        "using fallback built-in FileSystemTemplateRepository.";
+                final String msg = "Template repository not specified, " + MSG_FALLBACK_RESULTSTORE;
                 LOGGER.info(msg);
             }
         } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
-            final String msg = String.format("Error loading template repository: %s, " +
-                    "using fallback built-in FileSystemTemplateRepository.", repositoryProvider);
+            final String msg = String.format("Error loading template repository: %s, "
+                    + MSG_FALLBACK_RESULTSTORE, repositoryProvider);
             LOGGER.error(msg, e);
 
             this.templateRepository = new FileSystemTemplateRepository();
         } catch (final TemplateServiceConfigurationException e) {
-            final String msg = "Configuration error.";
+            final String msg = MSG_CONFIG_ERROR;
             LOGGER.error(msg, e);
 
             throw new TemplateServiceRuntimeException(msg);
@@ -308,7 +311,7 @@ public class TemplateServiceConfiguration {
      * Initializes the result store repository for the implementation class configured in the configuration parameters.
      */
     private void initResultStore(final Properties properties) {
-        String repositoryProvider = "<Not configured or could not read properties file>";
+        String repositoryProvider = MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED;
         try {
             repositoryProvider = (String) properties.get(RESULT_REPOSITORY_PROVIDER);
 
@@ -323,18 +326,17 @@ public class TemplateServiceConfiguration {
 
                 this.resultStore = tmpRepo;
             } else {
-                final String msg = "Template result repository not specified, " +
-                        "using fallback built-in FileSystemTemplateRepository.";
+                final String msg = "Template result repository not specified, " + MSG_FALLBACK_RESULTSTORE;
                 LOGGER.info(msg);
 
             }
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException |
+        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException |
                 NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading result store repository: %s, " +
                     "using fallback built-in FilesystemResultStore.", repositoryProvider);
             LOGGER.error(msg, e);
         } catch (final TemplateServiceConfigurationException e) {
-            final String msg = "Configuration error.";
+            final String msg = MSG_CONFIG_ERROR;
             LOGGER.error(msg, e);
 
             throw new TemplateServiceRuntimeException(msg);
