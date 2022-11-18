@@ -105,3 +105,7 @@ outputFormat: "UNCHANGED"
 copies: 1
 
 ```
+
+
+## Project tooling
+Issue tracking: [Get-the-docs project @ Atlassian Jira](https://getthedocs.atlassian.net/jira/software/c/projects/GD/boards/1)
