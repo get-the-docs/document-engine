@@ -37,6 +37,7 @@ package net.videki.templateutils.template.core.context.dto;
  */
 
 import net.videki.templateutils.template.core.context.JsonTemplateContext;
+import net.videki.templateutils.template.core.context.TemplateContext;
 import net.videki.templateutils.template.core.dto.ITemplate;
 import net.videki.templateutils.template.core.processor.input.PlaceholderEvalException;
 
@@ -51,9 +52,9 @@ public interface IJsonTemplate extends ITemplate {
         try {
             String result;
             if (value != null) {
-                final Integer year = (Integer) value.getValue(JsonTemplateContext.CONTEXT_ROOT_KEY + "." + "year");
-                final Integer month = (Integer) value.getValue(JsonTemplateContext.CONTEXT_ROOT_KEY + "." + "month");
-                final Integer day = (Integer) value.getValue(JsonTemplateContext.CONTEXT_ROOT_KEY + "." + "day");
+                final Integer year = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "year");
+                final Integer month = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "month");
+                final Integer day = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "day");
                 result = LocalDate.of(year, month, day).format(ITemplate.DATE_FORMAT_DATE);;
             } else {
                 result = ITemplate.PLACEHOLDER_EMPTY;

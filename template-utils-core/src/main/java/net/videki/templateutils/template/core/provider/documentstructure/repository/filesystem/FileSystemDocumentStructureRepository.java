@@ -43,6 +43,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * File system based document structure repository.
@@ -110,22 +111,24 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
             final Page<DocumentStructure> result = new Page<>();
 
             final Path basePath = Paths.get(this.basedir).toAbsolutePath();
-            final List<DocumentStructure> items = Files.walk(basePath).filter(file -> !Files.isDirectory(file))
-                    .map(basePath::relativize).map(Path::toString).map(t -> new DocumentStructure(t))
-                    .collect(Collectors.toList());
+            try (final Stream<Path> path = Files.walk(basePath)) {
+                final List<DocumentStructure> items = path.filter(file -> !Files.isDirectory(file))
+                        .map(basePath::relativize).map(Path::toString).map(DocumentStructure::new)
+                        .collect(Collectors.toList());
 
-            if (page != null && page.isPaged()) {
-                result.setData(items.subList(page.getOffset(),
-                        Math.min(page.getOffset() + page.getSize(), Math.max(items.size() - 1, 0))));
-            } else {
-                result.setData(items);
+                if (page != null && page.isPaged()) {
+                    result.setData(items.subList(page.getOffset(),
+                            Math.min(page.getOffset() + page.getSize(), Math.max(items.size() - 1, 0))));
+                } else {
+                    result.setData(items);
+                }
+                result.setNumber(page.getPage());
+                result.setSize(page.getSize());
+                result.setTotalElements(Long.valueOf(items.size()));
+                result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
+
+                return result;
             }
-            result.setNumber(page.getPage());
-            result.setSize(page.getSize());
-            result.setTotalElements(Long.valueOf(items.size()));
-            result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
-
-            return result;
 
         } catch (final IOException e) {
             final String msg = String.format("Error retrieving the document structure list - baseDir: [{}]",
