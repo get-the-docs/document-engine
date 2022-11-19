@@ -15,7 +15,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  pull-requests: read, write # allows SonarCloud to decorate PRs with analysis results
+#  pull-requests: read # allows SonarCloud to decorate PRs with analysis results
+  contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   build_job:
