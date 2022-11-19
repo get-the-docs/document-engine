@@ -84,9 +84,6 @@ jobs:
           name: JUnit tests
           path: target/surefire-reports/*.xml
 
-        reporter:
-          - all
-
   coverage_job:
     name: Run coverage
     needs:
