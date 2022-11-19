@@ -105,7 +105,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
      * @return the document structure list
      */
     @Override
-    public Page<DocumentStructure> getDocumentStructures(Pageable page) throws TemplateServiceException {
+    public Page<DocumentStructure> getDocumentStructures(final Pageable page) throws TemplateServiceException {
 
         try {
             final Page<DocumentStructure> result = new Page<>();
@@ -119,19 +119,20 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
                 if (page != null && page.isPaged()) {
                     result.setData(items.subList(page.getOffset(),
                             Math.min(page.getOffset() + page.getSize(), Math.max(items.size() - 1, 0))));
+
+                    result.setNumber(page.getPage());
+                    result.setSize(page.getSize());
+                    result.setTotalElements((long) items.size());
+                    result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
                 } else {
                     result.setData(items);
                 }
-                result.setNumber(page.getPage());
-                result.setSize(page.getSize());
-                result.setTotalElements(Long.valueOf(items.size()));
-                result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
 
                 return result;
             }
 
         } catch (final IOException e) {
-            final String msg = String.format("Error retrieving the document structure list - baseDir: [{}]",
+            final String msg = String.format("Error retrieving the document structure list - baseDir: [%s]",
                     this.basedir);
             LOGGER.error(msg, e);
 
@@ -179,7 +180,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
      * @param props the system properties (see template-utils.properties)
      * @return the builder instance
      */
-    private DocumentStructureBuilder loadDocumentStructureBuilder(final Properties props) {
+    protected DocumentStructureBuilder loadDocumentStructureBuilder(final Properties props) {
         DocumentStructureBuilder documentStructureBuilder = new YmlDocStructureBuilder();
 
         String repositoryProvider = "<Not configured or could not read properties file>";

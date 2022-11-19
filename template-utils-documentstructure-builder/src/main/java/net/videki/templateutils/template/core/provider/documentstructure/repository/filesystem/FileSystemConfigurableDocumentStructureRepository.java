@@ -79,7 +79,7 @@ public class FileSystemConfigurableDocumentStructureRepository extends FileSyste
         }
     }
 
-    private DocumentStructureOptionsBuilder loadDocumentStructureBuilder(final Properties props) {
+    protected DocumentStructureOptionsBuilder loadDocumentStructureBuilder(final Properties props) {
         DocumentStructureOptionsBuilder documentStructureBuilder = new YmlConfigurableDocStructureBuilder();
 
         String repositoryProvider = "<Not configured or could not read properties file>";

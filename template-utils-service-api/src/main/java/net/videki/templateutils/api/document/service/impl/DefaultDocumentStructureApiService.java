@@ -39,8 +39,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -70,23 +68,16 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
                 log.debug("getDocumentStructures - {}", page);
             }
 
-            Page<DocumentStructure> result = null;
+            final Page<DocumentStructure> result;
             if (id != null) {
                 result = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository().getDocumentStructures(page);
 
             } else {
-                final Optional<DocumentStructure> doc = getDocumentStructureById(id);
-
                 result = new Page<>();
-                final List<DocumentStructure> data = new LinkedList<>();
-                if (doc.isPresent()) {
-                    data.add(doc.get());
-                }
-                result.setData(data);
                 result.setNumber(0);
-                result.setSize(data.size() > 0 ? 1 : 0);
-                result.setTotalElements((long) data.size());
-                result.setTotalPages(data.size() > 0 ? 1 : 0);
+                result.setSize(0);
+                result.setTotalElements((long)0);
+                result.setTotalPages(0);
             }
 
             if (log.isDebugEnabled()) {
@@ -104,7 +95,7 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
     public Optional<DocumentStructure> getDocumentStructureById(final String id) {
         try {
             if (log.isDebugEnabled()) {
-                log.debug("getDocumentStructureById - {}/{}, binary: {}", id);
+                log.debug("getDocumentStructureById - {}", id);
             }
 
             final DocumentStructure ds = TemplateServiceConfiguration.getInstance().getDocumentStructureRepository()
@@ -122,7 +113,7 @@ public class DefaultDocumentStructureApiService implements DocumentStructureApiS
         } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
             log.warn("Error processing request: {}", id);
 
-            return null;
+            return Optional.empty();
         }
     }
 

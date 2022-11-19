@@ -121,7 +121,7 @@ public class TemplateServiceConfiguration {
 
     private static TemplateServiceConfiguration INSTANCE = new  TemplateServiceConfiguration();
 
-    private static final String LOCKOBJECT = "";
+    private static final Object LOCKOBJECT = new Object();
 
     // template-utils.properties keys
     private static final String FONT_FAMILY = "converter.pdf.font-library.font";
