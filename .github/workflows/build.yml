@@ -2,9 +2,21 @@ name: Build
 
 on:
   push:
+    branches: [ "main", release/*, story/*, task/* ]
     paths:
       - 'template-utils-*/**'
       - 'pom.xml'
+  pull_request:
+    #    branches: [ "main" ]
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'template-utils-*/**'
+      - 'pom.xml'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read # allows SonarCloud to decorate PRs with analysis results
+
 jobs:
   build_job:
     name: Build
@@ -31,6 +43,112 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml -DskipTests=true
+
+  test_job:
+    name: Run tests
+    needs: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/net/videki/**
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn -B verify --file pom.xml -Pcoverage
+
+  coverage_job:
+    name: Run coverage
+    needs:
+      - Build
+      - Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/net/videki/**
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn -B verify --file pom.xml -Pcoverage
+
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          name: template-utils
+      #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+      #    files: ./coverage1.xml,./coverage2.xml # optional
+      #    flags: unittests # optional
+      #    fail_ci_if_error: true # optional (default = false)
+      #    verbose: true # optional (default = false)
+
+      - name: Codecov upload
+        run: bash <(curl -s https://codecov.io/bash)
+
+  analyze_job:
+    name: Build and analyze
+    needs:
+      - Build
+      - Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_template-utils -Psonar
 
 #      - name: Archive production artifacts
 #        if: ${{ success() }}
