@@ -23,7 +23,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -31,8 +32,8 @@ jobs:
           distribution: 'microsoft'
           java-version: '17'
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
+      - name: Rebuild local Maven repository from cache
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -41,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build with Maven
+      - name: Maven build
         run: mvn -B package --file pom.xml -DskipTests=true
 
   test_job:
@@ -50,7 +51,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -58,8 +60,8 @@ jobs:
           distribution: 'microsoft'
           java-version: '17'
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
+      - name: Rebuild local Maven repository from cache
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -68,18 +70,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build with Maven
-        run: mvn -B verify --file pom.xml -Pcoverage
+      - name: Maven verify
+        run: mvn -B verify --file pom.xml
+
+#      - name: Test Reporting
+#        uses: phoenix-actions/test-reporting@v10
+#        with:
+#          name: JUnit tests
+#          path: ${{ github.workspace }}/**/target/surefire-reports/TEST-*.xml
+#          reporter: java-junit
+#          fail-on-error: true
 
   coverage_job:
-    name: Run coverage
+    name: Coverage check
     needs:
       - build_job
       - test_job
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -87,8 +98,8 @@ jobs:
           distribution: 'microsoft'
           java-version: '17'
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
+      - name: Rebuild local Maven repository from cache
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -97,7 +108,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build with Maven
+      - name: Maven verify
         run: mvn -B verify --file pom.xml -Pcoverage
 
       - name: Run Clover coverage and upload to Codecov
@@ -113,6 +124,15 @@ jobs:
       - name: Codecov upload
         run: bash <(curl -s https://codecov.io/bash)
 
+#      - name: Archive test results
+#        if: ${{ success() }}
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Coverage results
+#          path: ${{ github.workspace }}/**/template-utils-service-api/target/site/clover/
+#          retention-days: 30
+
+
   analyze_job:
     name: Code analysis
     needs:
@@ -120,11 +140,12 @@ jobs:
       - test_job
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -133,13 +154,13 @@ jobs:
           java-version: '17'
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
