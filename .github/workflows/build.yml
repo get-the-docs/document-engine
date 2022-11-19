@@ -15,10 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-#  pull-requests: read # allows SonarCloud to decorate PRs with analysis results
-  contents: read
-  issues: write
-  pull-requests: write
+  pull-requests: read # allows SonarCloud to decorate PRs with analysis results
 
 jobs:
   build_job:
@@ -27,7 +24,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -36,7 +33,7 @@ jobs:
           java-version: '17'
 
       - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -55,7 +52,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -64,7 +61,7 @@ jobs:
           java-version: '17'
 
       - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -76,18 +73,13 @@ jobs:
       - name: Maven verify
         run: mvn -B verify --file pom.xml
 
-      - name: Test Reporting
-        # You may pin to the exact commit or the version.
-        # uses: phoenix-actions/test-reporting@93ce19fa5882ebe3969ebdb9ee1024b3d29e776f
-        uses: phoenix-actions/test-reporting@v10
-        with:
-          # Name or regex of artifact containing test results
-          # artifact: # optional
-          # Name of the check run
-          name: JUnit tests
-          path: ${{ github.workspace }}/**/target/surefire-reports/TEST-*.xml
-          reporter: java-junit
-          fail-on-error: true
+#      - name: Test Reporting
+#        uses: phoenix-actions/test-reporting@v10
+#        with:
+#          name: JUnit tests
+#          path: ${{ github.workspace }}/**/target/surefire-reports/TEST-*.xml
+#          reporter: java-junit
+#          fail-on-error: true
 
   coverage_job:
     name: Coverage check
@@ -98,7 +90,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -107,7 +99,7 @@ jobs:
           java-version: '17'
 
       - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.m2/repository
@@ -132,6 +124,15 @@ jobs:
       - name: Codecov upload
         run: bash <(curl -s https://codecov.io/bash)
 
+      - name: Archive test results
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Coverage results
+          path: ${{ github.workspace }}/**/template-utils-service-api/target/site/clover/
+          retention-days: 30
+
+
   analyze_job:
     name: Code analysis
     needs:
@@ -139,12 +140,12 @@ jobs:
       - test_job
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Git checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -153,13 +154,13 @@ jobs:
           java-version: '17'
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
