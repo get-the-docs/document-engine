@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * File system based template repository implementation.
@@ -82,11 +83,9 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     }
 
     private void initTemplateRepositoryDir() throws TemplateServiceConfigurationException {
-        try {
-            LOGGER.info("Checking template repository access...");
-            Files.list(Paths.get(this.baseDir).toAbsolutePath());
-
-            LOGGER.info("Template repository available.");
+        LOGGER.info("Checking template repository access...");
+        try (final Stream<Path> ignored = Files.list(Paths.get(this.baseDir).toAbsolutePath())) {
+                LOGGER.info("Template repository available.");
         } catch (final NoSuchFileException e) {
             try {
                 Files.createDirectories(Paths.get(this.baseDir).toAbsolutePath());
@@ -117,32 +116,33 @@ public class FileSystemTemplateRepository implements TemplateRepository {
             final Page<TemplateDocument> result = new Page<>();
 
             final Path basePath = Paths.get(this.baseDir).toAbsolutePath();
-            final List<TemplateDocument> items = Files.walk(basePath)
-              .filter(file -> !Files.isDirectory(file))
-              .map(basePath::relativize)
-              .map(Path::toString)
-              .map(t -> new TemplateDocument(t))
-              .collect(Collectors.toList());
+            try (final Stream<Path> path = Files.walk(basePath)) {
+                final List<TemplateDocument> items = path
+                        .filter(file -> !Files.isDirectory(file))
+                        .map(basePath::relativize)
+                        .map(Path::toString)
+                        .map(TemplateDocument::new)
+                        .collect(Collectors.toList());
 
-            if (page != null && page.isPaged()) {
-                
-                final int endIndex = Math.min(page.getOffset() + page.getSize(), Math.max(items.size()-1, 0));
+                if (page != null && page.isPaged()) {
 
-                if (page.getOffset() < items.size() && endIndex < items.size()) {
-                    result.setData(items.subList(page.getOffset(), endIndex));
+                    final int endIndex = Math.min(page.getOffset() + page.getSize(), Math.max(items.size() - 1, 0));
+
+                    if (page.getOffset() < items.size() && endIndex < items.size()) {
+                        result.setData(items.subList(page.getOffset(), endIndex));
+                    }
+                    result.setNumber(page.getPage());
+                    result.setSize(page.getSize());
+                    result.setTotalElements((long) items.size());
+                    result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
+                } else {
+                    result.setData(items);
                 }
-            } else {
-                result.setData(items);
+
+                return result;
             }
-            result.setNumber(page.getPage());
-            result.setSize(page.getSize());
-            result.setTotalElements(Long.valueOf(items.size()));
-            result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
-
-            return result;
-
         } catch (final IOException e) {
-            final  String msg = String.format("Error retrieving the template list - baseDir: [{}]", this.baseDir);
+            final  String msg = String.format("Error retrieving the template list - baseDir: [%s]", this.baseDir);
             LOGGER.error(msg, e);
 
             throw new TemplateServiceException("68b79868-c05c-4d14-8d94-1d8815625c8f", msg);
@@ -158,10 +158,10 @@ public class FileSystemTemplateRepository implements TemplateRepository {
      * @return the template document if found.
      */
     @Override
-    public Optional<TemplateDocument> getTemplateDocumentById(final String id, final String version, final boolean withBinary) throws TemplateServiceException {
+    public Optional<TemplateDocument> getTemplateDocumentById(final String id, final String version, final boolean withBinary) {
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("getTemplateDocumentById - {} (version handling not supported, omiting). binary: {}", id, withBinary);
+            LOGGER.debug("getTemplateDocumentById - {} (version handling not supported, omitting). binary: {}", id, withBinary);
         }
 
         final TemplateDocument result = new TemplateDocument(id, version);
@@ -176,7 +176,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("getTemplateDocumentById - template not found: {}", id);
                 }
-                throw new TemplateNotFoundException("be3be068-78fc-49bc-a4ec-76db86bd1f55", String.format("Template not found: {]", id));
+                throw new TemplateNotFoundException("be3be068-78fc-49bc-a4ec-76db86bd1f55", String.format("Template not found: [%s]", id));
             }
 
             if (LOGGER.isDebugEnabled()) {
@@ -187,7 +187,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         } catch (final TemplateNotFoundException e) {
             return Optional.empty();
         } catch (final IOException e) {
-            throw new TemplateProcessException("5204f592-5f4a-4a86-9cdf-0d3c6912cf5f", String.format("Error reading the template - id: {}", id));
+            throw new TemplateProcessException("5204f592-5f4a-4a86-9cdf-0d3c6912cf5f", String.format("Error reading the template - id: [%s]", id));
         }
     }
 

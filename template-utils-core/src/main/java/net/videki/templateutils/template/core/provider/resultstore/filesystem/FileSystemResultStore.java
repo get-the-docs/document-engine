@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * File system based result store implementation. It stores the generation
@@ -238,15 +239,16 @@ public class FileSystemResultStore implements ResultStore {
         try {
 
             final Path basePath = Paths.get(this.baseDir + File.separator + transactionId).toAbsolutePath();
-            final List<StoredResultDocument> items = Files.list(basePath).filter(file -> !Files.isDirectory(file))
-                    .map(Path::getFileName).map(Path::toString).map(t -> new StoredResultDocument(t, true))
-                    .collect(Collectors.toList());
+            try (final Stream<Path> path = Files.list(basePath)) {
+                final List<StoredResultDocument> items = path.filter(file -> !Files.isDirectory(file))
+                        .map(Path::getFileName).map(Path::toString).map(t -> new StoredResultDocument(t, true))
+                        .collect(Collectors.toList());
 
-            final StoredGenerationResult result = new StoredGenerationResult(items);
-            result.setTransactionId(transactionId);
+                final StoredGenerationResult result = new StoredGenerationResult(items);
+                result.setTransactionId(transactionId);
 
-            return Optional.of(result);
-
+                return Optional.of(result);
+            }
         } catch (final NoSuchFileException e) {
             return Optional.empty();
         } catch (final IOException e) {
