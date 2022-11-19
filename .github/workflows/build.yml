@@ -100,7 +100,7 @@ jobs:
       - name: Build with Maven
         run: mvn -B verify --file pom.xml -Pcoverage
 
-      - name: Codecov
+      - name: Run Clover coverage and upload to Codecov
         uses: codecov/codecov-action@v2
         with:
           name: template-utils
@@ -114,7 +114,7 @@ jobs:
         run: bash <(curl -s https://codecov.io/bash)
 
   analyze_job:
-    name: Build and analyze
+    name: Code analysis
     needs:
       - build_job
       - test_job
@@ -144,7 +144,7 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+      - name: Run Sonarcloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
