@@ -124,13 +124,13 @@ jobs:
       - name: Codecov upload
         run: bash <(curl -s https://codecov.io/bash)
 
-      - name: Archive test results
-        if: ${{ success() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: Coverage results
-          path: ${{ github.workspace }}/**/template-utils-service-api/target/site/clover/
-          retention-days: 30
+#      - name: Archive test results
+#        if: ${{ success() }}
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Coverage results
+#          path: ${{ github.workspace }}/**/template-utils-service-api/target/site/clover/
+#          retention-days: 30
 
 
   analyze_job:
