@@ -46,7 +46,7 @@ jobs:
 
   test_job:
     name: Run tests
-    needs: Build
+    needs: build_job
     runs-on: ubuntu-latest
 
     steps:
@@ -74,8 +74,8 @@ jobs:
   coverage_job:
     name: Run coverage
     needs:
-      - Build
-      - Run tests
+      - build_job
+      - test_job
     runs-on: ubuntu-latest
 
     steps:
@@ -116,8 +116,8 @@ jobs:
   analyze_job:
     name: Build and analyze
     needs:
-      - Build
-      - Run tests
+      - build_job
+      - test_job
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
