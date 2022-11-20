@@ -32,12 +32,16 @@ import net.videki.templateutils.template.test.dto.officer.Officer;
 import net.videki.templateutils.template.test.dto.organization.OrganizationUnit;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class JxlsInputTemplateProcessorTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JxlsInputTemplateProcessorTest.class);
     private InputTemplateProcessor processor = new JxlsInputTemplateProcessor();
 
     @Test
@@ -66,10 +70,10 @@ public class JxlsInputTemplateProcessorTest {
                 getContractTestData())) {
 
             Assert.assertFalse(false);
-        } catch (TemplateNotFoundException e) {
+        } catch (final TemplateNotFoundException e) {
             Assert.assertEquals("3985eb36-6274-4870-af3a-c73a5c499873", e.getCode());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (final IOException e) {
+            LOGGER.error("fillTemplateNotFound error", e);
         }
     }
 
@@ -85,7 +89,7 @@ public class JxlsInputTemplateProcessorTest {
 
             Assert.assertTrue(true);
         } catch (IOException | NoSuchMethodError e) {
-            e.printStackTrace();
+            LOGGER.error("fillValidTemplatePlaceholderError error", e);
             Assert.assertFalse(false);
         }
     }
