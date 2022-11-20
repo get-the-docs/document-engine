@@ -1,8 +1,0 @@
----
-templateElementId:
-  id: "cover"
-templateNames:
-  hu_HU: "/full-example/01-cover_v03.docx"
-  en: "/full-example/02-contract_v09_en.docx"
-defaultLocale: "hu_HU"
-count: 1
