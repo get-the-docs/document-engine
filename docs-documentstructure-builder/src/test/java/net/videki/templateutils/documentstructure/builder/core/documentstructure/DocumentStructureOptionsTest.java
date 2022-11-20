@@ -33,6 +33,8 @@ import net.videki.templateutils.template.core.service.exception.TemplateServiceC
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -40,6 +42,8 @@ import java.util.Optional;
 import static org.junit.Assert.fail;
 
 public class DocumentStructureOptionsTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentStructureOptionsTest.class);
 
     @Test
     public void readDocStructureOptions() {
@@ -51,7 +55,7 @@ public class DocumentStructureOptionsTest {
             dsBuilder.buildOptions(dsOptionsFileAsStream);
 
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("readDocStructureOptions error", e);
             fail();
         }
 
@@ -66,8 +70,8 @@ public class DocumentStructureOptionsTest {
 
         } catch (final TemplateServiceConfigurationException e) {
             Assert.assertEquals("bf4dbf44-8b7b-4cba-b449-906083eabf0d", e.getCode());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (final Exception e) {
+            LOGGER.error("readDocStructureNonExistentFile error", e);
             fail();
         }
 
@@ -88,7 +92,7 @@ public class DocumentStructureOptionsTest {
             Assert.assertTrue(dso.getElements() != null && !dso.getElements().isEmpty() &&
                     dso.getElementIdByFriendlyName("conditions-vintage_basic_underaged").isPresent());
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("docStructureOptionsCheckFriendlyNameOk error", e);
             fail();
         }
     }
@@ -107,7 +111,7 @@ public class DocumentStructureOptionsTest {
             Assert.assertNotNull(dso.getElements().get(0));
 
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("docStructureOptionsCheckOptionalTemplateElementOk error", e);
             fail();
         }
     }
@@ -144,7 +148,7 @@ public class DocumentStructureOptionsTest {
             }
 
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("docStructureOptionsReplaceElementWithOptionOk error", e);
             fail();
         }
     }
@@ -180,7 +184,7 @@ public class DocumentStructureOptionsTest {
             }
 
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("docStructureOptionsReplaceElementWithOptionAsTemplateElementOk error", e);
             fail();
         }
     }
@@ -214,8 +218,8 @@ public class DocumentStructureOptionsTest {
                 fail();
             }
 
-        } catch (TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+        } catch (final TemplateNotFoundException | TemplateServiceException e) {
+            LOGGER.error("docStructureOptionsGetElementOption error", e);
             fail();
         }
     }

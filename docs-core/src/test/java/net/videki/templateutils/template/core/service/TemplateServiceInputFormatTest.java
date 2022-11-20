@@ -159,8 +159,8 @@ public class TemplateServiceInputFormatTest {
                     ContractDataFactory.createContract());
 
             Assert.assertTrue(result.isGenerated());
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
+        } catch (final TemplateServiceException e) {
+            LOGGER.error("processorDocxOKTest error", e);
 
             Assert.assertFalse(false);
             return;
@@ -176,8 +176,8 @@ public class TemplateServiceInputFormatTest {
                     new JsonTemplateContext(jsonDataMultiContext));
 
             Assert.assertTrue(result.isGenerated());
-        } catch (TemplateServiceException e) {
-            e.printStackTrace();
+        } catch (final TemplateServiceException e) {
+            LOGGER.error("processorDocxJsonpathOkTest error", e);
 
             fail();
             return;

@@ -260,14 +260,13 @@ public class TemplateServiceConfiguration {
             LOGGER.error(msg, e);
 
             this.templateRepository = new FileSystemTemplateRepository();
-            e.printStackTrace();
         } catch (final TemplateServiceConfigurationException e) {
             final String msg = MSG_CONFIG_ERROR;
             LOGGER.error(msg, e);
 
             throw new TemplateServiceRuntimeException(msg);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LOGGER.error("Cannot load document structure repository due configuration errors.", e);
         }
     }
 

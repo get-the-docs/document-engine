@@ -188,7 +188,7 @@ public class DocumentStructureTest {
         } catch (final TemplateNotFoundException e) {
             testResult = true;
         } catch (final TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("docCountForTemplateElementStructureEmptyTest error", e);
 
             testResult = false;
         } finally {

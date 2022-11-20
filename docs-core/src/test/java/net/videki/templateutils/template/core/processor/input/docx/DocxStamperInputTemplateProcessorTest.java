@@ -29,6 +29,8 @@ import net.videki.templateutils.template.test.dto.ContractDataFactory;
 import net.videki.templateutils.template.test.dto.contract.Contract;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import java.io.OutputStream;
 
 public class DocxStamperInputTemplateProcessorTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocxStamperInputTemplateProcessorTest.class);
     private InputTemplateProcessor processor = new DocxStamperInputTemplateProcessor();
 
     @Test
@@ -63,10 +66,10 @@ public class DocxStamperInputTemplateProcessorTest {
                 getContractTestData())) {
 
             Assert.assertFalse(false);
-        } catch (TemplateNotFoundException e) {
+        } catch (final TemplateNotFoundException e) {
             Assert.assertEquals("e12c71e9-f27f-48ba-b600-2a0a071c5958", e.getCode());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (final IOException e) {
+            LOGGER.error("fillTemplateNotFound error", e);
         }
     }
 
@@ -84,7 +87,7 @@ public class DocxStamperInputTemplateProcessorTest {
         } catch (PlaceholderEvalException e) {
             Assert.assertEquals("ff03cf41-25fb-463a-829d-e2b411df4c16", e.getCode());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("fillValidTemplatePlaceholderError error", e);
         }
     }
 

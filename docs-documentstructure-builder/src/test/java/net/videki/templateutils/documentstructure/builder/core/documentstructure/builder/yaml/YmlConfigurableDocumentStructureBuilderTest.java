@@ -26,12 +26,16 @@ import net.videki.templateutils.template.core.provider.documentstructure.reposit
 import net.videki.templateutils.template.core.service.exception.TemplateNotFoundException;
 import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
 import static org.junit.Assert.fail;
 
 public class YmlConfigurableDocumentStructureBuilderTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(YmlConfigurableDocumentStructureBuilderTest.class);
 
     @Test
     public void readDocStructureOptions() {
@@ -43,7 +47,7 @@ public class YmlConfigurableDocumentStructureBuilderTest {
             dsBuilder.buildOptions(dsOptionsFileAsStream);
 
         } catch (final TemplateNotFoundException | TemplateServiceException e) {
-            e.printStackTrace();
+            LOGGER.error("readDocStructureOptions error", e);
             fail();
         }
 
