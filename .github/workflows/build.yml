@@ -4,13 +4,13 @@ on:
   push:
     branches: [ "main", release/*, story/*, task/* ]
     paths:
-      - 'template-utils-*/**'
+      - 'docs-*/**'
       - 'pom.xml'
   pull_request:
     #    branches: [ "main" ]
     types: [opened, synchronize, reopened]
     paths:
-      - 'template-utils-*/**'
+      - 'docs-*/**'
       - 'pom.xml'
   workflow_dispatch:
 
@@ -114,7 +114,7 @@ jobs:
       - name: Run Clover coverage and upload to Codecov
         uses: codecov/codecov-action@v2
         with:
-          name: template-utils
+          name: document-engine
       #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
       #    files: ./coverage1.xml,./coverage2.xml # optional
       #    flags: unittests # optional
@@ -129,7 +129,7 @@ jobs:
 #        uses: actions/upload-artifact@v3
 #        with:
 #          name: Coverage results
-#          path: ${{ github.workspace }}/**/template-utils-service-api/target/site/clover/
+#          path: ${{ github.workspace }}/**/docs-api/target/site/clover/
 #          retention-days: 30
 
 
@@ -169,12 +169,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_template-utils -Psonar
+        run: mvn -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_document-engine -Psonar
 
 #      - name: Archive production artifacts
 #        if: ${{ success() }}
 #        uses: actions/upload-artifact@v1
 #        with:
-#          name: template-utils-core
-#          path: /home/runner/work/template-utils/template-utils/template-utils-core/target/template-utils-core-1.0.1.jar
-#          path: ${{ github.workspace }}/**/target/template-utils*.jar
+#          name: docs-core
+#          path: /home/runner/work/document-engine/document-engine/docs-core/target/docs-core-1.0.1.jar
+#          path: ${{ github.workspace }}/**/target/docs*.jar

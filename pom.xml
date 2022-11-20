@@ -6,16 +6,16 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.videki.template-utils</groupId>
-    <artifactId>template-utils-parent</artifactId>
+    <groupId>net.videki.getthedocs</groupId>
+    <artifactId>document-engine-parent</artifactId>
     <version>1.0.1</version>
     <packaging>pom</packaging>
 
-    <url>https://github.com/videki/template-utils</url>
+    <url>https://github.com/get-the-docs/document-engine</url>
     <scm>
-        <connection>scm:git:git@github.com:videki/template-utils.git</connection>
-        <developerConnection>scm:git:git@github.com:videki/template-utils.git</developerConnection>
-        <url>https://github.com/videki/template-utils</url>
+        <connection>scm:git:git@github.com:get-the-docs/document-engine.git</connection>
+        <developerConnection>scm:git:git@github.com:get-the-docs/document-engine.git</developerConnection>
+        <url>https://github.com/get-the-docs/document-engine</url>
     </scm>
     <developers>
         <developer>
@@ -26,7 +26,7 @@
     </developers>
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/videki/template-utils/issues</url>
+        <url>https://github.com/get-the-docs/document-engine/issues</url>
     </issueManagement>
     <distributionManagement>
         <snapshotRepository>
@@ -84,11 +84,11 @@
     </dependencies>
 
     <modules>
-        <module>template-utils-core-dto-extensions</module>
-        <module>template-utils-core</module>
-        <module>template-utils-core-test-dto</module>
-        <module>template-utils-documentstructure-builder</module>
-        <module>template-utils-service-api</module>
+        <module>docs-core-dto-extensions</module>
+        <module>docs-core</module>
+        <module>docs-core-test-dto</module>
+        <module>docs-documentstructure-builder</module>
+        <module>docs-api</module>
     </modules>
 
     <build>

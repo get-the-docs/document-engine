@@ -19,10 +19,10 @@ const config = {
   /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
   themeConfig: ({
     navbar: {
-      title: 'Template utils',
+      title: 'Get the docs',
       logo: {
-        alt: 'Template utils logo',
-        src: 'img/template-utils-logo.png',
+        alt: 'Get the docs logo',
+        src: 'img/document-engine-logo.png',
       },
       items: [
         {
@@ -44,7 +44,7 @@ const config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/get-the-docs/template-utils',
+          href: 'https://github.com/get-the-docs/document-engine',
           label: 'GitHub',
           position: 'right',
         },
@@ -62,7 +62,7 @@ const config = {
             },
             {
               label: 'Samples',
-              href: 'https://github.com/get-the-docs/template-utils/tree/master/template-utils-samples',
+              href: 'https://github.com/get-the-docs/document-engine/tree/master/document-engine-samples',
             },
           ],
         },
@@ -71,7 +71,7 @@ const config = {
           items: [
             {
               label: 'Twitter',
-              href: 'https://twitter.com/template_utils',
+              href: 'https://twitter.com/getthedocs',
             },
           ],
         },
@@ -80,15 +80,15 @@ const config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/get-the-docs/template-utils',
+              href: 'https://github.com/get-the-docs/document-engine',
             },
             {
               label: 'Mvn repository',
-              href: 'https://mvnrepository.com/artifact/net.videki/template-utils',
+              href: 'https://mvnrepository.com/artifact/net.videki.getthedocs/document-engine',
             },
             {
               label: 'License',
-              href: 'https://github.com/videki/template-utils/blob/master/LICENSE',
+              href: 'https://github.com/get-the-docs/document-engine/blob/master/LICENSE',
             },
           ],
         },
@@ -133,7 +133,7 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-              'https://github.com/videki/template-utils',
+              'https://github.com/get-the-docs/document-engine',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
