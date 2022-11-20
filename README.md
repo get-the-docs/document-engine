@@ -1,6 +1,6 @@
 # Get The Docs Document Engine
 
-![Build](https://github.com/get-the-docs/document-engine/workflows/Build/badge.svg)
+[![Build](https://github.com/get-the-docs/document-engine/actions/workflows/build.yml/badge.svg)](https://github.com/get-the-docs/document-engine/actions/workflows/build.yml)
 ![Tests](https://github.com/get-the-docs/document-engine/workflows/Tests/badge.svg)
 [![Sonar Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=get-the-docs_template-utils&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=get-the-docs_template-utils)
 [![Codecov branch](https://img.shields.io/codecov/c/github/get-the-docs/document-engine/master?label=Coverage)](https://codecov.io/gh/get-the-docs/document-engine)
