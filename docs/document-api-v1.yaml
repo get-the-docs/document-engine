@@ -39,6 +39,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [template_reader, template_fill, template_manager, documentstructure_reader, documentstructure_manager]
       parameters:
         - name: templateId
           description: "The template id as stored in the template repository."
@@ -89,6 +90,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [template_user, documentstructure_user]
       parameters:
         - name: templateId
           description: "The template id in the template repository. (e.g. for filesystem repo the relative path from the basedir - see get /templates)"
@@ -167,6 +169,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [template_user, documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -230,6 +233,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [template_user, documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -307,6 +311,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_reader, documentstructure_user, documentstructure_manager]
       parameters:
         - name: id
           description: document structure id in the document structure repository
@@ -363,6 +368,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_user]
       parameters:
         - name: id
           description: document structure id in the document structure repository
@@ -441,6 +447,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -495,6 +502,7 @@ paths:
       x-accepts: application/json
       security:
         - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -1144,6 +1152,19 @@ components:
       type: apiKey
       in: header
       name: X-API-KEY
-
+    JwtAuth:
+      type: oauth2
+      flows:
+        password:
+          authorizationUrl: http://localhost/auth/realms/getthedocs/oauth2/authorize
+          tokenUrl: http://localhost/auth/realms/getthedocs/oauth2/token
+          scopes:
+            template_reader: List and read templates
+            template_user: Impersonate templates
+            template_manager: Add, update and delete templates
+            documentstructure_reader: List and read document structures
+            documentstructure_user: List and read document structures
+            documentstructure_manager: Add, update and delete document structures
 security:
   - ApiKeyAuth: []
+  - JwtAuth: [template_reader, template_user, template_manager, documentstructure_reader, documentstructure_user, documentstructure_manager]

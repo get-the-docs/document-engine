@@ -1,4 +1,4 @@
-package net.videki.templateutils.api.document.api.configuration;
+package net.videki.templateutils.api.document.api.configuration.local;
 
 /*-
  * #%L
@@ -20,7 +20,9 @@ package net.videki.templateutils.api.document.api.configuration;
  * #L%
  */
 
+import net.videki.templateutils.api.document.ServiceApplication;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -30,9 +32,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * 
  * @author Levente Ban
  */
+@Profile(ServiceApplication.Profiles.LOCAL)
 @EnableWebSecurity
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class LocalWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	/**
 	 * Config entry point.
@@ -45,4 +48,3 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 }
-

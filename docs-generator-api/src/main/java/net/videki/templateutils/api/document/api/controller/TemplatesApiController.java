@@ -41,6 +41,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -80,6 +81,7 @@ public class TemplatesApiController implements TemplatesApi {
      * @return the available templates.
      */
 
+    @PreAuthorize("hasAnyRole('template_reader', 'template_fill', 'template_manager')")
     @Override
     public ResponseEntity<GetTemplatesResponse> getTemplates(String templateId,
                                                              PageableTemplate pageable) {
@@ -118,6 +120,7 @@ public class TemplatesApiController implements TemplatesApi {
      * @param body the model object.
      * @return the transaction id to refer on status check and download.
      */
+    @PreAuthorize("hasAnyRole('template_user', 'documentstructure_user')")
     @Override
     public ResponseEntity<TemplateJobApiResponse> postTemplateGenerationJob(final String id, final Object body,
                                                                             final String notificationUrl) {
@@ -159,6 +162,7 @@ public class TemplatesApiController implements TemplatesApi {
      * @param transactionId the transaction id.
      * @return the generation result containing the list of the result documents (refer to these to download via getResultDocumentForTemplateByTransactionIdAndResultDocumentId).
      */
+    @PreAuthorize("hasAnyRole('template_user', 'documentstructure_user')")
     @Override
     public ResponseEntity<GenerationResult> getResultDocumentByTransactionId(final String transactionId) {
         if (log.isDebugEnabled()) {
@@ -201,6 +205,7 @@ public class TemplatesApiController implements TemplatesApi {
      * @param resultDocumentId the result document to download.
      * @return the result document descriptor and binary.
      */
+    @PreAuthorize("hasAnyRole('template_user', 'documentstructure_user')")
     @Override
     public ResponseEntity<Resource> getResultDocumentForTemplateByTransactionIdAndResultDocumentId(
             final String transactionId, final String resultDocumentId) {

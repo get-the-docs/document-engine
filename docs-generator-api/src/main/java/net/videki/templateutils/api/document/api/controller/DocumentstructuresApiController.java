@@ -28,6 +28,7 @@ import net.videki.templateutils.api.document.api.mapper.PageableMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -86,6 +87,7 @@ public class DocumentstructuresApiController implements DocumentstructuresApi {
      * @param valueSet the model objects.
      * @param notificationUrl optional notification hook (webhook, etc.) to indicate job completion. 
      */
+    @PreAuthorize("hasAnyRole('documentstructure_user')")
     @Override
     public ResponseEntity<DocStructureJobApiResponse> postDocumentStructureGenerationJob(
             final String id,
@@ -108,6 +110,7 @@ public class DocumentstructuresApiController implements DocumentstructuresApi {
      * @param transactionId the transaction id.
      * @return the generation result.
      */
+    @PreAuthorize("hasAnyRole('documentstructure_user')")
     @Override
     public ResponseEntity<GenerationResult> getGenerationResultByTransactionId(final String transactionId) {
         return DocumentstructuresApi.super.getGenerationResultByTransactionId(transactionId);
@@ -120,6 +123,7 @@ public class DocumentstructuresApiController implements DocumentstructuresApi {
      * @param resultDocumentId the result document to return.
      * @return the result document descriptor and binary if found.
      */
+    @PreAuthorize("hasAnyRole('documentstructure_user')")
     @Override
     public ResponseEntity<Resource> getResultDocumentForDocStructureByTransactionIdAndResultDocumentId(final String transactionId,
       final String resultDocumentId) {

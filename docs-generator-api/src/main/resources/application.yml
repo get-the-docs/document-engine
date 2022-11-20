@@ -3,6 +3,7 @@ app:
     project-name: "@project.name@"
     version: "@project.version@"
     base-path: "/v1"
+    swagger-resource-path: "/v1/templates"
   http: 
     auth-token-name: "x-api-key"
     auth-token: "51af3e7e-f3dd-4751-8c0a-42a40450b694"
@@ -19,6 +20,9 @@ springdoc:
     path: "/v1/templates/swagger-ui/v3/api-docs"
 
 spring:
+  profiles:
+    active: prod
+
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
@@ -37,3 +41,21 @@ logging:
 
 server:
   port: "${SERVER_PORT:8081}"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH_RESOURCE_SERVER:http://localhost/realms/getthedocs}
+#          jwk-set-uri: ${OAUTH_RESOURCE_SERVER:http://localhost/realms/getthedocs/protocol/openid-connect/certs}
+
+springdoc:
+  swagger-ui:
+    oauth2-redirect-url: ${OAUTH_RESOURCE_SERVER:http://localhost/auth/realms/getthedocs}
