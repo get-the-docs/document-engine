@@ -44,14 +44,14 @@ import static net.videki.templateutils.template.core.service.exception.TemplateS
 
 /**
  * Template service configuration.
- * The default behaviour can be configured by adding a template-utils.properties config file to the classloader root.
+ * The default behaviour can be configured by adding a document-engine.properties config file to the classloader root.
  *
  * <p>
  *     <b>Config options</b>
  * </p>
  * <p>#                                                                                                                 </p>
  * <p># -------------------------                                                                                       </p>
- * <p># <b>Template-utils properties</b>                                                                                </p>
+ * <p># <b>Document-engine properties</b>                                                                                </p>
  * <p># -------------------------                                                                                       </p>
  * <p>#                                                                                                                 </p>
  * <p># <b>Document structure and value object logging category</b>                                                     </p>
@@ -123,10 +123,10 @@ public class TemplateServiceConfiguration {
 
     private static final Object LOCKOBJECT = new Object();
 
-    // template-utils.properties keys
+    // document-engine.properties keys
     private static final String FONT_FAMILY = "converter.pdf.font-library.font";
     private static final String FONT_DIR = "converter.pdf.font-library.basedir";
-    private static final String CONFIG_FILE_NAME = "template-utils.properties";
+    private static final String CONFIG_FILE_NAME = "document-engine.properties";
     private static final String LOG_APPENDER = "common.log.value-logcategory";
 
     private static final String CONFIG_ENV_FILENAME = "configFile";
@@ -158,7 +158,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Initializes the template service configuration.
-     * The config is read from the first file on the classpath named template-utils.properties.
+     * The config is read from the first file on the classpath named document-engine.properties.
      */
     protected TemplateServiceConfiguration() {
         init();
@@ -181,28 +181,29 @@ public class TemplateServiceConfiguration {
                 try (final InputStream propFile = path.openStream()) {
                     properties.load(propFile);
 
-                    LOGGER.info("template-utils.properties configuration file found at location: {}", path.getPath());
-
-                    initFontLibrary(properties);
-                    initDocumentStructureRepository(properties);
-                    initTemplateRepository(properties);
-                    initResultStore(properties);
-                    initProcessors(properties);
+                    LOGGER.info("document-engine.properties configuration file found at location: {}", path.getPath());
 
                     this.configurationProperties = properties;
 
                 }
             } else {
-                LOGGER.error("No template-utils.properties configuration file found");
+                LOGGER.error("No document-engine.properties configuration file found");
             }
+
+            initFontLibrary(properties);
+            initDocumentStructureRepository(properties);
+            initTemplateRepository(properties);
+            initResultStore(properties);
+            initProcessors(properties);
+
         } catch (final Exception e) {
-            LOGGER.error("template-utils.properties configuration file not found, using default configuration.");
+            LOGGER.error("document-engine.properties configuration file not found, using default configuration.");
         }
     }
 
     /**
      * Initialzes the custom fonts for pdf conversion.
-     * @param properties System properties (see config file - template-utils.properties).
+     * @param properties System properties (see config file - document-engine.properties).
      */
     private void initFontLibrary(final Properties properties) {
         if (properties != null && !properties.keySet().isEmpty()) {
@@ -449,7 +450,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Returns the configured document structure repository implementation.
-     * For configuration options see the system configuration (template-utils.properties)
+     * For configuration options see the system configuration (document-engine.properties)
      * @return the document structure implementation.
      */
     public DocumentStructureRepository getDocumentStructureRepository() {
@@ -458,7 +459,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Returns the template repository implementation.
-     * For configuration options see the system configuration (template-utils.properties)
+     * For configuration options see the system configuration (document-engine.properties)
      * @return the template repository implementation.
      */
     public TemplateRepository getTemplateRepository() {
@@ -467,7 +468,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Returns the result store repository implementation.
-     * For configuration options see the system configuration (template-utils.properties)
+     * For configuration options see the system configuration (document-engine.properties)
      * @return the result store repository implementation.
      */
     public ResultStore getResultStore() {

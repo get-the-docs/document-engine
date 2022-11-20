@@ -4,17 +4,21 @@ info:
     "API for listing available templates, document structures and generating impersonated documents with provided data.
     The API has two operation groups: 
       - templates for generating single documents and 
-      - documentstructures for generating document sets.
+      - document structures for generating document sets.
     The service is base on a template repository, a document structure repository and a result store. 
     These can be freely configured but once configured, have the same setup has to be used 
-    for the template and document structure repositories since they have to be consitent. 
+    for the template and document structure repositories since they have to be consistent. 
     
-    The document generation is asynchronous, when posting a job you will get a transcation id (or provide by yourself) and 
+    The document generation is asynchronous, when posting a job you will get a transaction id (or provide by yourself) and 
     you can query and download the results based on that."  
   title: Document generation API
   version: 1.0.1
 servers:
-  - url: https://localhost:8080/api/v1
+  - url: https://localhost:8080/{base-path}
+    description: "Local env"
+    variables:
+      base-path:
+        default: "v1"
 tags:
   - name: templates
     description: Template element
@@ -25,7 +29,7 @@ tags:
     externalDocs:
       url: "https://www.getthedocs.tech/docs/documentation/components"
 paths:
-  /template:
+  /templates:
     get:
       tags:
         - templates
@@ -33,6 +37,9 @@ paths:
       summary: "Lists a page of the available document templates, or a given template in the template repository."
       x-contentType: application/json
       x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [template_reader, template_fill, template_manager, documentstructure_reader, documentstructure_manager]
       parameters:
         - name: templateId
           description: "The template id as stored in the template repository."
@@ -73,7 +80,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /template/fill:
+  /templates/fill:
     post:
       tags:
         - templates
@@ -81,6 +88,9 @@ paths:
       summary: "Posts a template generation with the given data"
       x-contentType: application/json
       x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [template_user, documentstructure_user]
       parameters:
         - name: templateId
           description: "The template id in the template repository. (e.g. for filesystem repo the relative path from the basedir - see get /templates)"
@@ -136,8 +146,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
-        "404":
-          description: Template not found
+        "415":
+          description: "Unsupported media type or no body"
           content:
             application/json:
               schema:
@@ -149,7 +159,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /template/fill/{transactionId}:
+  /templates/fill/{transactionId}:
     get:
       tags:
         - templates
@@ -157,6 +167,9 @@ paths:
       summary: "Returns the result document for a given transaction id and result document."
       x-contentType: application/json
       x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [template_user, documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -210,7 +223,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /template/fill/{transactionId}/doc:
+  /templates/fill/{transactionId}/doc:
     get:
       tags:
         - templates
@@ -218,6 +231,9 @@ paths:
       summary: "Returns the result document for a given transaction id and result document."
       x-contentType: application/json
       x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [template_user, documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -285,7 +301,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /documentstructure:
+  /documentstructures:
     get:
       tags:
         - documentstructures
@@ -293,6 +309,9 @@ paths:
       summary: "Lists the available document structures."
       x-contentType: application/json
       x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_reader, documentstructure_user, documentstructure_manager]
       parameters:
         - name: id
           description: document structure id in the document structure repository
@@ -339,12 +358,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /documentstructure/fill:
+  /documentstructures/fill:
     post:
       tags:
         - documentstructures
       operationId: postDocumentStructureGenerationJob
       description: Posts data for a document structure to be generated.
+      x-contentType: application/json
+      x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_user]
       parameters:
         - name: id
           description: document structure id in the document structure repository
@@ -412,10 +436,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/BaseApiResponse"
       summary: Posts a template generation with the given data
-      x-contentType: application/json
-      x-accepts: application/json
 
-  /documentstructure/fill/{transactionId}:
+  /documentstructures/fill/{transactionId}:
     get:
       tags:
         - documentstructures
@@ -423,6 +445,9 @@ paths:
       summary: "Returns the generation results for a given transaction id."
       x-contentType: application/json
       x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -467,7 +492,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/EmptyResponse"
 
-  /documentstructure/fill/{transactionId}/doc:
+  /documentstructures/fill/{transactionId}/doc:
     get:
       tags:
         - documentstructures
@@ -475,6 +500,9 @@ paths:
       summary: "Returns the result document for a given transaction id and result document."
       x-contentType: application/json
       x-accepts: application/json
+      security:
+        - ApiKeyAuth: []
+        - JwtAuth: [documentstructure_user]
       parameters:
         - name: transactionId
           in: path
@@ -614,7 +642,7 @@ components:
               maxItems: 32768
           type: object
 
-    Pageable:
+    PageableTemplate:
       type: object
       description: "Pageable query parameters"
       additionalProperties: false
@@ -868,11 +896,19 @@ components:
       type: object
       additionalProperties: false
       properties:
+        transactionId:
+          $ref: "#/components/schemas/TransactionId"
         documentName:
           type: string
           minLength: 0
           maxLength: 4000
           pattern: "^[a-zA-Z0-9_/\\]*$"
+        status:
+          type: string
+          minLength: 0
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_/\\]*$"
+          enum: [PENDING, AVAILABLE, NOT_FOUND]
         format:
           type: string
           minLength: 0
@@ -890,6 +926,8 @@ components:
       additionalProperties: false
       properties:
         transactionId:
+          $ref: "#/components/schemas/TransactionId"
+        valuesetTransactionId:
           $ref: "#/components/schemas/TransactionId"
         documentStructureId:
           $ref: "#/components/schemas/DocumentStructureId"
@@ -1107,13 +1145,26 @@ components:
       name: pageable
       required: false
       schema:
-        $ref: "#/components/schemas/Pageable"
+        $ref: "#/components/schemas/PageableTemplate"
 
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
       name: X-API-KEY
-
+    JwtAuth:
+      type: oauth2
+      flows:
+        password:
+          authorizationUrl: http://localhost/auth/realms/getthedocs/oauth2/authorize
+          tokenUrl: http://localhost/auth/realms/getthedocs/oauth2/token
+          scopes:
+            template_reader: List and read templates
+            template_user: Impersonate templates
+            template_manager: Add, update and delete templates
+            documentstructure_reader: List and read document structures
+            documentstructure_user: List and read document structures
+            documentstructure_manager: Add, update and delete document structures
 security:
   - ApiKeyAuth: []
+  - JwtAuth: [template_reader, template_user, template_manager, documentstructure_reader, documentstructure_user, documentstructure_manager]
