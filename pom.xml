@@ -351,6 +351,7 @@
     </profiles>
 
     <reporting>
+
         <outputDirectory>target/site</outputDirectory>
         <plugins>
             <plugin>
