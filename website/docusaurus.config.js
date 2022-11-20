@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Template utils',
+  title: 'Get The Docs Document Engien',
   tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application',
   url: 'https://wwww.getthedoccs.tech',
   baseUrl: '/',
@@ -19,7 +19,7 @@ const config = {
   /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
   themeConfig: ({
     navbar: {
-      title: 'Get the docs',
+      title: 'Get The Docs Document Engine',
       logo: {
         alt: 'Get the docs logo',
         src: 'img/document-engine-logo.png',
@@ -93,7 +93,7 @@ const config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} contributors of the Template Utils Project.`,
+      copyright: `Copyright © ${new Date().getFullYear()} contributors of the Get The Docs Project.`,
     },
 
     prism: {
