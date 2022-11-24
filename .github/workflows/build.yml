@@ -15,6 +15,10 @@ on:
       - 'pom.xml'
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/docs-generator-api:${{ github.sha }}
+
 permissions:
   pull-requests: read # allows SonarCloud to decorate PRs with analysis results
 
@@ -189,6 +193,7 @@ jobs:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
       actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -220,12 +225,12 @@ jobs:
       - name: Build the Docker image
 #        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
         working-directory: ./docs-generator-api
-        run: docker build -t ghcr.io/${{ github.repository_owner }}/docs-generator-api:${{ github.sha }} --file Dockerfile .
+        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --file Dockerfile .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
-          image-ref: 'ghcr.io/${{ github.repository_owner }}/docs-generator-api:${{ github.sha }}'
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
@@ -236,10 +241,23 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      - name: Log into GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push image to GitHub Container Registry
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/docs-generator-api:${{ github.sha }}        
-          docker push $IMAGE_ID
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
