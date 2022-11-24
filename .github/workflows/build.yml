@@ -241,5 +241,5 @@ jobs:
 
       - name: Push image to GitHub Container Registry
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/docs-generator-api:${{ github.sha }        
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/docs-generator-api:${{ github.sha }}        
           docker push $IMAGE_ID
