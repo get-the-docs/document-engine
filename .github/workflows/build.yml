@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs-*/**'
       - 'pom.xml'
+      - '.github/workflows/**'
   pull_request:
     #    branches: [ "main" ]
     types: [opened, synchronize, reopened]
@@ -178,3 +179,41 @@ jobs:
 #          name: docs-core
 #          path: /home/runner/work/document-engine/document-engine/docs-core/target/docs-core-1.0.1.jar
 #          path: ${{ github.workspace }}/**/target/docs*.jar
+
+
+  docker_build_job:
+    name: Dockerize
+    needs:
+      - analyze_job
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Build the Docker image
+      - uses: actions/checkout@v3
+#        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+        working-directory: ./docs-generator-api
+        run: docker build -t get-the-docs/docs-generator-api:${{ github.sha }} --file Dockerfile .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+        with:
+          image-ref: 'get-the-docs/docs-generator-api:${{ github.sha }}'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
