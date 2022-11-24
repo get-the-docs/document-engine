@@ -113,7 +113,7 @@ jobs:
         run: mvn -B verify --file pom.xml -Dspring.profiles.active=local -Pcoverage
 
       - name: Run Clover coverage and upload to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           name: document-engine
       #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
@@ -182,7 +182,7 @@ jobs:
 
 
   docker_build_job:
-    name: Dockerize
+    name: Containerize
     needs:
       - analyze_job
     permissions:
@@ -215,12 +215,12 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Maven build
-        run: mvn -B clean package --file pom.xml -DskipTests=true
+        run: mvn -B package --file pom.xml -DskipTests=true
 
       - name: Build the Docker image
 #        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
         working-directory: ./docs-generator-api
-        run: docker build -t get-the-docs/docs-generator-api:${{ github.sha }} --file Dockerfile .
+        run: docker build -t ghcr.io/${{ github.repository_owner }}/docs-generator-api:${{ github.sha }} --file Dockerfile .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
@@ -235,3 +235,11 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Log into GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image to GitHub Container Registry
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/docs-generator-api:${{ github.sha }        
+          docker push $IMAGE_ID
