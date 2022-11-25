@@ -17,7 +17,7 @@ on:
 
 env:
   API_DOCKER_REGISTRY: ghcr.io
-  API_DOCKER_IMAGE_NAME: ${{ github.repository_owner }}/docs-generator-api:${{ github.sha }}
+  API_DOCKER_IMAGE_NAME: ${{ github.repository_owner }}/docs-generator-api
 
 permissions:
   pull-requests: read # allows SonarCloud to decorate PRs with analysis results
@@ -258,7 +258,6 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags:
-            - 'latest'
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
+#          tags: '${{ env.API_DOCKER_IMAGE_NAME }}:latest'
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
