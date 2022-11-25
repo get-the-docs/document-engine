@@ -252,6 +252,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Pull back the Docker image for the Trivy scan
+        working-directory: ./docs-generator-api
+        run: docker pull ${{ steps.meta.outputs.tags }}
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
