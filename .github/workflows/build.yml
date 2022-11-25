@@ -245,12 +245,10 @@ jobs:
             type=sha
 
       - name: Build and push Docker image
-        working-directory: ./docs-generator-api
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./docs-generator-api
           push: ${{ github.event_name != 'pull_request' }}
-#          tags: '${{ env.API_DOCKER_IMAGE_NAME }}:latest'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
