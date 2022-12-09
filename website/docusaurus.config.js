@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Get The Docs Document Engien',
+  title: 'Get The Docs Document Engine',
   tagline: 'Create and impersonate single or multi-part docx and xlsx templates easily with your application',
   url: 'https://wwww.getthedoccs.tech',
   baseUrl: '/',
