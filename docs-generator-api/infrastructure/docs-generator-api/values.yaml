@@ -1,17 +1,12 @@
 # Set how many application instances to run.
 replicaCount: 1
 
-# Override these settings and use your container image.
 image:
-  repository: docs-generator-api
-  tag: latest
+  repository: get-the-docs/docs-generator-api
+  tag: sha-8ab657b
   pullPolicy: IfNotPresent
 
-# Set image pull secrets (in case you're using a private container registry).
-imageCredentials:
-  registry: ghcr.io
-  username: # 
-  password: # 
+imageCredentials: [{ name: gh-getthedocs}]
 
 # Set service type: LoadBalancer, ClusterIP, NodePort
 service:
@@ -28,68 +23,83 @@ autoscaling:
 # Set to false to disable Prometheus support.
 monitoring: true
 
-# Set to false to disable Spring Cloud Kubernetes support.
-sck: false
-
 # Set configuration properties.
 config:
-  # -------------------------
-  # Template-utils properties
-  # -------------------------
 
-  # Document structure anf value object logging category
-  # -----------------------------
-  #   If specified, the document structure and the actual value set can be logged with a separate logger.
-  #   To do so, enable a log category specified by this setting.
-  #   The logging is bound to DEBUG log level and is logged by default through the TemplateService's logger.
-  # common.log.value-logcategory= net.videki.templateutils.valuelog
+  application:
+    spring:
+      config:
+        activate:
+          on-profile: prod
 
-  repository:
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: http://localhost/realms/getthedocs
 
-    # Document structure repository provider
-    documentstructure:
-      provider:
-        basedir: /repositories/source/documentstructures
-        storageclass: docs-documentstructures-sc
-        requests:
-          storage: 100Mi
-      builder: net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder
+    springdoc:
+      swagger-ui:
+        oauth2-redirect-url: http://localhost/auth/realms/getthedocs
 
-    # Template repository provider class
-    templates:
-      provider:
-        basedir: /repositories/source/templates
-        storageclass: docs-templates-sc
-        requests:
-          storage: 100Mi
+  documentengine:
+    # -------------------------
+    # Document-engine properties
+    # -------------------------
 
-    # InputTemplate processors
-    processors:
-      docx: net.videki.templateutils.template.core.processor.input.docx.DocxStamperInputTemplateProcessor
-      xlsx: net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
+    # Document structure anf value object logging category
+    # -----------------------------
+    #   If specified, the document structure and the actual value set can be logged with a separate logger.
+    #   To do so, enable a log category specified by this setting.
+    #   The logging is bound to DEBUG log level and is logged by default through the TemplateService's logger.
+    # common.log.value-logcategory= net.videki.templateutils.valuelog
 
-    # Result repository provider class
-    result:
-      provider:
-        basedir: /repositories/target/generated-documents
-        storageclass: docs-results-sc
-        requests:
-          storage: 1Gi
+    repository:
 
-  # Converters/PDF - Font library
-  # -----------------------------
-  #   For non built-in fonts (other then COURIER, HELVETICA, TIMES_ROMAN) the fonts used by the source documents
-  #   have to be provided.
-  #   The fonts will be embedded for the correct appearance into the result document.
-  #   Usage:
-  #     the fonts have to be specified as shown in the example below and
-  #     placed in a directory accessible for the TemplateService's class loader (e.g. have to be on the classpath).
+      # Document structure repository provider
+      documentstructure:
+        provider:
+          basedir: /repositories/source/documentstructures
+          storageclass: docs-documentstructures-sc
+          requests:
+            storage: 100Mi
+        builder: net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder
 
-  # Font base directory
-  converter:
-    pdf:
-      fontLibrary:
-        basedir: /fonts
-        storageclass: docs-fonts-sc
-        requests:
-          storage: 100Mi
+      # Template repository provider class
+      templates:
+        provider:
+          basedir: /repositories/source/templates
+          storageclass: docs-templates-sc
+          requests:
+            storage: 100Mi
+
+      # InputTemplate processors
+      processors:
+        docx: net.videki.templateutils.template.core.processor.input.docx.DocxStamperInputTemplateProcessor
+        xlsx: net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
+
+      # Result repository provider class
+      result:
+        provider:
+          basedir: /repositories/target/generated-documents
+          storageclass: docs-results-sc
+          requests:
+            storage: 1Gi
+
+    # Converters/PDF - Font library
+    # -----------------------------
+    #   For non built-in fonts (other then COURIER, HELVETICA, TIMES_ROMAN) the fonts used by the source documents
+    #   have to be provided.
+    #   The fonts will be embedded for the correct appearance into the result document.
+    #   Usage:
+    #     the fonts have to be specified as shown in the example below and
+    #     placed in a directory accessible for the TemplateService's class loader (e.g. have to be on the classpath).
+
+    # Font base directory
+    converter:
+      pdf:
+        fontLibrary:
+          basedir: /fonts
+          storageclass: docs-fonts-sc
+          requests:
+            storage: 100Mi
