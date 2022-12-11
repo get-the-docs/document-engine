@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>docs-provider-templaterepository-awss3</artifactId>
+    <artifactId>docs-templaterepo-aws-s3</artifactId>
     <version>1.0.1</version>
     <packaging>jar</packaging>
 
@@ -38,6 +38,7 @@
             <groupId>net.videki.getthedocs</groupId>
             <artifactId>docs-core</artifactId>
             <version>1.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
