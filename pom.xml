@@ -84,9 +84,11 @@
     </dependencies>
 
     <modules>
+        <module>docs-core-api</module>
         <module>docs-core-dto-extensions</module>
         <module>docs-core</module>
         <module>docs-core-test-dto</module>
+        <module>docs-provider-templaterepository-awss3</module>
         <module>docs-documentstructure-builder</module>
         <module>docs-generator-api</module>
     </modules>
