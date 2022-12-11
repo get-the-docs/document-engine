@@ -54,8 +54,8 @@ Now, add the control to the template:
 Maven:
 ```xml
   <dependency>
-    <groupId>net.videki.template-utils</groupId>
-    <artifactId>template-utils-core</artifactId>
+    <groupId>net.videki.getthedocs</groupId>
+    <artifactId>docs-core</artifactId>
     <version>1.0.1</version>
   </dependency>
 ```
@@ -63,9 +63,9 @@ Maven:
 Gradle:
 
 ```groovy
-  compile group: 'net.videki.template-utils', name: 'template-utils-core', version: '1.0.1'
+  compile group: 'net.videki.getthedocs', name: 'docs-core', version: '1.0.1'
 ```
-4. Add the generator config (template-utils.properties) to the project resources
+4. Add the generator config (document-engine.properties) to the project resources
 
 ```properties
 # Document structure repository provider
@@ -88,7 +88,7 @@ repository.result.provider.basedir=generated-documents
 # Font base directory
 converter.pdf.font-library.basedir=/fonts
 ```
-(download: [template-utils.properties](assets/template-utils.properties))
+(download: [document-engine.properties](assets/document-engine.properties))
 
 - The <code>repository.documentstructure.provider.basedir</code> property specifies the template root location. 
   This can be also set to an external location containing the templates.  

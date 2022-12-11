@@ -81,7 +81,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
     /**
      * Initializes the repository based on the system properties caught.
      * 
-     * @param props the system properties (see template-utils.properties)
+     * @param props the system properties (see document-engine.properties)
      * @throws TemplateServiceConfigurationException thrown in case of configuration
      *                                               errors.
      */
@@ -177,7 +177,7 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
     /**
      * Factory method to initialize the descriptor builder implementation.
      * 
-     * @param props the system properties (see template-utils.properties)
+     * @param props the system properties (see document-engine.properties)
      * @return the builder instance
      */
     protected DocumentStructureBuilder loadDocumentStructureBuilder(final Properties props) {

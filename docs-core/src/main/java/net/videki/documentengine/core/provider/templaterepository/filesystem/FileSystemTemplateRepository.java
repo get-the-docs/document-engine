@@ -57,7 +57,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemTemplateRepository.class);
 
     /**
-     * Configuration property key in the system properties (see template-utils.properties).
+     * Configuration property key in the system properties (see document-engine.properties).
      */
     private static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
 
@@ -68,7 +68,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
 
     /**
      * Entry point for repo initialization.
-     * @param props the system properties (see template-utils.properties)
+     * @param props the system properties (see document-engine.properties)
      */
     @Override
     public void init(final Properties props) throws TemplateServiceConfigurationException {

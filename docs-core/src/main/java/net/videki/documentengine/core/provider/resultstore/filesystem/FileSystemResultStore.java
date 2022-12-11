@@ -74,7 +74,7 @@ public class FileSystemResultStore implements ResultStore {
     /**
      * Initializer entry point to bootstrap the repository.
      * 
-     * @param props the system properties (see template-utils.properties)
+     * @param props the system properties (see document-engine.properties)
      */
     @Override
     public void init(final Properties props) throws TemplateServiceConfigurationException {

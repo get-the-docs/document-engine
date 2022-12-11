@@ -38,7 +38,7 @@ public interface DocumentStructureRepository {
     /**
      * Entry point for repository initialization.
      * 
-     * @param props configuration properties (see template-utils.properties)
+     * @param props configuration properties (see document-engine.properties)
      * @throws TemplateServiceConfigurationException thrown in case of
      *                                               initialization errors based on
      *                                               configuration errors.

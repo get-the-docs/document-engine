@@ -40,7 +40,7 @@ public interface ResultStore {
 
     /**
      * Repository initializer entry point.
-     * @param props the system properties (see template-utils.properties).
+     * @param props the system properties (see document-engine.properties).
      * @throws TemplateServiceConfigurationException thrown in case of configuration errors.
      */
     void init(Properties props) throws TemplateServiceConfigurationException;

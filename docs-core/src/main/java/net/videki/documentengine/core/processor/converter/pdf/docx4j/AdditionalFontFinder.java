@@ -45,7 +45,7 @@ public class AdditionalFontFinder {
 
     /**
      * Parses the specified font directory for the font mappings provided in the parameters.
-     * @param fontConfigList the font mappings specified in the configuration (see template-utils.properties).
+     * @param fontConfigList the font mappings specified in the configuration (see document-engine.properties).
      * @throws TemplateServiceConfigurationException thrown if the font urls or the mapping is invalid.
      */
     public static void discoverFonts(final List<FontConfig> fontConfigList) throws TemplateServiceConfigurationException {
@@ -68,7 +68,7 @@ public class AdditionalFontFinder {
                         String.format("%s - invalid font config url.", TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS) );
 
             } catch (final Exception e) {
-                LOGGER.warn("Error initializing template-utils config based additional fonts", e);
+                LOGGER.warn("Error initializing document-engine config based additional fonts", e);
             }
         }
     }

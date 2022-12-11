@@ -34,7 +34,7 @@ sck: false
 # Set configuration properties.
 config:
   # -------------------------
-  # Template-utils properties
+  # Document-engine properties
   # -------------------------
 
   # Document structure anf value object logging category
