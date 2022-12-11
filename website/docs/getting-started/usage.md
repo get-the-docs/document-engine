@@ -22,11 +22,11 @@ As we can see in the form (and spec., etc. of course) we got, we have the provid
 (in most cases we will have these classes in our business logic already done):
 
 ```java
-package net.videki.templateutils.template.test.dto.contract;
+package net.videki.documentengine.test.dto.contract;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.videki.templateutils.template.core.dto.ITemplate;
+import dto.net.videki.documentengine.core.ITemplate;
 
 import java.time.LocalDate;
 
@@ -54,8 +54,8 @@ Now, add the control to the template:
 Maven:
 ```xml
   <dependency>
-    <groupId>net.videki.template-utils</groupId>
-    <artifactId>template-utils-core</artifactId>
+    <groupId>net.videki.getthedocs</groupId>
+    <artifactId>docs-core</artifactId>
     <version>1.0.1</version>
   </dependency>
 ```
@@ -63,32 +63,32 @@ Maven:
 Gradle:
 
 ```groovy
-  compile group: 'net.videki.template-utils', name: 'template-utils-core', version: '1.0.1'
+  compile group: 'net.videki.getthedocs', name: 'docs-core', version: '1.0.1'
 ```
-4. Add the generator config (template-utils.properties) to the project resources
+4. Add the generator config (document-engine.properties) to the project resources
 
 ```properties
 # Document structure repository provider
-repository.documentstructure.provider=net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository
-repository.documentstructure.builder=net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder
+repository.documentstructure.provider=filesystem.repository.documentstructure.provider.net.videki.documentengine.core.FileSystemDocumentStructureRepository
+repository.documentstructure.builder=yaml.builder.documentstructure.provider.net.videki.documentengine.core.YmlDocStructureBuilder
 repository.documentstructure.provider.basedir=documentstructures
 
 # Template repository provider class
-repository.template.provider=net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository
+repository.template.provider=filesystem.templaterepository.provider.net.videki.documentengine.core.FileSystemTemplateRepository
 repository.template.provider.basedir=templates
 
 # InputTemplate processors
-processors.docx=net.videki.templateutils.template.core.processor.input.docx.DocxStamperInputTemplateProcessor
-processors.xlsx=net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
+processors.docx=docx.input.processor.net.videki.documentengine.core.DocxStamperInputTemplateProcessor
+processors.xlsx=xlsx.input.processor.net.videki.documentengine.core.JxlsInputTemplateProcessor
 
 # Result repository provider class
-repository.result.provider=net.videki.templateutils.template.core.provider.resultstore.filesystem.FileSystemResultStore
+repository.result.provider=filesystem.resultstore.provider.net.videki.documentengine.core.FileSystemResultStore
 repository.result.provider.basedir=generated-documents
 
 # Font base directory
 converter.pdf.font-library.basedir=/fonts
 ```
-(download: [template-utils.properties](assets/template-utils.properties))
+(download: [document-engine.properties](assets/document-engine.properties))
 
 - The <code>repository.documentstructure.provider.basedir</code> property specifies the template root location. 
   This can be also set to an external location containing the templates.  
@@ -104,12 +104,12 @@ The sample code below shows a simple fill-and-save scenario to the output dir, b
 as a stream. See the <code>TemplateService</code> interface for more information.
 
 ```java
-package net.videki.templateutils.examples;
+package net.videki.documentengine.examples;
 
-import net.videki.templateutils.examples.singletemplatepojo.dto.Person;
-import net.videki.templateutils.template.core.service.TemplateServiceRegistry;
-import net.videki.templateutils.template.core.service.exception.TemplateServiceException;
-import net.videki.templateutils.template.core.util.FileSystemHelper;
+import net.videki.documentengine.examples.singletemplatepojo.dto.Person;
+import service.net.videki.documentengine.core.TemplateServiceRegistry;
+import exception.service.net.videki.documentengine.core.TemplateServiceException;
+import util.net.videki.documentengine.core.FileSystemHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

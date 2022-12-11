@@ -8,11 +8,11 @@ optionalTemplateElement
 
 package full-example-rulebased.rules;
 
-import net.videki.templateutils.template.core.documentstructure.*;
-import net.videki.templateutils.template.core.documentstructure.descriptors.*;
-import net.videki.templateutils.documentstructure.builder.core.documentstructure.*;
+import net.videki.documentengine.core.documentstructure.*;
+import net.videki.documentengine.core.documentstructure.descriptors.*;
+import net.videki.documentengine.documentstructure.builder.core.documentstructure.*;
 
-import net.videki.templateutils.template.test.dto.contract.*;
+import net.videki.documentengine.test.dto.contract.*;
 
 template "Contract documents"
 

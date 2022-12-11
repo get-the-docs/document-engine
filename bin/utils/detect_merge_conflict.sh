@@ -1,6 +1,6 @@
 #!/bin/bash
 
-modules_array=(template-utils-core template-utils-core-dto-extensions template-utils-core-test-dto template-utils-documentstructure-builder)
+modules_array=(docs-core docs-core-dto-extensions docs-core-test-dto docs-documentstructure-builder)
 
 for index in ${!modules_array[*]}
 do

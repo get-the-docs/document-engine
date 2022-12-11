@@ -328,10 +328,10 @@
                                 <library>spring-boot</library>
                                 <interfaceOnly>true</interfaceOnly>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
-                                <basePackage>net.videki.templateutils.api.document</basePackage>
-                                <configPackage>net.videki.templateutils.api.document.api.configuration</configPackage>
-                                <apiPackage>net.videki.templateutils.api.document.api.controller</apiPackage>
-                                <modelPackage>net.videki.templateutils.api.document.api.model</modelPackage>
+                                <basePackage>net.videki.documentengine.api.document</basePackage>
+                                <configPackage>net.videki.documentengine.api.document.api.configuration</configPackage>
+                                <apiPackage>net.videki.documentengine.api.document.api.controller</apiPackage>
+                                <modelPackage>net.videki.documentengine.api.document.api.model</modelPackage>
                                 <enablePostProcessFile>true</enablePostProcessFile>
                             </configOptions>
                         </configuration>
