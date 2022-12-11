@@ -1,4 +1,4 @@
-package net.videki.templateutils.template.xlsx.dto;
+package net.videki.documentengine.xlsx.dto;
 
 /*-
  * #%L

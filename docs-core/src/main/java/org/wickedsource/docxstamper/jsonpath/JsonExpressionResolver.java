@@ -36,7 +36,6 @@ package org.wickedsource.docxstamper.jsonpath;
  * #L%
  */
 
-import net.videki.templateutils.template.core.context.JsonTemplateContext;
 import org.wickedsource.docxstamper.api.EvaluationContextConfigurer;
 import org.wickedsource.docxstamper.el.ExpressionResolver;
 import org.wickedsource.docxstamper.el.ExpressionUtil;

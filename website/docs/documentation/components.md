@@ -27,7 +27,7 @@ repository.template.provider=org.mycompany.templaterepo.ProviderClass
 Retrieves templates from a filesystem location, e.g. each template is stored as a file.  
 
 ```properties
-repository.template.provider=net.videki.templateutils.template.core.provider.templaterepository.filesystem.FileSystemTemplateRepository
+repository.template.provider=filesystem.templaterepository.provider.net.videki.documentengine.core.FileSystemTemplateRepository
 repository.template.provider.basedir=templates
 ```
 
@@ -62,7 +62,7 @@ repository.documentstructure.provider=org.mycompany.docstructurerepo.ProviderCla
 Retrieves templates from a filesystem location, e.g. each template is stored as a file.
 
 ```properties
-repository.documentstructure.provider=net.videki.templateutils.template.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository
+repository.documentstructure.provider=filesystem.repository.documentstructure.provider.net.videki.documentengine.core.FileSystemDocumentStructureRepository
 repository.documentstructure.provider.filesystem.basedir=doc-structures
 ```
 
@@ -95,7 +95,7 @@ Parses a document structure stored in YAML format.
 (The source repository )
 
 ```properties
-repository.documentstructure.builder=net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder
+repository.documentstructure.builder=yaml.builder.documentstructure.provider.net.videki.documentengine.core.YmlDocStructureBuilder
 ```
 
 
@@ -112,8 +112,8 @@ You can specify a list of input processors for the engine with **exactly one** p
 The built-in configuration for example is the setup below:
 
 ```properties
-processors.docx=net.videki.templateutils.template.core.processor.input.docx.DocxStamperInputTemplateProcessor
-processors.xlsx=net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
+processors.docx=docx.input.processor.net.videki.documentengine.core.DocxStamperInputTemplateProcessor
+processors.xlsx=xlsx.input.processor.net.videki.documentengine.core.JxlsInputTemplateProcessor
 ```
 
 
@@ -164,7 +164,7 @@ Processes .docx templates using comment markup implemented by the
 [docx stamper](https://github.com/thombergs/docx-stamper) tool.
 
 ```properties
-processors.provider.docx=net.videki.templateutils.template.core.processor.input.docx.DocxStamperInputTemplateProcessor
+processors.provider.docx=docx.input.processor.net.videki.documentengine.core.DocxStamperInputTemplateProcessor
 ```
 
 ### Noop processor
@@ -174,7 +174,7 @@ processors.provider.docx=net.videki.templateutils.template.core.processor.input.
 Simple loopback processor for returning input templates untouched.
 
 ```properties
-processors.provider.noop=net.videki.templateutils.template.core.processor.input.noop.NoopTemplateProcessor
+processors.provider.noop=noop.input.processor.net.videki.documentengine.core.NoopTemplateProcessor
 ```
 
 ### Jxls processor
@@ -184,7 +184,7 @@ processors.provider.noop=net.videki.templateutils.template.core.processor.input.
 .xlsx processor for processing [Jxls](http://jxls.sourceforge.net/) marked-up templates.
 
 ```properties
-processors.provider.xlsx=net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
+processors.provider.xlsx=xlsx.input.processor.net.videki.documentengine.core.JxlsInputTemplateProcessor
 ```
 
 ## Converters

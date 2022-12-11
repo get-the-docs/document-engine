@@ -42,7 +42,7 @@ config:
   #   If specified, the document structure and the actual value set can be logged with a separate logger.
   #   To do so, enable a log category specified by this setting.
   #   The logging is bound to DEBUG log level and is logged by default through the TemplateService's logger.
-  # common.log.value-logcategory= net.videki.templateutils.valuelog
+  # common.log.value-logcategory= net.videki.documentengine.valuelog
 
   repository:
 
@@ -53,7 +53,7 @@ config:
         storageclass: docs-documentstructures-sc
         requests:
           storage: 100Mi
-      builder: net.videki.templateutils.template.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder
+      builder: net.videki.documentengine.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder
 
     # Template repository provider class
     templates:
@@ -65,8 +65,8 @@ config:
 
     # InputTemplate processors
     processors:
-      docx: net.videki.templateutils.template.core.processor.input.docx.DocxStamperInputTemplateProcessor
-      xlsx: net.videki.templateutils.template.core.processor.input.xlsx.JxlsInputTemplateProcessor
+      docx: net.videki.documentengine.core.processor.input.docx.DocxStamperInputTemplateProcessor
+      xlsx: net.videki.documentengine.core.processor.input.xlsx.JxlsInputTemplateProcessor
 
     # Result repository provider class
     result:
