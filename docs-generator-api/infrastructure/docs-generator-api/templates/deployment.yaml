@@ -25,28 +25,17 @@ spec:
         prometheus.io/port:  "8080"
       {{- end }}
     spec:
-      {{- if .Values.imageCredentials.registry }}
+      {{- with .Values.imageCredentials }}
       imagePullSecrets:
-        - name: {{ include "spring-boot.fullname" . }}-registry
+        {{ toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.sck }}
-          env:
-            - name: SPRING_CLOUD_KUBERNETES_CONFIG_NAME
-              value: "{{ include "spring-boot.fullname" . }}"
-            - name: MANAGEMENT_ENDPOINT_RESTART_ENABLED
-              value: "true"
-            - name: SPRING_CLOUD_KUBERNETES_RELOAD_ENABLED
-              value: "true"
-            - name: SPRING_CLOUD_KUBERNETES_RELOAD_STRATEGY
-              value: "refresh"
-          {{- end }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 8081
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -80,13 +69,4 @@ spec:
       - name: generated-documents
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-pvc-generateddocuments
-  {{- if .Values.imageCredentials.registry }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ include "spring-boot.fullname" . }}-registry
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: {{ template "imagePullSecret" . }}
-{{- end }}
+

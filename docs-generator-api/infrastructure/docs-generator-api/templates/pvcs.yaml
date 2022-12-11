@@ -14,8 +14,8 @@ spec:
   volumeMode: Filesystem
   resources:
     requests:
-      storage: {{ .Values.config.repository.documentstructure.provider.requests.storage }}
-  storageClassName: {{ .Values.config.repository.documentstructure.provider.storageclass }}
+      storage: {{ .Values.config.documentengine.repository.documentstructure.provider.requests.storage }}
+  storageClassName: {{ .Values.config.documentengine.repository.documentstructure.provider.storageclass }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -33,8 +33,8 @@ spec:
   volumeMode: Filesystem
   resources:
     requests:
-      storage: {{ .Values.config.repository.templates.provider.requests.storage }}
-  storageClassName: {{ .Values.config.repository.templates.provider.storageclass }}
+      storage: {{ .Values.config.documentengine.repository.templates.provider.requests.storage }}
+  storageClassName: {{ .Values.config.documentengine.repository.templates.provider.storageclass }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -52,8 +52,8 @@ spec:
   volumeMode: Filesystem
   resources:
     requests:
-      storage: {{ .Values.config.repository.result.provider.requests.storage }}
-  storageClassName: {{ .Values.config.repository.result.provider.storageclass }}
+      storage: {{ .Values.config.documentengine.repository.result.provider.requests.storage }}
+  storageClassName: {{ .Values.config.documentengine.repository.result.provider.storageclass }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -71,5 +71,5 @@ spec:
   volumeMode: Filesystem
   resources:
     requests:
-      storage: {{ .Values.config.converter.pdf.fontLibrary.requests.storage }}
-  storageClassName: {{ .Values.config.converter.pdf.fontLibrary.storageclass }}
+      storage: {{ .Values.config.documentengine.converter.pdf.fontLibrary.requests.storage }}
+  storageClassName: {{ .Values.config.documentengine.converter.pdf.fontLibrary.storageclass }}

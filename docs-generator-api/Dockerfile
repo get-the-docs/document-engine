@@ -1,18 +1,7 @@
-FROM adoptopenjdk/openjdk16 as build
-WORKDIR /workspace/app
-
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-COPY src src
-
-RUN ./mvnw install -DskipTests
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
-
-FROM adoptopenjdk/openjdk16:alpine-jre
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
 VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/target/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+
+COPY target/app.jar .
+
 ENTRYPOINT ["java","-Dspring.profiles.active=${SPRING_PROFILE:prod}", "-Dconfig=\"./config\"", "-Dloader.path=\"config\"", "-cp","app:app/lib/*:./config","org.springframework.boot.loader.PropertiesLauncher"]
