@@ -25,7 +25,7 @@ If you find the functionality covered by the engine useful, please give it a sta
   - Pdf concatenation for multi-part documents
   - Cover page for multi user environments
   - QR code and picture embedding
-  - Ms office editable templates
+  - MS Office editable templates
 
 ## Upcoming features
 
@@ -106,6 +106,23 @@ copies: 1
 
 ```
 
+## Local build
+
+To compile the project locally some configuration settings are needed: 
+
+- **AWS S3 template repository**:
+
+  What you will need: 
+  an AWS account and an S3 bucket.
+
+  Add the environment variables below to the project configuration or shell:
+
+| Name                                       | Description                                                       |
+|--------------------------------------------|-------------------------------------------------------------------|
+| GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME | Your test bucket's name                                           | 
+| AWS_ACCESS_KEY_ID                          | The AWS access key id for a user having S3 object RW permissions. |
+| AWS_SECRET_ACCESS_KEY                      | The secret key for the access key id                              |
+  
 
 ## Project tooling
 Issue tracking: [Get-the-docs project @ Atlassian Jira](https://getthedocs.atlassian.net/jira/software/c/projects/GD/boards/1)

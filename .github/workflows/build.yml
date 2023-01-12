@@ -75,6 +75,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Prepare test environment
+        env:
+          TEST_AWS_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
+        run: sed -i "s/_BUCKETNAME_/$TEST_AWS_BUCKETNAME/g" docs-templaterepo-aws-s3/src/test/resources/document-engine.properties
+
       - name: Maven verify
         run: mvn -B verify --file pom.xml -Dspring.profiles.active=local
 
