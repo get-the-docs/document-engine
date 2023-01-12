@@ -54,6 +54,7 @@ jobs:
     name: Run tests
     needs: build_job
     runs-on: ubuntu-latest
+    environment: ci
 
     steps:
       - name: Git checkout
