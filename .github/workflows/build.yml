@@ -101,6 +101,7 @@ jobs:
       - build_job
       - test_job
     runs-on: ubuntu-latest
+    environment: ci
 
     steps:
       - name: Git checkout
@@ -123,6 +124,9 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Maven verify
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: mvn -B verify --file pom.xml -Dspring.profiles.active=local -Pcoverage
 
       - name: Run Clover coverage and upload to Codecov
@@ -153,6 +157,8 @@ jobs:
       - build_job
       - test_job
     runs-on: ubuntu-latest
+    environment: ci
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -183,6 +189,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: mvn -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_template-utils -Dspring.profiles.active=local -Psonar
 
 #      - name: Archive production artifacts

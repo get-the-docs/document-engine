@@ -58,7 +58,7 @@ public class AwsS3TemplateRepository implements TemplateRepository {
     /**
      * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
      */
-    private static final String TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR = "GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME";
+    public static final String TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR = "GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME";
     /**
      * AWS S3 object prefix in the bucket (see document-engine.properties).
      */

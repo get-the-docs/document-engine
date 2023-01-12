@@ -43,8 +43,7 @@ public class AwsS3TemplateRepositoryTest {
     private static final String BASEDIR;
 
     static {
-        final String testRunUniqueId = "ci";
-        TESTBUCKET = ("getthedocs-" + testRunUniqueId).toLowerCase();
+        TESTBUCKET = System.getenv(AwsS3TemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR);
         BASEDIR = "testfiles/templates/";
     }
 
