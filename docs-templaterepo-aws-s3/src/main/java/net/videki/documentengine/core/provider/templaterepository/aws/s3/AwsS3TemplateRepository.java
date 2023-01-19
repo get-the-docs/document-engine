@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.videki.documentengine.core.provider.persistence.Page;
 import net.videki.documentengine.core.provider.persistence.Pageable;
 import net.videki.documentengine.core.provider.templaterepository.TemplateRepository;
+import net.videki.documentengine.core.service.InputFormat;
 import net.videki.documentengine.core.service.exception.TemplateNotFoundException;
 import net.videki.documentengine.core.service.exception.TemplateProcessException;
 import net.videki.documentengine.core.service.exception.TemplateServiceConfigurationException;
@@ -133,19 +134,21 @@ public class AwsS3TemplateRepository implements TemplateRepository {
         try {
             final Page<TemplateDocument> result = new Page<>();
 
-            final S3Client s3 = S3ClientFactory.getS3Client();
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final String delimitedPrefix = this.prefix.endsWith("/") ? this.prefix : this.prefix + "/";
 
             final ListObjectsV2Request listObjectsRequest =
                     ListObjectsV2Request.builder()
                             .bucket(this.bucketName)
-                            .prefix(this.prefix)
+                            .prefix(delimitedPrefix)
                             .delimiter("/")
                             .build();
 
             final ListObjectsV2Response listObjectsResponse = s3.listObjectsV2(listObjectsRequest);
 
             final List<TemplateDocument> items = listObjectsResponse.contents().stream()
-                    .map(t -> t.toBuilder().key(t.key().replaceFirst(this.prefix + "/", "")).build())
+                    .map(t -> t.toBuilder().key(t.key().replaceFirst(delimitedPrefix, "")).build())
+                    .filter(t -> InputFormat.isSupportedInputFormatForFileName(t.key()))
                     .sorted(Comparator.comparing(S3Object::key))
                     .map(t -> new TemplateDocument(t.key()))
                     .collect(Collectors.toList());
@@ -155,10 +158,10 @@ public class AwsS3TemplateRepository implements TemplateRepository {
                 final int endIndex = Math.min(page.getOffset() + page.getSize(), Math.max(items.size() - 1, 0));
 
                 if (page.getOffset() < items.size() && endIndex < items.size()) {
-                    result.setData(items.subList(page.getOffset(), endIndex));
+                    result.setData(items.subList(page.getOffset(), endIndex + 1));
                 }
                 result.setNumber(page.getPage());
-                result.setSize(page.getSize());
+                result.setSize(result.getData().size());
                 result.setTotalElements((long) items.size());
                 result.setTotalPages((int) Math.ceil(Float.valueOf(result.getTotalElements()) / page.getSize()));
             } else {

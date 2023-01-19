@@ -21,8 +21,11 @@ package net.videki.documentengine.core.provider.templaterepository.aws.s3;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import net.videki.documentengine.core.provider.persistence.Page;
+import net.videki.documentengine.core.provider.persistence.Pageable;
 import net.videki.documentengine.core.provider.templaterepository.TemplateRepository;
 import net.videki.documentengine.core.service.TemplateServiceRegistry;
+import net.videki.documentengine.core.template.descriptors.TemplateDocument;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,6 +35,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.*;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -53,19 +57,28 @@ public class AwsS3TemplateRepositoryTest {
         templateRepository = TemplateServiceRegistry.getConfiguration().getTemplateRepository();
 
         final S3Client s3 = S3ClientFactory.getS3Client(Region.EU_CENTRAL_1);
-        final String fileName = "myfile.txt";
-        final String path = BASEDIR + "textfiles/";
 
         s3.putObject(
                 PutObjectRequest.builder()
                         .bucket(TESTBUCKET)
-                        .key(path + fileName)
+                        .key(BASEDIR + "myfile.txt")
                         .build(), RequestBody.fromBytes("Test content.".getBytes()));
 
+        s3.putObject(
+                PutObjectRequest.builder()
+                        .bucket(TESTBUCKET)
+                        .key(BASEDIR + "supportedfile.docx")
+                        .build(), RequestBody.fromBytes("Test content.".getBytes()));
+
+        s3.putObject(
+                PutObjectRequest.builder()
+                        .bucket(TESTBUCKET)
+                        .key(BASEDIR + "supportedfile2.docx")
+                        .build(), RequestBody.fromBytes("Test content.".getBytes()));
     }
 
     @AfterClass
-    public static void teardown() throws Exception	{
+    public static void teardown()	{
 
     }
 
@@ -114,7 +127,7 @@ public class AwsS3TemplateRepositoryTest {
     }
 
     @Test
-    public void testGetInputStreamForSingleFileToBucketNonExisting() throws Exception	{
+    public void testGetInputStreamForSingleFileToBucketNonExisting()	{
 
         final String path = "textfiles/";
         final String fileName = "nonexistingfile.txt";
@@ -124,4 +137,29 @@ public class AwsS3TemplateRepositoryTest {
         assertNull(is);
     }
 
+    @Test
+    public void testGetTemplateListExistingPrefix() throws Exception	{
+
+        final Pageable pageRequest = new Pageable();
+        pageRequest.setPaged(true);
+        pageRequest.setPage(0);
+        pageRequest.setSize(10);
+        pageRequest.setOffset(0);
+        final Page<TemplateDocument> templateDocumentPage = templateRepository.getTemplates(pageRequest);
+
+        assertNotNull(templateDocumentPage);
+        assertEquals(2, templateDocumentPage.getSize().intValue());
+    }
+
+    @Test
+    public void testGetTemplateDocumentById() throws Exception	{
+
+        final String fileName = "supportedfile.docx";
+
+        final Optional<TemplateDocument> templateDocument = templateRepository.getTemplateDocumentById(fileName, null, true);
+
+        assertNotNull(templateDocument);
+        assertTrue(templateDocument.isPresent());
+        assertTrue(templateDocument.get().getBinary().length > 0);
+    }
 }

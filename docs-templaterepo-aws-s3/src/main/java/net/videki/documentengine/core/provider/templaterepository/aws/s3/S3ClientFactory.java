@@ -113,8 +113,8 @@ public class S3ClientFactory {
                             .build())
                     .build();
 
-        } catch (final NoSuchBucketException | NoSuchKeyException e) {
-            final String msg = "Object not found.";
+        } catch (final IllegalArgumentException | NoSuchBucketException | NoSuchKeyException e) {
+            final String msg = "Bucket not found.";
             log.trace(msg, e);
 
             throw new IllegalArgumentException(msg);
