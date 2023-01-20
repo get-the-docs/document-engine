@@ -79,7 +79,7 @@ public enum InputFormat {
   }
 
   /**
-   * Tries to determine the the input format from a file name by extension.
+   * Tries to determine the input format from a file name by extension.
    * 
    * @param templateName the template name (in form of a file name).
    * @return the input format, if it is supported.
@@ -109,6 +109,33 @@ public enum InputFormat {
     }
 
     return format;
+  }
+
+  /**
+   * Tries to determine whether the format of a file can be recognized as an input format by its extension.
+   *
+   * @param templateName the template name (in form of a file name).
+   * @return true if it is supported.
+   */
+  public static boolean isSupportedInputFormatForFileName(final String templateName) {
+    try {
+      if (templateName == null) {
+        return false;
+      }
+
+      int fileExtPos = templateName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
+      if (fileExtPos > 0) {
+        InputFormat.valueOf(templateName.toUpperCase().substring(fileExtPos)
+                .replace(FileSystemHelper.FILENAME_COLON, ""));
+
+      } else {
+        return false;
+      }
+    } catch (final IllegalArgumentException e) {
+      return false;
+    }
+
+    return true;
   }
 
 }

@@ -20,6 +20,8 @@ package net.videki.documentengine.core.service;
  * #L%
  */
 
+import net.videki.documentengine.core.configuration.TemplateServiceConfiguration;
+
 /**
  * Top level container for the service. This is the entry point through the
  * getInstance() method for the outside world.
@@ -61,5 +63,10 @@ public class TemplateServiceRegistry {
             }
         }
         return result;
+    }
+
+    public static TemplateServiceConfiguration getConfiguration() {
+        getInstance();
+        return TemplateServiceConfiguration.getInstance();
     }
 }
