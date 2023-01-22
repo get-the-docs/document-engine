@@ -86,6 +86,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          GETTHEDOCS_REPO_DOCSTRUCTURE_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
         run: mvn -B verify --file pom.xml -Dspring.profiles.active=local
 
 #      - name: Test Reporting
@@ -129,6 +130,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          GETTHEDOCS_REPO_DOCSTRUCTURE_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
         run: mvn -B verify --file pom.xml -Dspring.profiles.active=local -Pcoverage
 
       - name: Run Clover coverage and upload to Codecov
@@ -194,6 +196,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          GETTHEDOCS_REPO_DOCSTRUCTURE_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
         run: mvn -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_template-utils -Dspring.profiles.active=local -Psonar
 
 #      - name: Archive production artifacts
