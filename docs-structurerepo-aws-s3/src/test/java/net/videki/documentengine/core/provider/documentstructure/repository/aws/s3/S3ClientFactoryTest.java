@@ -39,7 +39,7 @@ public class S3ClientFactoryTest {
 
     static {
         TESTBUCKET = System.getenv(AwsS3DocumentStructureRepository.DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR);
-        BASEDIR = "testfiles/docstructures/";
+        BASEDIR = "testfiles/templates/";
     }
 
     @BeforeClass
