@@ -89,6 +89,7 @@
         <module>docs-core</module>
         <module>docs-core-test-dto</module>
         <module>docs-templaterepo-aws-s3</module>
+        <module>docs-resultstore-aws-s3</module>
         <module>docs-documentstructure-builder</module>
         <module>docs-generator-api</module>
     </modules>

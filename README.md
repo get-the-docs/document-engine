@@ -120,6 +120,7 @@ To compile the project locally some configuration settings are needed:
 | Name                                       | Description                                                       |
 |--------------------------------------------|-------------------------------------------------------------------|
 | GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME | Your test bucket's name                                           | 
+| GETTHEDOCS_REPO_RESULT_AWS_S3_BUCKETNAME   | Your test bucket's name                                           |
 | AWS_ACCESS_KEY_ID                          | The AWS access key id for a user having S3 object RW permissions. |
 | AWS_SECRET_ACCESS_KEY                      | The secret key for the access key id                              |
   
