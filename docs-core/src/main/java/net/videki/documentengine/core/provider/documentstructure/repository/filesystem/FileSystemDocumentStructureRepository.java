@@ -58,12 +58,6 @@ public class FileSystemDocumentStructureRepository implements DocumentStructureR
     private static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR = "repository.documentstructure.provider.filesystem.basedir";
 
     /**
-     * Configuration property key for the builder implementation to (de)serialize
-     * the document structure descriptors.
-     */
-    private static final String DOCUMENT_STRUCTURE_BUILDER = "repository.documentstructure.builder";
-
-    /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemDocumentStructureRepository.class);
