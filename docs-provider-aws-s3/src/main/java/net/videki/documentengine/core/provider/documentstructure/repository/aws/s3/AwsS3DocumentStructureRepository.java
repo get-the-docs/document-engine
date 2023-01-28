@@ -115,7 +115,7 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
             this.documentStructureBuilder = loadDocumentStructureBuilder(props);
 
             LOGGER.info("Document structure repository available: AWS S3.");
-        } catch (final NoSuchBucketException | NoSuchKeyException e) {
+        } catch (final IllegalArgumentException | NoSuchBucketException | NoSuchKeyException e) {
             final String msg = "Invalid bucket name or template path.";
             LOGGER.error("Could not initialize template repository. " + msg, e);
             throw new TemplateServiceConfigurationException("cbdfa022-115b-4801-9407-e8cc22fcf4a2", msg);
