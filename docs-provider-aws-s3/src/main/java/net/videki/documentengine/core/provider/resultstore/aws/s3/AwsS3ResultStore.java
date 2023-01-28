@@ -114,7 +114,7 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
             LOGGER.info("Result store available: AWS S3.");
         } catch (final IllegalArgumentException | NoSuchBucketException | NoSuchKeyException e) {
             final String msg = "Invalid bucket name or result document path.";
-            LOGGER.error("Could not initialize result store. " + msg, e);
+            LOGGER.error("Could not initialize result store: [{}]." + msg, this.bucketName, e);
             throw new TemplateServiceConfigurationException("ce451961-f4e8-4b8b-8d02-382aea7b9dd5", msg);
         } catch (final S3Exception e) {
             final String msg = "Error querying the given S3 bucket.";

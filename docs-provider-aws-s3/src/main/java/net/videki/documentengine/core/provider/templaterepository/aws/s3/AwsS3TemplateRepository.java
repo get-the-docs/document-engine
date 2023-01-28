@@ -112,7 +112,7 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
             LOGGER.info("Template repository available: AWS S3.");
         } catch (final IllegalArgumentException | NoSuchBucketException | NoSuchKeyException e) {
             final String msg = "Invalid bucket name or template path.";
-            LOGGER.error("Could not initialize template repository. " + msg, e);
+            LOGGER.error("Could not initialize template repository: [{}]." + msg, this.bucketName, e);
             throw new TemplateServiceConfigurationException("833e27f3-6813-43f5-aafd-cd511aca3ae0", msg);
         } catch (final S3Exception e) {
             final String msg = "Error querying the given S3 bucket.";

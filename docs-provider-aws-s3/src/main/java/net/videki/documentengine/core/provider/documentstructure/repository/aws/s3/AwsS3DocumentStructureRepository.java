@@ -117,11 +117,11 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
             LOGGER.info("Document structure repository available: AWS S3.");
         } catch (final IllegalArgumentException | NoSuchBucketException | NoSuchKeyException e) {
             final String msg = "Invalid bucket name or template path.";
-            LOGGER.error("Could not initialize template repository. " + msg, e);
+            LOGGER.error("Could not initialize document structure repository: [{}]." + msg, this.bucketName, e);
             throw new TemplateServiceConfigurationException("cbdfa022-115b-4801-9407-e8cc22fcf4a2", msg);
         } catch (final S3Exception e) {
             final String msg = "Error querying the given S3 bucket.";
-            LOGGER.error("Could not initialize template repository. " + msg, e);
+            LOGGER.error("Could not initialize document structure repository. " + msg, e);
             throw new TemplateServiceConfigurationException("f8bb679a-3b91-4ba5-a890-c23e24ccfd7c", msg);
         }
 
