@@ -61,7 +61,7 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
     /**
      * AWS S3 bucket region configuration property key in the system properties (see document-engine.properties).
      */
-    private static final String TEMPLATE_REPOSITORY_PROVIDER_REGION = "repository.documentstructure.provider.aws.s3.region";
+    private static final String TEMPLATE_REPOSITORY_PROVIDER_REGION = "repository.template.provider.aws.s3.region";
     /**
      * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
      */
