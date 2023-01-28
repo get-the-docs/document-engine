@@ -62,6 +62,13 @@ public class ResultDocument extends AbstractResultDocument implements AutoClosea
         this.content = content;
     }
 
+    public ResultDocument clone() {
+        final ResultDocument result = new ResultDocument(this.getTransactionId(), this.getFileName(), this.getContent());
+        result.setTransactionId(this.getTransactionId());
+
+        return result;
+    }
+
     /**
      * Returns the document contents (the binary stream in the appropriate format).
      * 
