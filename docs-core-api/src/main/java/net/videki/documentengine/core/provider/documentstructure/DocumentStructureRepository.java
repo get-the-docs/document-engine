@@ -36,6 +36,12 @@ import java.util.Properties;
 public interface DocumentStructureRepository {
 
     /**
+     * Configuration property key for the builder implementation to (de)serialize
+     * the document structure descriptors.
+     */
+    String DOCUMENT_STRUCTURE_BUILDER = "repository.documentstructure.builder";
+
+    /**
      * Entry point for repository initialization.
      * 
      * @param props configuration properties (see document-engine.properties)
