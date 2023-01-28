@@ -105,7 +105,7 @@ public class S3ClientFactoryTest {
     @Test
     public void testGetClientForExistingBucket() {
 
-        final S3Client s3 = S3ClientFactory.getS3Client(TESTBUCKET);
+        final S3Client s3 = S3ClientFactory.getS3Client(TESTBUCKET, Region.EU_CENTRAL_1.toString());
 
         assertNotNull(s3);
 
@@ -114,7 +114,7 @@ public class S3ClientFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetClientForNonExistingBucket() {
 
-        final S3Client s3 = S3ClientFactory.getS3Client("there_is_no_such_bucket_here");
+        final S3Client s3 = S3ClientFactory.getS3Client("there_is_no_such_bucket_here", Region.EU_CENTRAL_1.toString());
 
         assertNotNull(s3);
 

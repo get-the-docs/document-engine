@@ -57,6 +57,10 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
      */
     private static final String RESULTSTORE_PROVIDER_BUCKET_NAME = "repository.result.provider.aws.s3.bucketname";
     /**
+     * AWS S3 bucket region configuration property key in the system properties (see document-engine.properties).
+     */
+    private static final String RESULTSTORE_REPOSITORY_PROVIDER_REGION = "repository.result.provider.aws.s3.region";
+    /**
      * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
      */
     public static final String RESULTSTORE_PROVIDER_BUCKET_NAME_ENV_VAR = "GETTHEDOCS_REPO_RESULT_AWS_S3_BUCKETNAME";
@@ -74,6 +78,10 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
      */
     private String bucketName;
     /**
+     * The bucket region.
+     */
+    private String region;
+    /**
      * The prefix in the given bucket.
      */
     private String prefix;
@@ -90,6 +98,7 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
         }
 
         this.bucketName = (String) props.get(RESULTSTORE_PROVIDER_BUCKET_NAME);
+        this.region = (String) props.get(RESULTSTORE_REPOSITORY_PROVIDER_REGION);
         final String bucketNameFromEnv = System.getenv(RESULTSTORE_PROVIDER_BUCKET_NAME_ENV_VAR);
         if (bucketNameFromEnv != null) {
             this.bucketName = bucketNameFromEnv;
@@ -102,7 +111,7 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
     private void initResultStoreDir() throws TemplateServiceConfigurationException {
         LOGGER.info("Checking result store access...");
         try {
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
             final ListObjectsV2Response response =
                     s3.listObjectsV2(
@@ -140,7 +149,7 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
                 + transactionDir + (!transactionDir.equals("") ? "/" : "") + RESULTSTORE_PROVIDER_FLAGFILE;
         boolean actSuccessFlag = false;
         try {
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
             final ListObjectsV2Response transactionCheckResponse =
                     s3.listObjectsV2(
@@ -191,7 +200,7 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
                 + resultDocument.getFileName();
         boolean actSuccessFlag = false;
         try {
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
             final PutObjectResponse putObjectResponse = s3.putObject(PutObjectRequest.builder()
                     .bucket(this.bucketName)
@@ -272,7 +281,7 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
             final String basePath = this.prefix + "/" + transactionId;
             final String delimitedPrefix = this.prefix.endsWith("/") ? this.prefix : this.prefix + "/";
 
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
             final ListObjectsV2Response resultDocsResponse =
                     s3.listObjectsV2(
@@ -369,7 +378,7 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
 
         final String pathToFile = this.prefix + "/" + transactionId + "/" + resultDocument;
         try {
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
             result = s3.getObject(GetObjectRequest.builder()
                     .bucket(this.bucketName)

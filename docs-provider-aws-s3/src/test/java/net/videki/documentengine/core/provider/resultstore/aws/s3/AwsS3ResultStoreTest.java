@@ -110,7 +110,7 @@ public class AwsS3ResultStoreTest {
     public static void teardown()	{
 
         try {
-            final S3Client s3 = S3ClientFactory.getS3Client(TESTBUCKET);
+            final S3Client s3 = S3ClientFactory.getS3Client(TESTBUCKET, Region.EU_CENTRAL_1.toString());
 
             final ListObjectsV2Response testFiles = s3.listObjectsV2(ListObjectsV2Request.builder()
                     .bucket(TESTBUCKET)

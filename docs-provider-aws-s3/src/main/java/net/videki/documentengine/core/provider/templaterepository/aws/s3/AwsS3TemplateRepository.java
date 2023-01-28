@@ -59,6 +59,10 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
      */
     private static final String TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME = "repository.template.provider.aws.s3.bucketname";
     /**
+     * AWS S3 bucket region configuration property key in the system properties (see document-engine.properties).
+     */
+    private static final String TEMPLATE_REPOSITORY_PROVIDER_REGION = "repository.documentstructure.provider.aws.s3.region";
+    /**
      * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
      */
     public static final String TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR = "GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME";
@@ -71,6 +75,10 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
      * The bucket name.
      */
     private String bucketName;
+    /**
+     * The bucket region.
+     */
+    private String region;
     /**
      * The prefix in the given bucket.
      */
@@ -88,6 +96,7 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
         }
 
         this.bucketName = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME);
+        this.region = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_REGION);
         final String bucketNameFromEnv = System.getenv(TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR);
         if (bucketNameFromEnv != null) {
             this.bucketName = bucketNameFromEnv;
@@ -100,7 +109,7 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
     private void initTemplateRepositoryDir() throws TemplateServiceConfigurationException {
         LOGGER.info("Checking template repository access...");
         try {
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
             final ListObjectsV2Response response =
                     s3.listObjectsV2(
@@ -136,7 +145,7 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
         try {
             final Page<TemplateDocument> result = new Page<>();
 
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
             final String delimitedPrefix = this.prefix.endsWith("/") ? this.prefix : this.prefix + "/";
 
             final ListObjectsV2Request listObjectsRequest =
@@ -231,7 +240,7 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
 
         final String pathToFile = this.prefix + "/" + templateFile;
         try {
-            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName);
+            final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
             result = s3.getObject(GetObjectRequest.builder()
                     .bucket(this.bucketName)

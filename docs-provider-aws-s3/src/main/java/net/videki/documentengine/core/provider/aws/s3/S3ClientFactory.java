@@ -101,13 +101,14 @@ public class S3ClientFactory {
     /**
      * Returns an S3Client in the given bucket's region. (Operations can be made through the regional endpoints)
      * @param bucketName The bucket name.
+     * @param region The bucket hosting region.
      * @return The S3Client object.
      * @throws IllegalArgumentException thrown if the bucket cannot be found or other storage access errors.
      */
-    public static S3Client getS3Client(final String bucketName) {
+    public static S3Client getS3Client(final String bucketName, final String region) {
         try {
             return S3Client.builder()
-                    .region(getRegion(bucketName))
+                    .region(Region.of(region))
                     .serviceConfiguration(S3Configuration.builder()
                             .accelerateModeEnabled(isTransferAccelerationEnabledForBucket(bucketName))
                             .build())
