@@ -166,6 +166,20 @@ public class TemplateServiceConfiguration {
      */
     protected void init() {
 
+        final Properties properties = getConfigurationProperties();
+        try {
+            initFontLibrary(properties);
+            initDocumentStructureRepository(properties);
+            initTemplateRepository(properties);
+            initResultStore(properties);
+            initProcessors(properties);
+
+        } catch (final Exception e) {
+            LOGGER.error("document-engine.properties configuration file not found, using default configuration.");
+        }
+    }
+
+    Properties getConfigurationProperties() {
         final Properties properties = new Properties();
         try {
             final var configPath = System.getenv(CONFIG_ENV_FILENAME);
@@ -183,19 +197,16 @@ public class TemplateServiceConfiguration {
                     this.configurationProperties = properties;
 
                 }
+
+                return properties;
             } else {
                 LOGGER.error("No document-engine.properties configuration file found");
             }
-
-            initFontLibrary(properties);
-            initDocumentStructureRepository(properties);
-            initTemplateRepository(properties);
-            initResultStore(properties);
-            initProcessors(properties);
-
         } catch (final Exception e) {
             LOGGER.error("document-engine.properties configuration file not found, using default configuration.");
         }
+
+        return null;
     }
 
     /**
