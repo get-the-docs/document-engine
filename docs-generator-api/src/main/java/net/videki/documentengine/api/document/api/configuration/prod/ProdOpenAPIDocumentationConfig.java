@@ -59,15 +59,16 @@ public class ProdOpenAPIDocumentationConfig {
         return new OpenAPI()
                 .info(new Info()
                     .title(this.projectName)
-                    .description("API for listing available templates, document structures and generating impersonated documents with provided data.\n" +
-                            "    The API has two operation groups: \n" +
-                            "      - templates for generating single documents and \n" +
-                            "      - document structures for generating document sets.\n" +
-                            "    The service is base on a template repository, a document structure repository and a result store. \n" +
-                            "    These can be freely configured but once configured, have the same setup has to be used \n" +
-                            "    for the template and document structure repositories since they have to be consistent. \n" +
-                            "    The document generation is asynchronous, when posting a job you will get a transaction id (or provide by yourself) and \n" +
-                            "    you can query and download the results based on that.")
+                    .description("""
+                            API for listing available templates, document structures and generating impersonated documents with provided data.
+                                The API has two operation groups:
+                                  - templates for generating single documents and
+                                  - document structures for generating document sets
+                                The service is base on a template repository, a document structure repository and a result store.
+                                These can be freely configured but once configured, have the same setup has to be used
+                                for the template and document structure repositories since they have to be consistent.
+                                The document generation is asynchronous, when posting a job you will get a transaction id (or provide by yourself) and
+                                you can query and download the results based on that.""")
                     .version(projectVersion)
                     .license(new License()
                             .name("Apache License Version 2.0")

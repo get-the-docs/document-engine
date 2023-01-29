@@ -79,6 +79,7 @@ public class FileSystemConfigurableDocumentStructureRepository extends FileSyste
         }
     }
 
+    @Override
     protected DocumentStructureOptionsBuilder loadDocumentStructureBuilder(final Properties props) {
         DocumentStructureOptionsBuilder documentStructureBuilder = new YmlConfigurableDocStructureBuilder();
 

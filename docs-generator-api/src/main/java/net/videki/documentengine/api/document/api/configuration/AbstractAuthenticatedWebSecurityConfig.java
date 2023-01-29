@@ -36,7 +36,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AbstractAuthenticatedWebSecurityConfig  extends WebSecurityConfigurerAdapter {
 
@@ -48,7 +47,7 @@ public class AbstractAuthenticatedWebSecurityConfig  extends WebSecurityConfigur
             return ((List<String>)realmAccess.get("roles")).stream()
                     .map(roleName -> "ROLE_" + roleName)
                     .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+                    .toList();
         }
     }
 
