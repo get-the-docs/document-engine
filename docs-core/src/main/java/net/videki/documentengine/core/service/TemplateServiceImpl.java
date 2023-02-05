@@ -20,35 +20,37 @@ package net.videki.documentengine.core.service;
  * #L%
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import net.videki.documentengine.core.configuration.TemplateServiceConfiguration;
+import net.videki.documentengine.core.context.JsonTemplateContext;
+import net.videki.documentengine.core.context.TemplateContext;
+import net.videki.documentengine.core.context.dto.JsonValueObject;
 import net.videki.documentengine.core.documentstructure.*;
 import net.videki.documentengine.core.documentstructure.descriptors.TemplateElement;
 import net.videki.documentengine.core.documentstructure.descriptors.TemplateElementId;
+import net.videki.documentengine.core.processor.ConverterRegistry;
+import net.videki.documentengine.core.processor.TemplateProcessorRegistry;
+import net.videki.documentengine.core.processor.converter.pdf.docx4j.DocxToPdfConverter;
 import net.videki.documentengine.core.processor.input.InputTemplateProcessor;
 import net.videki.documentengine.core.processor.input.PlaceholderEvalException;
 import net.videki.documentengine.core.service.exception.TemplateProcessException;
 import net.videki.documentengine.core.service.exception.TemplateServiceConfigurationException;
 import net.videki.documentengine.core.service.exception.TemplateServiceException;
-import net.videki.documentengine.core.configuration.TemplateServiceConfiguration;
-import net.videki.documentengine.core.context.JsonTemplateContext;
-import net.videki.documentengine.core.context.dto.JsonValueObject;
-import net.videki.documentengine.core.documentstructure.*;
-import net.videki.documentengine.core.processor.ConverterRegistry;
 import net.videki.documentengine.core.util.FileSystemHelper;
-import net.videki.documentengine.core.context.TemplateContext;
-import net.videki.documentengine.core.processor.TemplateProcessorRegistry;
-import net.videki.documentengine.core.processor.converter.pdf.docx4j.DocxToPdfConverter;
 import org.docx4j.com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Default template service implementation.
@@ -327,12 +329,11 @@ public class TemplateServiceImpl implements TemplateService {
      * @return the result filename.
      */
     private String getOutputFileName(final String templateFileName, final OutputFormat format) {
-        String result = null;
 
         try {
             int fileExtPos = templateFileName.lastIndexOf(FileSystemHelper.FILENAME_COLON);
             if (fileExtPos > 0) {
-                result = templateFileName.substring(0, fileExtPos) + FileSystemHelper.FILENAME_COLON
+                return templateFileName.substring(0, fileExtPos) + FileSystemHelper.FILENAME_COLON
                         + format.name().toLowerCase();
 
             } else {
@@ -343,7 +344,6 @@ public class TemplateServiceImpl implements TemplateService {
             throw new TemplateProcessException("9fcf0c32-4096-4647-9f46-bbbe4564cdd7", msg);
         }
 
-        return result;
     }
 
     /**
@@ -471,10 +471,8 @@ public class TemplateServiceImpl implements TemplateService {
                 .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
                 .collect(Collectors.toList());
 
-        final StoredGenerationResult result = new StoredGenerationResult(generationResult.getTransactionId(),
+        return new StoredGenerationResult(generationResult.getTransactionId(),
                 ResultDocuments);
-
-        return result;
     }
 
     /**
@@ -497,10 +495,8 @@ public class TemplateServiceImpl implements TemplateService {
                 .map(t -> TemplateServiceConfiguration.getInstance().getResultStore().save(t))
                 .collect(Collectors.toList());
 
-        final StoredGenerationResult result = new StoredGenerationResult(generationResult.getTransactionId(),
+        return new StoredGenerationResult(generationResult.getTransactionId(),
                 ResultDocuments);
-
-        return result;
     }
 
     /**

@@ -50,16 +50,14 @@ public interface IJsonTemplate extends ITemplate {
 
     default String fmtDate(final JsonTemplateContext value) {
         try {
-            String result;
             if (value != null) {
                 final Integer year = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "year");
                 final Integer month = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "month");
                 final Integer day = (Integer) value.getValue(TemplateContext.CONTEXT_ROOT_KEY + "." + "day");
-                result = LocalDate.of(year, month, day).format(ITemplate.DATE_FORMAT_DATE);;
+                return LocalDate.of(year, month, day).format(ITemplate.DATE_FORMAT_DATE);
             } else {
-                result = ITemplate.PLACEHOLDER_EMPTY;
+                return ITemplate.PLACEHOLDER_EMPTY;
             }
-            return result;
         } catch (final Exception e) {
             throw new PlaceholderEvalException("93868d56-af5b-4d31-b58e-f931a271dce7",
                     "Cannot convert data to date: " + value.toJson(), e);

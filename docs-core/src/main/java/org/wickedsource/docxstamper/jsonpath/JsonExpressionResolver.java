@@ -86,11 +86,11 @@ public class JsonExpressionResolver extends ExpressionResolver {
 
         if (expression.contains("jsonpath") || expression.contains("jp")) {
             return expression
-                    .replaceAll("\\$\\.", "")
+                    .replace("\\$\\.", "")
                     .replaceAll("(jsonpath[\\s]*\\(|jp[\\s]*\\()([^\\)]*)(\\))", "jsonpath(###$2###)")
-                    .replaceAll("'", "''")
-                    .replaceAll("jsonpath\\(###", "jsonpath\\('")
-                    .replaceAll("###\\)", "'\\)");
+                    .replace("'", "''")
+                    .replace("jsonpath\\(###", "jsonpath\\('")
+                    .replace("###\\)", "'\\)");
         } else {
             return expression;
         }

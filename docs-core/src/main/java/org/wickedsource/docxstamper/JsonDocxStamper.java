@@ -36,14 +36,12 @@ package org.wickedsource.docxstamper;
  * #L%
  */
 
-import org.wickedsource.docxstamper.jsonpath.JsonExpressionResolver;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.wickedsource.docxstamper.api.DocxStamperException;
 import org.wickedsource.docxstamper.api.commentprocessor.ICommentProcessor;
 import org.wickedsource.docxstamper.api.typeresolver.ITypeResolver;
 import org.wickedsource.docxstamper.api.typeresolver.TypeResolverRegistry;
-import org.wickedsource.docxstamper.el.ExpressionResolver;
-import org.wickedsource.docxstamper.processor.CommentProcessorRegistry;
+import org.wickedsource.docxstamper.jsonpath.JsonExpressionResolver;
 import org.wickedsource.docxstamper.processor.JsonCommentProcessorRegistry;
 import org.wickedsource.docxstamper.processor.displayif.DisplayIfProcessor;
 import org.wickedsource.docxstamper.processor.displayif.IDisplayIfProcessor;
@@ -71,8 +69,6 @@ public class JsonDocxStamper<T> {
 
     private JsonCommentProcessorRegistry commentProcessorRegistry;
 
-    private TypeResolverRegistry typeResolverRegistry;
-
     private DocxStamperConfiguration config = new DocxStamperConfiguration();
 
     public JsonDocxStamper() {
@@ -85,7 +81,7 @@ public class JsonDocxStamper<T> {
     }
 
     private void initFields() {
-        typeResolverRegistry = new TypeResolverRegistry(new FallbackResolver());
+        TypeResolverRegistry typeResolverRegistry = new TypeResolverRegistry(new FallbackResolver());
         typeResolverRegistry.registerTypeResolver(Image.class, new ImageResolver());
         typeResolverRegistry.registerTypeResolver(Date.class, new DateResolver("dd.MM.yyyy"));
         for (Map.Entry<Class<?>, ITypeResolver> entry : config.getTypeResolvers().entrySet()) {

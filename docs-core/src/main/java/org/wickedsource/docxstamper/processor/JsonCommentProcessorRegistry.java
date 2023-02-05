@@ -47,7 +47,6 @@ import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
 import org.wickedsource.docxstamper.api.commentprocessor.ICommentProcessor;
 import org.wickedsource.docxstamper.api.coordinates.ParagraphCoordinates;
 import org.wickedsource.docxstamper.api.coordinates.RunCoordinates;
-import org.wickedsource.docxstamper.el.ExpressionResolver;
 import org.wickedsource.docxstamper.el.ExpressionUtil;
 import org.wickedsource.docxstamper.jsonpath.JsonExpressionResolver;
 import org.wickedsource.docxstamper.proxy.ProxyBuilder;
@@ -68,7 +67,7 @@ import java.util.*;
  * @author Levente Ban
  */
 public class JsonCommentProcessorRegistry {
-    private Logger logger = LoggerFactory.getLogger(CommentProcessorRegistry.class);
+    private final Logger logger = LoggerFactory.getLogger(JsonCommentProcessorRegistry.class);
 
     private Map<ICommentProcessor, Class<?>> commentProcessorInterfaces = new HashMap<>();
 
@@ -166,16 +165,14 @@ public class JsonCommentProcessorRegistry {
                 T contextRootProxy = proxyBuilder.build();
                 expressionResolver.resolveExpression(strippedExpression, contextRootProxy);
                 placeholderReplacer.replace(paragraph, processorExpression, null);
-                logger.debug(String.format(
-                        "Processor expression '%s' has been successfully processed by a comment processor.",
-                        processorExpression));
+                logger.debug("Processor expression '{}' has been successfully processed by a comment processor.",
+                        processorExpression);
             } catch (SpelEvaluationException | SpelParseException e) {
                 if (failOnInvalidExpression) {
                     throw new UnresolvedExpressionException(strippedExpression, e);
                 } else {
-                    logger.warn(String.format(
-                            "Skipping processor expression '%s' because it can not be resolved by any comment processor. Reason: %s. Set log level to TRACE to view Stacktrace.",
-                            processorExpression, e.getMessage()));
+                    logger.warn("Skipping processor expression '{}' because it can not be resolved by any comment processor. Reason: {}. Set log level to TRACE to view Stacktrace.",
+                            processorExpression, e.getMessage());
                     logger.trace("Reason for skipping processor expression: ", e);
                 }
             } catch (ProxyException e) {
@@ -240,16 +237,16 @@ public class JsonCommentProcessorRegistry {
             expressionResolver.resolveExpression(commentString, contextRootProxy);
             comments.remove(comment.getId()); // guarantee one-time processing
             logger.debug(
-                    String.format("Comment '%s' has been successfully processed by a comment processor.",
-                            commentString));
+                    "Comment '{}' has been successfully processed by a comment processor.",
+                            commentString);
             return Optional.of(commentWrapper);
         } catch (SpelEvaluationException | SpelParseException e) {
             if (failOnInvalidExpression) {
                 throw new UnresolvedExpressionException(commentString, e);
             } else {
-                logger.warn(String.format(
-                        "Skipping comment expression '%s' because it can not be resolved by any comment processor. Reason: %s. Set log level to TRACE to view Stacktrace.",
-                        commentString, e.getMessage()));
+                logger.warn(
+                        "Skipping comment expression '{}' because it can not be resolved by any comment processor. Reason: {}. Set log level to TRACE to view Stacktrace.",
+                        commentString, e.getMessage());
                 logger.trace("Reason for skipping comment: ", e);
             }
         } catch (ProxyException e) {

@@ -54,7 +54,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
     /**
      * Document context from the caught JSON.
      */
-    private final transient DocumentContext dc;
+    private final DocumentContext dc;
 
     /**
      * The actual json data as plain string.
@@ -114,9 +114,8 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
      * @return the context object if found by the given JSON path.
      */
     public Object getValue(final String path) {
-        if (log.isTraceEnabled()) {
-            log.trace("Getting data for path {}...", path);
-        }
+        log.trace("Getting data for path {}...", path);
+
         try {
             final Object value = this.dc.read(JSONPATH_PREFIX + path);
 
@@ -124,34 +123,26 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
                 return value;
             } else if (value instanceof Map) {
                 final StringWriter sw = new StringWriter();
-                try {
-                    JSONValue.writeJSONString(value, sw);
-                } catch (final IOException e) {
-                    throw new TemplateServiceRuntimeException("Error parsing data.");
-                }
+                JSONValue.writeJSONString(value, sw);
                 return new JsonTemplateContext("{\"" + CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}");
             } else if (value instanceof JSONArray) {
                 final List<JsonTemplateContext> results = new ArrayList<>(((JSONArray) value).size());
                 for(final Object actItem : ((JSONArray) value)) {
                     final StringWriter sw = new StringWriter();
-                    try {
-                        JSONValue.writeJSONString(actItem, sw);
-                    } catch (final IOException e) {
-                        throw new TemplateServiceRuntimeException("Error parsing data.");
-                    }
+                    JSONValue.writeJSONString(actItem, sw);
                     results.add(new JsonTemplateContext("{\"" + CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}"));
                 }
                 return results;
             }
 
             return value;
-        } catch (final Exception e) {
+        }catch(final IOException e){
+            throw new TemplateServiceRuntimeException("Error parsing data.");
+        }
+        catch (final Exception e) {
             final var msg = "Error reading JSON data. Path: " + path;
-
             log.error(msg);
-            if (log.isTraceEnabled()) {
-                log.debug("Value object to parse: {}", this.jsonData);
-            }
+            log.debug("Value object to parse: {}", this.jsonData);
 
             throw new TemplateServiceRuntimeException(msg);
         }
