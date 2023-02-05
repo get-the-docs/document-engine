@@ -54,7 +54,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
     /**
      * Document context from the caught JSON.
      */
-    private final DocumentContext dc;
+    private final transient DocumentContext dc;
 
     /**
      * The actual json data as plain string.

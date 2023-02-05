@@ -50,7 +50,7 @@ public class JsonValueObject extends ContextObject {
     /**
      * Document context from the caught JSON.
      */
-    private final DocumentContext dc;
+    private final transient DocumentContext dc;
 
     /**
      * The actual json data as plain string.
