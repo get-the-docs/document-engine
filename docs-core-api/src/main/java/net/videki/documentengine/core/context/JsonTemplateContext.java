@@ -123,23 +123,28 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
                 return value;
             } else if (value instanceof Map) {
                 final StringWriter sw = new StringWriter();
-                JSONValue.writeJSONString(value, sw);
+                try {
+                    JSONValue.writeJSONString(value, sw);
+                } catch (final IOException e) {
+                    throw new TemplateServiceRuntimeException("Error parsing data.");
+                }
                 return new JsonTemplateContext("{\"" + CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}");
             } else if (value instanceof JSONArray) {
                 final List<JsonTemplateContext> results = new ArrayList<>(((JSONArray) value).size());
                 for(final Object actItem : ((JSONArray) value)) {
                     final StringWriter sw = new StringWriter();
-                    JSONValue.writeJSONString(actItem, sw);
+                    try {
+                        JSONValue.writeJSONString(actItem, sw);
+                    } catch (final IOException e) {
+                        throw new TemplateServiceRuntimeException("Error parsing data.");
+                    }
                     results.add(new JsonTemplateContext("{\"" + CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}"));
                 }
                 return results;
             }
 
             return value;
-        }catch(final IOException e){
-            throw new TemplateServiceRuntimeException("Error parsing data.");
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             final var msg = "Error reading JSON data. Path: " + path;
             log.error(msg);
             log.debug("Value object to parse: {}", this.jsonData);

@@ -67,7 +67,7 @@ import java.util.*;
  * @author Levente Ban
  */
 public class JsonCommentProcessorRegistry {
-    private final Logger logger = LoggerFactory.getLogger(JsonCommentProcessorRegistry.class);
+    private Logger logger = LoggerFactory.getLogger(CommentProcessorRegistry.class);
 
     private Map<ICommentProcessor, Class<?>> commentProcessorInterfaces = new HashMap<>();
 
