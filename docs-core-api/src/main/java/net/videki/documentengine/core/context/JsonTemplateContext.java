@@ -122,23 +122,11 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
             if (value instanceof String) {
                 return value;
             } else if (value instanceof Map) {
-                final StringWriter sw = new StringWriter();
-                try {
-                    JSONValue.writeJSONString(value, sw);
-                } catch (final IOException e) {
-                    throw new TemplateServiceRuntimeException("Error parsing data.");
-                }
-                return new JsonTemplateContext("{\"" + CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}");
-            } else if (value instanceof JSONArray) {
-                final List<JsonTemplateContext> results = new ArrayList<>(((JSONArray) value).size());
-                for(final Object actItem : ((JSONArray) value)) {
-                    final StringWriter sw = new StringWriter();
-                    try {
-                        JSONValue.writeJSONString(actItem, sw);
-                    } catch (final IOException e) {
-                        throw new TemplateServiceRuntimeException("Error parsing data.");
-                    }
-                    results.add(new JsonTemplateContext("{\"" + CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}"));
+                return getJsonTemplateContext(value);
+            } else if (value instanceof JSONArray jsonArray) {
+                final List<JsonTemplateContext> results = new ArrayList<>(jsonArray.size());
+                for(final Object actItem : jsonArray) {
+                    results.add(getJsonTemplateContext(actItem));
                 }
                 return results;
             }
@@ -151,6 +139,16 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
 
             throw new TemplateServiceRuntimeException(msg);
         }
+    }
+
+    private static JsonTemplateContext getJsonTemplateContext(Object value) {
+        final StringWriter sw = new StringWriter();
+        try {
+            JSONValue.writeJSONString(value, sw);
+        } catch (final IOException e) {
+            throw new TemplateServiceRuntimeException("Error parsing data.");
+        }
+        return new JsonTemplateContext("{\"" + CONTEXT_ROOT_KEY + "\": " + sw.toString() + "}");
     }
 
     /**
