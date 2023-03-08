@@ -37,7 +37,7 @@ public class TemplateServiceRegistry {
     /**
      * The actual service implementation.
      */
-    private static TemplateService INSTANCE = new TemplateServiceImpl();
+    private static TemplateService templateServiceInstance = new TemplateServiceImpl();
 
     /**
      * Sets the template service implementation to the given.
@@ -46,7 +46,7 @@ public class TemplateServiceRegistry {
      */
     void setTemplateService(final TemplateService tsImpl) {
         synchronized (lockObject) {
-            INSTANCE = tsImpl;
+            templateServiceInstance = tsImpl;
         }
     }
 
@@ -56,10 +56,10 @@ public class TemplateServiceRegistry {
      * @return the actual template service.
      */
     public static TemplateService getInstance() {
-        TemplateService result = INSTANCE;
+        TemplateService result = templateServiceInstance;
         if (result == null) {
             synchronized (lockObject) {
-                result = INSTANCE = new TemplateServiceImpl();
+                result = templateServiceInstance = new TemplateServiceImpl();
             }
         }
         return result;

@@ -79,15 +79,16 @@ public class FileSystemConfigurableDocumentStructureRepository extends FileSyste
         }
     }
 
+    @Override
     protected DocumentStructureOptionsBuilder loadDocumentStructureBuilder(final Properties props) {
-        DocumentStructureOptionsBuilder documentStructureBuilder = new YmlConfigurableDocStructureBuilder();
+        DocumentStructureOptionsBuilder documentStructureOptionsBuilder = new YmlConfigurableDocStructureBuilder();
 
         String repositoryProvider = "<Not configured or could not read properties file>";
         try {
             repositoryProvider = (String) props.get(DOCUMENT_STRUCTURE_BUILDER);
 
             if (repositoryProvider != null) {
-                documentStructureBuilder = (DocumentStructureOptionsBuilder)
+                documentStructureOptionsBuilder = (DocumentStructureOptionsBuilder)
                         this.getClass().getClassLoader()
                                 .loadClass(repositoryProvider)
                                 .getDeclaredConstructor()
@@ -104,6 +105,6 @@ public class FileSystemConfigurableDocumentStructureRepository extends FileSyste
             LOGGER.error(msg, e);
         }
 
-        return documentStructureBuilder;
+        return documentStructureOptionsBuilder;
     }
 }

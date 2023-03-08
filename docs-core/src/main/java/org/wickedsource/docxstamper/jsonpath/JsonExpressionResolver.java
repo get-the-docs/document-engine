@@ -88,7 +88,7 @@ public class JsonExpressionResolver extends ExpressionResolver {
             return expression
                     .replaceAll("\\$\\.", "")
                     .replaceAll("(jsonpath[\\s]*\\(|jp[\\s]*\\()([^\\)]*)(\\))", "jsonpath(###$2###)")
-                    .replaceAll("'", "''")
+                    .replace("'", "''")
                     .replaceAll("jsonpath\\(###", "jsonpath\\('")
                     .replaceAll("###\\)", "'\\)");
         } else {

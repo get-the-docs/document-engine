@@ -42,7 +42,7 @@ import java.io.OutputStream;
 public class JxlsInputTemplateProcessorTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JxlsInputTemplateProcessorTest.class);
-    private InputTemplateProcessor processor = new JxlsInputTemplateProcessor();
+    private final InputTemplateProcessor processor = new JxlsInputTemplateProcessor();
 
     @Test
     public void getInputFormatTest() {

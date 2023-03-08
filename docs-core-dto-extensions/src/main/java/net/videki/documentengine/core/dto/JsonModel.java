@@ -20,14 +20,21 @@ package net.videki.documentengine.core.dto;
  * #L%
  */
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public interface JsonModel {
 
   default String toJson() {
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    return gson.toJson(this);
+    final ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+    try {
+      return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+    } catch (final JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

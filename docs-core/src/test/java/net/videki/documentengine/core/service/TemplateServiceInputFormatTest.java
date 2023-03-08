@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.fail;
 
 public class TemplateServiceInputFormatTest {
@@ -38,118 +37,119 @@ public class TemplateServiceInputFormatTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateServiceInputFormatTest.class);
     private final TemplateService ts = TemplateServiceRegistry.getInstance();
 
-    private final String jsonDataMultiContext = "{\n" +
-            "  \"ctx\": {\n" +
-            "    \"org\": {\n" +
-            "      \"orgCode\": \"PB\",\n" +
-            "      \"name\": \"Vintage Services - Palm beach\",\n" +
-            "      \"address\": {\n" +
-            "        \"zip\": \"Y-1234567\",\n" +
-            "        \"city\": \"Simply City\",\n" +
-            "        \"address\": \"Main blvd 432\"\n" +
-            "      }\n" +
-            "    },\n" +
-            "    \"officer\": {\n" +
-            "      \"name\": \"Chuck Norris\",\n" +
-            "      \"orgCode\": \"PB-001\",\n" +
-            "      \"login\": \"PB\\\\cnorris\"\n" +
-            "    },\n" +
-            "    \"contract\": {\n" +
-            "      \"contractor\": {\n" +
-            "        \"name\": \"John Doe\",\n" +
-            "        \"birthDate\": {\n" +
-            "          \"year\": 1970,\n" +
-            "          \"month\": 7,\n" +
-            "          \"day\": 20\n" +
-            "        }\n" +
-            "      },\n" +
-            "      \"contractType\": {\n" +
-            "        \"contractTypeName\": \"Vintage Gold\",\n" +
-            "        \"fee\": 1500,\n" +
-            "        \"paymentFrequency\": \"MONTHLY\"\n" +
-            "      },\n" +
-            "      \"beneficiaries\": [\n" +
-            "        {\n" +
-            "          \"phoneNumber\": \"+1 800 2234 567\",\n" +
-            "          \"name\": \"Jim Doe\",\n" +
-            "          \"birthDate\": {\n" +
-            "            \"year\": 1975,\n" +
-            "            \"month\": 8,\n" +
-            "            \"day\": 11\n" +
-            "          }\n" +
-            "        },\n" +
-            "        {\n" +
-            "          \"phoneNumber\": \"+1 800 2234 568\",\n" +
-            "          \"name\": \"Tim Doe\",\n" +
-            "          \"birthDate\": {\n" +
-            "            \"year\": 1976,\n" +
-            "            \"month\": 8,\n" +
-            "            \"day\": 12\n" +
-            "          }\n" +
-            "        },\n" +
-            "        {\n" +
-            "          \"phoneNumber\": \"+1 800 2234 569\",\n" +
-            "          \"name\": \"Pim Doe\",\n" +
-            "          \"birthDate\": {\n" +
-            "            \"year\": 1977,\n" +
-            "            \"month\": 8,\n" +
-            "            \"day\": 13\n" +
-            "          }\n" +
-            "        },\n" +
-            "        {\n" +
-            "          \"phoneNumber\": \"+1 800 3234 567\",\n" +
-            "          \"name\": \"Jack Ryan\",\n" +
-            "          \"birthDate\": {\n" +
-            "            \"year\": 1962,\n" +
-            "            \"month\": 8,\n" +
-            "            \"day\": 11\n" +
-            "          }\n" +
-            "        },\n" +
-            "        {\n" +
-            "          \"phoneNumber\": \"+1 800 3234 568\",\n" +
-            "          \"name\": \"John Goodall\",\n" +
-            "          \"birthDate\": {\n" +
-            "            \"year\": 1946,\n" +
-            "            \"month\": 8,\n" +
-            "            \"day\": 11\n" +
-            "          }\n" +
-            "        },\n" +
-            "        {\n" +
-            "          \"phoneNumber\": \"+1 800 3234 569\",\n" +
-            "          \"name\": \"Mortimer Young\",\n" +
-            "          \"birthDate\": {\n" +
-            "            \"year\": 1991,\n" +
-            "            \"month\": 8,\n" +
-            "            \"day\": 11\n" +
-            "          }\n" +
-            "        },\n" +
-            "        {\n" +
-            "          \"phoneNumber\": \"+1 800 3234 560\",\n" +
-            "          \"name\": \"Zack Black\",\n" +
-            "          \"birthDate\": {\n" +
-            "            \"year\": 1987,\n" +
-            "            \"month\": 8,\n" +
-            "            \"day\": 11\n" +
-            "          }\n" +
-            "        }\n" +
-            "      ],\n" +
-            "      \"signDate\": {\n" +
-            "        \"year\": 2021,\n" +
-            "        \"month\": 2,\n" +
-            "        \"day\": 16\n" +
-            "      }\n" +
-            "    },\n" +
-            "    \"doc\": {\n" +
-            "      \"dmsUrl\": \"http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68\",\n" +
-            "      \"login\": \"PB\\\\cnorris\",\n" +
-            "      \"generationDate\": {\n" +
-            "        \"year\": 1970,\n" +
-            "        \"month\": 7,\n" +
-            "        \"day\": 20\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "}";
+    private final String jsonDataMultiContext = """
+            {
+              "ctx": {
+                "org": {
+                  "orgCode": "PB",
+                  "name": "Vintage Services - Palm beach",
+                  "address": {
+                    "zip": "Y-1234567",
+                    "city": "Simply City",
+                    "address": "Main blvd 432"
+                  }
+                },
+                "officer": {
+                  "name": "Chuck Norris",
+                  "orgCode": "PB-001",
+                  "login": "PB\\\\cnorris"
+                },
+                "contract": {
+                  "contractor": {
+                    "name": "John Doe",
+                    "birthDate": {
+                      "year": 1970,
+                      "month": 7,
+                      "day": 20
+                    }
+                  },
+                  "contractType": {
+                    "contractTypeName": "Vintage Gold",
+                    "fee": 1500,
+                    "paymentFrequency": "MONTHLY"
+                  },
+                  "beneficiaries": [
+                    {
+                      "phoneNumber": "+1 800 2234 567",
+                      "name": "Jim Doe",
+                      "birthDate": {
+                        "year": 1975,
+                        "month": 8,
+                        "day": 11
+                      }
+                    },
+                    {
+                      "phoneNumber": "+1 800 2234 568",
+                      "name": "Tim Doe",
+                      "birthDate": {
+                        "year": 1976,
+                        "month": 8,
+                        "day": 12
+                      }
+                    },
+                    {
+                      "phoneNumber": "+1 800 2234 569",
+                      "name": "Pim Doe",
+                      "birthDate": {
+                        "year": 1977,
+                        "month": 8,
+                        "day": 13
+                      }
+                    },
+                    {
+                      "phoneNumber": "+1 800 3234 567",
+                      "name": "Jack Ryan",
+                      "birthDate": {
+                        "year": 1962,
+                        "month": 8,
+                        "day": 11
+                      }
+                    },
+                    {
+                      "phoneNumber": "+1 800 3234 568",
+                      "name": "John Goodall",
+                      "birthDate": {
+                        "year": 1946,
+                        "month": 8,
+                        "day": 11
+                      }
+                    },
+                    {
+                      "phoneNumber": "+1 800 3234 569",
+                      "name": "Mortimer Young",
+                      "birthDate": {
+                        "year": 1991,
+                        "month": 8,
+                        "day": 11
+                      }
+                    },
+                    {
+                      "phoneNumber": "+1 800 3234 560",
+                      "name": "Zack Black",
+                      "birthDate": {
+                        "year": 1987,
+                        "month": 8,
+                        "day": 11
+                      }
+                    }
+                  ],
+                  "signDate": {
+                    "year": 2021,
+                    "month": 2,
+                    "day": 16
+                  }
+                },
+                "doc": {
+                  "dmsUrl": "http://dms.internal.pbvintage.com/050bca79-5aba-4e32-a34d-9409edcb0a68",
+                  "login": "PB\\\\cnorris",
+                  "generationDate": {
+                    "year": 1970,
+                    "month": 7,
+                    "day": 20
+                  }
+                }
+              }
+            }""";
 
     @Test
     public void processorDocxOKTest() {
@@ -163,7 +163,6 @@ public class TemplateServiceInputFormatTest {
             LOGGER.error("processorDocxOKTest error", e);
 
             Assert.assertFalse(false);
-            return;
         }
 
     }
@@ -180,7 +179,6 @@ public class TemplateServiceInputFormatTest {
             LOGGER.error("processorDocxJsonpathOkTest error", e);
 
             fail();
-            return;
         }
 
     }
@@ -216,7 +214,6 @@ public class TemplateServiceInputFormatTest {
             LOGGER.error("Error generating the template. ", e);
 
             fail();
-            return;
         }
     }
 
