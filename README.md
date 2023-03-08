@@ -117,14 +117,17 @@ To compile the project locally some configuration settings are needed:
 
   Add the environment variables below to the project configuration or shell:
 
-| Name                                            | Description                                                       |
-|-------------------------------------------------|-------------------------------------------------------------------|
-| GETTHEDOCS_REPO_TEMPLATE_AWS_S3_BUCKETNAME      | Your test bucket's name                                           | 
-| GETTHEDOCS_REPO_DOCSTRUCTURE_AWS_S3_BUCKETNAME  | Your test bucket's name                                           |
-| GETTHEDOCS_REPO_RESULT_AWS_S3_BUCKETNAME   | Your test bucket's name                                           |
-| AWS_ACCESS_KEY_ID                               | The AWS access key id for a user having S3 object RW permissions. |
-| AWS_SECRET_ACCESS_KEY                           | The secret key for the access key id                              |
-  
+| Name                                                    | Description                                                       |
+|---------------------------------------------------------|-------------------------------------------------------------------|
+| repository.template.provider.aws.s3.bucketname          | Your test bucket's name                                           | 
+| repository.template.provider.aws.s3.region              | Your test bucket's region                                         |
+| repository.documentstructure.provider.aws.s3.bucketname | Your test bucket's name                                           |
+| repository.documentstructure.provider.aws.s3.region     | Your test bucket's region                                         |
+| repository.result.provider.aws.s3.bucketname            | Your test bucket's name                                           |
+| repository.result.provider.aws.s3.region                | Your test bucket's region                                         |
+| AWS_ACCESS_KEY_ID                                       | The AWS access key id for a user having S3 object RW permissions. |
+| AWS_SECRET_ACCESS_KEY                                   | The secret key for the access key id                              |
+
 
 ## Project tooling
 Issue tracking: [Get-the-docs project @ Atlassian Jira](https://getthedocs.atlassian.net/jira/software/c/projects/GD/boards/1)

@@ -58,14 +58,12 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
      * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
      */
     private static final String DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME = "repository.documentstructure.provider.aws.s3.bucketname";
+
     /**
      * AWS S3 bucket region configuration property key in the system properties (see document-engine.properties).
      */
     private static final String DOCSTRUCTURE_REPOSITORY_PROVIDER_REGION = "repository.documentstructure.provider.aws.s3.region";
-    /**
-     * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
-     */
-    public static final String DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR = "GETTHEDOCS_REPO_DOCSTRUCTURE_AWS_S3_BUCKETNAME";
+
     /**
      * AWS S3 object prefix in the bucket (see document-engine.properties).
      */
@@ -75,14 +73,17 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
      * The configured document structure builder.
      */
     private DocumentStructureBuilder documentStructureBuilder;
+
     /**
      * The bucket name.
      */
     private String bucketName;
+
     /**
      * The bucket region.
      */
     private String region;
+
     /**
      * The prefix in the given bucket.
      */
@@ -104,9 +105,13 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
 
         this.bucketName = (String) props.get(DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME);
         this.region = (String) props.get(DOCSTRUCTURE_REPOSITORY_PROVIDER_REGION);
-        final String bucketNameFromEnv = System.getenv(DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR);
+        final String bucketNameFromEnv = System.getenv(DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME);
         if (bucketNameFromEnv != null) {
             this.bucketName = bucketNameFromEnv;
+        }
+        final String regionFromEnv = System.getenv(DOCSTRUCTURE_REPOSITORY_PROVIDER_REGION);
+        if (bucketNameFromEnv != null) {
+            this.region = regionFromEnv;
         }
         this.prefix = (String) props.get(DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_PREFIX);
 

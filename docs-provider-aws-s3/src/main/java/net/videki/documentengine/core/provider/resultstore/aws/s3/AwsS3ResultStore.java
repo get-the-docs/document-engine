@@ -56,14 +56,12 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
      * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
      */
     private static final String RESULTSTORE_PROVIDER_BUCKET_NAME = "repository.result.provider.aws.s3.bucketname";
+
     /**
      * AWS S3 bucket region configuration property key in the system properties (see document-engine.properties).
      */
     private static final String RESULTSTORE_REPOSITORY_PROVIDER_REGION = "repository.result.provider.aws.s3.region";
-    /**
-     * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
-     */
-    public static final String RESULTSTORE_PROVIDER_BUCKET_NAME_ENV_VAR = "GETTHEDOCS_REPO_RESULT_AWS_S3_BUCKETNAME";
+
     /**
      * AWS S3 object prefix in the bucket (see document-engine.properties).
      */
@@ -99,9 +97,14 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
 
         this.bucketName = (String) props.get(RESULTSTORE_PROVIDER_BUCKET_NAME);
         this.region = (String) props.get(RESULTSTORE_REPOSITORY_PROVIDER_REGION);
-        final String bucketNameFromEnv = System.getenv(RESULTSTORE_PROVIDER_BUCKET_NAME_ENV_VAR);
+
+        final String bucketNameFromEnv = System.getenv(RESULTSTORE_PROVIDER_BUCKET_NAME);
         if (bucketNameFromEnv != null) {
             this.bucketName = bucketNameFromEnv;
+        }
+        final String regionFromEnv = System.getenv(RESULTSTORE_REPOSITORY_PROVIDER_REGION);
+        if (bucketNameFromEnv != null) {
+            this.region = regionFromEnv;
         }
         this.prefix = (String) props.get(RESULTSTORE_PROVIDER_BUCKET_PREFIX);
 
