@@ -101,8 +101,8 @@ public class TemplateServiceImpl implements TemplateService {
 
         if (dto instanceof String) {
             LOGGER.debug("JSON context caught.");
-            context = new TemplateContext();
-            context.addValueObject(new JsonValueObject((String) dto));
+            context = new JsonTemplateContext((String) dto);
+//            context.addValueObject(new JsonValueObject((String) dto));
         } else if (dto instanceof Map) {
             LOGGER.debug("Map context caught.");
             context = new TemplateContext();

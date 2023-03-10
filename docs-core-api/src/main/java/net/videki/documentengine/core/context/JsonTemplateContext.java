@@ -23,6 +23,7 @@ package net.videki.documentengine.core.context;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONValue;
@@ -117,21 +118,42 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
         log.trace("Getting data for path {}...", path);
 
         try {
-            final Object value = this.dc.read(JSONPATH_PREFIX + path);
+            Object value = null;
+            try {
+                value = this.dc.read(JSONPATH_PREFIX + path);
+            } catch (final PathNotFoundException ex) {
+                if (value == null) {
+                    value = this.dc.read(JSONPATH_PREFIX + CONTEXT_ROOT_KEY + "." + path);
+                }
+
+                if (value == null) {
+                    throw ex;
+                }
+            }
 
             if (value instanceof String) {
                 return value;
             } else if (value instanceof Map) {
                 return getJsonTemplateContext(value);
-            } else if (value instanceof JSONArray jsonArray) {
-                final List<JsonTemplateContext> results = new ArrayList<>(jsonArray.size());
-                for(final Object actItem : jsonArray) {
+                // TODO: Correct lang level related issues when Java 17 lambda runtime is out
+//            } else if (value instanceof JSONArray jsonArray) {
+//                final List<JsonTemplateContext> results = new ArrayList<>(jsonArray.size());
+//                for(final Object actItem : jsonArray) {
+            } else if (value instanceof JSONArray) {
+                final List<JsonTemplateContext> results = new ArrayList<>(((JSONArray) value).size());
+                for(final Object actItem : ((JSONArray) value)) {
                     results.add(getJsonTemplateContext(actItem));
                 }
                 return results;
             }
 
             return value;
+        } catch (final PathNotFoundException e) {
+            final var msg = "The jsonpath is invalid for the actual data: Path: " + path;
+            log.error(msg);
+            log.debug(msg + ", value object to parse: {}", this.jsonData);
+
+            throw new TemplateServiceRuntimeException(msg);
         } catch (final Exception e) {
             final var msg = "Error reading JSON data. Path: " + path;
             log.error(msg);

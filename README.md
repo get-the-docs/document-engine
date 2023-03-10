@@ -115,16 +115,26 @@ To compile the project locally some configuration settings are needed:
   What you will need: 
   an AWS account and an S3 bucket.
 
-  Add the environment variables below to the project configuration or shell:
+  Add the below properties to the project configuration or shell either 
+  as a test resource named document-engine-test-properties, or as environment variables:
 
 | Name                                                    | Description                                                       |
 |---------------------------------------------------------|-------------------------------------------------------------------|
 | repository.template.provider.aws.s3.bucketname          | Your test bucket's name                                           | 
 | repository.template.provider.aws.s3.region              | Your test bucket's region                                         |
+| repository.template.provider.aws.s3.prefix              | Your test bucket's prefix                                         |
 | repository.documentstructure.provider.aws.s3.bucketname | Your test bucket's name                                           |
 | repository.documentstructure.provider.aws.s3.region     | Your test bucket's region                                         |
+| repository.documentstructure.provider.aws.s3.prefix     | Your test bucket's prefix                                         |
 | repository.result.provider.aws.s3.bucketname            | Your test bucket's name                                           |
 | repository.result.provider.aws.s3.region                | Your test bucket's region                                         |
+| repository.result.provider.aws.s3.prefix                | Your test bucket's prefix                                         |
+
+
+Environment variables:
+
+| Name                                                    | Description                                                       |
+|---------------------------------------------------------|-------------------------------------------------------------------|
 | AWS_ACCESS_KEY_ID                                       | The AWS access key id for a user having S3 object RW permissions. |
 | AWS_SECRET_ACCESS_KEY                                   | The secret key for the access key id                              |
 

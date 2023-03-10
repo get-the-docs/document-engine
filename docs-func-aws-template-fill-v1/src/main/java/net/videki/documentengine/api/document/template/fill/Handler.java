@@ -25,24 +25,20 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONValue;
 import net.videki.documentengine.core.context.JsonTemplateContext;
 import net.videki.documentengine.core.service.TemplateServiceRegistry;
 import net.videki.documentengine.core.service.exception.TemplateServiceException;
 import net.videki.documentengine.core.service.exception.TemplateServiceRuntimeException;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Map;
 
 @Slf4j
-public class Handler implements RequestHandler<SQSEvent, Void>{
+public class Handler implements RequestHandler<SQSEvent, Void> {
     public static final String REQ_TEMPLATE_ID = "templateId";
     public static final String REQ_NOTIFICATION_URL = "notificationUrl";
     @Override
     public Void handleRequest(final SQSEvent event, final Context context)
     {
-        for(SQSMessage msg : event.getRecords()){
+        for(SQSMessage msg : event.getRecords()) {
             final String messageId = msg.getMessageId();
 
             try {
@@ -69,6 +65,7 @@ public class Handler implements RequestHandler<SQSEvent, Void>{
                 log.error("Error processing message: [{}]", messageId);
             }
         }
+
         return null;
     }
 
@@ -83,7 +80,7 @@ public class Handler implements RequestHandler<SQSEvent, Void>{
             }
 
             final var genResult = TemplateServiceRegistry.getInstance().fillAndSave(transactionId, id,
-                    getContext(body));
+                    new JsonTemplateContext((String)(body)));
 
 //            this.notificationService.notifyRequestor(notificationUrl, genResult.getTransactionId(),
 //                    genResult.getFileName(), genResult.isGenerated());
@@ -96,33 +93,6 @@ public class Handler implements RequestHandler<SQSEvent, Void>{
             }
         } catch (final TemplateServiceException | TemplateServiceRuntimeException e) {
             log.warn("Error processing request: transaction id: [{}], template id:[{}], notification url: [{}]", transactionId, id, notificationUrl);
-        }
-
-    }
-
-    private JsonTemplateContext getContext(final Object data) {
-        if (data instanceof Map) {
-            log.debug("getContext - map...");
-            final StringWriter sw = new StringWriter();
-            try {
-                JSONValue.writeJSONString(data, sw);
-            } catch (final IOException e) {
-                throw new TemplateServiceRuntimeException("Error parsing data.");
-            }
-            final JsonTemplateContext result = new JsonTemplateContext((String) sw.toString());
-            log.debug("getContext - map, parse ok.");
-
-            return result;
-        } else if (data instanceof String) {
-            log.debug("getContext - plain string...");
-            final JsonTemplateContext result = new JsonTemplateContext((String) data);
-            log.debug("getContext - plain string, parse ok.");
-
-            return result;
-        } else {
-            log.warn("getContext - object caught at rest api level, should be string or map.");
-
-            throw new TemplateServiceRuntimeException("Error parsing data.");
         }
 
     }

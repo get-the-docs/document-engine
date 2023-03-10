@@ -26,6 +26,7 @@ import net.videki.documentengine.core.documentstructure.ResultDocument;
 import net.videki.documentengine.core.documentstructure.StoredGenerationResult;
 import net.videki.documentengine.core.documentstructure.StoredResultDocument;
 import net.videki.documentengine.core.documentstructure.descriptors.StoredResultDocumentStatus;
+import net.videki.documentengine.core.provider.aws.s3.AbstractAwsS3Repository;
 import net.videki.documentengine.core.provider.aws.s3.S3ClientFactory;
 import net.videki.documentengine.core.provider.aws.s3.S3Repository;
 import net.videki.documentengine.core.provider.resultstore.ResultStore;
@@ -45,7 +46,7 @@ import java.util.stream.Collectors;
  * @author Levente Ban
  */
 @Slf4j
-public class AwsS3ResultStore implements ResultStore, S3Repository {
+public class AwsS3ResultStore extends AbstractAwsS3Repository implements ResultStore, S3Repository {
 
     /**
      * Logger.
@@ -95,18 +96,9 @@ public class AwsS3ResultStore implements ResultStore, S3Repository {
                     "Null or invalid template properties caught.");
         }
 
-        this.bucketName = (String) props.get(RESULTSTORE_PROVIDER_BUCKET_NAME);
-        this.region = (String) props.get(RESULTSTORE_REPOSITORY_PROVIDER_REGION);
-
-        final String bucketNameFromEnv = System.getenv(RESULTSTORE_PROVIDER_BUCKET_NAME);
-        if (bucketNameFromEnv != null) {
-            this.bucketName = bucketNameFromEnv;
-        }
-        final String regionFromEnv = System.getenv(RESULTSTORE_REPOSITORY_PROVIDER_REGION);
-        if (bucketNameFromEnv != null) {
-            this.region = regionFromEnv;
-        }
-        this.prefix = (String) props.get(RESULTSTORE_PROVIDER_BUCKET_PREFIX);
+        this.bucketName = getSetting(props, RESULTSTORE_PROVIDER_BUCKET_NAME);
+        this.region = getSetting(props, RESULTSTORE_REPOSITORY_PROVIDER_REGION);
+        this.prefix = getSetting(props, RESULTSTORE_PROVIDER_BUCKET_PREFIX);
 
         initResultStoreDir();
     }

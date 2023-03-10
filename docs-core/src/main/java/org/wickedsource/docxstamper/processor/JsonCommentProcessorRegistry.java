@@ -241,13 +241,12 @@ public class JsonCommentProcessorRegistry {
                             commentString);
             return Optional.of(commentWrapper);
         } catch (SpelEvaluationException | SpelParseException e) {
+            logger.warn(
+                    "Skipping comment expression '{}' because it can not be resolved by any comment processor. Reason: {}. Set log level to TRACE to view Stacktrace.",
+                    commentString, e.getMessage());
+            logger.trace("Reason for skipping comment: ", e);
             if (failOnInvalidExpression) {
                 throw new UnresolvedExpressionException(commentString, e);
-            } else {
-                logger.warn(
-                        "Skipping comment expression '{}' because it can not be resolved by any comment processor. Reason: {}. Set log level to TRACE to view Stacktrace.",
-                        commentString, e.getMessage());
-                logger.trace("Reason for skipping comment: ", e);
             }
         } catch (ProxyException e) {
             throw new DocxStamperException("Could not create a proxy around context root object", e);

@@ -78,11 +78,17 @@ jobs:
 
       - name: Prepare test environment
         env:
-          GETTHEDOCS_REPO_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
-          GETTHEDOCS_REPO_AWS_S3_REGION: ${{ secrets.TEST_AWS_REGION }}
-        run: |
-          sed -i "s/_BUCKETNAME_/$GETTHEDOCS_REPO_AWS_S3_BUCKETNAME/g" docs-provider-aws-s3/src/test/resources/document-engine.properties
-          sed -i "s/_BUCKET_REGION_/$GETTHEDOCS_REPO_AWS_S3_REGION/g" docs-provider-aws-s3/src/test/resources/document-engine.properties
+          repository.template.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.template.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.template.provider.aws.s3.prefix: 'testfiles/templates'
+
+          repository.documentstructure.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.documentstructure.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.documentstructure.provider.aws.s3.prefix: 'testfiles/docstructures'
+
+          repository.result.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.result.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.result.provider.aws.s3.prefix: 'testfiles/results'
 
       - name: Maven verify
         env:
@@ -128,11 +134,17 @@ jobs:
 
       - name: Prepare test environment
         env:
-          GETTHEDOCS_REPO_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
-          GETTHEDOCS_REPO_AWS_S3_REGION: ${{ secrets.TEST_AWS_REGION }}
-        run: |
-          sed -i "s/_BUCKETNAME_/$GETTHEDOCS_REPO_AWS_S3_BUCKETNAME/g" docs-provider-aws-s3/src/test/resources/document-engine.properties
-          sed -i "s/_BUCKET_REGION_/$GETTHEDOCS_REPO_AWS_S3_REGION/g" docs-provider-aws-s3/src/test/resources/document-engine.properties
+          repository.template.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.template.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.template.provider.aws.s3.prefix: 'testfiles/templates'
+
+          repository.documentstructure.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.documentstructure.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.documentstructure.provider.aws.s3.prefix: 'testfiles/docstructures'
+
+          repository.result.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.result.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.result.provider.aws.s3.prefix: 'testfiles/results'
 
       - name: Maven verify
         env:
@@ -190,19 +202,28 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
       - name: Prepare test environment
         env:
-          GETTHEDOCS_REPO_AWS_S3_BUCKETNAME: ${{ secrets.TEST_AWS_BUCKETNAME }}
-          GETTHEDOCS_REPO_AWS_S3_REGION: ${{ secrets.TEST_AWS_REGION }}
-        run: |
-          sed -i "s/_BUCKETNAME_/$GETTHEDOCS_REPO_AWS_S3_BUCKETNAME/g" docs-provider-aws-s3/src/test/resources/document-engine.properties
-          sed -i "s/_BUCKET_REGION_/$GETTHEDOCS_REPO_AWS_S3_REGION/g" docs-provider-aws-s3/src/test/resources/document-engine.properties
+          repository.template.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.template.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.template.provider.aws.s3.prefix: 'testfiles/templates'
+
+          repository.documentstructure.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.documentstructure.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.documentstructure.provider.aws.s3.prefix: 'testfiles/docstructures'
+
+          repository.result.provider.aws.s3.bucketname: ${{ secrets.TEST_AWS_BUCKETNAME }}
+          repository.result.provider.aws.s3.region: ${{ secrets.TEST_AWS_REGION }}
+          repository.result.provider.aws.s3.prefix: 'testfiles/results'
+
       - name: Run Sonarcloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any

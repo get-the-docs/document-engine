@@ -21,6 +21,7 @@ package net.videki.documentengine.core.provider.templaterepository.aws.s3;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import net.videki.documentengine.core.provider.aws.s3.AbstractAwsS3Repository;
 import net.videki.documentengine.core.provider.aws.s3.S3ClientFactory;
 import net.videki.documentengine.core.provider.aws.s3.S3Repository;
 import net.videki.documentengine.core.provider.persistence.Page;
@@ -47,7 +48,7 @@ import java.util.stream.Collectors;
  * @author Levente Ban
  */
 @Slf4j
-public class AwsS3TemplateRepository implements TemplateRepository, S3Repository {
+public class AwsS3TemplateRepository extends AbstractAwsS3Repository implements TemplateRepository, S3Repository {
 
     /**
      * Logger.
@@ -94,18 +95,9 @@ public class AwsS3TemplateRepository implements TemplateRepository, S3Repository
                     "Null or invalid template properties caught.");
         }
 
-        this.bucketName = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME);
-        this.region = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_REGION);
-
-        final String bucketNameFromEnv = System.getenv(TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME);
-        if (bucketNameFromEnv != null) {
-            this.bucketName = bucketNameFromEnv;
-        }
-        final String regionFromEnv = System.getenv(TEMPLATE_REPOSITORY_PROVIDER_REGION);
-        if (bucketNameFromEnv != null) {
-            this.region = regionFromEnv;
-        }
-        this.prefix = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BUCKET_PREFIX);
+        this.bucketName = getSetting(props, TEMPLATE_REPOSITORY_PROVIDER_BUCKET_NAME);
+        this.region = getSetting(props, TEMPLATE_REPOSITORY_PROVIDER_REGION);
+        this.prefix = getSetting(props, TEMPLATE_REPOSITORY_PROVIDER_BUCKET_PREFIX);
 
         initTemplateRepositoryDir();
     }

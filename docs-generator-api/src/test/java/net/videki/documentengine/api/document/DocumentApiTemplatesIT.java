@@ -109,7 +109,7 @@ public class DocumentApiTemplatesIT {
     @Test
     void getTemplatesAllShouldReturnTestResources() {
         log.info("getTemplatesAllShouldReturnTestResources...");
-//        restTemplate.getForEntity(this.testEndpoint + "/template?{filed}={value}&page={page}&offset={offset}&size={szie}&sort=[{property:\"{propertyValue}\",\"direction\":\"{direction}\"}]", GetTemplatesResponse.class);
+//        restTemplate.getForEntity(this.testEndpoint + "/template?{filed}={value}&page={page}&offset={offset}&size={size}&sort=[{property:\"{propertyValue}\",\"direction\":\"{direction}\"}]", GetTemplatesResponse.class);
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
         final ResponseEntity<GetTemplatesResponse> responseEntity =
@@ -207,7 +207,7 @@ public class DocumentApiTemplatesIT {
 
     @Test
     void getTemplatesNoParamsShouldReturnDefaultPage() {
-        log.info("getTemplatesNoParamsShouldReturnUnpaged...");
+        log.info("getTemplatesNoParamsShouldReturnDefaultPage...");
 
         final TestRestTemplate restTemplate = new TestRestTemplate();
         final ResponseEntity<GetTemplatesResponse> responseEntity =
@@ -222,7 +222,7 @@ public class DocumentApiTemplatesIT {
         } else {
             Assertions.fail();
         }
-        log.info("getTemplatesNoParamsShouldReturnUnpaged - end.");
+        log.info("getTemplatesNoParamsShouldReturnDefaultPage - end.");
     }
 
     @Test
@@ -262,8 +262,8 @@ public class DocumentApiTemplatesIT {
     }
 
     @Test
-    void postTemplateGenerationJobNonexistingTemplateShouldReturnTransactionId() {
-        log.info("postTemplateGenerationJobNonexistingTemplateShouldReturnBadRequest...");
+    void postTemplateGenerationJobNonExistingTemplateShouldReturnTransactionId() {
+        log.info("postTemplateGenerationJobNonExistingTemplateShouldReturnTransactionId...");
 
         final Map<String, String> urlVariables = new HashMap<>();
         final var data = this.getDataForTestCase("contractdata.json");
@@ -291,7 +291,7 @@ public class DocumentApiTemplatesIT {
         } else {
             Assertions.fail();
         }
-        log.info("postTemplateGenerationJobNonexistingTemplateShouldReturnTransactionId - end.");
+        log.info("postTemplateGenerationJobNonExistingTemplateShouldReturnTransactionId - end.");
     }
 
     @Test
@@ -347,7 +347,7 @@ public class DocumentApiTemplatesIT {
                                 "templateId={templateId}", data, GenerationResult.class,
                         urlVariables);
 
-        // Step 2 - query result (may be empty due internal async processing)
+        // Step 2 - query result (maybe empty due internal async processing)
         if (responseEntity.getBody() != null
                 && responseEntity.getBody().getTransactionId() != null) {
             final String transactionId = responseEntity.getBody().getTransactionId();
