@@ -296,7 +296,7 @@ jobs:
       - name: Generate Trivy Vulnerability Report
         uses: aquasecurity/trivy-action@0.30.0
         with:
-          image-ref: '${{ steps.meta.outputs.tags }}'
+#          image-ref: '${{ steps.meta.outputs.tags }}'
           scan-type: "fs"
           output: trivy-report.json
           format: json
