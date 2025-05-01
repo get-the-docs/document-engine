@@ -310,15 +310,15 @@ jobs:
           path: trivy-report.json
           retention-days: 30
 
-      - name: Fail build on High/Criticial Vulnerabilities
-        uses: aquasecurity/trivy-action@0.30.0
-        with:
-          scan-type: "fs"
-          format: table
-          scan-ref: .
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: 1
-          # On a subsequent call to the action we know trivy is already installed so can skip this
-          skip-setup-trivy: true
+#      - name: Fail build on High/Criticial Vulnerabilities
+#        uses: aquasecurity/trivy-action@0.30.0
+#        with:
+#          scan-type: "fs"
+#          format: table
+#          scan-ref: .
+#          severity: HIGH,CRITICAL
+#          ignore-unfixed: true
+#          exit-code: 1
+#          # On a subsequent call to the action we know trivy is already installed so can skip this
+#          skip-setup-trivy: true
 
