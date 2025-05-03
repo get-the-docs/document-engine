@@ -116,15 +116,15 @@ jobs:
           distribution: 'microsoft'
           java-version: '17'
 
-      - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/net/videki/**
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+#      - name: Rebuild local Maven repository from cache
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ~/.m2/repository
+#            !~/.m2/repository/net/videki/**
+#          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-maven-
 
       - name: Prepare test environment
         env:
