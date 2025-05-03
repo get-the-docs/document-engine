@@ -65,7 +65,7 @@
         <json.version>20230227</json.version>
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <clover.version>4.4.1</clover.version>
+        <clover.version>4.5.2</clover.version>
     </properties>
 
     <dependencies>
