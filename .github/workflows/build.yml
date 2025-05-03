@@ -29,16 +29,16 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
           java-version: '17'
 
       - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository
@@ -58,16 +58,16 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
           java-version: '17'
 
       - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository
@@ -108,23 +108,23 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
           java-version: '17'
 
-      - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/net/videki/**
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+#      - name: Rebuild local Maven repository from cache
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ~/.m2/repository
+#            !~/.m2/repository/net/videki/**
+#          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-maven-
 
       - name: Prepare test environment
         env:
@@ -141,7 +141,7 @@ jobs:
         run: mvn -B verify --file pom.xml -Dspring.profiles.active=local -Pcoverage
 
       - name: Run Clover coverage and upload to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           name: document-engine
       #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
@@ -176,22 +176,22 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
           java-version: '17'
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache local Maven repository
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -231,18 +231,18 @@ jobs:
       packages: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
           java-version: '17'
 
       - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository
@@ -259,11 +259,11 @@ jobs:
 #        run: docker build -t ${{ env.API_DOCKER_REGISTRY }}/${{ env.API_DOCKER_IMAGE_NAME }} --file Dockerfile .
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
+        uses: docker/setup-buildx-action@v3
+                
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -292,17 +292,33 @@ jobs:
         working-directory: ./docs-generator-api
         run: docker pull ${{ steps.meta.outputs.tags }}
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+      # The first call to the action will invoke setup-trivy and install trivy
+      - name: Generate Trivy Vulnerability Report
+        uses: aquasecurity/trivy-action@0.30.0
         with:
-          image-ref: '${{ steps.meta.outputs.tags }}'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
+#          image-ref: '${{ steps.meta.outputs.tags }}'
+          scan-type: "fs"
+          output: trivy-report.json
+          format: json
+          scan-ref: .
+          exit-code: 0
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload Vulnerability Scan Results
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: 'trivy-results.sarif'
+          name: trivy-report
+          path: trivy-report.json
+          retention-days: 30
+
+#      - name: Fail build on High/Criticial Vulnerabilities
+#        uses: aquasecurity/trivy-action@0.30.0
+#        with:
+#          scan-type: "fs"
+#          format: table
+#          scan-ref: .
+#          severity: HIGH,CRITICAL
+#          ignore-unfixed: true
+#          exit-code: 1
+#          # On a subsequent call to the action we know trivy is already installed so can skip this
+#          skip-setup-trivy: true
 
