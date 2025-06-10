@@ -122,9 +122,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
             try {
                 value = this.dc.read(JSONPATH_PREFIX + path);
             } catch (final PathNotFoundException ex) {
-                if (value == null) {
-                    value = this.dc.read(JSONPATH_PREFIX + CONTEXT_ROOT_KEY + "." + path);
-                }
+                value = this.dc.read(JSONPATH_PREFIX + CONTEXT_ROOT_KEY + "." + path);
 
                 if (value == null) {
                     throw ex;
@@ -186,7 +184,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
     }
 
     /**
-     * Template placeholder convenience mehod to return a single context object based on the caught path. 
+     * Template placeholder convenience method to return a single context object based on the caught path.
      * @param path the JSON path on the actual model.
      * @return the result context object if found.
      */
@@ -196,7 +194,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
 
 
     /**
-     * Template placeholder convenience mehod to return a single context object based on the caught path. 
+     * Template placeholder convenience method to return a single context object based on the caught path.
      * @param path the JSON path on the actual model.
      * @return the result context object if found.
      */
@@ -205,7 +203,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
     }
 
     /**
-     * Template placeholder convenience mehod to return a single context object based on the caught path. 
+     * Template placeholder convenience method to return a single context object based on the caught path.
      * @param path the JSON path on the actual model.
      * @return the result context object if found.
      */
@@ -214,7 +212,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
     }
 
     /**
-     * Template placeholder convenience mehod to return a list of context object based on the caught path. 
+     * Template placeholder convenience method to return a list of context object based on the caught path.
      * @param path the JSON path on the actual model.
      * @return the result list of context objects if found.
      */

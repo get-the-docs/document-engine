@@ -105,7 +105,7 @@ public class JsonValueObject extends ContextObject {
     }
 
     /**
-     * Template placeholder convenience mehod to return a single model object based on the caught path. 
+     * Template placeholder convenience method to return a single model object based on the caught path.
      * @param path the JSON path on the actual model.
      * @return the result model object if found.
      */

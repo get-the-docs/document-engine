@@ -76,12 +76,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
     </dependencies>
 
     <modules>
@@ -92,7 +86,6 @@
         <module>docs-provider-aws-s3</module>
         <module>docs-documentstructure-builder</module>
         <module>docs-generator-api</module>
-        <module>docs-func-aws-template-fill-v1</module>
     </modules>
 
     <build>
