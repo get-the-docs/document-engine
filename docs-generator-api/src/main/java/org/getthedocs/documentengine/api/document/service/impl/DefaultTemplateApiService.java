@@ -93,9 +93,9 @@ public class DefaultTemplateApiService implements TemplateApiService {
 
                     resultObj.setData(data);
                     resultObj.setNumber(0);
-                    resultObj.setSize(data.size() > 0 ? 1 : 0);
+                    resultObj.setSize(!data.isEmpty() ? 1 : 0);
                     resultObj.setTotalElements((long) data.size());
-                    resultObj.setTotalPages(data.size() > 0 ? 1 : 0);
+                    resultObj.setTotalPages(!data.isEmpty() ? 1 : 0);
 
                     result = Optional.of(resultObj); 
                 }
@@ -195,7 +195,7 @@ public class DefaultTemplateApiService implements TemplateApiService {
      * @param notificationUrl notification url, optional.
      */
     @Async
-    protected void postTemplateGenerationJobAsync(final String transactionId, final String id, final Object body,
+    public void postTemplateGenerationJobAsync(final String transactionId, final String id, final Object body,
                                           final String notificationUrl) {
         try {
             if (log.isDebugEnabled()) {
@@ -300,7 +300,7 @@ public class DefaultTemplateApiService implements TemplateApiService {
             } catch (final IOException e) {
                 throw new TemplateServiceRuntimeException("Error parsing data.");
             }
-            final JsonTemplateContext result = new JsonTemplateContext((String) sw.toString());
+            final JsonTemplateContext result = new JsonTemplateContext(sw.toString());
             log.debug("getContext - map, parse ok.");
 
             return result;
