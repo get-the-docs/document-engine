@@ -57,10 +57,10 @@ public class DocxTemplateTest {
 
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
 
-    private String getDataForTestCase(final String fileName) {
+    private String getDataForTestCase(final String tcName, final String fileName) {
         final String dataFile = JSON_DIR + File.separator +
                 this.getClass().getSimpleName() + File.separator +
-                new Throwable().getStackTrace()[1].getMethodName() + File.separator + fileName;
+                tcName + File.separator + fileName;
         LOGGER.debug("Test json data file path: {}", dataFile);
 
         return getTestDataFromFile(dataFile);
@@ -124,7 +124,7 @@ public class DocxTemplateTest {
         final String resultFileName = "result-" + fileName;
 
         final String tranId = UUID.randomUUID().toString();
-        final String data = this.getDataForTestCase("contractdata.json");
+        final String data = this.getDataForTestCase("simpleTemplateWithJsonContextTest", "contractdata.json");
 
         try {
             final StoredResultDocument result = ts.fillAndSave(tranId, inputDir + File.separator + fileName, data);
