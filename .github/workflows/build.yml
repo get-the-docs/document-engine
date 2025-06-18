@@ -209,8 +209,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: mvn -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_template-utils -Dspring.profiles.active=local -Psonar
-
+        run: mvn -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_document-engine -Dsonar.organization=get-the-docs -Dspring.profiles.active=local -Psonar
 #      - name: Archive production artifacts
 #        if: ${{ success() }}
 #        uses: actions/upload-artifact@v1

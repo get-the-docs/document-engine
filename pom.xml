@@ -65,6 +65,7 @@
         <clover.version>4.5.2</clover.version>
         <sonar.organization>get-the-docs</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.projectKey>get-the-docs_document-engine</sonar.projectKey>
         <logback.version>1.4.5</logback.version>
     </properties>
 
