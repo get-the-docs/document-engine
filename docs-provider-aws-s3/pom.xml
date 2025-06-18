@@ -17,7 +17,7 @@
     </parent>
 
     <properties>
-        <aws.version>2.18.25</aws.version>
+        <aws.version>2.31.64</aws.version>
         <aws.spring.version>2.4.2</aws.spring.version>
     </properties>
 
