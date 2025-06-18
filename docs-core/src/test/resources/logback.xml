@@ -29,7 +29,7 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="net.videki" level="trace" />
+    <logger name="org.getthedocs" level="trace" />
     <logger name="org.wickedsource" level="debug" />
     <logger name="org.jxls" level="debug" />
 

@@ -3,9 +3,9 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.videki.getthedocs.examples</groupId>
+    <groupId>org.getthedocs.examples</groupId>
     <artifactId>document-engine-examples-parent</artifactId>
-    <version>1.0.1</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <url>https://github.com/get-the-docs/document-engine</url>

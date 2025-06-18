@@ -6,22 +6,32 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.videki.getthedocs</groupId>
+    <groupId>org.getthedocs.documentengine</groupId>
     <artifactId>document-engine-parent</artifactId>
-    <version>1.0.1</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
 
-    <url>https://github.com/get-the-docs/document-engine</url>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Docx, xlsx template engine and pdf converter to provide document generation features.
+        It is intended to generate single documents from WYSIWYG templates, based on placeholder logic in comments, or
+        to create document sets/a single result document from template structures.
+        The templates can be filled from JSON or Java objects as actual data via jsonpath and SpEL expression-like placeholders.
+
+        The engine core is a java wrapper to other tools integrate their capabilities and can be used with typed DTO-s
+        as a dependency also.</description>
+    <url>http://www.getthedocs.tech</url>
     <scm>
-        <connection>scm:git:git@github.com:get-the-docs/document-engine.git</connection>
-        <developerConnection>scm:git:git@github.com:get-the-docs/document-engine.git</developerConnection>
+        <connection>scm:git:git@github.com/get-the-docs/document-engine.git</connection>
+        <developerConnection>scm:git:ssh@github.com:get-the-docs/document-engine.git</developerConnection>
         <url>https://github.com/get-the-docs/document-engine</url>
     </scm>
     <developers>
         <developer>
             <id>banlevente</id>
             <name>Levente Ban</name>
-            <email>oss.levente.ban@gmail.com</email>
+            <organization>GetTheDocs</organization>
+            <organizationUrl>https://getthedocs.tech</organizationUrl>
+            <email>levente.ban@getthedocs.org</email>
         </developer>
     </developers>
     <issueManagement>
@@ -337,7 +347,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.7</version>
+                        <version>0.8.12</version>
                         <executions>
                             <execution>
                                 <id>report-aggregate</id>
@@ -398,7 +408,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.4.2</version>
+                <version>3.9.0</version>
                 <reportSets>
                     <reportSet>
                         <reports>

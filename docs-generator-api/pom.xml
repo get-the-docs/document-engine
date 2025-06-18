@@ -1,8 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>org.getthedocs.documentengine</groupId>
     <artifactId>docs-generator-api</artifactId>
-    <version>1.0.1</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>docs-generator-api</name>
@@ -71,20 +72,10 @@
     <dependencies>
         <!-- Template generator core -->
         <dependency>
-            <groupId>net.videki.getthedocs</groupId>
+            <groupId>org.getthedocs.documentengine</groupId>
             <artifactId>docs-core</artifactId>
-            <version>${project.version}</version>
+            <version>0.1.0</version>
         </dependency>
-        <!--dependency>
-            <groupId>net.videki.getthedocs</groupId>
-            <artifactId>docs-core-dto-extensions</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.videki.getthedocs</groupId>
-            <artifactId>docs-documentstructure-builder</artifactId>
-            <version>${project.version}</version>
-        </dependency-->
 
         <!-- Spring boot -->
         <dependency>
@@ -245,6 +236,7 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
+            <!--version>2.0.1.Final</version-->
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
@@ -328,10 +320,10 @@
                                 <library>spring-boot</library>
                                 <interfaceOnly>true</interfaceOnly>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
-                                <basePackage>net.videki.documentengine.api.document</basePackage>
-                                <configPackage>net.videki.documentengine.api.document.api.configuration</configPackage>
-                                <apiPackage>net.videki.documentengine.api.document.api.controller</apiPackage>
-                                <modelPackage>net.videki.documentengine.api.document.api.model</modelPackage>
+                                <basePackage>org.getthedocs.documentengine.api.document</basePackage>
+                                <configPackage>org.getthedocs.documentengine.api.document.api.configuration</configPackage>
+                                <apiPackage>org.getthedocs.documentengine.api.document.api.controller</apiPackage>
+                                <modelPackage>org.getthedocs.documentengine.api.document.api.model</modelPackage>
                                 <enablePostProcessFile>true</enablePostProcessFile>
                             </configOptions>
                         </configuration>
@@ -590,7 +582,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.7</version>
+                        <version>0.8.12</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>

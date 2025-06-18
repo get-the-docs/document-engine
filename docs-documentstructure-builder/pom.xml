@@ -7,13 +7,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>docs-documentstructure-builder</artifactId>
-    <version>1.0.1</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>net.videki.getthedocs</groupId>
+        <groupId>org.getthedocs.documentengine</groupId>
         <artifactId>document-engine-parent</artifactId>
-        <version>1.0.1</version>
+        <version>0.1.0</version>
     </parent>
 
     <dependencies>
@@ -60,17 +60,17 @@
 
         <!-- Project dependencies -->
         <dependency>
-            <groupId>net.videki.getthedocs</groupId>
+            <groupId>org.getthedocs.documentengine</groupId>
             <artifactId>docs-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.videki.getthedocs</groupId>
+            <groupId>org.getthedocs.documentengine</groupId>
             <artifactId>docs-core-dto-extensions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.videki.getthedocs</groupId>
+            <groupId>org.getthedocs.documentengine</groupId>
             <artifactId>docs-core-test-dto</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -149,7 +149,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.7</version>
+                        <version>0.8.12</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
