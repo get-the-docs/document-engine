@@ -167,14 +167,19 @@ public class TemplateServiceConfiguration {
     protected void init() {
 
         final Properties properties = getConfigurationProperties();
-        try {
-            initFontLibrary(properties);
-            initDocumentStructureRepository(properties);
-            initTemplateRepository(properties);
-            initResultStore(properties);
-            initProcessors(properties);
+        if (properties != null) {
+            try {
+                initFontLibrary(properties);
+                initDocumentStructureRepository(properties);
+                initTemplateRepository(properties);
+                initResultStore(properties);
+                initProcessors(properties);
 
-        } catch (final Exception e) {
+            } catch (final Exception e) {
+                LOGGER.error("Could not perform engine setup via the given configuration, defaulting to local, file based processing.");
+                LOGGER.debug("Could not perform engine setup via the given configuration, defaulting to local, file based processing:", e);
+            }
+        } else {
             LOGGER.error("document-engine.properties configuration file not found, using default configuration.");
         }
     }
@@ -220,7 +225,7 @@ public class TemplateServiceConfiguration {
             for (final String s : properties.keySet().stream()
                     .map(s -> (String) s)
                     .filter(s -> s.startsWith(FONT_FAMILY) && s.split("\\.").length == 5)
-                    .toList()) {
+                    .collect(Collectors.toList())) {
 
                 final String[] parts = s.split("\\.");
 

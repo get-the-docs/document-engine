@@ -509,6 +509,9 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <spring.profiles.active>local</spring.profiles.active>
+            </properties>
             <build>
                 <plugins>
                     <plugin>

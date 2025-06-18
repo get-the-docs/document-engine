@@ -38,8 +38,8 @@ import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
 
 /**
  * Docx input template processor based on the docx stamper library. See
- * https://github.com/thombergs/docx-stamper
- * 
+ * <a href="https://github.com/thombergs/docx-stamper">https://github.com/thombergs/docx-stamper</a>
+ *
  * @author Levente Ban
  */
 public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor implements InputTemplateProcessor {
@@ -73,7 +73,7 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
     OutputStream result = null;
 
     final DocxStamperConfiguration config = new DocxStamperConfiguration();
-    final JsonDocxStamper<T> stamper = new JsonDocxStamper<T>(config);
+    final JsonDocxStamper<T> stamper = new JsonDocxStamper<>(config);
 
     try (final InputStream templateFile = getTemplate(templateFileName)) {
 
@@ -99,10 +99,11 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
     } catch (final UnresolvedExpressionException e) {
       final String msg = String.format("Placeholder error in file: %s", templateFileName);
       LOGGER.warn(msg);
+      LOGGER.warn("Expression eval error: ", e);
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Expression eval error: ", e);
-      }
+//      if (LOGGER.isDebugEnabled()) {
+//        LOGGER.debug("Expression eval error: ", e);
+//      }
 
       throw new PlaceholderEvalException("ff03cf41-25fb-463a-829d-e2b411df4c16", msg, e);
 
