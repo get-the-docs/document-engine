@@ -12,4 +12,4 @@ if [ -z "$JAVA_MAX_META" ]; then
 fi
 
 # Starting app with PID 1
-exec java -Xms$JAVA_XMS -Xmx$JAVA_XMX -XX:MaxMetaspaceSize=$JAVA_MAX_META $JAVA_OPTS ${JAVA_OPTS} -cp /app/resources/:/app/config:/app/classes/:/app/libs/* "net.videki.documentengine.service.ServiceApplication" "$@"
+exec java -Xms$JAVA_XMS -Xmx$JAVA_XMX -XX:MaxMetaspaceSize=$JAVA_MAX_META $JAVA_OPTS ${JAVA_OPTS} -cp /app/resources/:/app/config:/app/classes/:/app/libs/* "org.getthedocs.documentengine.service.ServiceApplication" "$@"
