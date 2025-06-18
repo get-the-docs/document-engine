@@ -58,9 +58,12 @@ public class DocxTemplateTest {
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
 
     private String getDataForTestCase(final String fileName) {
-        return getTestDataFromFile(JSON_DIR + File.separator +
+        final String dataFile = JSON_DIR + File.separator +
                 this.getClass().getSimpleName() + File.separator +
-                new Throwable().getStackTrace()[1].getMethodName() + File.separator + fileName);
+                new Throwable().getStackTrace()[1].getMethodName() + File.separator + fileName;
+        LOGGER.debug("Test json data file path: {}", dataFile);
+
+        return getTestDataFromFile(dataFile);
     }
 
     private String getTestDataFromFile(final String fileName) {
