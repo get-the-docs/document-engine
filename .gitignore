@@ -12,3 +12,5 @@
 /website/build/
 /**/.vscode/
 /**/package-lock.json
+/**/document-engine-test.properties
+/**/.aws-sam/

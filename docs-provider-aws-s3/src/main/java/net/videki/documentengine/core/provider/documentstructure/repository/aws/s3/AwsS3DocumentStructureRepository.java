@@ -22,6 +22,7 @@ package net.videki.documentengine.core.provider.documentstructure.repository.aws
 
 import lombok.extern.slf4j.Slf4j;
 import net.videki.documentengine.core.documentstructure.DocumentStructure;
+import net.videki.documentengine.core.provider.aws.s3.AbstractAwsS3Repository;
 import net.videki.documentengine.core.provider.aws.s3.S3ClientFactory;
 import net.videki.documentengine.core.provider.aws.s3.S3Repository;
 import net.videki.documentengine.core.provider.documentstructure.DocumentStructureRepository;
@@ -47,7 +48,8 @@ import java.util.stream.Collectors;
  * @author Levente Ban
  */
 @Slf4j
-public class AwsS3DocumentStructureRepository implements DocumentStructureRepository, S3Repository {
+public class AwsS3DocumentStructureRepository extends AbstractAwsS3Repository
+        implements DocumentStructureRepository, S3Repository {
 
     /**
      * Logger.
@@ -58,14 +60,12 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
      * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
      */
     private static final String DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME = "repository.documentstructure.provider.aws.s3.bucketname";
+
     /**
      * AWS S3 bucket region configuration property key in the system properties (see document-engine.properties).
      */
     private static final String DOCSTRUCTURE_REPOSITORY_PROVIDER_REGION = "repository.documentstructure.provider.aws.s3.region";
-    /**
-     * AWS S3 bucket name configuration property key in the system properties (see document-engine.properties).
-     */
-    public static final String DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR = "GETTHEDOCS_REPO_DOCSTRUCTURE_AWS_S3_BUCKETNAME";
+
     /**
      * AWS S3 object prefix in the bucket (see document-engine.properties).
      */
@@ -75,14 +75,17 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
      * The configured document structure builder.
      */
     private DocumentStructureBuilder documentStructureBuilder;
+
     /**
      * The bucket name.
      */
     private String bucketName;
+
     /**
      * The bucket region.
      */
     private String region;
+
     /**
      * The prefix in the given bucket.
      */
@@ -102,20 +105,19 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
                     "Null or invalid template properties caught.");
         }
 
-        this.bucketName = (String) props.get(DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME);
-        this.region = (String) props.get(DOCSTRUCTURE_REPOSITORY_PROVIDER_REGION);
-        final String bucketNameFromEnv = System.getenv(DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME_ENV_VAR);
-        if (bucketNameFromEnv != null) {
-            this.bucketName = bucketNameFromEnv;
-        }
-        this.prefix = (String) props.get(DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_PREFIX);
+        this.bucketName = getSetting(props, DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_NAME);
+        this.region = getSetting(props, DOCSTRUCTURE_REPOSITORY_PROVIDER_REGION);
+        this.prefix = getSetting(props, DOCSTRUCTURE_REPOSITORY_PROVIDER_BUCKET_PREFIX);
 
+        initDocumentStructureRepository(props);
+    }
+
+    private void initDocumentStructureRepository(Properties props) throws TemplateServiceConfigurationException {
         LOGGER.info("Checking document structure repository access...");
         try {
             final S3Client s3 = S3ClientFactory.getS3Client(this.bucketName, this.region);
 
-            final ListObjectsV2Response response =
-                    s3.listObjectsV2(
+            s3.listObjectsV2(
                             ListObjectsV2Request.builder()
                                     .bucket(this.bucketName)
                                     .prefix(this.prefix)
@@ -133,7 +135,6 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
             LOGGER.error("Could not initialize document structure repository. " + msg, e);
             throw new TemplateServiceConfigurationException("f8bb679a-3b91-4ba5-a890-c23e24ccfd7c", msg);
         }
-
     }
 
     /**
@@ -212,7 +213,7 @@ public class AwsS3DocumentStructureRepository implements DocumentStructureReposi
             throws TemplateServiceConfigurationException {
 
         if (documentStructureFile == null) {
-            final String msg = String.format("DocumentStructure id not provided. ");
+            final String msg = "DocumentStructure id not provided. ";
             LOGGER.error(msg);
 
             throw new TemplateProcessException("bf61ec46-ef0a-44bf-bf4f-64cad7b34b5d", msg);

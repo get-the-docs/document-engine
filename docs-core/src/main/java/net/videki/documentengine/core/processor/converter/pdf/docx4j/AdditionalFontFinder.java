@@ -41,7 +41,7 @@ public class AdditionalFontFinder {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DocxToPdfConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalFontFinder.class);
 
     /**
      * Parses the specified font directory for the font mappings provided in the parameters.

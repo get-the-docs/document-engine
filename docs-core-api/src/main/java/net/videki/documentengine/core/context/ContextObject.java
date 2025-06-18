@@ -42,7 +42,7 @@ public abstract class ContextObject implements ITemplate, JsonModel {
     public abstract Object getValue(String expression);
 
     /**
-     * Returns the list of embedded objects, if persent.
+     * Returns the list of embedded objects, if present.
      * @param expression the expression to return a value list.
      * @return the list of objects as a result of the expression evaluation provided by the actual parameter.
      */

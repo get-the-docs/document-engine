@@ -36,8 +36,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -48,7 +53,40 @@ public class DocxTemplateTest {
 
     private final String inputDir = "unittests/docx";
 
+    final String JSON_DIR = "/values/integrationtests";
+
     private static TemplateService ts = TemplateServiceRegistry.getInstance();
+
+    private String getDataForTestCase(final String tcName, final String fileName) {
+        final String dataFile = JSON_DIR + File.separator +
+                this.getClass().getSimpleName() + File.separator +
+                tcName + File.separator + fileName;
+        LOGGER.debug("Test json data file path: {}", dataFile);
+
+        return getTestDataFromFile(dataFile);
+    }
+
+    private String getTestDataFromFile(final String fileName) {
+
+        String result = "";
+
+        try {
+            final File file = new ClassPathResource(fileName).getFile();
+            final BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String actLine;
+            final StringBuilder tmp = new StringBuilder();
+            while ((actLine = br.readLine()) != null) {
+                tmp.append(actLine);
+            }
+
+            result = tmp.toString();
+        } catch (final IOException e) {
+            LOGGER.warn("Could not read test data file: {}", e.getMessage());
+        }
+
+        return result;
+    }
 
     @Test
     public void simpleTemplateTest() {
@@ -72,6 +110,29 @@ public class DocxTemplateTest {
             Assert.assertTrue(result.isGenerated());
 
         } catch (TemplateServiceException e) {
+            LOGGER.error("Error generating the result file.", e);
+
+            fail();
+        }
+
+        assertTrue(true);
+    }
+
+    @Test
+    public void simpleTemplateWithJsonContextTest() {
+        final String fileName = "contract_v09_hu-jsonpath.docx";
+        final String resultFileName = "result-" + fileName;
+
+        final String tranId = UUID.randomUUID().toString();
+        final String data = this.getDataForTestCase("simpleTemplateWithJsonContextTest", "contractdata.json");
+
+        try {
+            final StoredResultDocument result = ts.fillAndSave(tranId, inputDir + File.separator + fileName, data);
+
+            LOGGER.info("Done - Result file: {}.", resultFileName);
+            Assert.assertTrue(result.isGenerated());
+
+        } catch (final TemplateServiceException e) {
             LOGGER.error("Error generating the result file.", e);
 
             fail();

@@ -65,6 +65,7 @@
         <clover.version>4.5.2</clover.version>
         <sonar.organization>get-the-docs</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.projectKey>get-the-docs_document-engine</sonar.projectKey>
         <logback.version>1.4.5</logback.version>
     </properties>
 
@@ -139,10 +140,10 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <organizationName>Levente Ban</organizationName>
-                            <inceptionYear>2021</inceptionYear>
+                            <inceptionYear>2023</inceptionYear>
                             <roots>
                                 <root>src/main/java</root>
-                                <root>src/test</root>
+                                <root>src/test/java</root>
                             </roots>
                             <excludes>
                                 <exclude>*.json</exclude>
@@ -378,14 +379,12 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <publishingServerId>central</publishingServerId>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -400,7 +399,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.4.2</version>
                 <reportSets>
                     <reportSet>
                         <reports>
