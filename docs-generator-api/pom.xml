@@ -63,7 +63,7 @@
         <jackson.dataformat-xml.version>2.14.0</jackson.dataformat-xml.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
-        <json.version>20230227</json.version>
+        <json.version>20231013</json.version>
         <lombok.version>1.18.22</lombok.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <clover.version>4.5.2</clover.version>
