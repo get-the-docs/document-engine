@@ -2,7 +2,7 @@ package org.getthedocs.documentengine.core.dto;
 
 /*-
  * #%L
- * docs-core-dto-extensions
+ * docs-core-dto
  * %%
  * Copyright (C) 2021 Levente Ban
  * %%
@@ -21,9 +21,9 @@ package org.getthedocs.documentengine.core.dto;
  */
 
 import java.io.StringWriter;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 
 public interface XmlModel {
 

@@ -42,7 +42,7 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-            !~/.m2/repository/net/videki/**
+            !~/.m2/repository/org/getthedocs/**
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
@@ -71,7 +71,7 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-            !~/.m2/repository/net/videki/**
+            !~/.m2/repository/org/getthedocs/**
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
@@ -120,7 +120,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_document-engine -Dspring.profiles.active=local
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_document-engine -Dspring.profiles.active=local -Psonar
 
   docker_build_job:
     name: Containerize
@@ -148,7 +148,7 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-            !~/.m2/repository/net/videki/**
+            !~/.m2/repository/org/getthedocs/**
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-

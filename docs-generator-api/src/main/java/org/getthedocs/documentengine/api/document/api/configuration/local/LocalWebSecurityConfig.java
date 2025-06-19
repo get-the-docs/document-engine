@@ -21,11 +21,21 @@ package org.getthedocs.documentengine.api.document.api.configuration.local;
  */
 
 import org.getthedocs.documentengine.api.document.ServiceApplication;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * Web security config for the application.
@@ -33,18 +43,29 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * @author Levente Ban
  */
 @Profile(ServiceApplication.Profiles.LOCAL)
-@EnableWebSecurity
-@Configuration
-public class LocalWebSecurityConfig extends WebSecurityConfigurerAdapter {
+//@EnableWebSecurity
+@AutoConfiguration
+//@EnableMethodSecurity(securedEnabled = true)
+@ConditionalOnWebApplication
+public class LocalWebSecurityConfig {
 
-	/**
-	 * Config entry point.
-	 * 
-	 * @param web the sec config.
-	 */
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/**");
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		return http
+				.cors(cors -> {})
+				.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
+//				.oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
+				.build();
+
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		final UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
+		configSource.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+
+		return configSource;
 	}
 
 }

@@ -85,7 +85,7 @@ public class DocxStamperInputTemplateProcessorTest {
 
             Assert.assertFalse(false);
         } catch (PlaceholderEvalException e) {
-            Assert.assertEquals("ff03cf41-25fb-463a-829d-e2b411df4c16", e.getCode());
+            Assert.assertEquals("36f17397-f921-44c6-9a6c-e2858d959c70", e.getCode());
         } catch (IOException e) {
             LOGGER.error("fillValidTemplatePlaceholderError error", e);
         }

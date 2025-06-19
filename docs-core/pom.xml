@@ -28,6 +28,11 @@
             <artifactId>commons-text</artifactId>
             <version>1.10.0</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.19.0</version>
+        </dependency>
 
         <!-- QR code -->
         <dependency>
@@ -43,10 +48,16 @@
         </dependency>
 
         <!-- Docx -->
+        <!-- https://mvnrepository.com/artifact/io.reflectoring/docx-stamper -->
         <dependency>
+            <groupId>io.reflectoring</groupId>
+            <artifactId>docx-stamper</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <!--dependency>
             <groupId>org.wickedsource.docx-stamper</groupId>
             <artifactId>docx-stamper</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -77,7 +88,7 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency-->
 
         <!-- JXls -->
         <dependency>
@@ -144,7 +155,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <version>5.3.16</version>
+            <version>6.0.8</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -164,6 +175,17 @@
             <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
             <version>${docx4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>4.0.5</version>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Pdf merger -->
         <dependency>
@@ -171,37 +193,6 @@
             <artifactId>pdfbox</artifactId>
             <version>3.0.0-RC1</version>
         </dependency>
-
-        <!--dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.2</version>
-        </dependency-->
-        <!-- API, java.xml.bind module -->
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-
-        <!-- Runtime, com.sun.xml.bind module -->
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-
-
-        <!--dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>2.3.0.1</version>
-        </dependency-->
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -222,11 +213,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -253,69 +239,40 @@
         <plugins>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>${java.version}</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.2</version>
             </plugin>
 
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M4</version>
-                <configuration>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=java.base/java.io=ALL-UNNAMED</argLine>
-                    <argLine>--add-opens=java.base/java.time=ALL-UNNAMED</argLine>
-                    <argLine>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</argLine>
-                    <argLine>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
             </plugin>
             <plugin>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
             </plugin>
 
         </plugins>
@@ -324,60 +281,15 @@
     <profiles>
         <profile>
             <id>sonar</id>
+            <activation><activeByDefault>false</activeByDefault></activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
-                        <executions>
-                            <execution>
-                                <id>prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                                <configuration>
-                                    <formats>
-                                        <format>XML</format>
-                                    </formats>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.0.0</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>team</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-
-    </reporting>
-
 </project>

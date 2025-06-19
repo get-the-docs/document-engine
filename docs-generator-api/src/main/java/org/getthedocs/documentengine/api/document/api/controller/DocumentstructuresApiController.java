@@ -36,8 +36,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.Optional;
 import java.util.UUID;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-02-21T15:16:34.406301500+01:00[Europe/Prague]")
-
 /**
  * Document structure API.
  * 

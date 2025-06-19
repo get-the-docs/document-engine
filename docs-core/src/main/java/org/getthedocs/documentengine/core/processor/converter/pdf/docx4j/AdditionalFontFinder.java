@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -58,12 +60,12 @@ public class AdditionalFontFinder {
             try {
                 final String baseDir = iter.next().getBasedir();
                 if (StringUtils.isNotEmpty(baseDir)) {
-                    PhysicalFonts.addPhysicalFont(new URL(baseDir));
+                    PhysicalFonts.addPhysicalFont(new URI(baseDir));
                 } else {
                     throw new TemplateServiceConfigurationException("656dca28-bc61-4059-991f-7bb65ec916e6",
                             String.format("%s - invalid font config url.", TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS) );
                 }
-            } catch (final MalformedURLException e) {
+            } catch (final URISyntaxException e) {
                 throw new TemplateServiceConfigurationException("656dca28-bc61-4059-991f-7bb65ec916e6",
                         String.format("%s - invalid font config url.", TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS) );
 

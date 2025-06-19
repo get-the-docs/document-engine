@@ -21,11 +21,14 @@ package org.getthedocs.documentengine.api.document;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.getthedocs.documentengine.api.document.api.model.*;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,8 +44,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -51,8 +52,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -67,7 +66,7 @@ public class DocumentApiTemplatesIT {
     @LocalServerPort
     private int port;
 
-    final ObjectMapper jsonMapper = new ObjectMapper();
+    final ObjectMapper jsonMapper = ObjectMapperFactory.jsonMapper();
 
     @PostConstruct
     public void setUp() {
@@ -455,7 +454,7 @@ public class DocumentApiTemplatesIT {
             Assertions.assertTrue(resultDocBinary.length > 0);
 
         } else {
-            fail();
+            Assertions.fail();
         }
 
         log.info("getResultDocumentForValidTransactionShouldReturnBinary - end.");

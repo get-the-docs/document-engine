@@ -2,7 +2,7 @@ package org.getthedocs.documentengine.core.dto;
 
 /*-
  * #%L
- * docs-core-dto-extensions
+ * docs-core-dto
  * %%
  * Copyright (C) 2021 Levente Ban
  * %%
@@ -20,17 +20,17 @@ package org.getthedocs.documentengine.core.dto;
  * #L%
  */
 
+import io.reflectoring.docxstamper.replace.typeresolver.image.Image;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wickedsource.docxstamper.replace.typeresolver.image.Image;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -133,8 +133,7 @@ public interface ITemplate {
   default String fmtDate(final Map<?, ?> value) {
     String result;
     if (value != null) {
-      final ObjectMapper mapper = new ObjectMapper();
-      mapper.registerModule(new JavaTimeModule());
+      final ObjectMapper mapper = ObjectMapperFactory.jsonMapper();
       //LocalDate.of((Integer) value.get("year"), (Integer) value.get("month"), (Integer) value.get("day"))
       LocalDate d = mapper.convertValue(value.values().toArray(), LocalDate.class);
       result = d.format(DATE_FORMAT_DATE);

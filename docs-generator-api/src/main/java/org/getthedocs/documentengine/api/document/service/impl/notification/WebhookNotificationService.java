@@ -20,8 +20,7 @@ package org.getthedocs.documentengine.api.document.service.impl.notification;
  * #L%
  */
 
-import javax.annotation.PostConstruct;
-
+import jakarta.annotation.PostConstruct;
 import org.getthedocs.documentengine.api.document.service.NotificationService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;

@@ -23,8 +23,10 @@ package org.getthedocs.documentengine.core.provider.documentstructure.builder.ya
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.getthedocs.documentengine.core.documentstructure.DocumentStructure;
 import org.getthedocs.documentengine.core.documentstructure.descriptors.TemplateElement;
+import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
 import org.getthedocs.documentengine.core.service.exception.TemplateProcessException;
 import org.getthedocs.documentengine.core.service.exception.TemplateServiceConfigurationException;
 import org.getthedocs.documentengine.core.provider.documentstructure.builder.DocumentStructureBuilder;
@@ -62,11 +64,10 @@ public class YmlDocStructureBuilder implements DocumentStructureBuilder {
         }
 
         DocumentStructure result;
-        SimpleModule module = new SimpleModule();
+        final SimpleModule module = new SimpleModule();
         module.addDeserializer(TemplateElement.class, new TemplateElementDeserializer());
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final ObjectMapper mapper = ObjectMapperFactory.yamlMapper(module);
 
-        mapper.registerModule(module);
         try {
             result = mapper.readValue(dsConfig, DocumentStructure.class);
             if (LOGGER.isDebugEnabled()) {

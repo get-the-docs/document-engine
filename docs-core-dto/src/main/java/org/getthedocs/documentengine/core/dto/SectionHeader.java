@@ -2,7 +2,7 @@ package org.getthedocs.documentengine.core.dto;
 
 /*-
  * #%L
- * docs-core-dto-extensions
+ * docs-core-dto
  * %%
  * Copyright (C) 2021 Levente Ban
  * %%
@@ -20,21 +20,8 @@ package org.getthedocs.documentengine.core.dto;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+public interface SectionHeader {
 
-public interface JsonModel {
-
-  default String toJson() {
-
-    final ObjectMapper mapper = new ObjectMapper();
-    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
-    try {
-      return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
-    } catch (final JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  public abstract boolean isSectionHeader();
+  
 }

@@ -1,8 +1,8 @@
-package org.getthedocs.documentengine.api.document.api.configuration;
+package org.getthedocs.documentengine.core.dto;
 
 /*-
  * #%L
- * docs-service-api
+ * docs-core-dto
  * %%
  * Copyright (C) 2021 Levente Ban
  * %%
@@ -20,30 +20,23 @@ package org.getthedocs.documentengine.api.document.api.configuration;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.*;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
-/**
- * Jackson configuration.
- * 
- * @author Levente Ban
- */
-@Configuration
-public class JacksonConfiguration {
+public interface JsonModel {
 
-    /**
-     * Json mapper bean injection.
-     * 
-     * @return json mapper.
-     */
-    @Primary
-    @Bean
-    public ObjectMapper jsonMapper() {
-        return ObjectMapperFactory.jsonMapper();
+  default String toJson() {
+
+    final ObjectMapper mapper = ObjectMapperFactory.jsonMapper();
+    mapper.registerModule(new JavaTimeModule());
+
+    try {
+      return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+    } catch (final JsonProcessingException e) {
+      throw new RuntimeException(e);
     }
-
+  }
 }

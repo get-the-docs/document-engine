@@ -1,33 +1,17 @@
-/*
- * Copyright (c) 2021-2021. Levente Ban
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package org.wickedsource.docxstamper;
+package org.getthedocs.documentengine.core.processor.docxstamper;
 
 /*-
  * #%L
  * docs-core
  * %%
- * Copyright (C) 2021 Levente Ban
+ * Copyright (C) 2023 - 2025 Levente Ban
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,50 +20,50 @@ package org.wickedsource.docxstamper;
  * #L%
  */
 
-import org.wickedsource.docxstamper.jsonpath.JsonExpressionResolver;
+import io.reflectoring.docxstamper.DocxStamper;
+import io.reflectoring.docxstamper.DocxStamperConfiguration;
+import io.reflectoring.docxstamper.api.DocxStamperException;
+import io.reflectoring.docxstamper.api.commentprocessor.ICommentProcessor;
+import io.reflectoring.docxstamper.api.typeresolver.ITypeResolver;
+import io.reflectoring.docxstamper.api.typeresolver.TypeResolverRegistry;
+import io.reflectoring.docxstamper.el.ExpressionResolver;
+import io.reflectoring.docxstamper.processor.CommentProcessorRegistry;
+import io.reflectoring.docxstamper.processor.displayif.DisplayIfProcessor;
+import io.reflectoring.docxstamper.processor.displayif.IDisplayIfProcessor;
+import io.reflectoring.docxstamper.processor.repeat.*;
+import io.reflectoring.docxstamper.processor.replaceExpression.IReplaceWithProcessor;
+import io.reflectoring.docxstamper.processor.replaceExpression.ReplaceWithProcessor;
+import io.reflectoring.docxstamper.proxy.ProxyBuilder;
+import io.reflectoring.docxstamper.replace.PlaceholderReplacer;
+import io.reflectoring.docxstamper.replace.typeresolver.DateResolver;
+import io.reflectoring.docxstamper.replace.typeresolver.FallbackResolver;
+import io.reflectoring.docxstamper.replace.typeresolver.image.Image;
+import io.reflectoring.docxstamper.replace.typeresolver.image.ImageResolver;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.wickedsource.docxstamper.api.DocxStamperException;
-import org.wickedsource.docxstamper.api.commentprocessor.ICommentProcessor;
-import org.wickedsource.docxstamper.api.typeresolver.ITypeResolver;
-import org.wickedsource.docxstamper.api.typeresolver.TypeResolverRegistry;
-import org.wickedsource.docxstamper.el.ExpressionResolver;
-import org.wickedsource.docxstamper.processor.CommentProcessorRegistry;
-import org.wickedsource.docxstamper.processor.JsonCommentProcessorRegistry;
-import org.wickedsource.docxstamper.processor.displayif.DisplayIfProcessor;
-import org.wickedsource.docxstamper.processor.displayif.IDisplayIfProcessor;
-import org.wickedsource.docxstamper.processor.repeat.*;
-import org.wickedsource.docxstamper.processor.replaceExpression.IReplaceWithProcessor;
-import org.wickedsource.docxstamper.processor.replaceExpression.ReplaceWithProcessor;
-import org.wickedsource.docxstamper.proxy.ProxyBuilder;
-import org.wickedsource.docxstamper.replace.PlaceholderReplacer;
-import org.wickedsource.docxstamper.replace.typeresolver.DateResolver;
-import org.wickedsource.docxstamper.replace.typeresolver.FallbackResolver;
-import org.wickedsource.docxstamper.replace.typeresolver.image.Image;
-import org.wickedsource.docxstamper.replace.typeresolver.image.ImageResolver;
+import org.getthedocs.documentengine.core.processor.docxstamper.el.JsonExpressionResolver;
+import org.getthedocs.documentengine.core.processor.docxstamper.processor.DocumentEngineCommentProcessorRegistry;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * @author Levente Ban
- */
-public class JsonDocxStamper<T> {
+public class DocumentEngineDocxStamper<T> extends DocxStamper<T> {
+
 
     private PlaceholderReplacer<T> placeholderReplacer;
 
-    private JsonCommentProcessorRegistry commentProcessorRegistry;
+    private CommentProcessorRegistry commentProcessorRegistry;
 
     private TypeResolverRegistry typeResolverRegistry;
 
-    private DocxStamperConfiguration config = new DocxStamperConfiguration();
+    private DocumentEngineDocxStamperConfiguration config = new DocumentEngineDocxStamperConfiguration();
 
-    public JsonDocxStamper() {
+    public DocumentEngineDocxStamper() {
         initFields();
     }
 
-    public JsonDocxStamper(DocxStamperConfiguration config) {
+    public DocumentEngineDocxStamper(DocumentEngineDocxStamperConfiguration config) {
         this.config = config;
         initFields();
     }
@@ -92,18 +76,18 @@ public class JsonDocxStamper<T> {
             typeResolverRegistry.registerTypeResolver(entry.getKey(), entry.getValue());
         }
 
-        final JsonExpressionResolver expressionResolver = new JsonExpressionResolver(config.getEvaluationContextConfigurer());
+        ExpressionResolver expressionResolver = new JsonExpressionResolver(config.getEvaluationContextConfigurer());
         placeholderReplacer = new PlaceholderReplacer<>(typeResolverRegistry, config.getLineBreakPlaceholder());
         placeholderReplacer.setExpressionResolver(expressionResolver);
         placeholderReplacer.setLeaveEmptyOnExpressionError(config.isLeaveEmptyOnExpressionError());
         placeholderReplacer.setReplaceNullValues(config.isReplaceNullValues());
 
-        commentProcessorRegistry = new JsonCommentProcessorRegistry(placeholderReplacer);
+        commentProcessorRegistry = new CommentProcessorRegistry(placeholderReplacer);
         commentProcessorRegistry.setExpressionResolver(expressionResolver);
         commentProcessorRegistry.setFailOnInvalidExpression(config.isFailOnUnresolvedExpression());
         commentProcessorRegistry.registerCommentProcessor(IRepeatProcessor.class, new RepeatProcessor(typeResolverRegistry, expressionResolver));
-        commentProcessorRegistry.registerCommentProcessor(IParagraphRepeatProcessor.class, new ParagraphRepeatProcessor(typeResolverRegistry));
-        commentProcessorRegistry.registerCommentProcessor(IRepeatDocPartProcessor.class, new RepeatDocPartProcessor(typeResolverRegistry));
+        commentProcessorRegistry.registerCommentProcessor(IParagraphRepeatProcessor.class, new ParagraphRepeatProcessor(typeResolverRegistry, expressionResolver));
+        commentProcessorRegistry.registerCommentProcessor(IRepeatDocPartProcessor.class, new RepeatDocPartProcessor(typeResolverRegistry, expressionResolver));
         commentProcessorRegistry.registerCommentProcessor(IDisplayIfProcessor.class, new DisplayIfProcessor());
         commentProcessorRegistry.registerCommentProcessor(IReplaceWithProcessor.class,
                 new ReplaceWithProcessor());
@@ -168,8 +152,10 @@ public class JsonDocxStamper<T> {
     public void stamp(WordprocessingMLPackage document, T contextRoot, OutputStream out) throws DocxStamperException {
         try {
             ProxyBuilder<T> proxyBuilder = addCustomInterfacesToContextRoot(contextRoot, this.config.getExpressionFunctions());
+            replaceExpressions(document, proxyBuilder);
             processComments(document, proxyBuilder);
             replaceExpressions(document, proxyBuilder);
+            postProcess();
             document.save(out);
             commentProcessorRegistry.reset();
         } catch (DocxStamperException e) {
@@ -201,4 +187,11 @@ public class JsonDocxStamper<T> {
         commentProcessorRegistry.runProcessors(document, proxyBuilder);
     }
 
+    private void postProcess() {
+        if(placeholderReplacer.isLeaveEmptyOnExpressionError()) {
+            placeholderReplacer.applyLeaveEmptyErrorExpressions();
+        }
+    }
+
 }
+

@@ -61,14 +61,12 @@
         <java.version>17</java.version>
         <maven-enforcer-maven.version>3.3.9</maven-enforcer-maven.version>
         <lombok.version>1.18.22</lombok.version>
-        <docx4j.version>11.2.8</docx4j.version>
-        <poi.version>5.0.0</poi.version>
+        <docx4j.version>11.5.3</docx4j.version>
+        <jaxb-api.version>4.0.2</jaxb-api.version>
+        <poi.version>5.4.0</poi.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <jackson.core.version>2.14.0</jackson.core.version>
-        <jackson.databind.version>2.14.0</jackson.databind.version>
-        <jackson.dataformat-xml.version>2.14.0</jackson.dataformat-xml.version>
+        <jackson.version>2.15.0-rc1</jackson.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
-        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <json.version>20190722</json.version>
         <slf4j.version>2.0.6</slf4j.version>
         <junit.version>5.9.2</junit.version>
@@ -76,7 +74,7 @@
         <sonar.organization>get-the-docs</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>get-the-docs_document-engine</sonar.projectKey>
-        <logback.version>1.4.5</logback.version>
+        <logback.version>1.5.13</logback.version>
     </properties>
 
     <dependencies>
@@ -92,19 +90,181 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <modules>
         <module>docs-core-api</module>
-        <module>docs-core-dto-extensions</module>
+        <module>docs-core-dto</module>
         <module>docs-core</module>
-        <module>docs-core-test-dto</module>
+        <module>docs-core-dto-test</module>
         <module>docs-documentstructure-builder</module>
         <module>docs-generator-api</module>
     </modules>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.5.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>${java.version}</version>
+                                    </requireJavaVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <release>${java.version}</release>
+                        <fork>true</fork>
+                        <compilerArgs>
+                            <arg>-Xlint:all</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=java.base/java.io=ALL-UNNAMED</arg>
+                            <arg>-J--add-opens=java.base/java.time=ALL-UNNAMED</arg>
+                            <arg>-J--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg>
+                            <arg>-J--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg>
+                        </compilerArgs>
+                        <encoding>UTF-8</encoding>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M7</version>
+                    <configuration>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=java.base/java.io=ALL-UNNAMED</argLine>
+                        <argLine>--add-opens=java.base/java.time=ALL-UNNAMED</argLine>
+                        <argLine>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</argLine>
+                        <argLine>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.6.3</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <charSet>UTF-8</charSet>
+                        <docencoding>UTF-8</docencoding>
+                        <show>public</show>
+                        <source>${java.version}</source>
+                        <detectOfflineLinks>false</detectOfflineLinks>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>4.0.0-M16</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
         <plugins>
 
@@ -164,49 +324,6 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.0.2</version>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
-                <configuration>
-                    <release>${java.version}</release>
-                    <fork>true</fork>
-                    <compilerArgs>
-                        <arg>-Xlint:all</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</arg> 
-                        <arg>-J--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</arg>  
-                        <arg>-J--add-opens=java.base/java.io=ALL-UNNAMED</arg> 
-                        <arg>-J--add-opens=java.base/java.time=ALL-UNNAMED</arg>
-                        <arg>-J--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> 
-                        <arg>-J--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg> 
-                    </compilerArgs>
-                    <encoding>UTF-8</encoding>
-                    <showDeprecation>true</showDeprecation>
-                    <showWarnings>true</showWarnings>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
 
             <plugin>
@@ -287,6 +404,9 @@
     <profiles>
         <profile>
             <id>coverage</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -342,7 +462,34 @@
         </profile>
         <profile>
             <id>sonar</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>0.8.12</version>
+                            <executions>
+                                <execution>
+                                    <id>prepare-agent</id>
+                                    <goals>
+                                        <goal>prepare-agent</goal>
+                                    </goals>
+                                </execution>
+                                <execution>
+                                    <id>report</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>report</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
@@ -407,12 +554,37 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.9.0</version>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.10.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>team</report>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.6.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <report>dependency-info</report>
+                            <report>dependency-management</report>
+                            <report>index</report>
+                            <report>project-team</report>
+                            <report>licenses</report>
+                            <report>scm</report>
+                            <report>issue-management</report>
+                            <report>modules</report>
+                            <report>summary</report>
+                            <report>distribution-management</report>
+                            <report>plugin-management</report>
+                            <report>plugins</report>
+                            <report>cim</report>
                         </reports>
                     </reportSet>
                 </reportSets>

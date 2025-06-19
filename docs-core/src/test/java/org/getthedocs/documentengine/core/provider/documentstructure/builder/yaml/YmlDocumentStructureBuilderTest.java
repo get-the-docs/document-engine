@@ -23,8 +23,10 @@ package org.getthedocs.documentengine.core.provider.documentstructure.builder.ya
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.getthedocs.documentengine.core.documentstructure.DocumentStructure;
 import org.getthedocs.documentengine.core.documentstructure.descriptors.TemplateElement;
+import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
 import org.getthedocs.documentengine.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository;
 import org.getthedocs.documentengine.core.service.exception.TemplateNotFoundException;
 import org.getthedocs.documentengine.core.service.exception.TemplateProcessException;
@@ -74,7 +76,7 @@ public class YmlDocumentStructureBuilderTest {
         try {
             final DocumentStructure templateStructure = getContractDocStructure();
 
-            final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            final ObjectMapper mapper = ObjectMapperFactory.yamlMapper();
             mapper.writeValue(
                     new File(FileSystemHelper.getFileNameWithPath(projectOutDir, "result.yml")), templateStructure);
         } catch (final TemplateNotFoundException | TemplateServiceException | IOException e) {
@@ -91,9 +93,7 @@ public class YmlDocumentStructureBuilderTest {
 
         SimpleModule module = new SimpleModule();
         module.addDeserializer(TemplateElement.class, new TemplateElementDeserializer());
-            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-
-            mapper.registerModule(module);
+            final ObjectMapper mapper = ObjectMapperFactory.yamlMapper(module);
 
             try {
                 result = mapper.readValue(YmlDocStructureBuilder.class.getClassLoader()

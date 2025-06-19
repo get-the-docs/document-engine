@@ -30,6 +30,8 @@ import net.minidev.json.JSONValue;
 import org.getthedocs.documentengine.core.context.dto.IJsonTemplate;
 import org.getthedocs.documentengine.core.context.dto.JsonValueObject;
 import org.getthedocs.documentengine.core.service.exception.TemplateServiceRuntimeException;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.SpelMessage;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -114,7 +116,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
      * @param path the JSONpath to be evaluated.
      * @return the context object if found by the given JSON path.
      */
-    public Object getValue(final String path) {
+    public Object getValue(final String path) throws SpelEvaluationException {
         log.trace("Getting data for path {}...", path);
 
         try {
@@ -151,7 +153,8 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
             log.error(msg);
             log.debug(msg + ", value object to parse: {}", this.jsonData);
 
-            throw new TemplateServiceRuntimeException(msg);
+            final SpelEvaluationException ex = new SpelEvaluationException(e, SpelMessage.INVALID_PATTERN, path);
+            throw ex;
         } catch (final Exception e) {
             final var msg = "Error reading JSON data. Path: " + path;
             log.error(msg);
@@ -188,7 +191,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
      * @param path the JSON path on the actual model.
      * @return the result context object if found.
      */
-    public Object jsonpath(final String path) {
+    public Object jsonpath(final String path) throws SpelEvaluationException {
         return getValue(path);
     }
 
@@ -198,7 +201,7 @@ public class JsonTemplateContext extends TemplateContext implements IJsonTemplat
      * @param path the JSON path on the actual model.
      * @return the result context object if found.
      */
-    public Object getJsonpath(final String path) {
+    public Object getJsonpath(final String path) throws SpelEvaluationException {
         return jsonpath(path);
     }
 
