@@ -74,7 +74,7 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
     OutputStream result = null;
 
     final DocumentEngineDocxStamperConfiguration config = new DocumentEngineDocxStamperConfiguration();
-    final DocxStamper<T> stamper = new DocumentEngineDocxStamper<>(config);
+    final DocumentEngineDocxStamper<T> stamper = new DocumentEngineDocxStamper<>(config);
 
     try (final InputStream templateFile = getTemplate(templateFileName)) {
 

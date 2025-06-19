@@ -128,7 +128,7 @@
         <module>docs-core</module>
         <module>docs-core-dto-test</module>
         <module>docs-documentstructure-builder</module>
-        <module>docs-generator-api</module>
+        <!--module>docs-generator-api</module-->
     </modules>
 
     <build>

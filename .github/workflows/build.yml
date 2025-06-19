@@ -156,6 +156,9 @@ jobs:
       - name: Maven build
         run: mvn -B package --file pom.xml -DskipTests=true
 
+      - name: Maven build
+        run: mvn -B package --file docs-generator-api/pom.xml -DskipTests=true
+
 #      - name: Build the Docker image
 #        working-directory: ./docs-generator-api
 #        run: docker build -t ${{ env.API_DOCKER_REGISTRY }}/${{ env.API_DOCKER_IMAGE_NAME }} --file Dockerfile .

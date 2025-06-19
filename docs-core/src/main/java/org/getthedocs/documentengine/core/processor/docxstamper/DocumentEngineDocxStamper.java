@@ -20,8 +20,6 @@ package org.getthedocs.documentengine.core.processor.docxstamper;
  * #L%
  */
 
-import io.reflectoring.docxstamper.DocxStamper;
-import io.reflectoring.docxstamper.DocxStamperConfiguration;
 import io.reflectoring.docxstamper.api.DocxStamperException;
 import io.reflectoring.docxstamper.api.commentprocessor.ICommentProcessor;
 import io.reflectoring.docxstamper.api.typeresolver.ITypeResolver;
@@ -41,14 +39,13 @@ import io.reflectoring.docxstamper.replace.typeresolver.image.Image;
 import io.reflectoring.docxstamper.replace.typeresolver.image.ImageResolver;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.getthedocs.documentengine.core.processor.docxstamper.el.JsonExpressionResolver;
-import org.getthedocs.documentengine.core.processor.docxstamper.processor.DocumentEngineCommentProcessorRegistry;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Map;
 
-public class DocumentEngineDocxStamper<T> extends DocxStamper<T> {
+public class DocumentEngineDocxStamper<T> {
 
 
     private PlaceholderReplacer<T> placeholderReplacer;
