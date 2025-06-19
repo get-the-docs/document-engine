@@ -20,8 +20,6 @@ package org.getthedocs.documentengine.core.processor.docxstamper;
  * #L%
  */
 
-import io.reflectoring.docxstamper.DocxStamper;
-import io.reflectoring.docxstamper.DocxStamperConfiguration;
 import io.reflectoring.docxstamper.api.EvaluationContextConfigurer;
 import io.reflectoring.docxstamper.api.commentprocessor.ICommentProcessor;
 import io.reflectoring.docxstamper.api.typeresolver.ITypeResolver;
@@ -31,7 +29,7 @@ import io.reflectoring.docxstamper.replace.typeresolver.FallbackResolver;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DocumentEngineDocxStamperConfiguration extends DocxStamperConfiguration {
+public class DocumentEngineDocxStamperConfiguration {
     private String lineBreakPlaceholder;
     private EvaluationContextConfigurer evaluationContextConfigurer = new NoOpEvaluationContextConfigurer();
     private boolean failOnUnresolvedExpression = true;
@@ -42,48 +40,48 @@ public class DocumentEngineDocxStamperConfiguration extends DocxStamperConfigura
     private ITypeResolver defaultTypeResolver = new FallbackResolver();
     private Map<Class<?>, Object> expressionFunctions = new HashMap();
 
-    public DocxStamperConfiguration setLineBreakPlaceholder(String lineBreakPlaceholder) {
+    public DocumentEngineDocxStamperConfiguration setLineBreakPlaceholder(String lineBreakPlaceholder) {
         this.lineBreakPlaceholder = lineBreakPlaceholder;
         return this;
     }
 
-    public DocxStamperConfiguration setEvaluationContextConfigurer(EvaluationContextConfigurer evaluationContextConfigurer) {
+    public DocumentEngineDocxStamperConfiguration setEvaluationContextConfigurer(EvaluationContextConfigurer evaluationContextConfigurer) {
         this.evaluationContextConfigurer = evaluationContextConfigurer;
         return this;
     }
 
-    public DocxStamperConfiguration setFailOnUnresolvedExpression(boolean failOnUnresolvedExpression) {
+    public DocumentEngineDocxStamperConfiguration setFailOnUnresolvedExpression(boolean failOnUnresolvedExpression) {
         this.failOnUnresolvedExpression = failOnUnresolvedExpression;
         return this;
     }
 
-    public DocxStamperConfiguration addCommentProcessor(Class<?> interfaceClass, ICommentProcessor commentProcessor) {
+    public DocumentEngineDocxStamperConfiguration addCommentProcessor(Class<?> interfaceClass, ICommentProcessor commentProcessor) {
         this.commentProcessors.put(interfaceClass, commentProcessor);
         return this;
     }
 
-    public <T> DocxStamperConfiguration addTypeResolver(Class<T> resolvedType, ITypeResolver resolver) {
+    public <T> DocumentEngineDocxStamperConfiguration addTypeResolver(Class<T> resolvedType, ITypeResolver resolver) {
         this.typeResolvers.put(resolvedType, resolver);
         return this;
     }
 
-    public DocxStamperConfiguration exposeInterfaceToExpressionLanguage(Class<?> interfaceClass, Object implementation) {
+    public DocumentEngineDocxStamperConfiguration exposeInterfaceToExpressionLanguage(Class<?> interfaceClass, Object implementation) {
         this.expressionFunctions.put(interfaceClass, implementation);
         return this;
     }
 
-    public DocxStamperConfiguration leaveEmptyOnExpressionError(boolean leaveEmpty) {
+    public DocumentEngineDocxStamperConfiguration leaveEmptyOnExpressionError(boolean leaveEmpty) {
         this.leaveEmptyOnExpressionError = leaveEmpty;
         return this;
     }
 
-    public DocxStamperConfiguration replaceNullValues(boolean replaceNullValues) {
+    public DocumentEngineDocxStamperConfiguration replaceNullValues(boolean replaceNullValues) {
         this.replaceNullValues = replaceNullValues;
         return this;
     }
 
-    public DocxStamper build() {
-        return new DocxStamper(this);
+    public DocumentEngineDocxStamper build() {
+        return new DocumentEngineDocxStamper(this);
     }
 
     EvaluationContextConfigurer getEvaluationContextConfigurer() {
@@ -106,7 +104,7 @@ public class DocumentEngineDocxStamperConfiguration extends DocxStamperConfigura
         return this.defaultTypeResolver;
     }
 
-    public DocxStamperConfiguration setDefaultTypeResolver(ITypeResolver defaultTypeResolver) {
+    public DocumentEngineDocxStamperConfiguration setDefaultTypeResolver(ITypeResolver defaultTypeResolver) {
         this.defaultTypeResolver = defaultTypeResolver;
         return this;
     }
