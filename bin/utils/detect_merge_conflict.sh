@@ -1,6 +1,6 @@
 #!/bin/bash
 
-modules_array=(docs-core docs-core-dto docs-core-test-dto docs-documentstructure-builder)
+modules_array=(docs-core docs-core-dto docs-core-dto-test docs-documentstructure-builder)
 
 for index in ${!modules_array[*]}
 do

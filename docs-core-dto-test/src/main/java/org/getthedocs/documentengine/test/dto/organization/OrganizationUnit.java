@@ -2,7 +2,7 @@ package org.getthedocs.documentengine.test.dto.organization;
 
 /*-
  * #%L
- * docs-core-test-dto
+ * docs-core-dto-test
  * %%
  * Copyright (C) 2021 Levente Ban
  * %%

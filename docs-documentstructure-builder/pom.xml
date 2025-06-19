@@ -63,7 +63,7 @@
         </dependency>
         <dependency>
             <groupId>org.getthedocs.documentengine</groupId>
-            <artifactId>docs-core-test-dto</artifactId>
+            <artifactId>docs-core-dto-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
