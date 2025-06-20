@@ -16,6 +16,10 @@
         <version>0.1.0</version>
     </parent>
 
+    <properties>
+        <clover.skip>true</clover.skip>
+    </properties>
+
     <dependencies>
 
         <dependency>
