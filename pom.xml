@@ -474,6 +474,11 @@
                             <groupId>org.jacoco</groupId>
                             <artifactId>jacoco-maven-plugin</artifactId>
                             <version>0.8.12</version>
+                            <configuration>
+                                <formats>
+                                    <format>XML</format>
+                                </formats>
+                            </configuration>
                             <executions>
                                 <execution>
                                     <id>prepare-agent</id>
@@ -487,11 +492,6 @@
                                     <goals>
                                         <goal>report</goal>
                                     </goals>
-                                    <configuration>
-                                        <formats>
-                                            <format>XML</format>
-                                        </formats>
-                                    </configuration>
                                 </execution>
 
                             </executions>
