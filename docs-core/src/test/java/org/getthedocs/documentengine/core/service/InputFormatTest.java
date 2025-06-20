@@ -70,7 +70,6 @@ public class InputFormatTest {
         Assert.assertEquals("DOCX", iFormat.getStrValue());
     }
 
-
     @Test
     public void getInputFormatForFileNameNoExtensionTest() {
         try {
@@ -80,4 +79,18 @@ public class InputFormatTest {
         }
     }
 
+    @Test
+    public void isSupportedInputFormatForFileNameTest() throws TemplateProcessException {
+        Assert.assertTrue(InputFormat.isSupportedInputFormatForFileName("myTestFile.docx"));
+    }
+
+    @Test
+    public void isSupportedInputFormatForUnsupportedFileNameTest() throws TemplateProcessException {
+        Assert.assertFalse(InputFormat.isSupportedInputFormatForFileName("myTestFile.docy"));
+    }
+
+    @Test
+    public void isSupportedInputFormatForNullFileNameTest() throws TemplateProcessException {
+        Assert.assertFalse(InputFormat.isSupportedInputFormatForFileName(null));
+    }
 }

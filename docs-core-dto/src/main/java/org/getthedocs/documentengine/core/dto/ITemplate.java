@@ -49,11 +49,18 @@ import java.util.stream.Collectors;
 public interface ITemplate {
   Locale LC_HU = new Locale("hu", "HU");
   String PLACEHOLDER_EMPTY = "................";
+  String PLACEHOLDER_NUMBER_EMPTY = "";
   DateTimeFormatter DATE_FORMAT_DATE = DateTimeFormatter.ofPattern("yyyy.MM.dd");
   DateTimeFormatter DATE_FORMAT_DATETIME = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
   Logger           LOG             = LoggerFactory.getLogger(ITemplate.class);
 
+  /**
+   * Formats an integer value into a localized string representation.
+   *
+   * @param value the integer value to format
+   * @return the formatted string or a placeholder if formatting fails and logs the warning
+   */
   default String fmtN(final Integer value) {
     try {
       final DecimalFormatSymbols dfs = new DecimalFormatSymbols(LC_HU);
@@ -70,22 +77,36 @@ public interface ITemplate {
 
   }
 
+    /**
+     * Formats a double value into a localized string representation with a specified number of decimal places.
+     *
+     * @param value the double value to format
+     * @param m     the number of decimal places
+     * @return the formatted string or a placeholder if formatting fails and logs the warning
+     */
   default String fmtNxM(final Double value, final int m) {
     try {
       final DecimalFormatSymbols dfs = new DecimalFormatSymbols(LC_HU);
       dfs.setDecimalSeparator(',');
       dfs.setGroupingSeparator(' ');
 
-      final DecimalFormat fmt = new DecimalFormat("###,###,##0." + new String(new char[m]).replace('\0', '0'), dfs);
+      final DecimalFormat fmt = new DecimalFormat(m > 0 ? "###,###,###,###,###,###,##0." + new String(new char[m]).replace('\0', '0') : "###,###,###,###,###,###,##0", dfs);
 
       return fmt.format(value);
     } catch (final IllegalArgumentException e) {
       LOG.warn("fmtNxM format error: {}", value, e);
 
-      return "";
+      return PLACEHOLDER_NUMBER_EMPTY;
     }
   }
 
+  /**
+   * Formats an optional double value into a localized string representation with a specified number of decimal places.
+   *
+   * @param value the double value to format
+   * @param m     the number of decimal places
+   * @return the formatted string or a placeholder if formatting fails
+   */
   default String fmtNxMOpc(final Double value, final int m) {
 
     String result;
@@ -93,20 +114,38 @@ public interface ITemplate {
     if (value != null) {
       result = fmtNxM(value, m);
     } else {
-      result = "";
+      result = PLACEHOLDER_NUMBER_EMPTY;
     }
 
     return result;
   }
 
+  /**
+   * Only for compatibility reason to avoid data type issues on context objects.
+   *
+   * @param value the string value to format
+   * @return the input value as a string
+   */
   default String fmtN(final String value) {
     return value;
   }
 
+  /**
+   * Only for compatibility reason to avoid data type issues on context objects.
+   *
+   * @param value the string value to format
+   * @return the input value as a string
+   */
   default String fmtNxM(final String value) {
-    return value;
+    return fmtNxM(Double.valueOf(value), 0);
   }
 
+  /**
+   * Formats an optional number as a string into a localized string representation.
+   *
+   * @param value the string value to format
+   * @return the formatted string or a placeholder if formatting fails
+   */
   default String fmtNxMOpc(final String value) {
 
     String result;
@@ -114,7 +153,7 @@ public interface ITemplate {
     if (value != null) {
       result = fmtNxM(value);
     } else {
-      result = "";
+      result = PLACEHOLDER_NUMBER_EMPTY;
     }
 
     return result;
