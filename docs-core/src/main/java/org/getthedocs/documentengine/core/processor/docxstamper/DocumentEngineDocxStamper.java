@@ -37,8 +37,13 @@ import io.reflectoring.docxstamper.replace.typeresolver.DateResolver;
 import io.reflectoring.docxstamper.replace.typeresolver.FallbackResolver;
 import io.reflectoring.docxstamper.replace.typeresolver.image.Image;
 import io.reflectoring.docxstamper.replace.typeresolver.image.ImageResolver;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.getthedocs.documentengine.core.processor.docxstamper.el.JsonExpressionResolver;
+import org.getthedocs.documentengine.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository;
+import org.getthedocs.documentengine.core.service.exception.TemplateServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,6 +52,10 @@ import java.util.Map;
 
 public class DocumentEngineDocxStamper<T> {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentEngineDocxStamper.class);
 
     private PlaceholderReplacer<T> placeholderReplacer;
 
@@ -146,7 +155,7 @@ public class DocumentEngineDocxStamper<T> {
      * @param out         the output stream in which to write the resulting .docx document.
      * @throws DocxStamperException in case of an error.
      */
-    public void stamp(WordprocessingMLPackage document, T contextRoot, OutputStream out) throws DocxStamperException {
+     void stamp(WordprocessingMLPackage document, T contextRoot, OutputStream out) throws DocxStamperException {
         try {
             ProxyBuilder<T> proxyBuilder = addCustomInterfacesToContextRoot(contextRoot, this.config.getExpressionFunctions());
             replaceExpressions(document, proxyBuilder);

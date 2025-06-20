@@ -80,10 +80,6 @@ public class DocumentEngineDocxStamperConfiguration {
         return this;
     }
 
-    public DocumentEngineDocxStamper build() {
-        return new DocumentEngineDocxStamper(this);
-    }
-
     EvaluationContextConfigurer getEvaluationContextConfigurer() {
         return this.evaluationContextConfigurer;
     }
