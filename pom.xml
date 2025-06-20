@@ -428,6 +428,7 @@
                                 <exclude>**/api/configuration/*.java</exclude>
                                 <exclude>**/ServiceApplication.java</exclude>
                                 <exclude>**/api/model/*.java</exclude>
+                                <exclude>**/src/test/**/*.java</exclude>
                             </excludes>
                         </configuration>
                         <executions>
