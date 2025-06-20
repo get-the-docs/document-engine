@@ -119,6 +119,15 @@ jobs:
           path: '**/*.xml'                  # Path to test results (inside artifact .zip)
           reporter: java-junit              # Format of test results
 
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
       - name: Maven site
         run: mvn -B verify site --file pom.xml -Dspring.profiles.active=local
 
