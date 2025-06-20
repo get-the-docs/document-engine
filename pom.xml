@@ -74,6 +74,7 @@
         <sonar.organization>get-the-docs</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>get-the-docs_document-engine</sonar.projectKey>
+        <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/docs-coverage-info/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <logback.version>1.5.13</logback.version>
     </properties>
 
@@ -128,7 +129,8 @@
         <module>docs-core</module>
         <module>docs-core-dto-test</module>
         <module>docs-documentstructure-builder</module>
-        <!--module>docs-generator-api</module-->
+        <module>docs-generator-api</module>
+        <module>docs-coverage-info</module>
     </modules>
 
     <build>
@@ -333,7 +335,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -485,27 +487,17 @@
                                     <goals>
                                         <goal>report</goal>
                                     </goals>
+                                    <configuration>
+                                        <formats>
+                                            <format>XML</format>
+                                        </formats>
+                                    </configuration>
                                 </execution>
+
                             </executions>
                         </plugin>
                     </plugins>
                 </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
-                        <executions>
-                            <execution>
-                                <id>report-aggregate</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>report-aggregate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
             </build>
         </profile>
         <profile>

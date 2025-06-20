@@ -51,9 +51,9 @@ public class RFC3339DateFormat extends DateFormat {
 
   /**
    * Date parses the input string and converts to date.
-   * 
+   *
    * @param source source string.
-   * @param pos parse position.
+   * @param pos    parse position.
    */
   @Override
   public Date parse(String source, ParsePosition pos) {
@@ -62,23 +62,14 @@ public class RFC3339DateFormat extends DateFormat {
 
   /**
    * Date format.
-   * 
-   * @param date the input date.
-   * @param toAppendTo StringBuffer to append to. 
+   *
+   * @param date          the input date.
+   * @param toAppendTo    StringBuffer to append to.
    * @param fieldPosition field position.
    * @return the converted string in a StringBuffer.
    */
   @Override
   public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
     return fmt.format(date, toAppendTo, fieldPosition);
-  }
-
-  /**
-   * Clone.
-   * @return the cloned object.
-   */
-  @Override
-  public Object clone() {
-    return this;
   }
 }
