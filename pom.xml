@@ -126,8 +126,6 @@
     <modules>
         <module>docs-core-api</module>
         <module>docs-core</module>
-        <module>docs-documentstructure-builder</module>
-        <module>docs-coverage-info</module>
     </modules>
 
     <build>
