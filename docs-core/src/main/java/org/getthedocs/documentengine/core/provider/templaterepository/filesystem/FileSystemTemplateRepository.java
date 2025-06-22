@@ -35,10 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -46,7 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * File system based template repository implementation.
+ * File-system-based template repository implementation.
  * @author Levente Ban
  */
 public class FileSystemTemplateRepository implements TemplateRepository {
@@ -59,7 +56,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     /**
      * Configuration property key in the system properties (see document-engine.properties).
      */
-    private static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
+    public static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
 
     /**
      * The current basedir.
@@ -96,7 +93,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
                 LOGGER.error("Could not initialize template repository. " + msg, ex);
                 throw new TemplateServiceConfigurationException("833e27f3-6813-43f5-aafd-cd511aca3ae0", msg);
             }
-        } catch (final IOException e) {
+        } catch (final InvalidPathException | IOException e) {
             final String msg = "Invalid template path";
             LOGGER.error("Could not initialize template repository. " + msg, e);
             throw new TemplateServiceConfigurationException("9bd97feb-1387-40f3-bc82-01961e26bf5f", msg);
