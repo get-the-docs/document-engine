@@ -20,14 +20,18 @@ package org.getthedocs.documentengine.core.service.exception;
  * #L%
  */
 
+import java.io.Serial;
+
 /**
  * Template repository indicated exception to template not found.
  * @author Levente Ban
  */
 public class TemplateNotFoundException extends TemplateProcessException {
 
+    @Serial
+    private static final long serialVersionUID = -7114326772390959128L;
     /**
-     * Initializer with given error code and message. 
+     * Initializer with the given error code and message.
      * @param errorCode the error code. 
      * @param message the error message.
      */
