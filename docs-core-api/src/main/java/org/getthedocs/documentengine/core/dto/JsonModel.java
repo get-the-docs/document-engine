@@ -22,7 +22,6 @@ package org.getthedocs.documentengine.core.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
 

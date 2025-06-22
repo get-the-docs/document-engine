@@ -125,9 +125,7 @@
 
     <modules>
         <module>docs-core-api</module>
-        <module>docs-core-dto</module>
         <module>docs-core</module>
-        <module>docs-core-dto-test</module>
         <module>docs-documentstructure-builder</module>
         <module>docs-coverage-info</module>
     </modules>

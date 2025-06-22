@@ -55,17 +55,7 @@
             <groupId>org.getthedocs.documentengine</groupId>
             <artifactId>docs-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.getthedocs.documentengine</groupId>
-            <artifactId>docs-core-dto</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.getthedocs.documentengine</groupId>
-            <artifactId>docs-core-dto-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
