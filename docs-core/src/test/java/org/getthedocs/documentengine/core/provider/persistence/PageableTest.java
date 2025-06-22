@@ -23,6 +23,8 @@ package org.getthedocs.documentengine.core.provider.persistence;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
+
 public class PageableTest {
 
   @Test
@@ -38,4 +40,17 @@ public class PageableTest {
 
   }
 
+    @Test
+    public void testToStringMethod() {
+        final var p = new Pageable();
+        p.setPage(1);
+        p.setSize(20);
+        p.setOffset(0);
+        p.setPaged(true);
+        p.setSort(List.of("name,asc", "date,desc"));
+
+        final String expected = "{ page='1', size='20', offset='0', paged='true', sort='[name,asc, date,desc]'}";
+
+        Assert.assertEquals(expected, p.toString());
+    }
 }

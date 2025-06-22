@@ -24,6 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import io.reflectoring.docxstamper.DocxStamper;
+import io.reflectoring.docxstamper.api.UnresolvedExpressionException;
+import org.getthedocs.documentengine.core.processor.docxstamper.DocumentEngineDocxStamper;
+import org.getthedocs.documentengine.core.processor.docxstamper.DocumentEngineDocxStamperConfiguration;
 import org.getthedocs.documentengine.core.processor.input.InputTemplateProcessor;
 import org.getthedocs.documentengine.core.processor.input.PlaceholderEvalException;
 import org.getthedocs.documentengine.core.service.InputFormat;
@@ -31,10 +35,7 @@ import org.getthedocs.documentengine.core.service.exception.TemplateNotFoundExce
 import org.getthedocs.documentengine.core.processor.AbstractTemplateProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wickedsource.docxstamper.DocxStamperConfiguration;
 
-import org.wickedsource.docxstamper.JsonDocxStamper;
-import org.wickedsource.docxstamper.api.UnresolvedExpressionException;
 
 /**
  * Docx input template processor based on the docx stamper library. See
@@ -72,8 +73,8 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
 
     OutputStream result = null;
 
-    final DocxStamperConfiguration config = new DocxStamperConfiguration();
-    final JsonDocxStamper<T> stamper = new JsonDocxStamper<>(config);
+    final DocumentEngineDocxStamperConfiguration config = new DocumentEngineDocxStamperConfiguration();
+    final DocumentEngineDocxStamper<T> stamper = new DocumentEngineDocxStamper<>(config);
 
     try (final InputStream templateFile = getTemplate(templateFileName)) {
 

@@ -23,8 +23,10 @@ package org.getthedocs.documentengine.core.provider.documentstructure.builder.ya
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.getthedocs.documentengine.core.documentstructure.descriptors.DocumentStructureOptions;
 import org.getthedocs.documentengine.core.documentstructure.descriptors.OptionalTemplateElement;
+import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
 import org.getthedocs.documentengine.core.service.exception.TemplateServiceConfigurationException;
 import org.getthedocs.documentengine.core.provider.documentstructure.builder.DocumentStructureOptionsBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -43,11 +45,10 @@ public class YmlConfigurableDocStructureBuilder extends YmlDocStructureBuilder i
     public DocumentStructureOptions buildOptions(final InputStream dsConfig) throws TemplateServiceConfigurationException {
 
         DocumentStructureOptions result;
-        SimpleModule module = new SimpleModule();
+        final SimpleModule module = new SimpleModule();
         module.addDeserializer(OptionalTemplateElement.class, new OptionalTemplateElementDeserializer());
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final ObjectMapper mapper = ObjectMapperFactory.yamlMapper(module);
 
-        mapper.registerModule(module);
         try {
             if (dsConfig == null) {
                 throw new FileNotFoundException();

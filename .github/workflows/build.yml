@@ -42,7 +42,7 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-            !~/.m2/repository/net/videki/**
+            !~/.m2/repository/org/getthedocs/**
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
@@ -71,13 +71,21 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-            !~/.m2/repository/net/videki/**
+            !~/.m2/repository/org/getthedocs/**
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
       - name: Maven verify
         run: mvn -B verify --file pom.xml -Dspring.profiles.active=local
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            **/target/surefire-reports/TEST-*.xml
+            **/target/failsafe-reports/TEST-*.xml
 
 #      - name: Test Reporting
 #        uses: phoenix-actions/test-reporting@v10
@@ -87,45 +95,98 @@ jobs:
 #          reporter: java-junit
 #          fail-on-error: true
 
-  analyze_job:
-    name: Code analysis
+  test_report_job:
+    name: Create test reports
     needs:
-      - build_job
-      - test_job
+    - build_job
+    - test_job
+
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Rebuild local Maven repository from cache
+        uses: actions/cache@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - uses: dorny/test-reporter@v2
+        with:
+          artifact: test-results            # artifact name
+          name: Tests                       # Name of the check run which will be created
+          path: '**/*.xml'                  # Path to test results (inside artifact .zip)
+          reporter: java-junit              # Format of test results
+
+      - name: Git checkout
+        uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available.
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Maven site
+        run: mvn -B verify site --file pom.xml -Dspring.profiles.active=local
+
+      - name: Upload site
+        uses: actions/upload-artifact@v4
         with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v4
+          name: site
+          path: '**/target/site/**'
+
+  coverage_job:
+    name: Coverage check
+    needs:
+      - test_job
+    runs-on: ubuntu-latest
+    environment: ci
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+          distribution: 'microsoft'
+          java-version: '17'
+
+      #      - name: Rebuild local Maven repository from cache
+      #        uses: actions/cache@v3
+      #        with:
+      #          path: |
+      #            ~/.m2/repository
+      #            !~/.m2/repository/net/videki/**
+      #          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+      #          restore-keys: |
+      #            ${{ runner.os }}-maven-
+
+      - name: Maven verify
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=get-the-docs_document-engine -Dspring.profiles.active=local
+        run: mvn -B verify --file pom.xml -Dspring.profiles.active=local -Pcoverage
+
+      - name: Run Clover coverage and upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          name: document-engine
+        #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        #    files: ./coverage1.xml,./coverage2.xml # optional
+        #    flags: unittests # optional
+        #    fail_ci_if_error: true # optional (default = false)
+        #    verbose: true # optional (default = false)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   docker_build_job:
-    name: Containerize
+    name: Containerize docs-generator-api
     needs:
-      - analyze_job
+      - test_job
+      - coverage_job
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -148,7 +209,7 @@ jobs:
         with:
           path: |
             ~/.m2/repository
-            !~/.m2/repository/net/videki/**
+            !~/.m2/repository/org/getthedocs/**
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
@@ -156,16 +217,16 @@ jobs:
       - name: Maven build
         run: mvn -B package --file pom.xml -DskipTests=true
 
-#      - name: Build the Docker image
-#        working-directory: ./docs-generator-api
-#        run: docker build -t ${{ env.API_DOCKER_REGISTRY }}/${{ env.API_DOCKER_IMAGE_NAME }} --file Dockerfile .
+      #      - name: Build the Docker image
+      #        working-directory: ./docs-generator-api
+      #        run: docker build -t ${{ env.API_DOCKER_REGISTRY }}/${{ env.API_DOCKER_IMAGE_NAME }} --file Dockerfile .
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-                
+
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -186,7 +247,7 @@ jobs:
         with:
           context: ./docs-generator-api
           push: true
-#          push: ${{ github.event_name != 'pull_request' }}
+          #          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -198,7 +259,7 @@ jobs:
       - name: Generate Trivy Vulnerability Report
         uses: aquasecurity/trivy-action@0.30.0
         with:
-#          image-ref: '${{ steps.meta.outputs.tags }}'
+          #          image-ref: '${{ steps.meta.outputs.tags }}'
           scan-type: "fs"
           output: trivy-report.json
           format: json

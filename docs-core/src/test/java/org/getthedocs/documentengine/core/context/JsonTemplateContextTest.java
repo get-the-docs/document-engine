@@ -25,6 +25,7 @@ import org.getthedocs.documentengine.core.context.dto.JsonValueObject;
 import org.getthedocs.documentengine.core.service.exception.TemplateServiceRuntimeException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.expression.spel.SpelEvaluationException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -195,7 +196,7 @@ public class JsonTemplateContextTest {
 
     }
 
-    @Test(expected = TemplateServiceRuntimeException.class)
+    @Test(expected = SpelEvaluationException.class)
     public void evalJsonPathNonexistingPath() {
         final var ctx = new JsonTemplateContext(this.jsonDataMultiContext);
 

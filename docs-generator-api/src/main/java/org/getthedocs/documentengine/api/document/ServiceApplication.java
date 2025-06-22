@@ -21,12 +21,14 @@ package org.getthedocs.documentengine.api.document;
  */
 
 import com.fasterxml.jackson.databind.Module;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
@@ -35,6 +37,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Levente Ban
  */
 @EnableAsync
+@OpenAPIDefinition
+@ComponentScan(basePackages = {"org.getthedocs.documentengine.core", "org.getthedocs.documentengine.api.document"})
 @SpringBootApplication
 public class ServiceApplication implements CommandLineRunner {
 

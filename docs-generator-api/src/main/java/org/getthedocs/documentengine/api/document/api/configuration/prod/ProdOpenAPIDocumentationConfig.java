@@ -36,7 +36,6 @@ import org.springframework.context.annotation.*;
  *   @author Levente Ban
  */
 @Profile(ServiceApplication.Profiles.PROD)
-@Configuration
 @PropertySources({@PropertySource("classpath:application.yml")})
 public class ProdOpenAPIDocumentationConfig {
 
@@ -48,7 +47,6 @@ public class ProdOpenAPIDocumentationConfig {
 
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String resourceServerUrl;
-
 
     /**
      * Api info.
