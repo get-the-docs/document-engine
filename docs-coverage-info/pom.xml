@@ -38,11 +38,6 @@
             <artifactId>docs-documentstructure-builder</artifactId>
             <version>0.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.getthedocs.documentengine</groupId>
-            <artifactId>docs-generator-api</artifactId>
-            <version>0.1.0</version>
-        </dependency>
 
     </dependencies>
     <build>
@@ -50,6 +45,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>

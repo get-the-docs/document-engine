@@ -15,10 +15,6 @@ on:
       - 'pom.xml'
   workflow_dispatch:
 
-env:
-  API_DOCKER_REGISTRY: ghcr.io
-  API_DOCKER_IMAGE_NAME: ${{ github.repository_owner }}/docs-generator-api
-
 permissions:
   pull-requests: read # allows SonarCloud to decorate PRs with analysis results
 
@@ -87,13 +83,6 @@ jobs:
             **/target/surefire-reports/TEST-*.xml
             **/target/failsafe-reports/TEST-*.xml
 
-#      - name: Test Reporting
-#        uses: phoenix-actions/test-reporting@v10
-#        with:
-#          name: JUnit tests
-#          path: ${{ github.workspace }}/**/target/surefire-reports/TEST-*.xml
-#          reporter: java-junit
-#          fail-on-error: true
 
   test_report_job:
     name: Create test reports
@@ -181,107 +170,3 @@ jobs:
         #    verbose: true # optional (default = false)
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  docker_build_job:
-    name: Containerize docs-generator-api
-    needs:
-      - test_job
-      - coverage_job
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
-      packages: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'microsoft'
-          java-version: '17'
-
-      - name: Rebuild local Maven repository from cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/org/getthedocs/**
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Maven build
-        run: mvn -B package --file pom.xml -DskipTests=true
-
-      #      - name: Build the Docker image
-      #        working-directory: ./docs-generator-api
-      #        run: docker build -t ${{ env.API_DOCKER_REGISTRY }}/${{ env.API_DOCKER_IMAGE_NAME }} --file Dockerfile .
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.API_DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v2
-        with:
-          images: ${{ env.API_DOCKER_REGISTRY }}/${{ env.API_DOCKER_IMAGE_NAME }}
-          tags: |
-            type=sha
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: ./docs-generator-api
-          push: true
-          #          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Pull back the Docker image for the Trivy scan
-        working-directory: ./docs-generator-api
-        run: docker pull ${{ steps.meta.outputs.tags }}
-
-      # The first call to the action will invoke setup-trivy and install trivy
-      - name: Generate Trivy Vulnerability Report
-        uses: aquasecurity/trivy-action@0.30.0
-        with:
-          #          image-ref: '${{ steps.meta.outputs.tags }}'
-          scan-type: "fs"
-          output: trivy-report.json
-          format: json
-          scan-ref: .
-          exit-code: 0
-
-      - name: Upload Vulnerability Scan Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-report
-          path: trivy-report.json
-          retention-days: 30
-
-#      - name: Fail build on High/Criticial Vulnerabilities
-#        uses: aquasecurity/trivy-action@0.30.0
-#        with:
-#          scan-type: "fs"
-#          format: table
-#          scan-ref: .
-#          severity: HIGH,CRITICAL
-#          ignore-unfixed: true
-#          exit-code: 1
-#          # On a subsequent call to the action we know trivy is already installed so can skip this
-#          skip-setup-trivy: true
-
