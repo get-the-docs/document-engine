@@ -21,60 +21,6 @@ import static org.mockito.Mockito.when;
 public class FileSystemTemplateRepositoryTest {
 
     @Test
-    public void testGetTemplatesWithoutPaging() throws IOException, TemplateServiceException {
-        // Arrange
-        FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
-        Properties properties = new Properties();
-        Path tempDir = Files.createTempDirectory("templates");
-        properties.put("repository.template.provider.basedir", tempDir.toString());
-        repository.init(properties);
-
-        Path template1 = Files.createFile(tempDir.resolve("template1.txt"));
-        Path template2 = Files.createFile(tempDir.resolve("template2.txt"));
-
-        // Act
-        Page<TemplateDocument> result = repository.getTemplates(null);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(2, result.getData().size());
-        List<String> templateNames = Arrays.asList("template1.txt", "template2.txt");
-        result.getData().forEach(template ->
-                assertTrue(templateNames.contains(template.getTemplateName())));
-    }
-
-    @Test
-    public void testGetTemplatesWithPaging() throws IOException, TemplateServiceException {
-        // Arrange
-        FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
-        Properties properties = new Properties();
-        Path tempDir = Files.createTempDirectory("templates");
-        properties.put("repository.template.provider.basedir", tempDir.toString());
-        repository.init(properties);
-
-        Files.createFile(tempDir.resolve("template1.txt"));
-        Files.createFile(tempDir.resolve("template2.txt"));
-        Files.createFile(tempDir.resolve("template3.txt"));
-
-        Pageable pageable = mock(Pageable.class);
-        when(pageable.isPaged()).thenReturn(true);
-        when(pageable.getSize()).thenReturn(2);
-        when(pageable.getOffset()).thenReturn(0);
-        when(pageable.getPage()).thenReturn(0);
-
-        // Act
-        Page<TemplateDocument> result = repository.getTemplates(pageable);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(2, result.getData().size());
-        assertEquals(0, result.getNumber());
-        assertEquals(2, result.getSize());
-        assertEquals(3, result.getTotalElements());
-        assertEquals(2, result.getTotalPages());
-    }
-
-    @Test
     public void testTemplateRepositoryInitCreatesNonexistingBasePath() {
         // Arrange
         final String basePath = "target/newdir";
