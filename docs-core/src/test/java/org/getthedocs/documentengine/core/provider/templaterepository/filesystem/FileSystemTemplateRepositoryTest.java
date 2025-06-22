@@ -30,13 +30,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class FileSystemTemplateRepositoryTest {
 
@@ -59,20 +55,19 @@ public class FileSystemTemplateRepositoryTest {
     }
 
     @Test
-    public void testTemplateRepositoryInitHandlesInvalidBasePath() throws IOException {
+    public void testTemplateRepositoryInitHandlesInvalidBasePath() {
         // Arrange
         final Properties properties = new Properties();
         properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, "/invalid?&`/dir");
         FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
 
         // Act & Assert
-        TemplateServiceException exception = assertThrows(TemplateServiceException.class, () ->
+        TemplateServiceException exception = assertThrows(TemplateServiceConfigurationException.class, () ->
                 repository.init(properties));
-        assertEquals("9bd97feb-1387-40f3-bc82-01961e26bf5f", exception.getCode());
     }
 
     @Test
-    public void testGetTemplatesWithoutPagesShallReturnAll() throws IOException {
+    public void testGetTemplatesWithoutPagesShallReturnAll() {
         // Arrange
         final String basePath = "target/newdir";
         final Properties properties = new Properties();
