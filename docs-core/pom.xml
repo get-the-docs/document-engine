@@ -226,11 +226,6 @@
             <artifactId>docs-core-api</artifactId>
             <version>0.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.getthedocs.documentengine</groupId>
-            <artifactId>docs-core-dto-test</artifactId>
-            <version>0.1.0</version>
-        </dependency>
 
     </dependencies>
 
