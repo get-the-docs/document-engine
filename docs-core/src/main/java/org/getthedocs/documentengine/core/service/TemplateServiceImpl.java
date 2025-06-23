@@ -630,6 +630,11 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
+    /**
+     * Returns an input stream for the given output stream.
+     * @param out the output stream.
+     * @return the input stream.
+     */
     protected static InputStream getInputStream(final OutputStream out) {
         return new ByteArrayInputStream(((ByteArrayOutputStream) out).toByteArray());
 

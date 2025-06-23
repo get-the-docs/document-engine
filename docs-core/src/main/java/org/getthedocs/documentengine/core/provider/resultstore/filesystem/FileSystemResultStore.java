@@ -97,13 +97,21 @@ public class FileSystemResultStore extends FilesystemProvider implements ResultS
 
                 LOGGER.info("Result store repository did not exist, created.");
             } catch (final IOException ex) {
-                final String msg = "Cannot create result store path";
-                LOGGER.error("Could not initialize result store. " + msg, ex);
+                final String msg = "Could not initialize result store: Cannot create result store path.";
+                LOGGER.error(msg);
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(msg, ex);
+                }
+
                 throw new TemplateServiceConfigurationException("b27ff1a0-2554-4d7c-b1f2-b8663fe00f92", msg);
             }
         } catch (final IOException e) {
-            final String msg = "Invalid result store path";
-            LOGGER.error("Could not initialize result store. " + msg, e);
+            final String msg = "Could not initialize result store: Invalid result store path.";
+            LOGGER.error(msg, e);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
+
             throw new TemplateServiceConfigurationException("748c6766-3211-45d2-b9a2-8fc745ca613e", msg);
         }
     }
@@ -180,12 +188,20 @@ public class FileSystemResultStore extends FilesystemProvider implements ResultS
 
             actSuccessFlag = true;
         } catch (IOException e) {
-            LOGGER.error("Error saving the result file.", e);
+            final String msg = "Error saving the result file.";
+            LOGGER.error(msg, e);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
         } finally {
             try {
                 resultDocument.getContent().close();
             } catch (IOException e) {
-                LOGGER.error("Error closing the result file.", e);
+                final String msg = "Error closing the result file.";
+                LOGGER.error(msg);
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(msg, e);
+                }
             }
         }
 
@@ -257,8 +273,12 @@ public class FileSystemResultStore extends FilesystemProvider implements ResultS
         } catch (final NoSuchFileException e) {
             return Optional.empty();
         } catch (final IOException e) {
-            final String msg = String.format("Error retrieving the result documents - baseDir: [{}]", getBasePath());
-            LOGGER.error(msg, e);
+            final String msg = String.format("Error retrieving the result documents - baseDir: [%s]", getBasePath());
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
+
 
             throw new TemplateServiceException("402713ce-9c2e-48b0-a910-ab92d0cc87fa", msg);
         }
@@ -321,6 +341,7 @@ public class FileSystemResultStore extends FilesystemProvider implements ResultS
      * @param transactionId  the transaction id.
      * @param resultDocument the document name.
      * @return the document as stream if found.
+     * @throws TemplateServiceConfigurationException thrown in case of a query error.
      */
     public InputStream getDocumentBinary(final String transactionId, final String resultDocument) throws TemplateServiceConfigurationException {
         InputStream result;

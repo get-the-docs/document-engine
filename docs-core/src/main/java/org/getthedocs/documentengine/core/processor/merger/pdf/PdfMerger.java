@@ -76,7 +76,11 @@ public class PdfMerger implements OutputMerger {
             pdfMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
             pdfMerger.setDestinationStream(result);
         } catch (final IOException e) {
-            LOGGER.error("Error on pdf concatenation: ", e);
+            final String msg = "Error on pdf concatenation. ";
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             result = null;
         }

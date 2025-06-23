@@ -25,25 +25,66 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * Copy of the DocxStamper class from the docx-stamper library to add JSON placeholder capabilities.
+ */
+
 public class DocumentEngineDocxStamper<T> {
 
+    /**
+     * @link io.reflectoring.docxstamper.api.DocxStamper#placeholderReplacer
+     */
     private PlaceholderReplacer<T> placeholderReplacer;
 
+    /**
+     * @link io.reflectoring.docxstamper.api.DocxStamper#commentProcessorRegistry
+     */
     private CommentProcessorRegistry commentProcessorRegistry;
 
+    /**
+     * @link io.reflectoring.docxstamper.api.DocxStamper#typeResolverRegistry
+     */
     private TypeResolverRegistry typeResolverRegistry;
 
+    /**
+     * @link io.reflectoring.docxstamper.api.DocxStamper#proxyBuilder
+     */
     private DocumentEngineDocxStamperConfiguration config = new DocumentEngineDocxStamperConfiguration();
 
+    /**
+     * @link io.reflectoring.docxstamper.api.DocxStamper#proxyBuilder
+     */
+    @SuppressWarnings("rawtypes")
+    private ProxyBuilder proxyBuilder = new ProxyBuilder();
+
+    /**
+     * @see io.reflectoring.docxstamper.DocxStamper
+     */
     public DocumentEngineDocxStamper() {
         initFields();
     }
 
+    /**
+     * @see io.reflectoring.docxstamper.DocxStamper
+     * @param config the configuration to use
+     */
     public DocumentEngineDocxStamper(DocumentEngineDocxStamperConfiguration config) {
         this.config = config;
         initFields();
     }
 
+    /**
+     * @see io.reflectoring.docxstamper.DocxStamper
+     * @param proxyBuilder the proxy builder class to use
+     */
+    public DocumentEngineDocxStamper(ProxyBuilder proxyBuilder) {
+        this.proxyBuilder = proxyBuilder;
+        initFields();
+    }
+
+    /**
+     * @link io.reflectoring.docxstamper.DocxStamper#initFields
+     */
     private void initFields() {
         typeResolverRegistry = new TypeResolverRegistry(new FallbackResolver());
         typeResolverRegistry.registerTypeResolver(Image.class, new ImageResolver());
@@ -73,37 +114,11 @@ public class DocumentEngineDocxStamper<T> {
     }
 
     /**
-     * <p>
-     * Reads in a .docx template and "stamps" it into the given OutputStream, using the specified context object to
-     * fill out any expressions it finds.
-     * </p>
-     * <p>
-     * In the .docx template you have the following options to influence the "stamping" process:
-     * </p>
-     * <ul>
-     * <li>Use expressions like ${name} or ${person.isOlderThan(18)} in the template's text. These expressions are resolved
-     * against the contextRoot object you pass into this method and are replaced by the results.</li>
-     * <li>Use comments within the .docx template to mark certain paragraphs to be manipulated. </li>
-     * </ul>
-     * <p>
-     * Within comments, you can put expressions in which you can use the following methods by default:
-     * </p>
-     * <ul>
-     * <li><em>displayParagraphIf(boolean)</em> to conditionally display paragraphs or not</li>
-     * <li><em>displayTableRowIf(boolean)</em> to conditionally display table rows or not</li>
-     * <li><em>displayTableIf(boolean)</em> to conditionally display whole tables or not</li>
-     * <li><em>repeatTableRow(List&lt;Object&gt;)</em> to create a new table row for each object in the list and resolve expressions
-     * within the table cells against one of the objects within the list.</li>
-     * </ul>
-     * <p>
-     * If you need a wider vocabulary of methods available in the comments, you can create your own ICommentProcessor
-     * and register it via getCommentProcessorRegistry().addCommentProcessor().
-     * </p>
-     *
-     * @param template    the .docx template.
-     * @param contextRoot the context root object against which all expressions found in the template are evaluated.
-     * @param out         the output stream in which to write the resulting .docx document.
-     * @throws DocxStamperException in case of an error.
+     * @see io.reflectoring.docxstamper.DocxStamper#stamp
+     * @param template the input template as an InputStream
+     * @param contextRoot the context root object containing the data to be filled into the template
+     * @param out the output stream to write the filled template to
+     * @throws DocxStamperException thrown if an error occurs during the stamping process
      */
     public void stamp(InputStream template, T contextRoot, OutputStream out) throws DocxStamperException {
         try {
@@ -117,13 +132,11 @@ public class DocumentEngineDocxStamper<T> {
     }
 
     /**
-     * Same as stamp(InputStream, T, OutputStream) except that you may pass in a DOCX4J document as a template instead
-     * of an InputStream.
-     *
-     * @param document    the .docx template.
-     * @param contextRoot the context root object against which all expressions found in the template are evaluated.
-     * @param out         the output stream in which to write the resulting .docx document.
-     * @throws DocxStamperException in case of an error.
+     * @see io.reflectoring.docxstamper.DocxStamper#stamp
+     * @param document the input template as a WordprocessingMLPackage
+     * @param contextRoot the context root object containing the data to be filled into the template
+     * @param out the output stream to write the filled template to
+     * @throws DocxStamperException thrown if an error occurs during the stamping process
      */
      void stamp(WordprocessingMLPackage document, T contextRoot, OutputStream out) throws DocxStamperException {
         try {
@@ -141,6 +154,12 @@ public class DocumentEngineDocxStamper<T> {
         }
     }
 
+    /**
+     * @see io.reflectoring.docxstamper.DocxStamper#addCustomInterfacesToContextRoot
+     * @param contextRoot the context root object containing the data to be filled into the template
+     * @param interfacesToImplementations the implementations of the custom resolver interfaces
+     * @return the proxy builder with the custom resolver interfaces added to the context root
+     */
     private ProxyBuilder<T> addCustomInterfacesToContextRoot(T contextRoot, Map<Class<?>, Object> interfacesToImplementations) {
         ProxyBuilder<T> proxyBuilder = new ProxyBuilder<T>()
                 .withRoot(contextRoot);
@@ -155,14 +174,27 @@ public class DocumentEngineDocxStamper<T> {
         return proxyBuilder;
     }
 
+    /**
+     * @see io.reflectoring.docxstamper.DocxStamper#replaceExpressions
+     * @param document the input template as a WordprocessingMLPackage
+     * @param proxyBuilder the proxy builder with the custom resolver interfaces added to the context root
+     */
     private void replaceExpressions(WordprocessingMLPackage document, ProxyBuilder<T> proxyBuilder) {
         placeholderReplacer.resolveExpressions(document, proxyBuilder);
     }
 
+    /**
+     * @link io.reflectoring.docxstamper.api.DocxStamper#processComments
+     * @param document the input template as a WordprocessingMLPackage
+     * @param proxyBuilder the proxy builder with the custom resolver interfaces added to the context root
+     */
     private void processComments(final WordprocessingMLPackage document, ProxyBuilder<T> proxyBuilder) {
         commentProcessorRegistry.runProcessors(document, proxyBuilder);
     }
 
+    /**
+     * @link io.reflectoring.docxstamper.api.DocxStamper#postProcess
+     */
     private void postProcess() {
         if(placeholderReplacer.isLeaveEmptyOnExpressionError()) {
             placeholderReplacer.applyLeaveEmptyErrorExpressions();

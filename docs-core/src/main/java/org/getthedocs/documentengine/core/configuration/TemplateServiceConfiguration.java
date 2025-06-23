@@ -114,42 +114,154 @@ import org.slf4j.LoggerFactory;
  */
 public class TemplateServiceConfiguration {
 
+    /**
+     * Logger for the TemplateServiceConfiguration class.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
 
+    /**
+     * The singleton instance of the TemplateServiceConfiguration.
+     */
     private static TemplateServiceConfiguration INSTANCE = new  TemplateServiceConfiguration();
 
+    /**
+     * Lock object for the singleton instance.
+     */
     private static final Object LOCKOBJECT = new Object();
 
     // document-engine.properties keys
+    /**
+     * document-engine.properties keys/global - The engine's default locale property key.
+     */
+    public static final String ENGINE_DEFAULT_LOCALE = "locale.default";
+
+    /**
+     * document-engine.properties keys/converter - The font family for a given font.
+     */
     private static final String FONT_FAMILY = "converter.pdf.font-library.font";
+
+    /**
+     * document-engine.properties keys/converter - proprietary font library for PDF conversion.
+     */
     private static final String FONT_DIR = "converter.pdf.font-library.basedir";
+
+    /**
+     * document-engine.properties keys - The config file name to be used for configuration.
+     */
     private static final String CONFIG_FILE_NAME = "document-engine.properties";
+
+    /**
+     * document-engine.properties keys/global - log category to be used when using as a library.
+     */
     private static final String LOG_APPENDER = "common.log.value-logcategory";
 
+    /**
+     * document-engine.properties keys/global - Config file location.
+     */
     private static final String CONFIG_ENV_FILENAME = "configFile";
+
+    /**
+     * document-engine.properties keys/template repository - The template repository provider class to be used.
+     * See the provider's configuration for the available options.
+     */
     private static final String TEMPLATE_REPOSITORY_PROVIDER = "repository.template.provider";
+
+    /**
+     * document-engine.properties keys/document structure repository - The document structure repository provider class to be used.
+     * See the provider's configuration for the available options.
+     */
     private static final String DOCUMENT_STRUCTURE_PROVIDER = "repository.documentstructure.provider";
+
+    /**
+     * document-engine.properties keys/result store repository - The result store repository provider class to be used.
+     * See the provider's configuration for the available options.
+     */
     private static final String RESULT_REPOSITORY_PROVIDER = "repository.result.provider";
+
+    /**
+     * document-engine.properties keys/processors - The list of processors to be used by the engine.
+     * A processor is a class implementing the InputTemplateProcessor interface.
+     * Built-in processors:
+     * @see org.getthedocs.documentengine.core.processor.input.docx.DocxStamperInputTemplateProcessor
+     * @see org.getthedocs.documentengine.core.processor.input.xlsx.JxlsInputTemplateProcessor
+     */
     private static final String PROCESSORS = "processors";
 
+    /**
+     * document-engine.properties keys/global - The property delimiter for the data objects in the placeholders.
+     * The default is "." (dot).
+     */
     private static final String PROPERTY_DELIMITER = ".";
 
+    /**
+     *The system configuration properties.
+     */
     private Properties configurationProperties;
+
+    /**
+     * The document structure repository implementation configured on a successful configuration read.
+     * This is the repository where the document structure descriptors are stored.
+     * For configuration options see the system configuration (document-engine.properties)
+     */
     private DocumentStructureRepository documentStructureRepository;
 
+    /**
+     * The template repository implementation configured on a successful configuration read.
+     * This is the repository where the available raw templates are stored.
+     * For configuration options see the system configuration (document-engine.properties)
+     */
     private TemplateRepository templateRepository;
 
+    /**
+     * The list of the document template processor implementations configured on a successful configuration read.
+     * For configuration options see the system configuration (document-engine.properties)
+     */
     private final List<InputTemplateProcessor> inputProcessors = new LinkedList<>();
 
+    /**
+     * The result store repository implementation configured on a successful configuration read.
+     * This is the repository where the filled and/or converted documents will be stored.
+     * For configuration options see the system configuration (document-engine.properties)
+     */
     private ResultStore resultStore;
 
+    /**
+     * The default locale used by the template service.
+     * This is set to the system default locale if not specified in the configuration.
+     */
+    private Locale defaultLocale = Locale.getDefault();
+
+    /**
+     * The log category used by the template service.
+     * This is set to the TemplateService's logger if not specified in the configuration.
+     */
+    private String logCategory = TemplateService.class.getName();
+
+    /**
+     * The custom fonts if specified by the system configuration to be used on PDF conversion.
+     */
     private final Map<String, Map<FontStyle, FontConfig>> styles = new TreeMap<>();
 
+    /**
+     * The font directory if specified by the system configuration to be used on PDF conversion.
+     */
     private String fontDir;
 
+    /**
+     * The error message when the repository provider is not configured or could not be read.
+     */
     private static final String MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED =
             "<Not configured or could not read properties file>";
+
+    /**
+     * The message when the repository provider is not configured.
+     * In this case the default FileSystemTemplateRepository is used.
+     */
     private static final String MSG_FALLBACK_RESULTSTORE = "using fallback built-in FilesystemResultStore.";
+
+    /**
+     * The error message, when the configuration file could not be read.
+     */
     private static final String MSG_CONFIG_ERROR = "Configuration error.";
 
 
@@ -169,6 +281,7 @@ public class TemplateServiceConfiguration {
         final Properties properties = getConfigurationProperties();
         if (properties != null) {
             try {
+                initGlobalSettings(properties);
                 initFontLibrary(properties);
                 initDocumentStructureRepository(properties);
                 initTemplateRepository(properties);
@@ -184,6 +297,10 @@ public class TemplateServiceConfiguration {
         }
     }
 
+    /**
+     * Returns the actual configuration properties.
+     * @return the configuration properties.
+     */
     Properties getConfigurationProperties() {
         final Properties properties = new Properties();
         try {
@@ -215,7 +332,30 @@ public class TemplateServiceConfiguration {
     }
 
     /**
-     * Initialzes the custom fonts for pdf conversion.
+     * Initializes the global settings for the template service.
+     * @param properties the configuration properties (see config file - document-engine.properties).
+     */
+    private void initGlobalSettings(final Properties properties) {
+        if (properties != null && !properties.isEmpty()) {
+            final String defaultLocale = (String) properties.get(ENGINE_DEFAULT_LOCALE);
+            if (StringUtils.isNotEmpty(defaultLocale)) {
+                Locale locale = Locale.forLanguageTag(defaultLocale);
+                Locale.setDefault(locale);
+                this.defaultLocale = locale;
+
+                final String msg = String.format("Default locale set to: %s", defaultLocale);
+                LOGGER.info(msg);
+            } else {
+                final String msg = String.format("No default locale specified, using system default: %s", Locale.getDefault());
+                LOGGER.warn(msg);
+            }
+        } else {
+            LOGGER.warn("No properties provided, using system defaults.");
+        }
+    }
+
+    /**
+     * Initializes the custom fonts for PDF conversion.
      * @param properties System properties (see config file - document-engine.properties).
      */
     private void initFontLibrary(final Properties properties) {
@@ -249,6 +389,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Initializes the document structure repository for the implementation class configured in the configuration parameters.
+     * @param properties System properties (see config file - document-engine.properties).
      */
     private void initDocumentStructureRepository(final Properties properties) {
         String repositoryProvider = MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED;
@@ -271,12 +412,18 @@ public class TemplateServiceConfiguration {
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException e) {
             final String msg = String.format("Error loading document structure repository: %s, "
                     + MSG_FALLBACK_RESULTSTORE, repositoryProvider);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             this.templateRepository = new FileSystemTemplateRepository();
         } catch (final TemplateServiceConfigurationException e) {
             final String msg = MSG_CONFIG_ERROR;
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceRuntimeException(msg);
         } catch (InvocationTargetException e) {
@@ -286,6 +433,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Initializes the template repository for the implementation class configured in the configuration parameters.
+     * @param properties System properties (see config file - document-engine.properties).
      */
     private void initTemplateRepository(final Properties properties) {
         String repositoryProvider = MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED;
@@ -309,12 +457,18 @@ public class TemplateServiceConfiguration {
         } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading template repository: %s, "
                     + MSG_FALLBACK_RESULTSTORE, repositoryProvider);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             this.templateRepository = new FileSystemTemplateRepository();
         } catch (final TemplateServiceConfigurationException e) {
             final String msg = MSG_CONFIG_ERROR;
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceRuntimeException(msg);
         }
@@ -322,6 +476,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Initializes the result store repository for the implementation class configured in the configuration parameters.
+     * @param properties System properties (see config file - document-engine.properties).
      */
     private void initResultStore(final Properties properties) {
         String repositoryProvider = MSG_ERROR_REPOSITORYPROVIDER_NOT_CONFIGURED;
@@ -347,10 +502,16 @@ public class TemplateServiceConfiguration {
                 NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading result store repository: %s, " +
                     "using fallback built-in FilesystemResultStore.", repositoryProvider);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
         } catch (final TemplateServiceConfigurationException e) {
             final String msg = MSG_CONFIG_ERROR;
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceRuntimeException(msg);
         }
@@ -358,6 +519,7 @@ public class TemplateServiceConfiguration {
 
     /**
      * Initializes the document processor the implementation classes configured in the configuration parameters.
+     * @param properties System properties (see config file - document-engine.properties).
      */
     private void initProcessors(final Properties properties) {
         try {
@@ -388,29 +550,14 @@ public class TemplateServiceConfiguration {
         } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException |
                 NoSuchMethodException | InvocationTargetException e) {
             final String msg = String.format("Error loading template processors. %s", e);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceRuntimeException(msg);
         }
     }
-
-/*
-    private static InputStream getResource(String filename) throws java.io.IOException {
-        java.net.URL url = TemplateServiceConfiguration.class.getClassLoader().getResource(filename);
-
-        if (url == null) {
-            LOGGER.warn("Couldn't get resource: " + filename);
-            throw new IOException(filename + " not found via classloader.");
-        }
-
-        InputStream is = url.openConnection().getInputStream();
-        if (is == null) {
-            LOGGER.error("Couldn't open file: " + filename);
-            throw new IOException(filename + " not found via classloader.");
-        }
-        return is;
-    }
-*/
 
     /**
      * Returns whether there is a font configuration in the custom font library configured in the system properties. 

@@ -39,7 +39,12 @@ public class TestHelper {
                         as.getContent().close();
                     }
                 } catch (IOException e) {
-                    LOGGER.error("Error closing result stream.", e);
+                    final String msg = "Error closing result stream.";
+                    LOGGER.error(msg);
+                    if(LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(msg, e);
+                    }
+
                 }
             }
         }

@@ -9,9 +9,9 @@ package org.getthedocs.documentengine.core.dto;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,17 +25,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.getthedocs.documentengine.core.dto.json.ObjectMapperFactory;
 
+/**
+ * Decorator interface to indicate that the template data is a JSON object.
+ *
+ * @author Levente Ban
+ */
 public interface JsonModel {
 
-  default String toJson() {
+    /**
+     * Converts the object to a JSON string.
+     *
+     * @return the JSON representation of the object.
+     */
+    default String toJson() {
 
-    final ObjectMapper mapper = ObjectMapperFactory.jsonMapper();
-    mapper.registerModule(new JavaTimeModule());
+        final ObjectMapper mapper = ObjectMapperFactory.jsonMapper();
+        mapper.registerModule(new JavaTimeModule());
 
-    try {
-      return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
-    } catch (final JsonProcessingException e) {
-      throw new RuntimeException(e);
+        try {
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        } catch (final JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
-  }
 }

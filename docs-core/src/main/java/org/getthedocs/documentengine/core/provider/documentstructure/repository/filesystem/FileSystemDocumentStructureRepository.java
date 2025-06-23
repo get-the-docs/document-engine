@@ -129,7 +129,10 @@ public class FileSystemDocumentStructureRepository extends FilesystemProvider im
         } catch (final IOException e) {
             final String msg = String.format("Error retrieving the document structure list - baseDir: [%s]",
                     this.basedir);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceException("71117d2a-9f36-49f5-af25-ddfbca07cea3", msg);
         }
@@ -195,7 +198,10 @@ public class FileSystemDocumentStructureRepository extends FilesystemProvider im
             final String msg = String.format(
                     "Error loading document structure builder: %s, " + "using built-in YmlDocStructureBuilder.",
                     repositoryProvider);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
         }
 
         return documentStructureBuilder;

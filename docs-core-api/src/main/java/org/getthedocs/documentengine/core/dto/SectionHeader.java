@@ -20,8 +20,14 @@ package org.getthedocs.documentengine.core.dto;
  * #L%
  */
 
+/**
+ * Pojo data object marker to indicate the object is a section header.
+ */
 public interface SectionHeader {
 
+  /**
+   * @return true if the object is a section header.
+   */
   public abstract boolean isSectionHeader();
   
 }

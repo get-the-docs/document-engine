@@ -98,13 +98,11 @@ public class DocxStamperInputTemplateProcessor extends AbstractTemplateProcessor
       throw e;
 
     } catch (final UnresolvedExpressionException e) {
-      final String msg = String.format("Placeholder error in file: %s", templateFileName);
+      final String msg = String.format("Placeholder error in file: %s. Expression eval error: %s", templateFileName, e.getMessage());
       LOGGER.warn(msg);
-      LOGGER.warn("Expression eval error: ", e);
-
-//      if (LOGGER.isDebugEnabled()) {
-//        LOGGER.debug("Expression eval error: ", e);
-//      }
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Expression eval error: ", e);
+      }
 
       throw new PlaceholderEvalException("ff03cf41-25fb-463a-829d-e2b411df4c16", msg, e);
 

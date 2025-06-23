@@ -65,7 +65,7 @@ public abstract class AbstractTemplateProcessor {
    * Retrieves the template from the template repository. 
    * @param templateFile the template name.
    * @return the template binary if found.
-   * @throws TemplateServiceRuntimeException thrown if the template repository is not properly configured.
+   * @throws TemplateServiceConfigurationException thrown if the template repository is not properly configured.
    */
   protected static InputStream getTemplate(final String templateFile) throws TemplateServiceConfigurationException {
     if (TemplateServiceConfiguration.getInstance() == null) {

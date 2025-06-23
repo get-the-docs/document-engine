@@ -85,13 +85,21 @@ public class FileSystemTemplateRepository extends FilesystemProvider implements 
 
                 LOGGER.info("Template repository did not exist, created.");
             } catch (final IOException ex) {
-                final String msg = "Cannot create template repository path";
-                LOGGER.error("Could not initialize template repository. " + msg, ex);
+                final String msg = "Could not initialize template repository: Cannot create template repository path.";
+                LOGGER.error(msg);
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(msg, e);
+                }
+
                 throw new TemplateServiceConfigurationException("833e27f3-6813-43f5-aafd-cd511aca3ae0", msg);
             }
         } catch (final InvalidPathException | IOException e) {
-            final String msg = "Invalid template path";
-            LOGGER.error("Could not initialize template repository. " + msg, e);
+            final String msg = "Could not initialize template repository: Invalid template path.";
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
+
             throw new TemplateServiceConfigurationException("9bd97feb-1387-40f3-bc82-01961e26bf5f", msg);
         }
     }
@@ -136,7 +144,10 @@ public class FileSystemTemplateRepository extends FilesystemProvider implements 
             }
         } catch (final IOException e) {
             final  String msg = String.format("Error retrieving the template list - baseDir: [%s]", getBasePath());
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceException("68b79868-c05c-4d14-8d94-1d8815625c8f", msg);
         }
