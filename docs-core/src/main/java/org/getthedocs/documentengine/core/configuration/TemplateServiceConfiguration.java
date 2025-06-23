@@ -337,9 +337,9 @@ public class TemplateServiceConfiguration {
      */
     private void initGlobalSettings(final Properties properties) {
         if (properties != null && !properties.isEmpty()) {
-            final String defaultLocale = (String) properties.get(ENGINE_DEFAULT_LOCALE);
-            if (StringUtils.isNotEmpty(defaultLocale)) {
-                Locale locale = Locale.forLanguageTag(defaultLocale);
+            final String strLocale = (String) properties.get(ENGINE_DEFAULT_LOCALE);
+            if (StringUtils.isNotEmpty(strLocale)) {
+                Locale locale = Locale.forLanguageTag(strLocale);
                 Locale.setDefault(locale);
                 this.defaultLocale = locale;
 

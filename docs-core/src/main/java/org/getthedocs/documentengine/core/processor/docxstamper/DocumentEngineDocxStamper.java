@@ -77,6 +77,7 @@ public class DocumentEngineDocxStamper<T> {
      * @see io.reflectoring.docxstamper.DocxStamper
      * @param proxyBuilder the proxy builder class to use
      */
+    @SuppressWarnings("rawtypes")
     public DocumentEngineDocxStamper(ProxyBuilder proxyBuilder) {
         this.proxyBuilder = proxyBuilder;
         initFields();
@@ -140,10 +141,10 @@ public class DocumentEngineDocxStamper<T> {
      */
      void stamp(WordprocessingMLPackage document, T contextRoot, OutputStream out) throws DocxStamperException {
         try {
-            ProxyBuilder<T> proxyBuilder = addCustomInterfacesToContextRoot(contextRoot, this.config.getExpressionFunctions());
-            replaceExpressions(document, proxyBuilder);
-            processComments(document, proxyBuilder);
-            replaceExpressions(document, proxyBuilder);
+            ProxyBuilder<T> localProxyBuilder = addCustomInterfacesToContextRoot(contextRoot, this.config.getExpressionFunctions());
+            replaceExpressions(document, localProxyBuilder);
+            processComments(document, localProxyBuilder);
+            replaceExpressions(document, localProxyBuilder);
             postProcess();
             document.save(out);
             commentProcessorRegistry.reset();
@@ -155,27 +156,27 @@ public class DocumentEngineDocxStamper<T> {
     }
 
     /**
-     * @see io.reflectoring.docxstamper.DocxStamper#addCustomInterfacesToContextRoot
+     * @see io.reflectoring.docxstamper.DocxStamper
      * @param contextRoot the context root object containing the data to be filled into the template
      * @param interfacesToImplementations the implementations of the custom resolver interfaces
      * @return the proxy builder with the custom resolver interfaces added to the context root
      */
     private ProxyBuilder<T> addCustomInterfacesToContextRoot(T contextRoot, Map<Class<?>, Object> interfacesToImplementations) {
-        ProxyBuilder<T> proxyBuilder = new ProxyBuilder<T>()
+        ProxyBuilder<T> localProxyBuilder = new ProxyBuilder<T>()
                 .withRoot(contextRoot);
         if (interfacesToImplementations.isEmpty()) {
-            return proxyBuilder;
+            return localProxyBuilder;
         }
         for (Map.Entry<Class<?>, Object> entry : interfacesToImplementations.entrySet()) {
             Class<?> interfaceClass = entry.getKey();
             Object implementation = entry.getValue();
-            proxyBuilder.withInterface(interfaceClass, implementation);
+            localProxyBuilder.withInterface(interfaceClass, implementation);
         }
-        return proxyBuilder;
+        return localProxyBuilder;
     }
 
     /**
-     * @see io.reflectoring.docxstamper.DocxStamper#replaceExpressions
+     * @see io.reflectoring.docxstamper.DocxStamper
      * @param document the input template as a WordprocessingMLPackage
      * @param proxyBuilder the proxy builder with the custom resolver interfaces added to the context root
      */

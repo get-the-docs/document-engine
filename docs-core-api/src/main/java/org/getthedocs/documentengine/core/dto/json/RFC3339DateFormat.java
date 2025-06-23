@@ -26,9 +26,7 @@ import java.io.Serial;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
@@ -50,22 +48,11 @@ public class RFC3339DateFormat extends DateFormat {
     private static final TimeZone TIMEZONE_Z = TimeZone.getTimeZone("UTC");
 
     /**
-     * Calendar instance.
-     */
-    private final Calendar calendar = GregorianCalendar.getInstance();
-
-    /**
      * Date format instance.
      */
     private final StdDateFormat fmt = new StdDateFormat()
             .withTimeZone(TIMEZONE_Z)
             .withColonInTimeZone(true);
-
-    /**
-     * Default constructor.
-     */
-    public RFC3339DateFormat() {
-    }
 
     /**
      * Date parses the input string and converts to date.
