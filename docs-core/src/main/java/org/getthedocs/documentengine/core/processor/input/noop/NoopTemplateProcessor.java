@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.getthedocs.documentengine.core.service.exception.TemplateServiceConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,10 +65,14 @@ public class NoopTemplateProcessor extends AbstractTemplateProcessor implements 
     
         try (final InputStream is = getTemplate(templateFileName);
             final ByteArrayOutputStream targetStream = new ByteArrayOutputStream()) {
-        
+
             is.transferTo(targetStream);
 
             return targetStream;
+        } catch (TemplateServiceConfigurationException e) {
+            LOGGER.error("Error getting template: {}", templateFileName, e);
+
+            return null;
         } catch(final IOException e) {
             LOGGER.error("Error creating result stream", e);
             

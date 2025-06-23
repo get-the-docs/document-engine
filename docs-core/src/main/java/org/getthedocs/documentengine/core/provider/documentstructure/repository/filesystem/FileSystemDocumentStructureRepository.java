@@ -21,6 +21,7 @@ package org.getthedocs.documentengine.core.provider.documentstructure.repository
  */
 
 import org.getthedocs.documentengine.core.documentstructure.DocumentStructure;
+import org.getthedocs.documentengine.core.provider.FilesystemProvider;
 import org.getthedocs.documentengine.core.provider.documentstructure.DocumentStructureRepository;
 import org.getthedocs.documentengine.core.provider.documentstructure.builder.DocumentStructureBuilder;
 import org.getthedocs.documentengine.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder;
@@ -46,16 +47,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * File system based document structure repository.
+ * Filesystem-based document structure repository.
  * 
  * @author Levente Ban
  */
-public class FileSystemDocumentStructureRepository implements DocumentStructureRepository {
+public class FileSystemDocumentStructureRepository extends FilesystemProvider implements DocumentStructureRepository {
     /**
      * Configuration property key for the basedir where the document structures will
      * be stored.
      */
-    private static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR = "repository.documentstructure.provider.filesystem.basedir";
+    public static final String DOCUMENT_STRUCTURE_PROVIDER_BASEDIR = "repository.documentstructure.provider.filesystem.basedir";
 
     /**
      * Logger.

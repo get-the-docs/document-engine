@@ -25,6 +25,7 @@ import org.getthedocs.documentengine.core.documentstructure.ResultDocument;
 import org.getthedocs.documentengine.core.documentstructure.StoredGenerationResult;
 import org.getthedocs.documentengine.core.documentstructure.StoredResultDocument;
 import org.getthedocs.documentengine.core.documentstructure.descriptors.StoredResultDocumentStatus;
+import org.getthedocs.documentengine.core.provider.FilesystemProvider;
 import org.getthedocs.documentengine.core.provider.resultstore.ResultStore;
 import org.getthedocs.documentengine.core.service.exception.ResultNotFoundException;
 import org.getthedocs.documentengine.core.service.exception.TemplateProcessException;
@@ -48,28 +49,23 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * File system based result store implementation. It stores the generation
+ * Filesystem-based result store implementation. It stores the generation
  * results of single template and document structure processings.
  * 
  * @author Levente Ban
  */
-public class FileSystemResultStore implements ResultStore {
+public class FileSystemResultStore extends FilesystemProvider implements ResultStore {
 
     /**
      * Configuration property key in the system properties to define the basedir of
      * the result store.
      */
-    private static final String RESULT_REPOSITORY_PROVIDER_BASEDIR = "repository.result.provider.basedir";
+    public static final String RESULT_REPOSITORY_PROVIDER_BASEDIR = "repository.result.provider.basedir";
 
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemResultStore.class);
-
-    /**
-     * The actual basedir.
-     */
-    private String baseDir;
 
     /**
      * Initializer entry point to bootstrap the repository.
@@ -83,7 +79,7 @@ public class FileSystemResultStore implements ResultStore {
                     "Null or invalid template properties caught.");
         }
 
-        this.baseDir = (String) props.get(RESULT_REPOSITORY_PROVIDER_BASEDIR);
+        super.init( (String) props.get(RESULT_REPOSITORY_PROVIDER_BASEDIR));
 
         initResultStoreDir();
 
@@ -92,12 +88,12 @@ public class FileSystemResultStore implements ResultStore {
     private void initResultStoreDir() throws TemplateServiceConfigurationException {
         try {
             LOGGER.info("Checking result store repository access...");
-            Files.list(Paths.get(this.baseDir).toAbsolutePath());
+            Files.list(Paths.get(getBasePath()).toAbsolutePath());
 
             LOGGER.info("Result store repository available.");
         } catch (final NoSuchFileException e) {
             try {
-                Files.createDirectories(Paths.get(this.baseDir).toAbsolutePath());
+                Files.createDirectories(Paths.get(getBasePath()).toAbsolutePath());
 
                 LOGGER.info("Result store repository did not exist, created.");
             } catch (final IOException ex) {
@@ -123,12 +119,17 @@ public class FileSystemResultStore implements ResultStore {
         if (transactionDir == null) {
             transactionDir = ".";
         }
-        final String resultDir = this.baseDir + File.separator + transactionDir;
+
+        String resultDir = "";
 
         try {
+            resultDir = getBasePath() + File.separator + transactionDir;
+
             Files.createDirectories(Paths.get(resultDir).toAbsolutePath());
+        } catch (TemplateServiceConfigurationException ex) {
+            throw new TemplateProcessException("28904c7b-1287-4882-8d4b-fa66a5446f30", ex.getMessage());
         } catch (final FileAlreadyExistsException e) {
-            LOGGER.debug("The transaction dir was already present:" + resultDir);
+            LOGGER.debug("The transaction directory was already present:" + resultDir);
         } catch (final IOException e) {
             return false;
         }
@@ -153,10 +154,14 @@ public class FileSystemResultStore implements ResultStore {
         if (transactionDir == null) {
             transactionDir = ".";
         }
-        final String resultDir = this.baseDir + File.separator + transactionDir;
 
+        String resultDir = "";
         try {
+            resultDir = getBasePath() + File.separator + transactionDir;
+
             Files.createDirectories(Paths.get(resultDir).toAbsolutePath());
+        } catch (TemplateServiceConfigurationException ex) {
+            throw new TemplateProcessException("28904c7b-1287-4882-8d4b-fa66a5446f30", ex.getMessage());
         } catch (final FileAlreadyExistsException e) {
             LOGGER.debug("The transaction dir was already present:" + resultDir);
         } catch (final IOException e) {
@@ -238,7 +243,7 @@ public class FileSystemResultStore implements ResultStore {
             throws TemplateServiceException {
         try {
 
-            final Path basePath = Paths.get(this.baseDir + File.separator + transactionId).toAbsolutePath();
+            final Path basePath = Paths.get(getBasePath() + File.separator + transactionId).toAbsolutePath();
             try (final Stream<Path> path = Files.list(basePath)) {
                 final List<StoredResultDocument> items = path.filter(file -> !Files.isDirectory(file))
                         .map(Path::getFileName).map(Path::toString).map(t -> new StoredResultDocument(t, true))
@@ -252,7 +257,7 @@ public class FileSystemResultStore implements ResultStore {
         } catch (final NoSuchFileException e) {
             return Optional.empty();
         } catch (final IOException e) {
-            final String msg = String.format("Error retrieving the result documents - baseDir: [{}]", this.baseDir);
+            final String msg = String.format("Error retrieving the result documents - baseDir: [{}]", getBasePath());
             LOGGER.error(msg, e);
 
             throw new TemplateServiceException("402713ce-9c2e-48b0-a910-ab92d0cc87fa", msg);
@@ -264,7 +269,7 @@ public class FileSystemResultStore implements ResultStore {
      * structures query
      * 
      * @param transactionId the requested transaction, if found.
-     * @throws TemplateServiceException thrown in case of query error.
+     * @throws TemplateServiceException thrown in case of a query error.
      * @return the template document.
      */
     @Override
@@ -317,10 +322,10 @@ public class FileSystemResultStore implements ResultStore {
      * @param resultDocument the document name.
      * @return the document as stream if found.
      */
-    public InputStream getDocumentBinary(final String transactionId, final String resultDocument) {
+    public InputStream getDocumentBinary(final String transactionId, final String resultDocument) throws TemplateServiceConfigurationException {
         InputStream result;
 
-        final String pathToFile = this.baseDir + File.separator + transactionId + File.separator + resultDocument;
+        final String pathToFile = getBasePath() + File.separator + transactionId + File.separator + resultDocument;
         try {
             result = Paths.get(pathToFile).toUri().toURL().openStream();
         } catch (final IOException e) {

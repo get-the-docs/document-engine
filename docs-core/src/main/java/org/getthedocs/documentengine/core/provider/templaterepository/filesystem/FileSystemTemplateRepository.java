@@ -20,6 +20,7 @@ package org.getthedocs.documentengine.core.provider.templaterepository.filesyste
  * #L%
  */
 
+import org.getthedocs.documentengine.core.provider.FilesystemProvider;
 import org.getthedocs.documentengine.core.provider.persistence.Page;
 import org.getthedocs.documentengine.core.provider.persistence.Pageable;
 import org.getthedocs.documentengine.core.provider.templaterepository.TemplateRepository;
@@ -35,10 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -46,10 +44,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * File system based template repository implementation.
+ * Filesystem-based template repository implementation.
  * @author Levente Ban
  */
-public class FileSystemTemplateRepository implements TemplateRepository {
+public class FileSystemTemplateRepository extends FilesystemProvider implements TemplateRepository {
 
     /**
      * Logger.
@@ -59,12 +57,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     /**
      * Configuration property key in the system properties (see document-engine.properties).
      */
-    private static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
-
-    /**
-     * The current basedir.
-     */
-    private String baseDir;
+    public static final String TEMPLATE_REPOSITORY_PROVIDER_BASEDIR = "repository.template.provider.basedir";
 
     /**
      * Entry point for repo initialization.
@@ -77,18 +70,18 @@ public class FileSystemTemplateRepository implements TemplateRepository {
                     "Null or invalid template properties caught.");
         }
 
-        this.baseDir = (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BASEDIR);
+        super.init( (String) props.get(TEMPLATE_REPOSITORY_PROVIDER_BASEDIR));
 
         initTemplateRepositoryDir();
     }
 
     private void initTemplateRepositoryDir() throws TemplateServiceConfigurationException {
         LOGGER.info("Checking template repository access...");
-        try (final Stream<Path> ignored = Files.list(Paths.get(this.baseDir).toAbsolutePath())) {
+        try (final Stream<Path> ignored = Files.list(Paths.get(getBasePath()).toAbsolutePath())) {
                 LOGGER.info("Template repository available.");
         } catch (final NoSuchFileException e) {
             try {
-                Files.createDirectories(Paths.get(this.baseDir).toAbsolutePath());
+                Files.createDirectories(Paths.get(getBasePath()).toAbsolutePath());
 
                 LOGGER.info("Template repository did not exist, created.");
             } catch (final IOException ex) {
@@ -96,7 +89,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
                 LOGGER.error("Could not initialize template repository. " + msg, ex);
                 throw new TemplateServiceConfigurationException("833e27f3-6813-43f5-aafd-cd511aca3ae0", msg);
             }
-        } catch (final IOException e) {
+        } catch (final InvalidPathException | IOException e) {
             final String msg = "Invalid template path";
             LOGGER.error("Could not initialize template repository. " + msg, e);
             throw new TemplateServiceConfigurationException("9bd97feb-1387-40f3-bc82-01961e26bf5f", msg);
@@ -115,7 +108,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
         try {
             final Page<TemplateDocument> result = new Page<>();
 
-            final Path basePath = Paths.get(this.baseDir).toAbsolutePath();
+            final Path basePath = Paths.get(getBasePath()).toAbsolutePath();
             try (final Stream<Path> path = Files.walk(basePath)) {
                 final List<TemplateDocument> items = path
                         .filter(file -> !Files.isDirectory(file))
@@ -142,7 +135,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
                 return result;
             }
         } catch (final IOException e) {
-            final  String msg = String.format("Error retrieving the template list - baseDir: [%s]", this.baseDir);
+            final  String msg = String.format("Error retrieving the template list - baseDir: [%s]", getBasePath());
             LOGGER.error(msg, e);
 
             throw new TemplateServiceException("68b79868-c05c-4d14-8d94-1d8815625c8f", msg);
@@ -186,7 +179,7 @@ public class FileSystemTemplateRepository implements TemplateRepository {
 
         } catch (final TemplateNotFoundException e) {
             return Optional.empty();
-        } catch (final IOException e) {
+        } catch (final IOException | TemplateServiceConfigurationException e) {
             throw new TemplateProcessException("5204f592-5f4a-4a86-9cdf-0d3c6912cf5f", String.format("Error reading the template - id: [%s]", id));
         }
     }
@@ -194,23 +187,22 @@ public class FileSystemTemplateRepository implements TemplateRepository {
     /**
      * Returns a template for a given template name.
      * @param templateFile the template name (relative path from the basedir).
-     * @return the template document as stream if found.
+     * @return the template document as a stream if found.
      */
-    public InputStream getTemplate(final String templateFile) {
+    public InputStream getTemplate(final String templateFile) throws TemplateServiceConfigurationException {
         InputStream result;
 
-        final String pathToFile = this.baseDir + File.separator + templateFile;
         try {
+            final String pathToFile = getBasePath() + File.separator + templateFile;
             result = Paths.get(pathToFile).toUri().toURL().openStream();
+
+            if (result == null) {
+                LOGGER.error("Template not found. File: {}. ", pathToFile);
+            } else {
+                LOGGER.debug("Template found. File: {}. ", pathToFile);
+            }
         } catch (final IOException e) {
             result = null;
-        }
-//                result = FileSystemTemplateRepository.class.getClassLoader().getResourceAsStream(pathToFile);
-
-        if (result == null) {
-            LOGGER.error("Template not found. File: {}. ", pathToFile);
-        } else {
-            LOGGER.debug("Template found. File: {}. ", pathToFile);
         }
 
         return result;

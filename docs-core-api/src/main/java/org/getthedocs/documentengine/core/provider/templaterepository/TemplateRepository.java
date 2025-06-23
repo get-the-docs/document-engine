@@ -57,16 +57,16 @@ public interface TemplateRepository {
      * @param id the requested descriptor, if found
      * @param version the template version for the id
      * @param withBinary true, if the template binary should be part of the response 
-     * @throws TemplateServiceException thrown in case of query error
      * @return the template document
      */
-    Optional<TemplateDocument> getTemplateDocumentById(String id, String version, boolean withBinary) throws TemplateServiceException;
+    Optional<TemplateDocument> getTemplateDocumentById(String id, String version, boolean withBinary);
     
     /**
      * Returns a given template as a stream, or null if not found.
      * @param templateFile the template document id
      * @return The given template as a stream, or null if not found.
+     * @throws TemplateServiceConfigurationException thrown in case of configuration errors.
      */
-    InputStream getTemplate(String templateFile);
+    InputStream getTemplate(String templateFile) throws TemplateServiceConfigurationException;
 
 }
