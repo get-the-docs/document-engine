@@ -6,8 +6,18 @@ env:
   MAVEN_CLI_OPTS: " --show-version --batch-mode --no-transfer-progress "
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., v1.2.3)'
+        required: true
+
+  push:
+    tags:
+      - 'v*'   # Runs on tag push like v1.2.3
+
   release:
-    types: [ published ]
+    types: [published]  # Runs when a GitHub Release is published
 
 jobs:
   build_job:
@@ -75,6 +85,17 @@ jobs:
       packages: write
 
     steps:
+      - name: Determine release tag
+        id: set-tag
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "tag=${{ github.event.inputs.release_tag }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
