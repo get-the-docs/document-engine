@@ -306,14 +306,15 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <organizationName>Levente Ban</organizationName>
-                            <inceptionYear>2023</inceptionYear>
+                            <inceptionYear>2025</inceptionYear>
                             <roots>
                                 <root>src/main/java</root>
                                 <root>src/test/java</root>
                             </roots>
                             <excludes>
                                 <exclude>*.json</exclude>
-                              </excludes>                            
+                                <exclude>**/org/getthedocs/documentengine/core/processor/docxstamper/*.java</exclude>
+                              </excludes>
                         </configuration>
                     </execution>
                 </executions>
