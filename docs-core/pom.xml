@@ -16,6 +16,41 @@
         <version>0.1.0</version>
     </parent>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Core implementation for docx, xlsx template engine and pdf converter to provide document generation features.
+        It is intended to generate single documents from WYSIWYG templates, based on placeholder logic in comments, or
+        to create document sets/a single result document from template structures.
+        The templates can be filled from JSON or Java objects as actual data via jsonpath and SpEL expression-like placeholders.
+
+        The engine core is a java wrapper to other tools integrate their capabilities and can be used with typed DTO-s
+        as a dependency also.</description>
+    <url>http://www.getthedocs.tech</url>
+    <scm>
+        <connection>scm:git:git@github.com/get-the-docs/document-engine.git</connection>
+        <developerConnection>scm:git:ssh@github.com:get-the-docs/document-engine.git</developerConnection>
+        <url>https://github.com/get-the-docs/document-engine</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>banlevente</id>
+            <name>Levente Ban</name>
+            <organization>GetTheDocs</organization>
+            <organizationUrl>https://getthedocs.tech</organizationUrl>
+            <email>levente.ban@getthedocs.org</email>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/get-the-docs/document-engine/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <dependencies>
 
         <dependency>
@@ -48,47 +83,11 @@
         </dependency>
 
         <!-- Docx -->
-        <!-- https://mvnrepository.com/artifact/io.reflectoring/docx-stamper -->
         <dependency>
             <groupId>io.reflectoring</groupId>
             <artifactId>docx-stamper</artifactId>
             <version>2.0.0</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.wickedsource.docx-stamper</groupId>
-            <artifactId>docx-stamper</artifactId>
-            <version>1.5.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-expression</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-dataformat-yaml</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.docx4j</groupId>
-                    <artifactId>docx4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency-->
 
         <!-- JXls -->
         <dependency>
