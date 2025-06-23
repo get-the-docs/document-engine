@@ -164,10 +164,10 @@ jobs:
 #        env:
 #          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY }}
           
-      - name: Set default key
-        run: gpg --default-key "$GPG_PRIVATE_KEY_ID"
-        env:
-          GPG_PRIVATE_KEY_ID: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY_ID }}
+#      - name: Set default key
+#        run: gpg --default-key "$GPG_PRIVATE_KEY_ID"
+#        env:
+#          GPG_PRIVATE_KEY_ID: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY_ID }}
 
       - name: List keys
         run: gpg --list-secret-keys --keyid-format LONG
