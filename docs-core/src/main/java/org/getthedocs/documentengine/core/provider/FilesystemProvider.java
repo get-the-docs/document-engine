@@ -24,6 +24,11 @@ import org.getthedocs.documentengine.core.service.exception.TemplateServiceConfi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Abstract class for filesystem-based providers.
+ *
+ * @author Levente Ban
+ */
 public abstract class FilesystemProvider {
     /**
      * Logger.

@@ -65,6 +65,11 @@ public class TemplateServiceRegistry {
         return result;
     }
 
+    /**
+     * Returns the configuration of the template service.
+     *
+     * @return the configuration of the template service.
+     */
     public static TemplateServiceConfiguration getConfiguration() {
         getInstance();
         return TemplateServiceConfiguration.getInstance();

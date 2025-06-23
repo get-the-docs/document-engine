@@ -70,12 +70,20 @@ public class NoopTemplateProcessor extends AbstractTemplateProcessor implements 
 
             return targetStream;
         } catch (TemplateServiceConfigurationException e) {
-            LOGGER.error("Error getting template: {}", templateFileName, e);
+            final String msg = String.format("Error getting template: %s", templateFileName);
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             return null;
         } catch(final IOException e) {
-            LOGGER.error("Error creating result stream", e);
-            
+            final String msg = "Error creating result stream";
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
+
             return null;
         }
     }

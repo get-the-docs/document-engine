@@ -83,12 +83,18 @@ public class YmlDocStructureBuilder implements DocumentStructureBuilder {
             }
         } catch (FileNotFoundException e) {
             final String msg = String.format("DocumentStructure configuration file not found: %s", dsConfig);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceConfigurationException("9c4233f3-ce43-45b5-80f9-a06424916649", msg);
         } catch (Exception e) {
             final String msg = String.format("Error reading documentStructure configuration: %s", dsConfig);
-            LOGGER.error(msg, e);
+            LOGGER.error(msg);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
+            }
 
             throw new TemplateServiceConfigurationException("d53a8fb6-183f-466e-ad94-aa189bad455a", msg);
         }

@@ -108,7 +108,10 @@ public class DocxToPdfConverter implements Converter {
       source.close();
     } catch (final Throwable e) {
       final String msg = "Error on pdf creation.";
-      LOGGER.error(msg, e);
+      LOGGER.error(msg);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(msg, e);
+      }
 
       throw new ConversionException("c0a3ab2e-297d-4634-85cc-d171fd0772f1", msg, e);
     }

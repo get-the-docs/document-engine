@@ -44,10 +44,19 @@ import org.getthedocs.documentengine.core.context.TemplateContext;
 import java.time.LocalDate;
 
 /**
+ * Interface for JSON templates that provides a method to format date values.
+ *
  * @author Levente Ban
  */
 public interface IJsonTemplate extends ITemplate {
 
+    /**
+     * Formats a date value in a year-month-date format (YYYY-MM-DD) from the given JsonTemplateContext.
+     *
+     * @param value The JsonTemplateContext containing the date value.
+     * @return The formatted date string, or a placeholder if the value is null.
+     * @throws PlaceholderEvalException If an error occurs during date formatting.
+     */
     default String fmtDate(final JsonTemplateContext value) {
         try {
             if (value != null) {

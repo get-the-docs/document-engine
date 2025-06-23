@@ -39,12 +39,29 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Factory class for creating {@link ObjectMapper} instances with pre-configured settings to use
+ * coherent settings across the application.
+ * Provides methods for both JSON and YAML mappers, with options to register additional modules.
+ */
 public class ObjectMapperFactory {
 
+    /**
+     * Creates a new {@link ObjectMapper} instance configured for JSON serialization/deserialization.
+     *
+     * @return a new {@link ObjectMapper} instance for JSON.
+     */
     public static ObjectMapper jsonMapper() {
         return getMapper(null);
     }
 
+    /**
+     * Creates a new {@link ObjectMapper} instance configured for JSON serialization/deserialization,
+     * with an additional module registered. Use this method to register custom serializers or deserializers.
+     *
+     * @param additionalModule the additional module to register with the mapper.
+     * @return a new {@link ObjectMapper} instance for JSON with the additional module registered.
+     */
     public static ObjectMapper jsonMapper(final SimpleModule additionalModule) {
         final ObjectMapper mapper = getMapper(null);
         mapper.registerModule(additionalModule);
@@ -52,10 +69,22 @@ public class ObjectMapperFactory {
         return mapper;
     }
 
+    /**
+     * Creates a new {@link ObjectMapper} instance configured for YAML serialization/deserialization.
+     *
+     * @return a new {@link ObjectMapper} instance for YAML.
+     */
     public static ObjectMapper yamlMapper() {
         return getMapper(new YAMLFactory());
     }
 
+    /**
+     * Creates a new {@link ObjectMapper} instance configured for YAML serialization/deserialization,
+     * with an additional module registered. Use this method to register custom serializers or deserializers.
+     *
+     * @param additionalModule the additional module to register with the mapper.
+     * @return a new {@link ObjectMapper} instance for YAML with the additional module registered.
+     */
     public static ObjectMapper yamlMapper(final SimpleModule additionalModule) {
         final ObjectMapper mapper = getMapper(new YAMLFactory());
         mapper.registerModule(additionalModule);
@@ -63,10 +92,16 @@ public class ObjectMapperFactory {
         return mapper;
     }
 
+    /**
+     * Internal method to create a new {@link ObjectMapper} instance with the specified {@link JsonFactory}.
+     * Configures the mapper with various serialization/deserialization settings.
+     *
+      * @param jsonFactory the {@link JsonFactory} to use for creating the mapper.
+     * @return a new {@link ObjectMapper} instance configured with the specified {@link JsonFactory}.
+     */
     private static ObjectMapper getMapper(final JsonFactory jsonFactory) {
         final ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
 
-//        mapper.enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

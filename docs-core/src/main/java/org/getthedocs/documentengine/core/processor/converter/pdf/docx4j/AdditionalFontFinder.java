@@ -70,7 +70,12 @@ public class AdditionalFontFinder {
                         String.format("%s - invalid font config url.", TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS) );
 
             } catch (final Exception e) {
-                LOGGER.warn("Error initializing document-engine config based additional fonts", e);
+                final String msg = String.format("Error initializing document-engine config based additional fonts. Parameters: %s", TemplateServiceConfigurationException.MSG_INVALID_PARAMETERS);
+                LOGGER.warn(msg);
+                if(LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(msg, e);
+                }
+
             }
         }
     }

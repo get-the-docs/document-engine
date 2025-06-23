@@ -16,6 +16,36 @@
         <version>0.1.0</version>
     </parent>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Docx, xlsx template engine and pdf converter API to provide document generation features.
+    </description>
+    <url>http://www.getthedocs.tech</url>
+    <scm>
+        <connection>scm:git:git@github.com/get-the-docs/document-engine.git</connection>
+        <developerConnection>scm:git:ssh@github.com:get-the-docs/document-engine.git</developerConnection>
+        <url>https://github.com/get-the-docs/document-engine</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>banlevente</id>
+            <name>Levente Ban</name>
+            <organization>GetTheDocs</organization>
+            <organizationUrl>https://getthedocs.tech</organizationUrl>
+            <email>levente.ban@getthedocs.org</email>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/get-the-docs/document-engine/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <dependencies>
         <!-- QR code -->
         <dependency>
@@ -57,11 +87,6 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency-->
 
         <!-- API, java.xml.bind module -->
         <dependency>
@@ -142,11 +167,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
