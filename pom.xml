@@ -236,6 +236,7 @@
                         <maxmemory>1g</maxmemory>
                         <detectOfflineLinks>false</detectOfflineLinks>
                         <failOnWarnings>false</failOnWarnings>
+                        <sourcepath>${project.basedir}/src/main/java</sourcepath>
                     </configuration>
                     <executions>
                         <execution>
