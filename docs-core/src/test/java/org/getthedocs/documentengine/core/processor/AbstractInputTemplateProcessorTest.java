@@ -21,9 +21,12 @@ package org.getthedocs.documentengine.core.processor;
  */
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.InputStream;
 
 import org.getthedocs.documentengine.core.processor.AbstractTemplateProcessor;
+import org.getthedocs.documentengine.core.service.exception.TemplateServiceConfigurationException;
 import org.junit.Test;
 
 public class AbstractInputTemplateProcessorTest {
@@ -31,8 +34,12 @@ public class AbstractInputTemplateProcessorTest {
   @Test
   public void getTemplate() {
     final String fileName = "unittests/docx/SimpleContract_v1_21-pojo.docx";
-    InputStream i = AbstractTemplateProcessor.getTemplate(fileName);
-    
-    assertNotNull(i);
-  }  
+    try {
+      InputStream i = AbstractTemplateProcessor.getTemplate(fileName);
+
+      assertNotNull(i);
+    } catch (TemplateServiceConfigurationException e) {
+      fail();
+    }
+  }
 }

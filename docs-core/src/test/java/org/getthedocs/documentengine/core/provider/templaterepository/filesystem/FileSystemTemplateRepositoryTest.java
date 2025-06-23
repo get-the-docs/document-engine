@@ -26,28 +26,32 @@ import org.getthedocs.documentengine.core.service.exception.TemplateServiceConfi
 import org.getthedocs.documentengine.core.service.exception.TemplateServiceException;
 import org.getthedocs.documentengine.core.template.descriptors.TemplateDocument;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FileSystemTemplateRepositoryTest {
 
+    @TempDir
+    static Path tempFolder;
+
     @Test
     public void testTemplateRepositoryInitCreatesNonexistingBasePath() {
         // Arrange
-        final String basePath = "target/newdir";
         final Properties properties = new Properties();
-        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, basePath);
+        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, tempFolder.toString());
 
         FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
         try {
             repository.init(properties);
 
-            assertTrue(Files.exists(Path.of(basePath)));
+            assertTrue(Files.exists(Path.of(tempFolder.toUri())));
         } catch (TemplateServiceConfigurationException e) {
             fail();
         }
@@ -69,9 +73,8 @@ public class FileSystemTemplateRepositoryTest {
     @Test
     public void testGetTemplatesWithoutPagesShallReturnAll() {
         // Arrange
-        final String basePath = "target/newdir";
         final Properties properties = new Properties();
-        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, basePath);
+        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, tempFolder.toString());
         FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
 
         // Act & Assert
@@ -90,9 +93,8 @@ public class FileSystemTemplateRepositoryTest {
     @Test
     public void testGetTemplatesWithNoPagedQueryShallReturnAll() throws IOException {
         // Arrange
-        final String basePath = "target/newdir";
         final Properties properties = new Properties();
-        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, basePath);
+        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, tempFolder.toString());
         FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
 
         final Pageable pageable = new Pageable();
@@ -109,7 +111,52 @@ public class FileSystemTemplateRepositoryTest {
         } catch (final TemplateServiceException e) {
             fail();
         }
-
     }
 
+    @Test
+    public void testGetTemplateByIdShallReturnTemplate() {
+        // Arrange
+        final String basePath = "target/test-classes/templates/unittests";
+        final Properties properties = new Properties();
+        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, basePath);
+        FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
+
+        // Act & Assert
+        try {
+            repository.init(properties);
+            final Optional<TemplateDocument> template = repository
+                    .getTemplateDocumentById("docx/contract_v09_en.docx", null, true);
+
+            assertTrue(template.isPresent());
+
+            final TemplateDocument doc = template.get();
+            assertEquals("docx/contract_v09_en.docx", doc.getTemplateName());
+            assertTrue(doc.getBinary().length > 0);
+
+        } catch (final TemplateServiceException e) {
+            fail();
+        }
+    }
+
+
+    @Test
+    public void testGetTemplateByWithInvalidTemplateNameShallReturnOptionalEmpty() {
+        // Arrange
+        final String basePath = "target/test-classes/templates/unittests";
+        final Properties properties = new Properties();
+        properties.put(FileSystemTemplateRepository.TEMPLATE_REPOSITORY_PROVIDER_BASEDIR, basePath);
+        FileSystemTemplateRepository repository = new FileSystemTemplateRepository();
+
+        // Act & Assert
+        try {
+            repository.init(properties);
+            final Optional<TemplateDocument> template = repository
+                    .getTemplateDocumentById("docx/i_dont_exist.docx", null, true);
+
+            assertFalse(template.isPresent());
+
+        } catch (final TemplateServiceException e) {
+            fail();
+        }
+    }
 }

@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.getthedocs.documentengine.core.service.exception.TemplateServiceConfigurationException;
 import org.getthedocs.documentengine.core.service.exception.TemplateServiceRuntimeException;
 import org.getthedocs.documentengine.core.configuration.TemplateServiceConfiguration;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public abstract class AbstractTemplateProcessor {
    * @return the template binary if found.
    * @throws TemplateServiceRuntimeException thrown if the template repository is not properly configured.
    */
-  protected static InputStream getTemplate(final String templateFile) {
+  protected static InputStream getTemplate(final String templateFile) throws TemplateServiceConfigurationException {
     if (TemplateServiceConfiguration.getInstance() == null) {
       final String msg = "Template configuration error: TemplateServiceConfiguration.getInstance() is null.";
       LOGGER.error(msg);

@@ -1,4 +1,4 @@
-package org.getthedocs.documentengine.core.service.docx;
+package org.getthedocs.documentengine.core.integrationtests.docx;
 
 /*-
  * #%L
@@ -47,9 +47,9 @@ import java.util.UUID;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class DocxTemplateTest {
+public class DocxTemplateIT {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplateIT.class);
 
     private final String inputDir = "unittests/docx";
 
