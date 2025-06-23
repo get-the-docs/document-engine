@@ -32,8 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class FileSystemDocumentStructureRepositoryTest {
@@ -103,8 +102,13 @@ public class FileSystemDocumentStructureRepositoryTest {
         props.put(FileSystemDocumentStructureRepository.DOCUMENT_STRUCTURE_PROVIDER_BASEDIR, basedir);
 
         FileSystemDocumentStructureRepository repository = new FileSystemDocumentStructureRepository();
-        assertThrows(TemplateServiceException.class, () -> {
+        try {
             repository.init(props);
+        } catch (Exception e) {
+            fail();
+        }
+
+        assertThrows(TemplateServiceException.class, () -> {
             repository.getDocumentStructures(null);
         });
     }
