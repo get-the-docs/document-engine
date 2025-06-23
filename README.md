@@ -3,7 +3,7 @@
 [![Build](https://github.com/get-the-docs/document-engine/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/get-the-docs/document-engine/actions/workflows/build.yml)
 ![Tests](https://github.com/get-the-docs/document-engine/workflows/Tests/badge.svg)
 [![Sonar Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=get-the-docs_document-engine&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=get-the-docs_document-engine)
-[![Codecov branch](https://img.shields.io/codecov/c/github/get-the-docs/document-engine/master?label=Coverage)](https://codecov.io/gh/get-the-docs/document-engine)
+[![Codecov branch](https://img.shields.io/codecov/c/github/get-the-docs/document-engine/main?label=Coverage)](https://codecov.io/gh/get-the-docs/document-engine)
 
 Docx, xlsx template engine and pdf converter to provide enterprise document generation feautures.
 
@@ -57,7 +57,72 @@ Uses:
 
 ## Usage
 
-### Single document
+### Getting Started
+
+Add the dependency via **Maven**:
+
+```xml
+<dependency>
+  <groupId>getthedocs</groupId>
+  <artifactId>document-engine</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+If not using spring, add the SpEL library of your needs (you can lookup the version the engine was tested with in the docs-core project):
+
+```xml
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-expression</artifactId>
+  <version>6.0.8</version>
+</dependency>
+```
+
+```properties
+# Template repository provider class
+repository.template.provider=org.getthedocs.documentengine.core.provider.templaterepository.filesystem.FileSystemTemplateRepository
+repository.template.provider.basedir=templatefileshare/templates
+
+# InputTemplate processors
+processors.docx=org.getthedocs.documentengine.core.processor.input.docx.DocxStamperInputTemplateProcessor
+processors.xlsx=org.getthedocs.documentengine.core.processor.input.xlsx.JxlsInputTemplateProcessor
+
+# Result repository provider class
+repository.result.provider=org.getthedocs.documentengine.core.provider.resultstore.filesystem.FileSystemResultStore
+repository.result.provider.basedir=resultsfileshare/generated-documents
+
+# Document structure repository provider
+repository.documentstructure.provider=org.getthedocs.documentengine.core.provider.documentstructure.repository.filesystem.FileSystemDocumentStructureRepository
+repository.documentstructure.builder=org.getthedocs.documentengine.core.provider.documentstructure.builder.yaml.YmlDocStructureBuilder
+repository.documentstructure.provider.filesystem.basedir=template_bundle_descriptors/documentstructures
+
+# Converters/PDF - Font library
+# -----------------------------
+#   For non built-in fonts (other than COURIER, HELVETICA, TIMES_ROMAN) the fonts used by the source documents
+#   have to be provided.
+#   The fonts will be embedded for the correct appearance into the result document.
+#   Usage:
+#     the fonts have to be specified as shown in the example below and
+#     placed in a directory accessible for the TemplateService's class loader (e.g. have to be on the classpath).
+
+# Font base directory (optional)
+converter.pdf.font-library.basedir=companydata/fonts
+
+converter.pdf.font-library.font.arial.bold=arialbd.ttf
+converter.pdf.font-library.font.arial.italic=ariali.ttf
+converter.pdf.font-library.font.arial.boldItalic=arialbi.ttf
+converter.pdf.font-library.font.arial.normal=arial.ttf
+
+converter.pdf.font-library.font.calibri.bold=calibrib.ttf
+converter.pdf.font-library.font.calibri.italic=calibrii.ttf
+converter.pdf.font-library.font.calibri.boldItalic=calibriz.ttf
+converter.pdf.font-library.font.calibri.normal=calibri.ttf
+
+```
+
+
+### Single document generation
 
 To create a simple document
 
@@ -69,6 +134,9 @@ To create a simple document
 ```
 
 ### Document structure
+
+Place the document structures you need in the `template_bundle_descriptors/documentstructures` directory 
+(when using the above example), and use the following YAML format to define them:
 
 ```yaml
 # contract_v02.yml
@@ -104,6 +172,23 @@ resultMode: "SEPARATE_DOCUMENTS"
 outputFormat: "UNCHANGED"
 copies: 1
 
+```
+then invoke the template engine with the document structure ID:
+
+```java
+    public OutputStream generateContractDocuments() {
+        TemplateService templateService = TemplateServiceRegistry.getInstance();
+    
+        ValueSet dto = new ValueSet(transactionId);
+        dto
+                .addContext("cover", getCoverData(transactionId))
+                .addContext("contract", getContractTestData())
+                .addDefaultContext("terms", null)
+                .addContext("conditions", getContractTestData());
+    
+        final StoredGenerationResult result = templateService
+                .fillAndSaveDocumentStructureByName("contract/vintage/contract-vintage_v02-separate.yml", dto);
+    }
 ```
 
 ## Project tooling
