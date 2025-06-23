@@ -6,7 +6,6 @@ env:
   MAVEN_CLI_OPTS: " --show-version --batch-mode --no-transfer-progress "
 
 on:
-  workflow_dispatch:  # Manual trigger
   release:
     types: [ published ]
 
