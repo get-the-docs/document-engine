@@ -475,9 +475,6 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <properties>
-                <gpg.keyname>${env.MAVEN_GPG_PRIVATE_KEY_ID}</gpg.keyname>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -495,6 +492,8 @@
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>
                             </gpgArguments>
+                            <keyname>${env.MAVEN_GPG_PRIVATE_KEY_ID}</keyname>
+                            <passphraseEnvName>MAVEN_GPG_PASSPHRASE</passphraseEnvName>
                         </configuration>
                         <executions>
                             <execution>
