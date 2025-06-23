@@ -159,6 +159,18 @@ jobs:
           echo "Release version: $VERSION"
           mvn versions:set -DnewVersion=${VERSION#v}
 
+      - name: Import signing key
+        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --yes --import
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY }}
+          
+      - name: Set default key
+        run: gpg --default-key "$GPG_PRIVATE_KEY_ID"
+        env:
+          GPG_PRIVATE_KEY_ID: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY_ID }}
+
+      - name: List keys
+        run: gpg --list-secret-keys --keyid-format LONG
 
       - name: Publish package
         run: mvn -P release --batch-mode deploy -DskipTests $MAVEN_CLI_OPTS $MAVEN_CLI_SETTINGS
