@@ -108,7 +108,7 @@ jobs:
     permissions:
       contents: write
       packages: write
-
+    environment: release
     steps:
       - name: Determine release tag
         id: set-tag
@@ -159,10 +159,10 @@ jobs:
           echo "Release version: $VERSION"
           mvn versions:set -DnewVersion=${VERSION#v}
 
-      - name: Import signing key
-        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --yes --import
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY }}
+#      - name: Import signing key
+#        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --yes --import
+#        env:
+#          GPG_PRIVATE_KEY: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY }}
           
       - name: Set default key
         run: gpg --default-key "$GPG_PRIVATE_KEY_ID"
@@ -178,7 +178,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
           MAVEN_GPG_PRIVATE_KEY_ID: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY_ID }}
-          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY }}
+#          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_RELEASE_GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_RELEASE_GPG_PASSPHRASE }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
