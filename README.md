@@ -64,7 +64,7 @@ Add the dependency via **Maven**:
 ```xml
 <dependency>
   <groupId>org.getthedocs.documentengine</groupId>
-  <artifactId>document-engine-parent</artifactId>
+  <artifactId>docs-core</artifactId>
   <version>0.1.0</version>
 </dependency>
 ```
